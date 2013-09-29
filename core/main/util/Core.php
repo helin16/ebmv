@@ -13,7 +13,7 @@ abstract class Core
      * 
      * @var array
      */
-	private static $_storage = array('userAccount' => null, 'role' => null);
+	private static $_storage = array('user' => null, 'role' => null);
     /**
      * Setting the role in the core
      * 
@@ -33,12 +33,12 @@ abstract class Core
 	/**
 	 * Set the active user on the core for auditing purposes
 	 * 
-	 * @param UserAccount $userAccount The useraccount
-	 * @param Role        $role        The role
+	 * @param User $userAccount The useraccount
+	 * @param Role $role        The role
 	 */
-	public static function setUser(UserAccount $userAccount, Role $role = null)
+	public static function setUser(User $userAccount, Role $role = null)
 	{
-		self::$_storage['userAccount'] = $userAccount;
+		self::$_storage['user'] = $userAccount;
 		self::$_storage['role'] = $role;
 	}
 	/**
@@ -46,17 +46,17 @@ abstract class Core
 	 */
 	public static function rmUser()
 	{
-	    self::$_storage['userAccount'] = null;
+	    self::$_storage['user'] = null;
 	    self::rmRole();
 	}
 	/**
 	 * Get the current user set against the System for auditing purposes
 	 *
-	 * @return UserAccount
+	 * @return User
 	 */
 	public static function getUser()
 	{
-		return self::$_storage['userAccount'];
+		return self::$_storage['user'];
 	}
 	/**
 	 * Get the current user role set against the System for Dao filtering purposes
@@ -84,20 +84,8 @@ abstract class Core
 	public static function unserialize($string)
 	{
 		self::$_storage = unserialize($string);
-		Core::setUser(self::$_storage['userAccount'], self::$_storage['role']);
+		Core::setUser(self::$_storage['user'], self::$_storage['role']);
 		return self::$_storage;
-	}
-	/**
-	 * getting the JSON string
-	 *
-	 * @param array $data   The result data
-	 * @param array $errors The errors
-	 *
-	 * @return string The json string
-	 */
-	public static function getJson($data = array(), $errors = array())
-	{
-	    return json_encode(array('resultData' => $data, 'errors' => $errors, 'succ' => (count($errors) === 0 ? true : false)));
 	}
 }
 
