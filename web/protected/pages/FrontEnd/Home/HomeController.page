@@ -1,0 +1,4 @@
+<%@MasterClass="Application.layout.BlankLayout"%>
+<com:TContent ID="MainContent">
+    test
+</com:TContent>
