@@ -1,87 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<application id="EzCashFlow" mode="Performance">
-  <!-- alias definitions and namespace usings
-  <paths>
-    <alias id="myalias" path="./lib" />
-    <using namespace="Application.common.*" />
-  </paths>
-  -->
+<application id="BMV-Lib-System" mode="Performance">
+	<!-- alias definitions and namespace usings <paths> <alias id="myalias" 
+		path="./lib" /> <using namespace="Application.common.*" /> </paths> -->
 
 	<paths>
-	    <using namespace="System.I18N.*" />
-	    <using namespace="System.Web.UI.ActiveControls.*" />
+		<using namespace="System.I18N.*" />
+		<using namespace="System.Web.UI.ActiveControls.*" />
 	</paths>
 
 	<!-- configurations for modules -->
 	<modules>
-		<module id="cache" class="System.Caching.TAPCCache" />
-	    <module id="Session" class="Application.classes.Session.SessionDb" UseCustomStorage="true"/>
-		<module id="security" class="TSecurityManager" EncryptionKey="EasyCashFlowCool" ValidationKey="EasyCashFlowCool" />
+		<!-- <module id="cache" class="System.Caching.TAPCCache" />
+		<module id="Session" class="Application.classes.Session.SessionDb"	UseCustomStorage="true" /> -->
+		<module id="security" class="TSecurityManager" EncryptionKey="BMVLibSysCool" ValidationKey="bfb9e1b24ba6308e39495a4a78f35d70" />
 		<module id="request" class="THttpRequest" UrlManager="friendly-url" />
-		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">	
-			<url ServiceParameter="Login.LoginController" pattern="login.html" />
-					
-			<url ServiceParameter="Accounts.AccountsController" pattern="accounts.html" />
-			<url ServiceParameter="Reports.ReportsController" pattern="reports.html" />
-			<url ServiceParameter="Statics.StaticsController" pattern="statics.html" />
-			<url ServiceParameter="Properties.PropertiesController" pattern="properties.html" />
-			<url ServiceParameter="Reports.ReportsController" pattern="trans/{transid}" parameters.transid="\d+" />
-			<url ServiceParameter="Reports.ReportsController" pattern="reports/{reportVars}" parameters.reportVars=".+" />
-			
-			<!--  admin pages -->
-			<url ServiceParameter="Admin.Admin.AdminController" pattern="admin/"/>
-			<url ServiceParameter="Admin.Backup.BackupController" pattern="admin/backup"/>
-			<url ServiceParameter="Admin.AssetType.AssetTypeController" pattern="admin/assettype"/>
-			<url ServiceParameter="Admin.Eofy.EofyController" pattern="admin/eofy"/>
-			
-			
-			<!--  asset service -->
+		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
+			<!-- asset service -->
 			<url ServiceId="stream" ServiceParameter="" pattern="asset/{method}/{ids}" parameters.method="zipped" parameters.ids=".+" />
 			<url ServiceId="stream" ServiceParameter="" pattern="asset/{method}" parameters.method="upload" />
-			<url ServiceId="stream" ServiceParameter="" pattern="asset/{id}" parameters.id="\w+" />
-			
-			<!--  json service -->
-			<url ServiceId="json" ServiceParameter="" pattern="json" />
-			
 		</module>
-	
+
 		<module id="globalization" class="TGlobalization">
-		    <translation type="XLIFF"
-		        source="Application.messages"
-		        marker="@@"
-		        autosave="true" cache="true" />
+			<translation type="XLIFF" source="Application.messages"	marker="@@" autosave="true" cache="true" />
 		</module>
 	</modules>
 
 	<!-- configuration for available services -->
 	<services>
-		<service id="page" class="TPageService" DefaultPage="Home.Home">
+		<service id="page" class="TPageService" DefaultPage="FrontEnd.Home.HomeController">
 			<modules>
-			  <module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/login.html" LoginPage="Login.LoginController" AuthExpire="3600"/>
-			  <module id="users" class="Application.classes.WebUser.WebUserManager"/>
+				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="FrontEnd.Home.HomeController" AuthExpire="3600" />
+				<module id="users" class="Application.classes.WebUser.WebUserManager" />
 			</modules>
 		</service>
-		
+
 		<service id="stream" class="Application.pages.Stream.StreamController">
-            <modules>
-              <module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/login.html" LoginPage="Login.LoginController" AuthExpire="3600"/>
-              <module id="users" class="Application.classes.WebUser.WebUserManager"/>
-            </modules>
-        </service>
-        
-		<!--  json service -->
+			<modules>
+				<module id="auth" class="Application.classes.WebUser.AuthManager"
+					UserManager="users" ReturnUrl="/login.html" LoginPage="Login.LoginController"
+					AuthExpire="3600" />
+				<module id="users" class="Application.classes.WebUser.WebUserManager" />
+			</modules>
+		</service>
+
+		<!-- json service -->
 		<service id="json" class="Application.classes.JsonService">
-            <modules>
-              <module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/login.html" LoginPage="Login.LoginController" AuthExpire="3600"/>
-              <module id="users" class="Application.classes.WebUser.WebUserManager"/>
-            </modules>
-        </service>
+			<modules>
+				<module id="auth" class="Application.classes.WebUser.AuthManager"
+					UserManager="users" ReturnUrl="/login.html" LoginPage="Login.LoginController"
+					AuthExpire="3600" />
+				<module id="users" class="Application.classes.WebUser.WebUserManager" />
+			</modules>
+		</service>
 	</services>
 	<!-- application parameters -->
 	<parameters>
-	  <parameter id="AppTitle" value="Easy Cash Flow" />
-	  <parameter id="AppVersion" value="3.0.1"/>
+		<parameter id="AppTitle" value="Easy Cash Flow" />
+		<parameter id="AppVersion" value="3.0.1" />
 	</parameters>
 
 </application>
