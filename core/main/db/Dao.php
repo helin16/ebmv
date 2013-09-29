@@ -440,11 +440,11 @@ abstract class Dao
      * 
      * @return BaseEntityAbstract
      */
-    private static function _objectify(DaoQuery $qry, array $row)
+    private static function _objectify(DaoQuery $qry, array $row, BaseEntityAbstract &$entity = null)
     {
         // Populate the focus object
         $fClass = $qry->getFocusClass();
-        $newEntity = new $fClass;
+        $newEntity = $entity instanceof BaseEntityAbstract ? $entity : new $fClass;
         $newEntity->setId($row['id']);
         DaoMap::loadMap(strtolower($fClass));
         foreach (DaoMap::$map[strtolower($fClass)] as $field => $properties)
