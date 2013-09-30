@@ -9,6 +9,12 @@
 class UserAccount extends BaseEntityAbstract
 {
     /**
+     * The id of the system account
+     * 
+     * @var int
+     */
+    const ID_SYSTEM_ACCOUNT = 100;
+    /**
      * The username
      *
      * @var string
