@@ -138,7 +138,7 @@ abstract class DaoMap
         $alias = $field;
         self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
                         'type' => 'int',
-                        'size' => 4,
+                        'size' => 10,
                         'unsigned' => true,
                         'nullable' => false,
                         'default' => 0,
@@ -161,7 +161,7 @@ abstract class DaoMap
         $alias = $field;
         self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
                         'type' => 'int',
-                        'size' => 4,
+                        'size' => 10,
                         'unsigned' => true,
                         'nullable' => ($isOwner) ? $nullable : false,
                         'default' => 0,
@@ -187,7 +187,7 @@ abstract class DaoMap
         $alias = $field;
         self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
                         'type' => 'int',
-                        'size' => 4,
+                        'size' => 10,
                         'unsigned' => true,
                         'nullable' => $nullable,
                         'default' => 0,
@@ -210,7 +210,7 @@ abstract class DaoMap
         $alias = $field;
         self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
                         'type' => 'int',
-                        'size' => 4,
+                        'size' => 10,
                         'unsigned' => true,
                         'nullable' => $nullable,
                         'default' => 0,
@@ -248,7 +248,7 @@ abstract class DaoMap
      * @param bool $nullable
      * @param string $defaultValue
      */
-    public static function setIntType($field, $dataType='int', $size=4, $unsigned=true, $nullable=false, $defaultValue=0, $class='')
+    public static function setIntType($field, $dataType='int', $size=10, $unsigned=true, $nullable=false, $defaultValue=0, $class='')
     {
         self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
                         'type' => $dataType,

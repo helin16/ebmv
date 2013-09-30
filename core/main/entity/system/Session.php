@@ -80,6 +80,8 @@ class Session extends BaseEntityAbstract
 		DaoMap::setStringType('key', 'varchar', 32);
 		DaoMap::setStringType('data', 'longtext');
 		parent::__loadDaoMap();
+		
+		DaoMap::createUniqueIndex('key');
 		DaoMap::commit();
 	}
 }

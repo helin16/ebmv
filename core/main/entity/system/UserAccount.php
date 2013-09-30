@@ -145,7 +145,7 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
         parent::__loadDaoMap();
         
-        DaoMap::createIndex('username');
+        DaoMap::createUniqueIndex('username');
         DaoMap::createIndex('password');
         DaoMap::commit();
     }

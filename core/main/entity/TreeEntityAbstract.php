@@ -90,15 +90,26 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
         $this->root = $root;
         return $this;
     }
+    public function postSave()
+    {
+        $class = get_class($this);
+        if(!$this->root instanceof $class)
+        {
+            $fakeParent = new $class();
+            $fakeParent->setProxyMode(true);
+            $fakeParent->setId($this->getId());
+            EntityDao::getInstance($class)->save($this);
+        }
+    }
 	/**
 	 * load the default elments of the base entity
 	 */
 	protected function __loadDaoMap()
 	{
-	    parent::__loadDaoMap();
-	    DaoMap::setManyToOne('root', get_class($this));
-	    DaoMap::setManyToOne('parent', get_class($this));
+	    DaoMap::setManyToOne('root', get_class($this), null, true);
+	    DaoMap::setManyToOne('parent', get_class($this), null, true);
 		DaoMap::setStringType('position', 'varchar', 255, false, '1');
+	    parent::__loadDaoMap();
 	}
 }
 

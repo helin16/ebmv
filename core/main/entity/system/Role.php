@@ -80,6 +80,7 @@ class Role extends BaseEntityAbstract
         DaoMap::setStringType('name', 'varchar');
         DaoMap::setManyToMany("userAccounts", "UserAccount", DaoMap::RIGHT_SIDE, "ua");
         parent::__loadDaoMap();
+        DaoMap::createUniqueIndex('name');
         DaoMap::commit();
     }
 }
