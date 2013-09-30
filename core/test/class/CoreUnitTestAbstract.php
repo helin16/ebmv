@@ -33,7 +33,6 @@ abstract class CoreUnitTestAbstract extends PHPUnit_Framework_TestCase
     public function __construct($name = NULL, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        Core::setUser(Dao::findById(new DaoQuery("UserAccount"), 1));
     }
     /**
      * pre-test for each test function 
