@@ -13,13 +13,13 @@ class User extends BaseEntityAbstract
      *
      * @var string
      */
-    private $_username;
+    private $username;
     /**
      * The session data
      *
      * @var string
      */
-    private $_password;
+    private $password;
     /**
      * Getter of the username
      * 
@@ -27,7 +27,7 @@ class User extends BaseEntityAbstract
      */
     public function getUsername()
     {
-        return $this->_username;
+        return $this->username;
     }
     /**
      * Setter for the username
@@ -38,7 +38,7 @@ class User extends BaseEntityAbstract
      */
     public function setUsername($username)
     {
-        $this->_username = $username;
+        $this->username = $username;
         return $this;
     }
     /**
@@ -46,7 +46,7 @@ class User extends BaseEntityAbstract
      */
     public function getPassword()
     {
-        return $this->_password;
+        return $this->password;
     }
     /**
      * Setter for the password
@@ -57,19 +57,19 @@ class User extends BaseEntityAbstract
      */
     public function setPassword($password)
     {
-        $this->_password = $password;
+        $this->password = $password;
         return $this;
     }
     /**
      * (non-PHPdoc)
-     * @see BaseEntity::__loadDaoMap()
+     * @see BaseEntity::loadDaoMap()
      */
-    public function __loadDaoMap()
+    public function loadDaoMap()
     {
         DaoMap::begin($this, 'ua');
-        DaoMap::setStringType('_username', 'varchar', 20);
-        DaoMap::setStringType('_password', 'varchar', 32);
-        parent::__loadDaoMap();
+        DaoMap::setStringType('username', 'varchar', 20);
+        DaoMap::setStringType('password', 'varchar', 32);
+        parent::loadDaoMap();
         DaoMap::commit();
     }
 }

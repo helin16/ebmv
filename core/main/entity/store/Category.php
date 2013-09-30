@@ -13,23 +13,23 @@ class Category extends TreeEntityAbstract
      * 
      * @var string
      */
-    private $_name;
+    private $name;
 	/**
 	 * The products that the products are belongin to 
 	 * 
 	 * @var multiple:Product
 	 */
-	protected $_products;
+	protected $products;
 	/**
 	 * (non-PHPdoc)
-	 * @see BaseEntity::__loadDaoMap()
+	 * @see BaseEntity::loadDaoMap()
 	 */
-	public function __loadDaoMap()
+	public function loadDaoMap()
 	{
 		DaoMap::begin($this, 'sess');
 		DaoMap::setStringType('key', 'varchar', 32);
 		DaoMap::setStringType('data', 'longtext');
-		parent::__loadDaoMap();
+		parent::loadDaoMap();
 		DaoMap::commit();
 	}
 }

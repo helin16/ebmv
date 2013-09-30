@@ -22,7 +22,4 @@ abstract class StringUtilsAbstract
 	{
 	    return strtolower(substr($string, 0, 1)) . substr($string, 1);
 	}
-	
-	select distinct p.`id`, p.`firstName`, p.`lastName`, p.`active`, p.`created`, p.`createdById`, p.`updated`, p.`updatedById` from person p inner join useraccount `ua` on (p.id = ua.PersonId) where (p.active = 1)'(210), 
-	select distinct p.`id`, p.`firstName`, p.`lastName`, p.`active`, p.`created`, p.`createdById`, p.`updated`, p.`updatedById` from person p inner join useraccount `ua` on (p.id = ua.personId) where (p.active = 1)'(210)
 }

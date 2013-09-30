@@ -13,7 +13,7 @@ class Product extends BaseEntityAbstract
 	 * 
 	 * @var multiple:Category
 	 */
-	protected $_categories;
+	protected $categories;
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
