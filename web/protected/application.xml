@@ -11,8 +11,8 @@
 
 	<!-- configurations for modules -->
 	<modules>
-		<!-- <module id="cache" class="System.Caching.TAPCCache" />
-		<module id="Session" class="Application.classes.Session.SessionDb"	UseCustomStorage="true" /> -->
+		<!-- <module id="cache" class="System.Caching.TAPCCache" /> <module id="Session" 
+			class="Application.classes.Session.SessionDb" UseCustomStorage="true" /> -->
 		<module id="security" class="TSecurityManager" EncryptionKey="BMVLibSysCool" ValidationKey="bfb9e1b24ba6308e39495a4a78f35d70" />
 		<module id="request" class="THttpRequest" UrlManager="friendly-url" />
 		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
@@ -29,35 +29,19 @@
 	<!-- configuration for available services -->
 	<services>
 		<service id="page" class="TPageService" DefaultPage="FrontEnd.Home.HomeController">
+		    <pages MasterClass="Application.layout.FrontEnd.PageLayout" Theme="default" />
 			<modules>
 				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="FrontEnd.Home.HomeController" AuthExpire="3600" />
 				<module id="users" class="Application.classes.WebUser.WebUserManager" />
 			</modules>
 		</service>
 
-		<service id="stream" class="Application.pages.Stream.StreamController">
-			<modules>
-				<module id="auth" class="Application.classes.WebUser.AuthManager"
-					UserManager="users" ReturnUrl="/login.html" LoginPage="Login.LoginController"
-					AuthExpire="3600" />
-				<module id="users" class="Application.classes.WebUser.WebUserManager" />
-			</modules>
-		</service>
-
-		<!-- json service -->
-		<service id="json" class="Application.classes.JsonService">
-			<modules>
-				<module id="auth" class="Application.classes.WebUser.AuthManager"
-					UserManager="users" ReturnUrl="/login.html" LoginPage="Login.LoginController"
-					AuthExpire="3600" />
-				<module id="users" class="Application.classes.WebUser.WebUserManager" />
-			</modules>
-		</service>
+		<service id="stream" class="Application.pages.Stream.StreamController"></service>
 	</services>
 	<!-- application parameters -->
 	<parameters>
-		<parameter id="AppTitle" value="Easy Cash Flow" />
-		<parameter id="AppVersion" value="3.0.1" />
+		<parameter id="AppTitle" value="BMV Library System" />
+		<parameter id="AppVersion" value="1.0.0" />
 	</parameters>
 
 </application>

@@ -1,12 +1,12 @@
 <?php
 /**
- * class BlankLayout
+ * FrontEnd PageLayout
  *
  * @package    Web
  * @subpackage Layout
  * @author     lhe
  */
-class BlankLayout extends TTemplateControl
+class PageLayout extends TTemplateControl
 {
     /**
      * (non-PHPdoc)
