@@ -80,7 +80,7 @@ class DaoQueryUnitTest extends CoreDaoUnitTestAbstract
         $this->assertEquals($expected, $actual, "We should have '$expected'(" . strlen($expected) . "), but got '$actual'(" . strlen($actual) . ")!");
         $this->assertFalse($this->_daoQuery->isPaged());
         
-        $expected = 'select distinct p.`id`, p.`firstName`, p.`lastName`, p.`active`, p.`created`, p.`createdById`, p.`updated`, p.`updatedById` from person p inner join person ua on (p.id = ua.PersonId) where (p.active = 1)';
+        $expected = 'select distinct p.`id`, p.`firstName`, p.`lastName`, p.`active`, p.`created`, p.`createdById`, p.`updated`, p.`updatedById` from person p inner join useraccount `ua` on (p.id = ua.personId) where (p.active = 1)';
         $this->_daoQuery->eagerLoad("Person.userAccounts");
         $actual = $this->_daoQuery->generateForSelect();
         $this->assertEquals($expected, $actual, "We should have '$expected'(" . strlen($expected) . "), but got '$actual'(" . strlen($actual) . ")!");

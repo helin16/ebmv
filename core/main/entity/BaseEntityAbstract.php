@@ -314,12 +314,12 @@ abstract class BaseEntityAbstract
 	 */
 	protected function __loadDaoMap()
 	{
-	    DaoMap::setIntType('_id', 'int', 1);
-	    DaoMap::setBoolType('_active', 'bool', 1);
-	    DaoMap::setDateType('_created');
-	    DaoMap::setManyToOne('_createdBy', 'User');
-	    DaoMap::setDateType('_updated', 'timestamp', false, 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
-	    DaoMap::setManyToOne('_updatedBy', 'User');
+// 	    DaoMap::setIntType('_id', 'int', 1);
+	    DaoMap::setBoolType('active', 'bool', 1);
+	    DaoMap::setDateType('created');
+	    DaoMap::setManyToOne('createdBy', 'User');
+	    DaoMap::setDateType('updated', 'timestamp', false, 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+	    DaoMap::setManyToOne('updatedBy', 'User');
 	}
 	/**
 	 * validates all rules before save in EntityDao!!!
