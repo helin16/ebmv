@@ -5,26 +5,26 @@
  * @package Core
  * @subpackage Entity
  */
-abstract class TreeEntityAbstract extends BaseEntityAbastract
+abstract class TreeEntityAbstract extends BaseEntityAbstract
 {
 	/**
      * The parent category of this category
      * 
      * @var Category
      */
-    protected $_parent;
+    protected $parent;
     /**
      * The position of the category with the category tree
      *
      * @var string
      */
-    private $_position;
+    private $position;
     /**
      * The root category of this category
      * 
      * @var Category
      */
-    private $_root;
+    private $root;
     /**
      * getter position
      *
@@ -32,7 +32,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbastract
      */
     public function getPosition()
     {
-        return $this->_position;
+        return $this->position;
     }
     /**
      * setter position
@@ -53,8 +53,8 @@ abstract class TreeEntityAbstract extends BaseEntityAbastract
      */
     public function getParent()
     {
-        $this->loadManyToOne('_parent');
-        return $this->_parent;
+        $this->loadManyToOne('parent');
+        return $this->parent;
     }
     /**
      * setter parent
@@ -65,7 +65,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbastract
      */
     public function setParent($parent)
     {
-        $this->_parent = $parent;
+        $this->parent = $parent;
         return $this;
     }
     /**
@@ -75,8 +75,8 @@ abstract class TreeEntityAbstract extends BaseEntityAbastract
      */
     public function getRoot()
     {
-        $this->loadManyToOne('_root');
-        return $this->_root;
+        $this->loadManyToOne('root');
+        return $this->root;
     }
     /**
      * setter parent
@@ -87,7 +87,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbastract
      */
     public function setRoot($root)
     {
-        $this->_root = $root;
+        $this->root = $root;
         return $this;
     }
 	/**
@@ -96,9 +96,9 @@ abstract class TreeEntityAbstract extends BaseEntityAbastract
 	protected function __loadDaoMap()
 	{
 	    parent::__loadDaoMap();
-	    DaoMap::setManyToOne('_root', get_class($this));
-	    DaoMap::setManyToOne('_parent', get_class($this));
-		DaoMap::setStringType('_position', 'varchar', 255, false, '1');
+	    DaoMap::setManyToOne('root', get_class($this));
+	    DaoMap::setManyToOne('parent', get_class($this));
+		DaoMap::setStringType('position', 'varchar', 255, false, '1');
 	}
 }
 

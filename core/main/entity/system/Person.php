@@ -114,16 +114,6 @@ class Person extends BaseEntityAbstract
         return isset($addresses[0]) ? $addresses[0] : null;
     }
     /**
-     * getting the account entry for json
-     *
-     * @throws EntityException
-     */
-    public function getJsonArray()
-    {
-        $array = $this->_getJsonFromPM();
-        return $array;
-    }
-    /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */

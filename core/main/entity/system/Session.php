@@ -74,12 +74,12 @@ class Session extends BaseEntityAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntity::loadDaoMap()
 	 */
-	public function loadDaoMap()
+	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'sess');
 		DaoMap::setStringType('key', 'varchar', 32);
 		DaoMap::setStringType('data', 'longtext');
-		parent::loadDaoMap();
+		parent::__loadDaoMap();
 		DaoMap::commit();
 	}
 }
