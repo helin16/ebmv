@@ -12,33 +12,33 @@ abstract class BaseEntityAbstract
 	 * 
 	 * @var int
 	 */
-	protected $id = null;
+	protected $_id = null;
 	/**
 	 * @var bool
 	 */
-	protected $active;
+	protected $_active;
 	/**
 	 * @var UDate
 	 */
-	protected $created;
+	protected $_created;
 	/**
-	 * @var UserAccount
+	 * @var User
 	 */
-	protected $createdBy;
+	protected $_createdBy;
 	/**
 	 * @var UDate
 	 */
-	protected $updated;
+	protected $_updated;
 	/**
-	 * @var UserAccount
+	 * @var User
 	 */
-	protected $updatedBy;
+	protected $_updatedBy;
 	/**
 	 * Is this a proxy object?
 	 * 
 	 * @var bool
 	 */
-	protected $proxyMode = false;
+	protected $_proxyMode = false;
 	/**
 	 * Set the primary key for this entity
 	 *
@@ -48,7 +48,7 @@ abstract class BaseEntityAbstract
 	 */
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->_id = $id;
 		return $this;
 	}
 	/**
@@ -58,105 +58,8 @@ abstract class BaseEntityAbstract
 	 */
 	public function getId()
 	{
-		return $this->id;
+		return $this->_id;
 	}
-	/**
-	 * Set when this entity was created
-	 *
-	 * @param string $created The UDate time string
-	 * 
-	 * @return BaseEntityAbstract
-	 */
-	public function setCreated($created)
-	{
-		$this->created = $created;
-		return $this;
-	}
-	/**
-	 * When was this entity created
-	 *
-	 * @return UDate
-	 */
-	public function getCreated()
-	{
-		if (is_string($this->created))
-			$this->created = new UDate($this->created);
-		return $this->created;
-	}
-	/**
-	 * Set who created this entity
-	 *
-	 * @param UserAccount $user The new CreatedBy useraccount
-	 * 
-	 * @return BaseEntityAbstract
-	 */
-	public function setCreatedBy(UserAccount $user)
-	{
-		$this->createdBy = $user;
-		return $this;
-	}
-	/**
-	 * Who created this entity
-	 *
-	 * @return UserAccount
-	 */
-	public function getCreatedBy()
-	{
-		$this->loadManyToOne('createdBy');
-		return $this->createdBy;
-	}
-	/**
-	 * Set when this entity was last updated
-	 *
-	 * @param string $updated The UDate time string
-	 * 
-	 * @return BaseEntityAbstract
-	 */
-	public function setUpdated($updated)
-	{
-		$this->updated = $updated;
-		return $this;
-	}
-	/**
-	 * When was this entity last updated
-	 *
-	 * @return UDate
-	 */
-	public function getUpdated()
-	{
-		if (is_string($this->updated))
-			$this->updated = new UDate($this->updated);
-		return $this->updated;
-	}
-	/**
-	 * Set who last updated this entity
-	 *
-	 * @param UserAccount $user The UpdatedBy useraccount
-	 * 
-	 * @return BaseEntityAbstract
-	 */
-	public function setUpdatedBy(UserAccount $user)
-	{
-		$this->updatedBy = $user;
-		return $this;
-	}
-	/**
-	 * Who last updated this entity
-	 *
-	 * @return UserAccount
-	 */
-	public function getUpdatedBy()
-	{
-		$this->loadManyToOne('updatedBy');
-		return $this->updatedBy;
-	}
-    /**
-     * @return bool
-     */
-    public function isActive()
-    {
-    	return trim($this->active) === '1';
-    }
     /**
      * Setter for whether the entity is active
      * 
@@ -176,7 +79,97 @@ abstract class BaseEntityAbstract
      */
     public function getActive()
     {
-    	return $this->active;
+    	return trim($this->_active) === '1';
+    }
+    /**
+     * Set when this entity was created
+     *
+     * @param string $created The UDate time string
+     *
+     * @return BaseEntityAbstract
+     */
+    public function setCreated($created)
+    {
+        $this->_created = $created;
+        return $this;
+    }
+    /**
+     * When was this entity created
+     *
+     * @return UDate
+     */
+    public function getCreated()
+    {
+        if (is_string($this->_created))
+        $this->_created = new UDate($this->_created);
+        return $this->_created;
+    }
+    /**
+     * Set who created this entity
+     *
+     * @param User $user The new CreatedBy useraccount
+     *
+     * @return BaseEntityAbstract
+     */
+    public function setCreatedBy(User $user)
+    {
+        $this->_createdBy = $user;
+        return $this;
+    }
+    /**
+     * Who created this entity
+     *
+     * @return UserAccount
+     */
+    public function getCreatedBy()
+    {
+        $this->loadManyToOne('createdBy');
+        return $this->_createdBy;
+    }
+    /**
+     * Set when this entity was last updated
+     *
+     * @param string $updated The UDate time string
+     *
+     * @return BaseEntityAbstract
+     */
+    public function setUpdated($updated)
+    {
+        $this->_updated = $updated;
+        return $this;
+    }
+    /**
+     * When was this entity last updated
+     *
+     * @return UDate
+     */
+    public function getUpdated()
+    {
+        if (is_string($this->_updated))
+        $this->_updated = new UDate($this->_updated);
+        return $this->_updated;
+    }
+    /**
+     * Set who last updated this entity
+     *
+     * @param UserAccount $user The UpdatedBy useraccount
+     *
+     * @return BaseEntityAbstract
+     */
+    public function setUpdatedBy(User $user)
+    {
+        $this->_updatedBy = $user;
+        return $this;
+    }
+    /**
+     * Who last updated this entity
+     *
+     * @return User
+     */
+    public function getUpdatedBy()
+    {
+        $this->loadManyToOne('updatedBy');
+        return $this->_updatedBy;
     }
 	/**
 	 * Dictates if the entity is a proxy object or not for lazy loading purposes
@@ -187,7 +180,7 @@ abstract class BaseEntityAbstract
 	 */
 	public function setProxyMode($bool)
 	{
-		$this->proxyMode = (bool)$bool;
+		$this->_proxyMode = (bool)$bool;
 		return $this;
 	}
 	/**
@@ -197,21 +190,14 @@ abstract class BaseEntityAbstract
 	 */
 	public function getProxyMode()
 	{
-		return $this->proxyMode;
-	}
-	/**
-	 * Default behaviour for an entity dao map
-	 */
-	public function __loadDaoMap()
-	{
-		throw new DaoException(get_class($this) . '::__loadDaoMap() is unimplemented');
+		return $this->_proxyMode;
 	}
 	/**
 	 * Lazy load a one-to-many relationship 
 	 *
 	 * @param string $property The property that we are trying to load
 	 * 
-	 * @return BaseEntityAbstract
+	 * @return Mixed
 	 */
 	protected function loadOneToMany($property)
 	{
@@ -225,7 +211,7 @@ abstract class BaseEntityAbstract
 		$field = strtolower(substr($thisClass, 0, 1)) . substr($thisClass, 1);
 		$this->$property = Dao::findByCriteria(new DaoQuery($cls), sprintf('%s.`%sId`=?', $alias, $field), array($this->getId()));
 		
-		return $this;
+		return $this->$property;
 	}
 	/**
 	 * Lazy load a one-to-one relationship 
@@ -266,14 +252,14 @@ abstract class BaseEntityAbstract
 		if (!$this->$property instanceof BaseEntityAbstract)
 		    throw new DaoException('The property(' . $property . ') for "' . get_class($this) . '" is NOT a BaseEntity!');
 		$this->$property = Dao::findById(new DaoQuery($cls), $this->$property->getId());
-		return $this;
+		return $this->$property;
 	}
 	/**
 	 * Lazy load a many-to-many relationship 
 	 *
 	 * @param string $property The property that we are trying to load
 	 * 
-	 * @return BaseEntityAbstract
+	 * @return mixed
 	 */
 	protected function loadManyToMany($property)
 	{
@@ -292,31 +278,7 @@ abstract class BaseEntityAbstract
 		$alias = DaoMap::$map[strtolower($cls)]['_']['alias'];
 		$field = strtolower(substr($thisClass, 0, 1)) . substr($thisClass, 1);
 		$this->$property = Dao::findByCriteria($qry, sprintf('`%sId`=?', $field), array($this->getId()));
-		return $this;
-	}
-	/**
-	 * This behaviour is blocked
-	 *
-	 * @param string $var The property of the entity
-	 * 
-	 * @throws Exception
-	 */
-	public function __get($var)
-	{
-		$class = get_class($this);
-		throw new EntityException("Attempted to get variable $class::$var directly and it is either inaccessable or doesnt exist");
-	}
-	/**
-	 * This behaviour is blocked
-	 *
-	 * @param string $var The property of the entity
-	 * 
-	 * @throws Exception
-	 */
-	public function __set($var, $value)
-	{
-		$class = get_class($this);
-		throw new EntityException("Attempted to set variable $class::$var directly and it is either inaccessable or doesnt exist");
+		return $this->$property;
 	}
 	/**
 	 * getting the account entry for json
@@ -325,16 +287,7 @@ abstract class BaseEntityAbstract
 	 */
 	public function getJsonArray()
 	{
-		throw new EntityException("There is NO getJsonArray() defined for: " . get_class($this));
-	}
-	/**
-	 * getting the Json array from all the private memebers of the entity
-	 * 
-	 * @return array The associative arary for json
-	 */
-	protected function _getJsonFromPM()
-	{
-	    $array = array('id' => trim($this->getId()));
+		$array = array('id' => trim($this->getId()));
 	    DaoMap::loadMap(get_class($this));
 	    foreach(DaoMap::$map[strtolower(get_class($this))] as $field => $fieldMap)
 	    {
@@ -359,13 +312,14 @@ abstract class BaseEntityAbstract
 	/**
 	 * load the default elments of the base entity
 	 */
-	protected function loadDaoMap()
+	protected function __loadDaoMap()
 	{
-	    DaoMap::setBoolType('active', 'bool', 1);
-	    DaoMap::setDateType('created');
-	    DaoMap::setManyToOne('createdBy', 'UserAccount');
-	    DaoMap::setDateType('updated', 'timestamp', false, 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
-	    DaoMap::setManyToOne('updatedBy', 'UserAccount');
+	    DaoMap::setIntType('_id', 'int', 1);
+	    DaoMap::setBoolType('_active', 'bool', 1);
+	    DaoMap::setDateType('_created');
+	    DaoMap::setManyToOne('_createdBy', 'User');
+	    DaoMap::setDateType('_updated', 'timestamp', false, 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+	    DaoMap::setManyToOne('_updatedBy', 'User');
 	}
 	/**
 	 * validates all rules before save in EntityDao!!!

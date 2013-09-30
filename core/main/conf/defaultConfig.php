@@ -6,9 +6,9 @@ return array(
 						'ImportNode' => 'localhost',
 						'SecondaryNode' => 'localhost',
 						'NASNode' => 'localhost',
-						'CoreDatabase' => 'ezcashflow',
+						'CoreDatabase' => 'bmv',
 						'Username' => 'root',
-						'Password' => 'root'
+						'Password' => ''
 					),
 				'Profiler' => array(
 								'SQL' => false,

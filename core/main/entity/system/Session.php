@@ -13,13 +13,13 @@ class Session extends BaseEntityAbstract
      * 
      * @var string
      */
-    private $key;
+    private $_key;
     /**
      * The session data
      * 
      * @var string
      */
-    private $data;
+    private $_data;
     /**
      * Getting the sesison ID
      * 
@@ -27,7 +27,7 @@ class Session extends BaseEntityAbstract
      */
     public function getKey()
     {
-        return $this->key;
+        return $this->_key;
     }
     /**
      * Setter for the session ID
@@ -38,7 +38,7 @@ class Session extends BaseEntityAbstract
      */
     public function setKey($key)
     {
-        $this->key = $key;
+        $this->_key = $key;
         return $this;
     }
     /**
@@ -48,7 +48,7 @@ class Session extends BaseEntityAbstract
      */
     public function getData()
     {
-        return $this->data;
+        return $this->_data;
     }
     /**
      * Setter for the session data
@@ -59,7 +59,7 @@ class Session extends BaseEntityAbstract
      */
     public function setData($data)
     {
-        $this->data = $data;
+        $this->_data = $data;
         return $this;
     }
 	/**
@@ -68,7 +68,7 @@ class Session extends BaseEntityAbstract
 	 */
 	public function __toString()
 	{
-        return $tis->data;
+        return $tis->_data;
 	}
 	/**
 	 * (non-PHPdoc)
@@ -77,9 +77,9 @@ class Session extends BaseEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'sess');
-		DaoMap::setStringType('key', 'varchar', 32);
-		DaoMap::setStringType('data', 'longtext');
-		parent::loadDaoMap();
+		DaoMap::setStringType('_key', 'varchar', 32);
+		DaoMap::setStringType('_data', 'longtext');
+		parent::__loadDaoMap();
 		DaoMap::commit();
 	}
 }
