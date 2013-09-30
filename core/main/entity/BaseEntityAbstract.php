@@ -12,33 +12,33 @@ abstract class BaseEntityAbstract
 	 * 
 	 * @var int
 	 */
-	protected $_id = null;
+	protected $id = null;
 	/**
 	 * @var bool
 	 */
-	protected $_active;
+	protected $active;
 	/**
 	 * @var UDate
 	 */
-	protected $_created;
+	protected $created;
 	/**
 	 * @var User
 	 */
-	protected $_createdBy;
+	protected $createdBy;
 	/**
 	 * @var UDate
 	 */
-	protected $_updated;
+	protected $updated;
 	/**
 	 * @var User
 	 */
-	protected $_updatedBy;
+	protected $updatedBy;
 	/**
 	 * Is this a proxy object?
 	 * 
 	 * @var bool
 	 */
-	protected $_proxyMode = false;
+	protected $proxyMode = false;
 	/**
 	 * Set the primary key for this entity
 	 *
@@ -48,7 +48,7 @@ abstract class BaseEntityAbstract
 	 */
 	public function setId($id)
 	{
-		$this->_id = $id;
+		$this->id = $id;
 		return $this;
 	}
 	/**
@@ -58,7 +58,7 @@ abstract class BaseEntityAbstract
 	 */
 	public function getId()
 	{
-		return $this->_id;
+		return $this->id;
 	}
     /**
      * Setter for whether the entity is active
@@ -79,7 +79,7 @@ abstract class BaseEntityAbstract
      */
     public function getActive()
     {
-    	return trim($this->_active) === '1';
+    	return trim($this->active) === '1';
     }
     /**
      * Set when this entity was created
@@ -90,7 +90,7 @@ abstract class BaseEntityAbstract
      */
     public function setCreated($created)
     {
-        $this->_created = $created;
+        $this->created = $created;
         return $this;
     }
     /**
@@ -100,9 +100,9 @@ abstract class BaseEntityAbstract
      */
     public function getCreated()
     {
-        if (is_string($this->_created))
-        $this->_created = new UDate($this->_created);
-        return $this->_created;
+        if (isstring($this->created))
+        $this->created = new UDate($this->created);
+        return $this->created;
     }
     /**
      * Set who created this entity
@@ -113,7 +113,7 @@ abstract class BaseEntityAbstract
      */
     public function setCreatedBy(User $user)
     {
-        $this->_createdBy = $user;
+        $this->createdBy = $user;
         return $this;
     }
     /**
@@ -124,7 +124,7 @@ abstract class BaseEntityAbstract
     public function getCreatedBy()
     {
         $this->loadManyToOne('createdBy');
-        return $this->_createdBy;
+        return $this->createdBy;
     }
     /**
      * Set when this entity was last updated
@@ -135,7 +135,7 @@ abstract class BaseEntityAbstract
      */
     public function setUpdated($updated)
     {
-        $this->_updated = $updated;
+        $this->updated = $updated;
         return $this;
     }
     /**
@@ -145,9 +145,9 @@ abstract class BaseEntityAbstract
      */
     public function getUpdated()
     {
-        if (is_string($this->_updated))
-        $this->_updated = new UDate($this->_updated);
-        return $this->_updated;
+        if (isstring($this->updated))
+        $this->updated = new UDate($this->updated);
+        return $this->updated;
     }
     /**
      * Set who last updated this entity
@@ -158,7 +158,7 @@ abstract class BaseEntityAbstract
      */
     public function setUpdatedBy(User $user)
     {
-        $this->_updatedBy = $user;
+        $this->updatedBy = $user;
         return $this;
     }
     /**
@@ -169,7 +169,7 @@ abstract class BaseEntityAbstract
     public function getUpdatedBy()
     {
         $this->loadManyToOne('updatedBy');
-        return $this->_updatedBy;
+        return $this->updatedBy;
     }
 	/**
 	 * Dictates if the entity is a proxy object or not for lazy loading purposes
@@ -180,7 +180,7 @@ abstract class BaseEntityAbstract
 	 */
 	public function setProxyMode($bool)
 	{
-		$this->_proxyMode = (bool)$bool;
+		$this->proxyMode = (bool)$bool;
 		return $this;
 	}
 	/**
@@ -190,7 +190,7 @@ abstract class BaseEntityAbstract
 	 */
 	public function getProxyMode()
 	{
-		return $this->_proxyMode;
+		return $this->proxyMode;
 	}
 	/**
 	 * Lazy load a one-to-many relationship 
@@ -202,12 +202,12 @@ abstract class BaseEntityAbstract
 	protected function loadOneToMany($property)
 	{
 		// Figure out what the object type is on the many side
-		$this->__loadDaoMap();
-		$thisClass = get_class($this);
+		$this->loadDaoMap();
+		$thisClass = getclass($this);
 		$cls = DaoMap::$map[strtolower($thisClass)][$property]['class'];
 
 		DaoMap::loadMap($cls);
-		$alias = DaoMap::$map[strtolower($cls)]['_']['alias'];
+		$alias = DaoMap::$map[strtolower($cls)]['']['alias'];
 		$field = strtolower(substr($thisClass, 0, 1)) . substr($thisClass, 1);
 		$this->$property = Dao::findByCriteria(new DaoQuery($cls), sprintf('%s.`%sId`=?', $alias, $field), array($this->getId()));
 		
@@ -231,26 +231,26 @@ abstract class BaseEntityAbstract
 	 */
 	protected function loadManyToOne($property)
 	{
-		$this->__loadDaoMap();
-		if (is_null($this->$property))
+		$this->loadDaoMap();
+		if (isnull($this->$property))
 		{
 		    //if the proerty is allow to have null value, then let it be
-			if (DaoMap::$map[strtolower(get_class($this))][$property]['nullable'])
+			if (DaoMap::$map[strtolower(getclass($this))][$property]['nullable'])
 			{
 				$this->$property = null;
 				return $this;
 			}
 			//if the property is one of these, as when we are trying to save them, we don't have the iniated value
-			if (in_array($property, array('createdBy', 'updatedBy')))
+			if (inarray($property, array('createdBy', 'updatedBy')))
 			    $this->$property = Core::getUser();
 			else
-			    throw new Exception('Property (' . get_class($this) . '::' . $property . ') must be initialised to integer or proxy prior to lazy loading.', 1);
+			    throw new Exception('Property (' . getclass($this) . '::' . $property . ') must be initialised to integer or proxy prior to lazy loading.', 1);
 		}
 		
 		// Load the DAO map for this entity
-		$cls = DaoMap::$map[strtolower(get_class($this))][$property]['class'];
+		$cls = DaoMap::$map[strtolower(getclass($this))][$property]['class'];
 		if (!$this->$property instanceof BaseEntityAbstract)
-		    throw new DaoException('The property(' . $property . ') for "' . get_class($this) . '" is NOT a BaseEntity!');
+		    throw new DaoException('The property(' . $property . ') for "' . getclass($this) . '" is NOT a BaseEntity!');
 		$this->$property = Dao::findById(new DaoQuery($cls), $this->$property->getId());
 		return $this->$property;
 	}
@@ -264,18 +264,18 @@ abstract class BaseEntityAbstract
 	protected function loadManyToMany($property)
 	{
 		// Grab the DaoMap data for both ends of the join
-		$this->__loadDaoMap();
-		$cls = DaoMap::$map[strtolower(get_class($this))][$property]['class'];
+		$this->loadDaoMap();
+		$cls = DaoMap::$map[strtolower(getclass($this))][$property]['class'];
 		$obj = new $cls;
-		$obj->__loadDaoMap();
+		$obj->loadDaoMap();
 
-		$thisClass = get_class($this);
+		$thisClass = getclass($this);
 		$qry = new DaoQuery($cls);
 		$qry->eagerLoad($cls . '.' . strtolower(substr($thisClass, 0, 1)) . substr($thisClass, 1) . 's');
 		
 		// Load this end with an array of entities typed to the other end
 		DaoMap::loadMap($cls);
-		$alias = DaoMap::$map[strtolower($cls)]['_']['alias'];
+		$alias = DaoMap::$map[strtolower($cls)]['']['alias'];
 		$field = strtolower(substr($thisClass, 0, 1)) . substr($thisClass, 1);
 		$this->$property = Dao::findByCriteria($qry, sprintf('`%sId`=?', $field), array($this->getId()));
 		return $this->$property;
@@ -288,10 +288,10 @@ abstract class BaseEntityAbstract
 	public function getJsonArray()
 	{
 		$array = array('id' => trim($this->getId()));
-	    DaoMap::loadMap(get_class($this));
-	    foreach(DaoMap::$map[strtolower(get_class($this))] as $field => $fieldMap)
+	    DaoMap::loadMap(getclass($this));
+	    foreach(DaoMap::$map[strtolower(getclass($this))] as $field => $fieldMap)
 	    {
-	        if($field === '_' || isset($fieldMap['rel']))
+	        if($field === '' || isset($fieldMap['rel']))
 	            continue;
 	        $getterMethod = 'get' . ucfirst($field);
 	        $array[$field] = trim($this->$getterMethod());
@@ -305,20 +305,20 @@ abstract class BaseEntityAbstract
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function toString()
 	{
-		return get_class($this) . ' (#' . $this->getId() . ')';
+		return getclass($this) . ' (#' . $this->getId() . ')';
 	}
 	/**
 	 * load the default elments of the base entity
 	 */
 	protected function __loadDaoMap()
 	{
-// 	    DaoMap::setIntType('_id', 'int', 1);
+// 	    DaoMap::setIntType('id', 'int', 1);
 	    DaoMap::setBoolType('active', 'bool', 1);
 	    DaoMap::setDateType('created');
 	    DaoMap::setManyToOne('createdBy', 'User');
-	    DaoMap::setDateType('updated', 'timestamp', false, 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+	    DaoMap::setDateType('updated', 'timestamp', false, 'CURRENTTIMESTAMP ON UPDATE CURRENTTIMESTAMP');
 	    DaoMap::setManyToOne('updatedBy', 'User');
 	}
 	/**

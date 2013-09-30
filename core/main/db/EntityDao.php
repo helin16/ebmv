@@ -19,7 +19,7 @@ class EntityDao
 	 *
 	 * @var DaoQuery
 	 */
-	private $_tmpQuery;
+	private $_originalQuery;
 	/**
 	 * Last id inserted into this table
 	 *
@@ -49,7 +49,7 @@ class EntityDao
 	 */
 	public function __construct($entityClassName)
 	{
-		$this->_tmpQuery = new DaoQuery($entityClassName);
+		$this->_originalQuery = new DaoQuery($entityClassName);
 		$this->resetQuery();
 	}
 	/**
@@ -79,27 +79,79 @@ class EntityDao
 	 *
 	 * @param BaseEntityAbstract $entity The entity that we are tyring to save
 	 * 
-	 * @return GenericDAO
+	 * @return EntityDao
 	 */
-	public function save(BaseEntityAbstract $entity)
+	public function save(BaseEntityAbstract &$entity)
 	{
 		if (is_array($messages = $entity->validateAll()) && count($messages) > 0)
 			throw new EntityValidationException($messages);
 		$newEntity = (trim($entity->getId()) === '');
-	    $entity = Dao::save($entity);
+		$params = $this->_getParams($entity);
 		if ($newEntity === true)
 		{
-			$this->_lastId = $entity->getId();
-			$this->_affectedRows = 1;
+    		$now = new UDate();
+            $params['active'] = 1;
+            $entity->setActive(true);
+            $params['created'] = $entity->getCreated();
+            if(!$params['created'] instanceof UDate)
+            {
+                $params['created'] = $now;
+                $entity->setCreated($now);
+            }
+            $params['updated'] = $entity->getUpdated();
+            if(!$params['updated'] instanceof UDate)
+            {
+                $params['updated'] = $now;
+                $entity->setUpdated($now);
+            }
+            $lastId = null;
+		    Dao::execSql($this->_query->generateForInsert(), $params, $lastId);
+		    $entity->setId($lastId);
+			$this->_lastId = $lastId;
 		}
 		else
 		{
-			$this->_affectedRows = 1;
+    		Dao::execSql($this->_query->generateForUpdate(), $params);
 			$this->_lastId = -1;
 		}
+		$this->_affectedRows = 1;
 		$this->resetQuery();
 		return $entity;
 	}
+	/**
+     * Getting the params for the Save fucntion
+     *
+     * @param BaseEntityAbstract $entity The entity that we are trying to translate
+     *
+     * @return array;
+     */
+    private function _getParams(BaseEntityAbstract $entity)
+    {
+        $params = array();
+        foreach (DaoMap::$map[strtolower(get_class($entity))] as $field => $properties)
+        {
+            //ignore metadata
+            if (trim($field) === '_')
+                continue;
+
+            //if it's just a private data for this entity class
+            $getter = 'get' . ucfirst($field);
+            if (!isset($properties['rel']))
+                $params[$field] = $entity->$getter();
+            //if it's a relationship then we need to consider repopulate object(s)
+            else if ($properties['rel'] === DaoMap::MANY_TO_ONE || ($properties['rel'] === DaoMap::ONE_TO_ONE))
+            {
+                $childEntity = self::_getProperty($entity, $field);
+                if ($childEntity instanceof BaseEntityAbstract)
+                    $params[$field] = $childEntity->getId();
+                else if ($properties['nullable'] === true)
+                    $params[$field] = null;
+                else
+                    throw new DaoException('The field(' . $field . ') for "' . get_class($entity) . '" is NOT a BaseEntity!');
+            }
+        }
+        return $params;
+    }
 	/**
 	 * Get a single instance of an entity by its database record id
 	 *
@@ -109,7 +161,11 @@ class EntityDao
 	 */
 	public function findById($id)
 	{
-		$results = Dao::findById($this->_query, $id);
+	    $focusClass = $this->_query->getFocusClass();
+	    $this->_query->getPage(1, 1);
+	    DaoMap::loadMap($focusClass);
+	    $this->_query->where('`' . DaoMap::$map[strtolower($focusClass)]['_']['alias'] . '`.`id`=?');
+		$results = Dao::getSingleResultNative($this->_query->generateForSelect(), array($id));
 		$this->resetQuery();
 		return $results;
 	}
@@ -124,6 +180,13 @@ class EntityDao
 	 */
 	public function findByCriteria($criteria, array $params = array(), $pageNumber = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderByParams = array())
 	{
+	    $focusClass = $this->_query->getFocusClass();
+	    $this->_query->where($criteria)
+	        ->getPage($pageNumber, $pageSize);
+	    $this->_query->orderBy($orderByParams);
+	    
+	    $results = Dao::getSingleResultNative($this->_query->generateForSelect(), array($id));
+	    
 		$results = Dao::findByCriteria($this->_query, $criteria, $params, $pageNumber, $pageSize, $orderByParams);
 		$this->_pageStats = Dao::getPageStats();
 		$this->resetQuery();
@@ -222,7 +285,7 @@ class EntityDao
 	 */
 	protected function resetQuery()
 	{
-		$this->_query = clone $this->_tmpQuery;
+		$this->_query = clone $this->_originalQuery;
 		return $this;
 	}
 	/**
