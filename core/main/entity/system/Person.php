@@ -103,17 +103,6 @@ class Person extends BaseEntityAbstract
         return trim(implode(' ', $names));
     }
     /**
-     * Getting the default address of this person
-     *
-     * @return Address
-     */
-    public function getAddress()
-    {
-        $dao = new EntityDao('Address');
-        $addresses = $dao->findByCriteria('addr.id = (select x.addressId from x_person_address x where x.personId = ? order by x.isDefault desc limit 1)', array($this->getId()), 1, 1);
-        return isset($addresses[0]) ? $addresses[0] : null;
-    }
-    /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */

@@ -13,7 +13,7 @@ class UserAccount extends BaseEntityAbstract
      *
      * @var string
      */
-    private $userName;
+    private $username;
     /**
      * The password
      *
@@ -26,12 +26,12 @@ class UserAccount extends BaseEntityAbstract
      * @var Person
      */
     protected $person;
-//     /**
-//      * The roles that this person has
-//      *
-//      * @var array
-//      */
-//     protected $roles;
+    /**
+     * The roles that this person has
+     *
+     * @var array
+     */
+    protected $roles;
     /**
      * getter UserName
      *
@@ -39,7 +39,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function getUserName()
     {
-        return $this->userName;
+        return $this->username;
     }
     /**
      * Setter UserName
@@ -50,7 +50,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function setUserName($UserName)
     {
-        $this->userName = $UserName;
+        $this->username = $UserName;
         return $this;
     }
     /**
@@ -96,28 +96,28 @@ class UserAccount extends BaseEntityAbstract
         $this->person = $Person;
         return $this;
     }
-//     /**
-//      * getter Roles
-//      *
-//      * @return Roles
-//      */
-//     public function getRoles()
-//     {
-//         $this->loadManyToMany("roles");
-//         return $this->roles;
-//     }
-//     /**
-//      * setter Roles
-//      *
-//      * @param array $Roles The roles that this user has
-//      *
-//      * @return UserAccount
-//      */
-//     public function setRoles(array $Roles)
-//     {
-//         $this->roles = $Roles;
-//         return $this;
-//     }
+    /**
+     * getter Roles
+     *
+     * @return Roles
+     */
+    public function getRoles()
+    {
+        $this->loadManyToMany("roles");
+        return $this->roles;
+    }
+    /**
+     * setter Roles
+     *
+     * @param array $Roles The roles that this user has
+     *
+     * @return UserAccount
+     */
+    public function setRoles(array $Roles)
+    {
+        $this->roles = $Roles;
+        return $this;
+    }
     /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
@@ -133,11 +133,14 @@ class UserAccount extends BaseEntityAbstract
     public function __loadDaoMap()
     {
         DaoMap::begin($this, 'ua');
-        DaoMap::setStringType('userName', 'varchar', 256);
-        DaoMap::setStringType('password', 'varchar', 256);
+        DaoMap::setStringType('username', 'varchar', 100);
+        DaoMap::setStringType('password', 'varchar', 40);
         DaoMap::setOneToOne("person", "Person", true, "p");
-//         DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
-        parent::loadDaoMap();
+        DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
+        parent::__loadDaoMap();
+        
+        DaoMap::createIndex('username');
+        DaoMap::createIndex('password');
         DaoMap::commit();
     }
      
