@@ -79,12 +79,11 @@ abstract class DaoMap
 	public static function hasMap($entityOrClass)
 	{
 		if (is_string($entityOrClass))
-		{
-			$entityOrClass = strtolower($entityOrClass);
-			return isset(self::$map[$entityOrClass]);
-		}
+			return isset(self::$map[strtolower($entityOrClass)]);
+		
 		if ($entityOrClass instanceof BaseEntityAbstract)
 			return isset(self::$map[strtolower(get_class($entityOrClass))]);
+		
 		return false;
 	}
 	/**
@@ -96,10 +95,55 @@ abstract class DaoMap
 	{
 		if (!DaoMap::hasMap($class))
 		{
+		    $class = $class instanceof BaseEntityAbstract ? get_class($class) : $class;
+		    if(!class_exists($class))
+		        throw new DaoException("$class does NOT exsits!");
+		    
 			$obj = new $class;
-			$obj->__loadDaoMap();			
-		}		
+			$obj->__loadDaoMap();
+		}	
+		return self::getMap($class);
 	}
+	/**
+	 * Getting the DaoMap
+	 * 
+	 * @param string|BaseEntityAbstract $class The BaseEntityAbstract object or the class name
+	 * @param string                    $field The field
+	 * 
+	 * @return array
+	 */
+	public static function getMap($class = null, $field = '')
+	{
+	    $class = trim($class instanceof BaseEntityAbstract ? get_class($class) : $class);
+	    if($class === '')
+	        return self::$map;
+	    
+	    if(!DaoMap::hasMap($class))
+	        return array();
+	    
+	    if (($field = trim($field)) === '')
+	        return self::$map[strtolower($class)];
+	    
+	    return isset(self::$map[$field]) ? self::$map[strtolower($class)][$field] : array();
+	}
+	/**
+	 * clearing the Map
+	 * 
+	 * @param string|BaseEntityAbstract $class The BaseEntityAbstract object or the class name
+	 * 
+	 * @return multitype:
+	 */
+	public static function clearMap($class = null)
+	{
+	    $class = trim($class instanceof BaseEntityAbstract ? get_class($class) : $class);
+	    if($class === '')
+	        self::$map = array();
+	    
+	    if (DaoMap::hasMap($class))
+	        unset(self::$map[strtolower($class)]);
+	    return self::getMap();
+	}
+	
 	/**
 	 * Start a DaoMap transaction
 	 *
@@ -114,6 +158,17 @@ abstract class DaoMap
 			$alias = $activeClass;
 		self::$_tempMap[$activeClass]['_']['alias'] = $alias;
 		self::$_tempMap[$activeClass]['_']['sort'] = null;
+	}
+	/**
+	 * Commit the data map to the internal hash table
+	 */
+	public static function commit()
+	{
+	    // Copy the temp data into the live properties
+	    self::$map[strtolower(self::$_activeClassRaw)] = self::$_tempMap[strtolower(self::$_activeClassRaw)];
+	
+	    // Reset the temp variables
+	    self::$_tempMap = array();
 	}
 	/**
 	 * Set the default sort order to apply when querying this entity
@@ -138,7 +193,7 @@ abstract class DaoMap
 			$alias = $field;
 		self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
 			'type' => 'int',
-			'size' => 4,
+			'size' => 10,
 			'unsigned' => true,
 			'nullable' => false,
 			'default' => 0,
@@ -161,7 +216,7 @@ abstract class DaoMap
 			$alias = $field;
 		self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
 			'type' => 'int',
-			'size' => 4,
+			'size' => 10,
 			'unsigned' => true,
 			'nullable' => ($isOwner) ? $nullable : false,
 			'default' => 0,
@@ -187,7 +242,7 @@ abstract class DaoMap
 			$alias = $field;
 		self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
 			'type' => 'int',
-			'size' => 4,
+			'size' => 10,
 			'unsigned' => true,
 			'nullable' => $nullable,
 			'default' => 0,
@@ -210,7 +265,7 @@ abstract class DaoMap
 			$alias = $field;
 		self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
 			'type' => 'int',
-			'size' => 4,
+			'size' => 10,
 			'unsigned' => true,
 			'nullable' => $nullable,
 			'default' => 0,
@@ -288,34 +343,16 @@ abstract class DaoMap
 			'default' => $defaultValue
 		);
 	}
-	/**
-	 * Register which properties on an entity are searchable. Takes multiple strings as parameter
-	 * 
-	 * @param string
-	 */
-	public static function setSearchFields()
-	{
-		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['search'] = func_get_args();
-	}
-	/**
-	 * Set the base query that should be built off every time
-	 *
-	 * @param string $query
-	 */
-	public static function setBaseQuery($query)
-	{
-		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['base'] = $query;
-	}
-	/**
-	 * Register which filters the entity will respond to
-	 * 
-	 * @param string
-	 * @param string
-	 */
-	public static function createFilter($filterName, $filterClause)
-	{
-		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['filters'][$filterName] = $filterClause;
-	}
+// 	/**
+// 	 * Register which filters the entity will respond to
+// 	 * 
+// 	 * @param string
+// 	 * @param string
+// 	 */
+// 	public static function createFilter($filterName, $filterClause)
+// 	{
+// 		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['filters'][$filterName] = $filterClause;
+// 	}
 	/**
 	 * Create an index. Takes multiple strings as parameter
 	 * 
@@ -339,15 +376,15 @@ abstract class DaoMap
 			self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['unique'] = array();
 		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['unique'][] = func_get_args();
 	}
-	/**
-	 * Link a table to a tablespace
-	 * 
-	 * @param string
-	 */
-	public static function useTablespace($tablespace)
-	{
-		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['tablespace'] = $tablespace;
-	}
+// 	/**
+// 	 * Link a table to a tablespace
+// 	 * 
+// 	 * @param string
+// 	 */
+// 	public static function useTablespace($tablespace)
+// 	{
+// 		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['tablespace'] = $tablespace;
+// 	}
 	/**
 	 * Specify which special case storage engine to use for this entity
 	 * 
@@ -357,17 +394,6 @@ abstract class DaoMap
 	public static function storageEngine($engine, $confSection)
 	{
 		self::$_tempMap[strtolower(self::$_activeClassRaw)]['_']['engine'] = array($engine, $confSection);
-	}
-	/**
-	 * Commit the data map to the internal hash table
-	 */
-	public static function commit()
-	{
-		// Copy the temp data into the live properties
-		self::$map[strtolower(self::$_activeClassRaw)] = self::$_tempMap[strtolower(self::$_activeClassRaw)];
-		
-		// Reset the temp variables
-		self::$_tempMap = array();
 	}
 }
 

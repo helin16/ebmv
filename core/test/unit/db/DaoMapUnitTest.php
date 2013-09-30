@@ -9,6 +9,7 @@
  */
 class DaoMapUnitTest extends CoreUnitTestAbstract
 {
+    private $_className = 'User';
     /**
      * pre-test for each test function
      */
@@ -20,23 +21,33 @@ class DaoMapUnitTest extends CoreUnitTestAbstract
      */
     public function tearDown()
     {
-        DaoMap::$map = array();
+        DaoMap::clearMap();
     }
     /**
-     * testing DaoMap::loadMap()
+     * testing DaoMap::loadMap() && DaoMap::getMap()
      */
 	public function testLoadMap()
 	{
-	    $class = 'User';
-		DaoMap::loadMap($class);
-		$this->assertTrue(isset(DaoMap::$map[strtolower($class)]['_']['base']) && is_string(DaoMap::$map[strtolower($class)]['_']['base']), 'Site requires a base query');
+		DaoMap::loadMap($this->_className);
+		$map = DaoMap::getMap();
+		$this->assertTrue(array_key_exists(strtolower($this->_className), $map));
+	}
+    /**
+     * testing DaoMap::hasMap()  && DaoMap::clearMap()
+     */
+	public function testHasMap()
+	{
+	    DaoMap::loadMap($this->_className);
+		$this->assertTrue(DaoMap::hasMap($this->_className));
+		DaoMap::clearMap();
+		$this->assertFalse(DaoMap::hasMap($this->_className));
 	}
     /**
      * testing DaoMap::loadMap()
      * 
      * 
-     * @expectedException        HydraDaoException
-     * @expectedExceptionMessage You can NOT create an object with empty classname!
+     * @expectedException        DaoException
+     * @expectedExceptionMessage  does NOT exsits!
      */
 	public function testHasMapWithException()
 	{
@@ -45,7 +56,7 @@ class DaoMapUnitTest extends CoreUnitTestAbstract
     /**
      * testing DaoMap::hasMap()
      */
-	public function testHasMap()
+	public function testHasMapWithObject()
 	{
 		$this->assertFalse(DaoMap::hasMap('User'));
 		$this->assertFalse(DaoMap::hasMap(new stdClass()));
@@ -66,11 +77,11 @@ class DaoMapUnitTest extends CoreUnitTestAbstract
 		DaoMap::commit();
 		
 		//check on map key
-		$this->assertTrue(isset(DaoMap::$map[strtolower($class)]));
+		$map = DaoMap::getMap();
+		$this->assertTrue(isset($map[strtolower($class)]));
 		//check on alias key '_'
-		$this->assertEquals(strtolower($class), DaoMap::$map[strtolower($class)]['_']['alias']);
-		$this->assertEquals($object instanceof HydraVersionedEntity, DaoMap::$map[strtolower($class)]['_']['versioned']);
-		$this->assertEquals(null, DaoMap::$map[strtolower($class)]['_']['sort']);
+		$this->assertEquals(strtolower($class), $map[strtolower($class)]['_']['alias']);
+		$this->assertEquals(null, $map[strtolower($class)]['_']['sort']);
 	}
 	
 	public function testManyToOne()
@@ -100,13 +111,14 @@ class DaoMapUnitTest extends CoreUnitTestAbstract
 	
 	public function testManyToMany()
 	{
-	    $alias = null;
+	    $alias = 'test';
 	    $nullable = true;
+	    $defaultId = 
 	    $class = 'User';
 	    $field = 'manytomany';
 	    $object = new $class();
 	    DaoMap::begin($object);
-	    DaoMap::setManyToMany($field, $class, DaoMap::LEFT_SIDE);
+	    DaoMap::setManyToMany($field, $class, DaoMap::LEFT_SIDE, $alias, $nullable);
 	    DaoMap::commit();
 	    
 	    //check on fields
@@ -115,14 +127,65 @@ class DaoMapUnitTest extends CoreUnitTestAbstract
 	        	    	'size' => 10,
 	        	    	'unsigned' => true,    	    	
 	        	    	'nullable' => $nullable,
-	        	    	'default' => $defaultId, 
+	        	    	'default' => intval($defaultId), 
 	        	    	'class' => $class, 
-	        	    	'alias' => $field,
-	        	    	'rel' => DaoMap::MANY_TO_ONE);
-	    $this->assertEquals(array('type' => 'int', 'size' => 10,'unsigned' => true,'nullable' => $nullable,'default' => $defaultId, 'class' => $class, 'alias' => $alias,'rel' => DaoMap::MANY_TO_MANY), DaoMap::$map[strtolower($class)][$field]);
+	        	    	'alias' => $alias,
+	    				'side' => DaoMap::LEFT_SIDE,
+	        	    	'rel' => DaoMap::MANY_TO_MANY);
+	    $this->assertEquals($excepted, DaoMap::$map[strtolower($class)][$field], "Should get: " . print_r($excepted, true) . " but got: " . print_r(DaoMap::$map[strtolower($class)][$field], true));
+	}
+	public function testOneToMany()
+	{
+	    $alias = 'test';
+	    $nullable = true;
+	    $defaultId = 
+	    $class = 'User';
+	    $field = 'manytomany';
+	    $object = new $class();
+	    DaoMap::begin($object);
+	    DaoMap::setOneToMany($field, $class, $alias);
+	    DaoMap::commit();
+	    
+	    //check on fields
+	    $this->assertTrue(isset(DaoMap::$map[strtolower($class)][$field]));
+	    $excepted = array('type' => 'int',
+			'size' => 10,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => 0,
+			'class' => $class,
+			'alias' => $alias,
+			'rel' => DaoMap::ONE_TO_MANY
+	    );
+	    $this->assertEquals($excepted, DaoMap::$map[strtolower($class)][$field], "Should get: " . print_r($excepted, true) . " but got: " . print_r(DaoMap::$map[strtolower($class)][$field], true));
 	}
 	
-	
+	public function testOneToOne()
+	{
+	    $alias = null;
+	    $nullable = true;
+	    $class = 'User';
+	    $field = 'onetoone';
+	    $defaultId = 0;
+	    $isOwner = true;
+	    $object = new $class();
+	    DaoMap::begin($object);
+	    DaoMap::setOneToOne($field, $class, $isOwner, $alias, $nullable);
+	    DaoMap::commit();
+	    
+	    //check on fields
+	    $this->assertTrue(isset(DaoMap::$map[strtolower($class)][$field]));
+	    $excepted = array('type' => 'int', 
+    	    	'size' => 10,
+    	    	'unsigned' => true,    	    	
+    	    	'nullable' => $nullable,
+    	    	'default' => $defaultId, 
+    	    	'class' => $class, 
+    	    	'alias' => $field,
+    	    	'owner' => intval($isOwner),
+    	    	'rel' => DaoMap::ONE_TO_ONE);
+	    $this->assertEquals($excepted, DaoMap::$map[strtolower($class)][$field], "Should get: " . print_r($excepted, true) . " but got: " . print_r(DaoMap::$map[strtolower($class)][$field], true));
+	}
 }
 
 ?>

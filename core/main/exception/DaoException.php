@@ -8,10 +8,10 @@
  */
 class DaoException extends Exception
 {
-	public function __construct($message, $code = 0, $preivousException = null)
+	public function __construct($message, $code = 0)
 	{
 		// Supply the base exception class with an arbitrary code value
-		parent::__construct($message, $code, $preivousException);
+		parent::__construct($message, $code);
 	}
 }
 
