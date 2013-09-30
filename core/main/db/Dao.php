@@ -50,7 +50,7 @@ abstract class Dao
 	private static function _connect()
 	{
 	    // Only connect if we don't have a handle on the database
-	    if (!is_null(self::$_db))
+	    if (self::$_db instanceof PDO)
 	        return self::$_db;
 	
 	    try
@@ -104,7 +104,7 @@ abstract class Dao
      *
      * @return PDOStatement
      */
-    private static function _execSql($sql, array $params = array(), &$lastInsertId = null)
+    public static function execSql($sql, array $params = array(), &$lastId = null)
     {
         self::_connect();
         $stmt = self::$_db->prepare($sql);
@@ -117,9 +117,9 @@ abstract class Dao
             $retVal = self::$_db->lastInsertId();
             if(is_numeric($retVal) && $retVal > 0)
             {
-                $lastInsertId = $retVal;
+                $lastId = $retVal;
                 if(self::$debug === true)
-                    echo " Last Insert Id: " . $lastInsertId;
+                    echo " Last Insert Id: " . $lastId;
             }
         }
         catch (Exception $ex)
@@ -139,7 +139,7 @@ abstract class Dao
      */
     public static function getSingleResultNative($sql, array $params = array(), $pdoOption = PDO::FETCH_ASSOC)
     {
-        $stmt = self::_execSql($sql, $params);
+        $stmt = self::execSql($sql, $params);
         $my = $stmt->fetch($pdoOption);
         return $my;
     }
@@ -154,7 +154,7 @@ abstract class Dao
      */
     public static function getResultsNative($sql, array $params = array(), $pdoOption = PDO::FETCH_ASSOC)
     {
-        $stmt = self::_execSql($sql, $params);
+        $stmt = self::execSql($sql, $params);
         $results = $stmt->fetchAll($pdoOption);
         return $results;
     }
