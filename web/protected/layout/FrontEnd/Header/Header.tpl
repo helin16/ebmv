@@ -1,0 +1,1 @@
+<div class="systemtitle">My Logo</div>
