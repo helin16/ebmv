@@ -1,3 +1,5 @@
+/* www.colourlovers.com/palette/3056776/Pride_Joy */
+/* http://www.colourlovers.com/palette/3056750/Gray_Bed */
 body {
 	font-family: "Source Sans Pro","Helvetica Neue","HelveticaNeue",Helvetica,Arial,"Lucida Grande",sans-serif;
     background: url("images/bg.png") repeat scroll 0 0 #FFFFFF;
@@ -28,9 +30,9 @@ a {
     background: #ffffff;
 }
 .header .contentwrapper {
-    height: 260px;
+	height: 260px;
 	background: transparent url("images/backgroundImage.png") no-repeat right bottom;
-	vertical-align: baseline;
+	vertical-align: bottom;
 }
 
 .header .systemtitle {
@@ -38,6 +40,39 @@ a {
 	color: #002A5C;
     font-size: 45px;
     font-weight: bold;
+}
+.header .topmenu {
+	background: #305FAC;
+	border-radius: 5px;
+	color: white;
+	padding: 8px;
+	width: 40%;
+	top: 30%;
+	margin: 30px 0 0 0;
+}
+
+.header .topmenu .item a {
+	width: 80px;
+	height: 60px;
+	padding: 2px;
+	text-align:center;
+	display: block;
+	background: transparent url("images/quick_sprite.png") no-repeat 0 0;
+	background-position: center 0px;
+	color: white;
+}
+.header .topmenu .item a:hover {
+	background-color: #BD3A40;
+	border-radius: 5px;
+}
+.header .topmenu .home a {
+	background-position: center -989px;
+}
+.header .topmenu .user a {
+	background-position: center -1914px;
+}
+.header .topmenu .help a {
+	background-position: center -930px;
 }
 
 .menu {
