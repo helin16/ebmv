@@ -44,7 +44,12 @@ abstract class BaseService
 	public static function getInstance($serviceName)
 	{
 		if(!array_key_exists($serviceName, self::$_instances))
-			self::$_instances[$serviceName] = new $serviceName . 'Service';
+		{
+		    $className = $serviceName . 'Service';
+		    if(!class_exists($className))
+		        throw new ServiceException("$className does NOT exsits!");
+		    self::$_instances[$serviceName] = new $className;
+		}
 		return self::$_instances[$serviceName];
 	}
 	/**

@@ -33,10 +33,10 @@ abstract class Core
 	/**
 	 * Set the active user on the core for auditing purposes
 	 * 
-	 * @param User $userAccount The useraccount
-	 * @param Role $role        The role
+	 * @param UserAccount $userAccount The useraccount
+	 * @param Role        $role        The role
 	 */
-	public static function setUser(User $userAccount, Role $role = null)
+	public static function setUser(UserAccount $userAccount, Role $role = null)
 	{
 		self::$_storage['user'] = $userAccount;
 		self::$_storage['role'] = $role;
@@ -52,7 +52,7 @@ abstract class Core
 	/**
 	 * Get the current user set against the System for auditing purposes
 	 *
-	 * @return User
+	 * @return UserAccount
 	 */
 	public static function getUser()
 	{

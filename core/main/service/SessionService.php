@@ -38,7 +38,7 @@ class SessionService extends BaseService
 	public function write($sessionId, $sessionData)
 	{
 	    $user = Core::getUser(); 
-	    $user = ($user instanceof UserAccount ? $user : Dao::findById(new DaoQuery('UserAccount'), 1));
+	    $user = ($user instanceof UserAccount ? $user : BaseService::getInstance('UserAccount')->get(UserAccount::ID_GUEST_ACCOUNT));
 	    Core::setUser($user, Core::getRole());
 	    $session = $this->getSession($sessionId);
 	    $session = ($session instanceof Session ? $session : new Session());
