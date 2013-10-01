@@ -96,6 +96,9 @@ CREATE TABLE `product` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `title` varchar(200) NOT NULL DEFAULT '',
     `isbn` varchar(50) NOT NULL DEFAULT '',
+    `author` varchar(200) NOT NULL DEFAULT '',
+    `publisher` varchar(255) NOT NULL DEFAULT '',
+    `publishDate` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
     `noOfWords` int(10) unsigned NOT NULL DEFAULT 0,
     `description` varchar(255) NOT NULL DEFAULT '',
     `active` bool NOT NULL DEFAULT 1,
@@ -107,6 +110,9 @@ CREATE TABLE `product` (
     ,INDEX (`createdById`)
     ,INDEX (`updatedById`)
     ,INDEX (`title`)
+    ,INDEX (`author`)
+    ,INDEX (`publisher`)
+    ,INDEX (`publishDate`)
     ,INDEX (`isbn`)
     ,INDEX (`description`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;

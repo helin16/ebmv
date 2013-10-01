@@ -15,6 +15,11 @@ class Product extends BaseEntityAbstract
      */
     private $title;
     /**
+     * The auther 
+     * @var string
+     */
+    private $author;
+    /**
      * The ISBN
      * 
      * @var string
@@ -32,6 +37,18 @@ class Product extends BaseEntityAbstract
      * @var int
      */
     private $noOfWords;
+    /**
+     * The publisher
+     * 
+     * @var string
+     */
+    private $publisher;
+    /**
+     * The published date
+     * 
+     * @var UDate::
+     */
+    private $publishDate;
 	/**
 	 * The categories that the products are belongin to 
 	 * 
@@ -74,6 +91,33 @@ class Product extends BaseEntityAbstract
 	    $this->description = $description;
 	    return $this;
 	}
+	public function getAuthor()
+	{
+	    return $this->author;
+	}
+	public function setAuthor($author)
+	{
+	    $this->author = $author;
+	    return $this;
+	}
+	public function getPublisher()
+	{
+	    return $this->publisher;
+	}
+	public function setPublisher($publisher)
+	{
+	    $this->publisher = $publisher;
+	    return $this;
+	}
+	public function getPublishDate()
+	{
+	    return $this->publishDate;
+	}
+	public function setPublishDate($publishDate)
+	{
+	    $this->publishDate = $publishDate;
+	    return $this;
+	}
 	/**
 	* getter Categorys
 	*
@@ -105,12 +149,18 @@ class Product extends BaseEntityAbstract
 		DaoMap::begin($this, 'p');
 		DaoMap::setStringType('title','varchar', 200);
 		DaoMap::setStringType('isbn');
+		DaoMap::setStringType('author','varchar', 200);
+		DaoMap::setStringType('publisher','varchar', 255);
+		DaoMap::setDateType('publishDate');
 		DaoMap::setIntType('noOfWords');
 		DaoMap::setStringType('description','varchar', 255);
 		DaoMap::setManyToMany("categorys", "Category", DaoMap::LEFT_SIDE, "pcat");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');
+		DaoMap::createIndex('author');
+		DaoMap::createIndex('publisher');
+		DaoMap::createIndex('publishDate');
 		DaoMap::createIndex('isbn');
 		DaoMap::createIndex('description');
 		DaoMap::commit();
