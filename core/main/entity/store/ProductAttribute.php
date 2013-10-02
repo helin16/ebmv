@@ -64,9 +64,19 @@ class ProductAttribute extends BaseEntityAbstract
         return $this;
     }
     /**
-    * (non-PHPdoc)
-    * @see BaseEntity::__loadDaoMap()
-    */
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::getJson()
+     */
+    public function getJson()
+    {
+        $array = parent::getJson();
+        $array['type'] = $this->getType()->getJson();
+        return $array;
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntity::__loadDaoMap()
+     */
     public function __loadDaoMap()
     {
         DaoMap::begin($this, 'pa');
