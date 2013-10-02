@@ -1,6 +1,6 @@
 <?php
 /**
- * Product Entity - storing the session data in the database
+ * Product Entity
  *
  * @package    Core
  * @subpackage Entity
@@ -15,114 +15,64 @@ class Product extends BaseEntityAbstract
      */
     private $title;
     /**
-     * The auther 
-     * @var string
-     */
-    private $author;
-    /**
-     * The ISBN
+     * Supplier Unique Key string
      * 
      * @var string
      */
-    private $isbn;
-    /**
-     * The description
-     * 
-     * @var string
-     */
-    private $description;
-    /**
-     * The noOfWords
-     * 
-     * @var int
-     */
-    private $noOfWords;
-    /**
-     * The publisher
-     * 
-     * @var string
-     */
-    private $publisher;
-    /**
-     * The published date
-     * 
-     * @var UDate::
-     */
-    private $publishDate;
+    private $suk;
 	/**
 	 * The categories that the products are belongin to 
 	 * 
 	 * @var multiple:Category
 	 */
 	protected $categorys;
+	/**
+	 * Getter for the title
+	 * 
+	 * @return string
+	 */
 	public function getTitle()
 	{
 	    return $this->title;
 	}
+	/**
+	 * Setter for 
+	 * 
+	 * @param string $title The title of product
+	 * 
+	 * @return Product
+	 */
 	public function setTitle($title)
 	{
 	    $this->title = $title;
 	    return $this;
 	}
-	public function getIsbn()
+	/**
+	 * Getter for the suk
+	 * 
+	 * @return string
+	 */
+	public function getSuk()
 	{
-	    return $this->isbn;
+	    return $this->suk;
 	}
-	public function setIsbn($isbn)
+	/**
+	 * Setter for suk
+	 * 
+	 * @param string $suk The suk of product
+	 * 
+	 * @return Product
+	 */
+	public function setSuk($suk)
 	{
-	    $this->isbn = $isbn;
-	    return $this;
-	}
-	public function getNoOfWords()
-	{
-	    return $this->noOfWords;
-	}
-	public function setNoOfWords($noOfWords)
-	{
-	    $this->noOfWords = $noOfWords;
-	    return $this;
-	}
-	public function getDescription()
-	{
-	    return $this->description;
-	}
-	public function setDescription($description)
-	{
-	    $this->description = $description;
-	    return $this;
-	}
-	public function getAuthor()
-	{
-	    return $this->author;
-	}
-	public function setAuthor($author)
-	{
-	    $this->author = $author;
-	    return $this;
-	}
-	public function getPublisher()
-	{
-	    return $this->publisher;
-	}
-	public function setPublisher($publisher)
-	{
-	    $this->publisher = $publisher;
-	    return $this;
-	}
-	public function getPublishDate()
-	{
-	    return $this->publishDate;
-	}
-	public function setPublishDate($publishDate)
-	{
-	    $this->publishDate = $publishDate;
+	    $this->suk = $suk;
 	    return $this;
 	}
 	/**
-	* getter Categorys
-	*
-	* @return multiple:Category
-	*/
+	 * getter Categorys
+	 *
+	 * @return multiple:Category
+	 */
 	public function getCategorys()
 	{
 	    $this->loadManyToMany("categorys");
@@ -141,6 +91,20 @@ class Product extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Getting the attribute
+	 * 
+	 * @param string $typeCode  The code of the ProductAttributeType
+	 * @param string $separator The separator of the returned attributes, in case there are multiple
+	 * 
+	 * @return Ambigous <>
+	 */
+	public function getAttribute($typeCode, $separator = ',')
+	{
+	    $sql = 'select group_concat(pa.attribute separator ?) `attr` from productattribute pa inner join productattributetype pat on (pat.id = pa.typeId and pat.active = 1 and pat.code = ?) where pa.active = 1';
+	    $result = Dao::getSingleResultNative($sql, array($separator, $typeCode), PDO::FETCH_ASSOC);
+	    return $result['attr'];
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
@@ -148,21 +112,12 @@ class Product extends BaseEntityAbstract
 	{
 		DaoMap::begin($this, 'p');
 		DaoMap::setStringType('title','varchar', 200);
-		DaoMap::setStringType('isbn');
-		DaoMap::setStringType('author','varchar', 200);
-		DaoMap::setStringType('publisher','varchar', 255);
-		DaoMap::setDateType('publishDate');
-		DaoMap::setIntType('noOfWords');
-		DaoMap::setStringType('description','varchar', 255);
+		DaoMap::setStringType('suk','varchar', 50);
 		DaoMap::setManyToMany("categorys", "Category", DaoMap::LEFT_SIDE, "pcat");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');
-		DaoMap::createIndex('author');
-		DaoMap::createIndex('publisher');
-		DaoMap::createIndex('publishDate');
-		DaoMap::createIndex('isbn');
-		DaoMap::createIndex('description');
+		DaoMap::createIndex('suk');
 		DaoMap::commit();
 	}
 }

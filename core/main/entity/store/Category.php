@@ -1,6 +1,6 @@
 <?php
 /**
- * Category Entity - storing the session data in the database
+ * Category Entity
  *
  * @package    Core
  * @subpackage Entity
