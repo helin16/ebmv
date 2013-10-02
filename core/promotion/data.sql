@@ -14,3 +14,13 @@ insert into `role_useraccount` (`roleId`, `userAccountId`, `created`, `createdBy
 insert into `category`(`name`,`active`, `created`, `createdById`, `updated`, `updatedById`) values 
 ('简体中文', 1, NOW(), 100, NOW(), 100),
 ('繁體中文', 1, NOW(), 100, NOW(), 100);
+
+insert into `productattributetype` (`name`, `code`, `searchable`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
+('Author', 'author', 1, 1, NOW(), 100, NOW(), 100),
+('ISBN', 'isbn', 1, 1, NOW(), 100, NOW(), 100),
+('Publisher', 'publisher', 1, 1, NOW(), 100, NOW(), 100),
+('PublishDate', 'publish_date', 1, 1, NOW(), 100, NOW(), 100),
+('Number Of Words', 'no_of_words', 1, 1, NOW(), 100, NOW(), 100),
+('Image', 'image', 1, 1, NOW(), 100, NOW(), 100),
+('ImageThumbnail', 'image_thumb', 1, 1, NOW(), 100, NOW(), 100),
+('Description', 'description', 1, 1, NOW(), 100, NOW(), 100);

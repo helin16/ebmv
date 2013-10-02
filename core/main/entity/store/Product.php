@@ -27,6 +27,12 @@ class Product extends BaseEntityAbstract
 	 */
 	protected $categorys;
 	/**
+	 * The attributes of the products
+	 * 
+	 * @var multiple:ProductAttribute
+	 */
+	protected $attributes;
+	/**
 	 * Getter for the title
 	 * 
 	 * @return string
@@ -79,7 +85,7 @@ class Product extends BaseEntityAbstract
 	    return $this->categorys;
 	}
 	/**
-	 * Setter Person
+	 * Setter Categorys
 	 *
 	 * @param array $categorys The categories that the products are belongin to 
 	 *
@@ -88,6 +94,28 @@ class Product extends BaseEntityAbstract
 	public function setCategorys($categorys)
 	{
 	    $this->categorys = $categorys;
+	    return $this;
+	}
+	/**
+	 * getter attributes
+	 *
+	 * @return multiple:ProductAttribute
+	 */
+	public function getAttributes()
+	{
+	    $this->loadOneToMany('attributes');
+	    return $this->attributes;
+	}
+	/**
+	 * Setter attributes
+	 *
+	 * @param array $attributes The attributes that this product has
+	 *
+	 * @return Product
+	 */
+	public function setAttributes($attributes)
+	{
+	    $this->attributes = $attributes;
 	    return $this;
 	}
 	/**
@@ -106,6 +134,20 @@ class Product extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson()
+	{
+	    $array = parent::getJson();
+	    $array['attributes'] = array();
+	    foreach($this->getAttributes() as $attr)
+	    {
+	        $array['attributes'][] = $attr->getJson();
+	    }
+	    return $array;
+	}
+	/**
+	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
 	public function __loadDaoMap()
@@ -114,6 +156,7 @@ class Product extends BaseEntityAbstract
 		DaoMap::setStringType('title','varchar', 200);
 		DaoMap::setStringType('suk','varchar', 50);
 		DaoMap::setManyToMany("categorys", "Category", DaoMap::LEFT_SIDE, "pcat");
+		DaoMap::setOneToMany("attributes", "ProductAttribute");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');
