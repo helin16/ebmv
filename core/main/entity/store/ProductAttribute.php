@@ -21,6 +21,12 @@ class ProductAttribute extends BaseEntityAbstract
      */
     private $attribute;
     /**
+     * The product this attribute is belonging to
+     * 
+     * @var Product
+     */
+    protected $product;
+    /**
      * Getter for the productattribute type
      * 
      * @return ProductAttributeType
@@ -64,6 +70,27 @@ class ProductAttribute extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Getter for the product
+     * 
+     * @return Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+    /**
+     * Setter for the product
+     * 
+     * @param Product $product The product
+     * 
+     * @return ProductAttribute
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+        return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntityAbstract::getJson()
      */
@@ -80,6 +107,7 @@ class ProductAttribute extends BaseEntityAbstract
     public function __loadDaoMap()
     {
         DaoMap::begin($this, 'pa');
+        DaoMap::setManyToOne('product', 'Product');
         DaoMap::setStringType('attribute','varchar', 500);
         DaoMap::setManyToOne('type', 'ProductAttributeType');
         parent::__loadDaoMap();
