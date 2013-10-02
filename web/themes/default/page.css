@@ -1,0 +1,35 @@
+.controlbtns {
+	vertical-align: bottom;
+}
+
+.productlistviewbtns {
+	text-align: right;
+	vertical-align: bottom;
+}
+
+.productlistviewbtns .button {
+	background: none repeat scroll 0 0 #DDDDDD;
+    border: 1px solid #BBBBBB;
+    box-shadow: 0 1px 0 #FFFFFF inset;
+    color:inherit;
+}
+.productlistviewbtns .button.active,
+.productlistviewbtns .button:hover {
+	background: none repeat scroll 0 0 #eeeeee;
+}
+
+.productlistviewbtns .button .icon{
+	display: inline-block;
+	height: 26px;
+	width: 34px;
+	vertical-align: middle;
+	background: transparent url('images/product_show_sprite.png') no-repeat left center;
+}
+.productlistviewbtns .button.list .icon{
+	background-position: -68px -3px;
+}
+.productlistviewbtns .button .title{
+	display: inline-block;
+	float: right;
+	margin: 3px 0 0 0;
+}

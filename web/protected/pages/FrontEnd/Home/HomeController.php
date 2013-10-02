@@ -24,7 +24,8 @@ class HomeController extends FrontEndPageAbstract
              orientation: "v",
              classname: "ddsmoothmenu-v",
              arrowswap: true,
-             contentsource: "markup"});';
+             contentsource: "markup"});
+	    var pageJs = new PageJs();';
 	}
 	
 	public function getCategories()

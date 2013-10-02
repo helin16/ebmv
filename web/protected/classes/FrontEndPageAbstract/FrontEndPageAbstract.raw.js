@@ -1,8 +1,8 @@
 /**
  * The FrontEndPageAbstract Js file
  */
-var PageJs = new Class.create();
-PageJs.prototype = {
+var FrontPageJs = new Class.create();
+FrontPageJs.prototype = {
 
 	//constructor
 	initialize: function () {}

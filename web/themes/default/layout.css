@@ -23,6 +23,41 @@ body {
 .rdcrnr {
 	border-radius: 5px;
 }
+.cursorpntr {
+	cursor: pointer;
+}
+
+.rdcrnrfirst {
+	border-radius:5px 0 0 5px;
+}
+.rdcrnrlast {
+	border-radius: 0 5px 5px 0;
+}
+.button {
+	background: #1C5A80;
+	color: white;
+	padding: 6px;
+	margin: 0px;
+	border: none;
+	box-shadow: 0px 0px 2px 0px #000000;
+	cursor: pointer;
+}
+.button:hover {
+	background-color: #ADD8E6;
+    color: #000080;
+    box-shadow: none;
+}
+
+ul.btn-group {
+	list-style: none;
+	margin: 0px;
+    overflow: hidden;
+    padding: 0;
+}
+
+ul.btn-group li {
+	float: left;
+}
 
 a {
     text-decoration: none;
