@@ -120,6 +120,7 @@ CREATE TABLE `category_product` (
 DROP TABLE IF EXISTS `productattribute`;
 CREATE TABLE `productattribute` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `productId` int(10) unsigned NOT NULL DEFAULT 0,
     `attribute` varchar(500) NOT NULL DEFAULT '',
     `typeId` int(10) unsigned NOT NULL DEFAULT 0,
     `active` bool NOT NULL DEFAULT 1,
@@ -128,6 +129,7 @@ CREATE TABLE `productattribute` (
     `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `updatedById` int(10) unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
+    ,INDEX (`productId`)
     ,INDEX (`typeId`)
     ,INDEX (`createdById`)
     ,INDEX (`updatedById`)

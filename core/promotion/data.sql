@@ -11,10 +11,6 @@ insert into `useraccount`(`username`, `password`, `personId`, `active`, `created
 
 insert into `role_useraccount` (`roleId`, `userAccountId`, `created`, `createdById`) values (10, 100, NOW(), 100);
 
-insert into `category`(`name`,`active`, `created`, `createdById`, `updated`, `updatedById`) values 
-('简体中文', 1, NOW(), 100, NOW(), 100),
-('繁體中文', 1, NOW(), 100, NOW(), 100);
-
 insert into `productattributetype` (`name`, `code`, `searchable`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
 ('Author', 'author', 1, 1, NOW(), 100, NOW(), 100),
 ('ISBN', 'isbn', 1, 1, NOW(), 100, NOW(), 100),
