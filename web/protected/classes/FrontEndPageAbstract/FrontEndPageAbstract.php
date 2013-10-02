@@ -22,9 +22,15 @@ abstract class FrontEndPageAbstract extends TPage
 	public function onInit($param)
 	{
 	    parent::onInit($param);
+<<<<<<< .mine
+	    $this->getClientScript()->registerPradoScript('ajax');
+	    $this->getPage()->getClientScript()->registerScriptFile('jQueryJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . 'jQuery.js', true));
+	    $this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . __CLASS__ . '.js', true));
+=======
 	    $this->getClientScript()->registerPradoScript('ajax');
 	    $this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . __CLASS__ . '.js', true));
 	    $this->getPage()->getClientScript()->registerScriptFile('jQueryJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . 'jQuery.js', true));
+>>>>>>> .r48
         $cScripts = self::getLastestJS(get_class($this));
 	    if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
 	        $this->getPage()->getClientScript()->registerScriptFile('pageJs', $this->publishAsset($lastestJs));
