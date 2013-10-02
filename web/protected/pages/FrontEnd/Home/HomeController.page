@@ -1,3 +1,27 @@
 <com:TContent ID="MainContent">
-    test
+    <com:Application.controls.AccordinMenu.AccordinMenuJs />
+    <div class="pageWrapper">
+        <span class="left sidebar inlineblock">
+            <div ID="menu-accordion" class="sidebarmodule">
+                <h3 class="sidebarmoduletitle">Categories</h3>
+                <div id="catelist" class="sidebarmodulecontent">
+		            <%= $this->getCategories() %>
+		            <br style="clear: left" />
+                </div>
+            </div>
+        </span>
+        <span class="maincontent inlineblock">
+            <div class="controlbtns">
+                <span class="inlineblock" style="width: 50%;">
+	                <input type="textbox" class="padding5 fullwith rdcrnr" placeholder="Search Your Books Here.." />
+                </span>
+                <span class="inlineblock">
+	                <input type="button" class="button rdcrnr" value="Search"/>
+                </span>
+            </div>
+            <div id="productlist" >
+                fsdfds
+            </div>
+        </span>
+    </div>
 </com:TContent>
