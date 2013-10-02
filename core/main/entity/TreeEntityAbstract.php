@@ -18,13 +18,13 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
      *
      * @var string
      */
-    private $position;
+    protected $position;
     /**
      * The root category of this category
      * 
      * @var Category
      */
-    private $root;
+    protected $root;
     /**
      * getter position
      *

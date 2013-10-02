@@ -41,6 +41,16 @@ class Category extends TreeEntityAbstract
         $this->name = $Name;
         return $this;
     }
+    public function getProducts()
+    {
+        $this->loadManyToMany('products');
+        return $this->products;
+    }
+    public function setProducts($products)
+    {
+        $this->products = $products;
+        return $this;
+    }
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::loadDaoMap()
