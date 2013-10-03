@@ -25,9 +25,7 @@
                     </ul>
                 </span>
             </div>
-            <div id="productlist" >
-                
-            </div>
+            <div id="productlist" ><img src="/themes/default/images/loading.gif" /></div>
         </span>
     </div>
 </com:TContent>

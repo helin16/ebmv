@@ -25,7 +25,7 @@ class HomeController extends FrontEndPageAbstract
              classname: "ddsmoothmenu-v",
              arrowswap: true,
              contentsource: "markup"});
-	    var pageJs = new PageJs();';
+	    var pageJs = new PageJs("productlist"); pageJs.showProducts();';
 	}
 	
 	public function getCategories()
