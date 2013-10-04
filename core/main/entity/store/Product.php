@@ -128,8 +128,8 @@ class Product extends BaseEntityAbstract
 	 */
 	public function getAttribute($typeCode, $separator = ',')
 	{
-	    $sql = 'select group_concat(pa.attribute separator ?) `attr` from productattribute pa inner join productattributetype pat on (pat.id = pa.typeId and pat.active = 1 and pat.code = ?) where pa.active = 1';
-	    $result = Dao::getSingleResultNative($sql, array($separator, $typeCode), PDO::FETCH_ASSOC);
+	    $sql = 'select group_concat(pa.attribute separator ?) `attr` from productattribute pa inner join productattributetype pat on (pat.id = pa.typeId and pat.active = 1 and pat.code = ?) where pa.active = 1 and pa.productId = ?';
+	    $result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
 	    return $result['attr'];
 	}
 	/**
@@ -142,7 +142,10 @@ class Product extends BaseEntityAbstract
 	    $array['attributes'] = array();
 	    foreach($this->getAttributes() as $attr)
 	    {
-	        $array['attributes'][] = $attr->getJson();
+	        $typeId = $attr->getType()->getCode();
+	        if(!isset($array['attributes'][$typeId]))
+	            $array['attributes'][$typeId] = array();
+            $array['attributes'][$typeId][] = $attr->getJson();
 	    }
 	    return $array;
 	}

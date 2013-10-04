@@ -37,3 +37,50 @@
 .productlist {
 	padding: 10px;
 }
+.productlist .loading {
+	display: block;
+	width: 50px;
+	margin: 30px auto;
+	text-align: center;
+}
+.product .product_image {
+	display: inline-block;
+	width: 160px;
+	height: 200px;
+	border: 1px #eeeeee solid;
+}
+.product .product_image.noimage {
+    background-image: transparent url('images/no_image_found.jpg') no-repeat center center;
+}
+
+.product.listitem {
+	padding: 10px 0;
+}
+.product .listcol {
+	vertical-align: top;
+}
+.product .listcol.left {
+    width: 27%;
+}
+.product .listcol.right {
+    width: 72%;
+}
+.product .listcol label{
+	font-size: 10px;
+	font-weight: bold;
+	padding: 8px 0 0 5px;
+	color: #aaaaaa;
+	font-style: italic;
+	display:block;
+}
+.product .listcol div .inlineblock{
+	width: 49%;
+}
+.product .listcol .product_title {
+	font-size: 20px;
+	font-weight: bold;
+}
+.product .listcol .product_description {
+	padding: 8px 0 0 0;
+	font-size: 12px;
+}

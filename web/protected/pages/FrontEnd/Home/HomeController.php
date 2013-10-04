@@ -14,18 +14,24 @@ class HomeController extends FrontEndPageAbstract
      */
 	public function onLoad($param)
 	{
-	    $this->getClientScript()->registerEndScript('navListJs', $this->_getNavListJs());
+	    if(!$this->IsPostBack || !$this->IsCallback)
+	    {
+	        $this->getClientScript()->registerEndScript('navListJs', $this->_getNavListJs());
+	    }
 	}
 	
 	private function _getNavListJs()
 	{
 	    return 'ddsmoothmenu.init({
-             mainmenuid: "catelist",
-             orientation: "v",
-             classname: "ddsmoothmenu-v",
-             arrowswap: true,
-             contentsource: "markup"});
-	    var pageJs = new PageJs("productlist"); pageJs.showProducts();';
+            mainmenuid: "catelist",
+            orientation: "v",
+            classname: "ddsmoothmenu-v",
+            arrowswap: true,
+            contentsource: "markup"
+		});
+		var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); 
+		pageJs.showProducts();
+	   ';
 	}
 	
 	public function getCategories()
@@ -76,6 +82,24 @@ class HomeController extends FrontEndPageAbstract
 	        $array[$parentId][$cate->getId()] = $cate->getId();
 	    }
 	    return $array;
+	}
+	
+	public function getProducts($sender, $params)
+	{
+	    $errors = $result = array();
+	    try
+	    {
+	        $products = BaseService::getInstance('Product')->findByCriteria('active = 1', array(), false, 1, 30, array());
+	        foreach($products as $product)
+	        {
+	            $result[] = $product->getJson();
+	        } 
+	    }
+	    catch(Exception $ex)
+	    {
+	        $errors[] = $ex->getMessage();
+	    }
+	    $params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
 }
 ?>

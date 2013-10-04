@@ -1,5 +1,7 @@
 <com:TContent ID="MainContent">
     <com:Application.controls.AccordinMenu.AccordinMenuJs />
+    <com:TCallback ID="getProductsBtn" OnCallback="getProducts" />
+    
     <div class="pageWrapper">
         <span class="left sidebar inlineblock">
             <div ID="menu-accordion" class="sidebarmodule">
@@ -25,7 +27,8 @@
                     </ul>
                 </span>
             </div>
-            <div id="productlist" ><img src="/themes/default/images/loading.gif" /></div>
+            <div id="productlist" class="productlist">
+            </div>
         </span>
     </div>
 </com:TContent>
