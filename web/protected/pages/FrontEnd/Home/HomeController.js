@@ -26,13 +26,15 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				tmp.resultDiv = new Element('div');
 				try {
 					tmp.result = pageJs.getResp(param, false, true);
-					if(tmp.result.size() === 0)
+					console.debug(tmp.result);
+					if(!tmp.result.pagination || tmp.result.pagination.totalRows === 0)
 						throw 'Nothing found!';
 					
-					tmp.result.each(function(item){
+					tmp.resultDiv.insert({'bottom': tmp.me._getPaginationDiv(tmp.result.pagination) });
+					tmp.result.products.each(function(item){
 						tmp.resultDiv.insert({'bottom': tmp.me._getProductListItem(item) });
 					});
-					
+					tmp.resultDiv.insert({'bottom':tmp.me._getPaginationDiv(tmp.result.pagination) });
 				} catch (e) {
 					tmp.resultDiv.update(new Element('div', {'class': 'errMsg'}).update(e));
 				}
@@ -42,10 +44,33 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return this;
 	}
 	
+	//getting the loading div
 	,_getLoadingDiv: function() {
 		return new Element('span', {'class': 'loading'})
 			.insert({'bottom': new Element('img', {'src': '/themes/default/images/loading.gif'})})
 			.insert({'bottom': 'Loading ...'});
+	}
+	
+	//get pagination div
+	,_getPaginationDiv: function(pagination) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.paginationDiv = new Element('div', {'class': 'pagination_wrapper'});
+		tmp.windowSize = 5;
+		//if the page we are at is at 
+		if(Math.ceil( tmp.windowSize / 2) > pagination.pageNumber) {
+			tmp.pageStart = 1;
+		} else {
+			tmp.paginationDiv
+				.insert({'bottom': new Element('span', {'class': 'pagin_btn cursorpntr'}).update('<<') })
+				.insert({'bottom': new Element('span', {'class': 'pagin_btn cursorpntr'}).update('<') })
+			;
+		}
+		
+		$R(tmp.pageStart, tmp.pageStart + (tmp.windowSize - 1)).each(function(pageNo) {
+			tmp.paginationDiv.insert({'bottom': new Element('span', {'class': 'pagin_btn cursorpntr' + (pageNo === (pagination.pageNumber * 1) ? ' selected' : '')}).update(pageNo) });
+		});
+		return tmp.paginationDiv;
 	}
 	
 	//get product html

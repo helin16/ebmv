@@ -8,6 +8,7 @@
  */
 class HomeController extends FrontEndPageAbstract  
 {
+    public $pageSize = 1;
     /**
      * (non-PHPdoc)
      * @see TControl::onLoad()
@@ -30,6 +31,7 @@ class HomeController extends FrontEndPageAbstract
             contentsource: "markup"
 		});
 		var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); 
+		pageJs.pagination.pageSize = ' . $this->pageSize . ';
 		pageJs.showProducts();
 	   ';
 	}
@@ -89,10 +91,20 @@ class HomeController extends FrontEndPageAbstract
 	    $errors = $result = array();
 	    try
 	    {
-	        $products = BaseService::getInstance('Product')->findByCriteria('active = 1', array(), false, 1, 30, array());
+	        $pageNo = 1;
+	        $pageSize = $this->pageSize;
+	        if(isset($params->CallbackParameter->pagination))
+	        {
+	            $pageNo = trim(isset($params->CallbackParameter->pagination->pageNo) ? $params->CallbackParameter->pagination->pageNo : $pageNo);
+	            $pageSize = trim(isset($params->CallbackParameter->pagination->pageSize) ? $params->CallbackParameter->pagination->pageSize : $pageSize);
+	        }
+	        
+	        $products = BaseService::getInstance('Product')->findByCriteria('active = 1', array(), false, $pageNo, $pageSize, array());
+	        $result['pagination'] = BaseService::getInstance('Product')->getPageStats();
+	        $result['products'] = array();
 	        foreach($products as $product)
 	        {
-	            $result[] = $product->getJson();
+	            $result['products'][] = $product->getJson();
 	        } 
 	    }
 	    catch(Exception $ex)
