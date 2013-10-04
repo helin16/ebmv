@@ -68,7 +68,7 @@
 .product .listcol label{
 	font-size: 10px;
 	font-weight: bold;
-	padding: 8px 0 0 5px;
+	padding: 4px 0 0 5px;
 	color: #aaaaaa;
 	font-style: italic;
 	display:block;
@@ -83,4 +83,41 @@
 .product .listcol .product_description {
 	padding: 8px 0 0 0;
 	font-size: 12px;
+}
+
+
+.pagination_wrapper {
+	text-align: right;
+}
+
+.pagination_wrapper .pagin_btn {
+	display: inline-block;
+	padding: 4px;
+}
+
+.pagination_wrapper .pagin_btn.selected {
+	font-weight:bold;
+}
+
+.pagination_wrapper .pagin_btn:hover {
+	background: #1C5A80;
+	color: white;
+}
+
+.product.griditem {
+	padding: 5px;
+	text-align: center;
+}
+
+.product.griditem .product_image {
+	border: none;
+}
+
+.product.griditem:hover {
+	border-radius: 5px;
+	box-shadow: 0px 0px 5px 0px #1C5A80;
+}
+.product.griditem .product_title {
+	font-weight: bold;
+	padding: 4px 0 ;
 }

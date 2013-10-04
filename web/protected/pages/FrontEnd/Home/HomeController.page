@@ -15,15 +15,15 @@
         <span class="maincontent inlineblock">
             <div class="controlbtns">
                 <span class="inlineblock" style="width: 50%;">
-	                <input type="textbox" class="padding5 fullwith rdcrnr" placeholder="Search Your Books Here.." />
+	                <input type="textbox" class="padding5 fullwith rdcrnr lightBrdr" placeholder="Search Your Books Here.." />
                 </span>
                 <span class="inlineblock" style="width: 20%">
 	                <input type="button" class="button rdcrnr" value="Search"/>
                 </span>
                 <span class="inlineblock productlistviewbtns">
                     <ul class="btn-group">
-		                <li class="rdcrnrfirst grid button active"><span class="icon"></span><span class="title">Grid</span></li>
-		                <li class="rdcrnrlast list button"><span class="icon"></span><span class="title">List</span></li>
+		                <li class="rdcrnrfirst grid button active" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">Grid</span></li>
+		                <li class="rdcrnrlast list button" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">List</span></li>
                     </ul>
                 </span>
             </div>

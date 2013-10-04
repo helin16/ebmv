@@ -8,7 +8,7 @@
  */
 class HomeController extends FrontEndPageAbstract  
 {
-    public $pageSize = 1;
+    public $pageSize = 12;
     /**
      * (non-PHPdoc)
      * @see TControl::onLoad()

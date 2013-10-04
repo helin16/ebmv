@@ -26,6 +26,9 @@ body {
 .cursorpntr {
 	cursor: pointer;
 }
+.lightBrdr {
+	border: 1px #cccccc solid;
+}
 
 .rdcrnrfirst {
 	border-radius:5px 0 0 5px;
