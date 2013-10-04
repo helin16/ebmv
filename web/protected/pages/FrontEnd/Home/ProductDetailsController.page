@@ -1,0 +1,20 @@
+<com:TContent ID="MainContent">
+    <com:Application.controls.AccordinMenu.AccordinMenuJs />
+    <div class = "productContent">
+    	<com:TPanel id = "productImageDiv" CssClass = "productImageDiv inlineblock"> </com:TPanel>
+    	
+    	<com:TPanel id = "productDetailsDiv" CssClass = "productDetailsDiv inlineblock">
+    		
+    		<com:TLabel id = "productTitle" CssClass = "productTitle block"/> 
+    		<com:TLabel id = "productAuthor" CssClass = "productAuthor block"/>
+    		
+    		<com:TLabel id = "productDescription" />
+    		
+    	</com:TPanel>
+    	<com:TPanel id = "productInfoDiv" CssClass = "productInfoDiv inlineblock">
+    		Book Details Div2
+    	</com:TPanel>
+    	
+    </div>
+    	    
+</com:TContent>
