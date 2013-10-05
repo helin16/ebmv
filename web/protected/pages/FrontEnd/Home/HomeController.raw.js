@@ -22,7 +22,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		pageJs.postAjax(this.getProductsBtn, {'pagination': tmp.me.pagination, 'searchCriteria':  tmp.me.searchCriteria}, {
 			'onLoading': function () {
-				$(this.resultDivId).update(tmp.me._getLoadingDiv());
+				$(tmp.me.resultDivId).update(tmp.me._getLoadingDiv());
 			}
 			,'onComplete': function(sender, param) {
 				tmp.resultDiv = new Element('div');
