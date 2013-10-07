@@ -50,7 +50,7 @@
 	border: 1px #eeeeee solid;
 }
 .product .product_image.noimage {
-    background-image: transparent url('images/no_image_found.jpg') no-repeat center center;
+    background: transparent url('images/no_image_found.jpg') no-repeat center center;
 }
 
 .product.listitem {
