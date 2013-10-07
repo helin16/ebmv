@@ -1,0 +1,34 @@
+<com:TContent ID="MainContent">
+    <com:Application.controls.AccordinMenu.AccordinMenuJs />
+    <com:TCallback ID="getProductsBtn" OnCallback="getProducts" />
+    
+    <div class="pageWrapper">
+        <span class="left sidebar inlineblock">
+            <div ID="menu-accordion" class="sidebarmodule">
+                <h3 class="sidebarmoduletitle">Categories</h3>
+                <div id="catelist" class="sidebarmodulecontent">
+                    <%= $this->getCategories() %>
+                    <br style="clear: left" />
+                </div>
+            </div>
+        </span>
+        <span class="maincontent inlineblock">
+            <div class="controlbtns">
+                <span class="inlineblock" style="width: 50%;">
+                    <input id="searchtxt" type="textbox" class="padding5 fullwith rdcrnr lightBrdr" placeholder="Search Your Books Here.." onkeydown="return pageJs.keydown(event, function(){ $('searchbtn').click();})"/>
+                </span>
+                <span class="inlineblock" style="width: 20%">
+                    <input id="searchbtn" type="button" class="button rdcrnr" value="Search" OnClick="window.location='/products/search/' + $F('searchtxt');"/>
+                </span>
+                <span class="inlineblock productlistviewbtns">
+                    <ul class="btn-group">
+                        <li class="rdcrnrfirst grid button active" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">Grid</span></li>
+                        <li class="rdcrnrlast list button" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">List</span></li>
+                    </ul>
+                </span>
+            </div>
+            <div id="productlist" class="productlist">
+            </div>
+        </span>
+    </div>
+</com:TContent>
