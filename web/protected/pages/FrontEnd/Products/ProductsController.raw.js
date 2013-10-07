@@ -4,10 +4,11 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	
+	productDetailsUrl: '/product/{id}', 
 	resultDivId: '', //the result div for the product list
 	getProductsBtn: '', //the callbackId for getting the products
 	pagination: {'pageNo': 1, 'pageSize': 10},
-	searchCriteria: {'searchString': '', 'categories': []},
+	searchCriteria: {'searchString': '', 'categoryIds': []},
 	getProductItemFunc: '_getProductGridItem',
 	
 	//constructor
@@ -118,10 +119,14 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.productDiv = new Element('div', {'class': 'product listitem'})
 			.insert({'bottom': new Element('span', {'class': 'inlineblock listcol left'})
-				.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null) })
+				.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null)
+										.observe('click', function(){ tmp.me.showDetailsPage(product.id); })
+				})
 			})
 			.insert({'bottom': new Element('span', {'class': 'inlineblock listcol right'})
-				.insert({'bottom': new Element('div', {'class': 'product_title'}).update(product.title) })
+				.insert({'bottom': new Element('div', {'class': 'product_title'}).update(product.title)
+					.observe('click', function(){ tmp.me.showDetailsPage(product.id); })
+				})
 				.insert({'bottom': new Element('div', {'class': 'row'})
 					.insert({'bottom': new Element('span', {'class': 'author inlineblock'})
 						.insert({'bottom': new Element('label').update('Author:')})
@@ -148,6 +153,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return tmp.productDiv;
 	}
 	
+	,showDetailsPage: function(productId) {
+		window.location = this.productDetailsUrl.replace('{id}', productId);
+	}
+	
 	//get product grid item
 	,_getProductGridItem: function(product) {
 		var tmp = {};
@@ -157,6 +166,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			.insert({'bottom': new Element('div', {'class': 'product_details'})
 				.insert({'bottom': new Element('div', {'class': 'product_title'}).update(product.title) })
 			})
+			.observe('click', function(){ tmp.me.showDetailsPage(product.id); })
 		;
 		return tmp.productDiv;
 	}
