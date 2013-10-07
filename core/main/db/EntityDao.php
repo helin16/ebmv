@@ -66,6 +66,18 @@ class EntityDao
         return self::$_entityDaos[$entityName];
     }
     /**
+     * set a new query to the dao
+     * 
+     * @param DaoQuery $query The new query
+     * 
+     * @return EntityDao
+     */
+    public function setQuery(DaoQuery $query)
+    {
+        $this->_query = $query;
+        return $this;
+    }
+    /**
      * Return the internal DaoQuery instance
      *
      * @return DaoQuery
