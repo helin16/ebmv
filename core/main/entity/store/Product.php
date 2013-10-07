@@ -155,7 +155,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'p');
+		DaoMap::begin($this, 'pro');
 		DaoMap::setStringType('title','varchar', 200);
 		DaoMap::setStringType('suk','varchar', 50);
 		DaoMap::setManyToMany("categorys", "Category", DaoMap::LEFT_SIDE, "pcat");
