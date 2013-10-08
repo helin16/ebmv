@@ -1,0 +1,15 @@
+<com:TContent ID="MainContent">
+	<div class="LoginPanel">
+	    <div class="row">
+	       <label for="username" class="inlineblock title">Username:</label>
+	       <span class="inlineblock content"><input id="username" class="rdcrnr padding5 lightBrdr fullwith" placeholder="Username"/></span>
+	    </div>
+	    <div class="row">
+	       <label for="password" class="inlineblock title">Password: </label>
+	       <span class="inlineblock content"><input id="password" class="rdcrnr padding5 lightBrdr fullwith"  placeholder="Password"/></span>
+	    </div>
+	    <div class="row">
+	       <input type="button" class="button fullwith rdcrnr upperTxt" value="login" />
+	    </div>
+	</div>
+</com:TContent>

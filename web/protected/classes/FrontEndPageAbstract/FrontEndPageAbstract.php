@@ -15,6 +15,27 @@ abstract class FrontEndPageAbstract extends TPage
 	{
 	    parent::__construct();
 	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see TControl::onLoad()
+	 */
+	public function onLoad($param)
+	{
+	    if(!$this->IsPostBack || !$this->IsCallback)
+	    {
+	        $this->getClientScript()->registerEndScript('pageJs', $this->_getEndJs());
+	    }
+	}
+	/**
+	 * Getting The end javascript
+	 * 
+	 * @return string
+	 */
+	protected function _getEndJs() 
+	{
+	    return '';
+	}
 	/**
 	 * (non-PHPdoc)
 	 * @see TPage::render()

@@ -8,15 +8,5 @@
  */
 class HomeController extends FrontEndPageAbstract  
 {
-    /**
-     * (non-PHPdoc)
-     * @see TControl::onLoad()
-     */
-	public function onLoad($param)
-	{
-	    if(!$this->IsPostBack || !$this->IsCallback)
-	    {
-	    }
-	}
 }
 ?>

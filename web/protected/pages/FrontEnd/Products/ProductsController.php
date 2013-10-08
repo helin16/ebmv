@@ -9,19 +9,8 @@
 class ProductsController extends FrontEndPageAbstract  
 {
     public $pageSize = 12;
-    /**
-     * (non-PHPdoc)
-     * @see TControl::onLoad()
-     */
-	public function onLoad($param)
-	{
-	    if(!$this->IsPostBack || !$this->IsCallback)
-	    {
-	        $this->getClientScript()->registerEndScript('navListJs', $this->_getNavListJs());
-	    }
-	}
 	
-	private function _getNavListJs()
+	protected function _getEndJs()
 	{
 	    $js = 'ddsmoothmenu.init({';
            $js .= 'mainmenuid: "catelist",';
