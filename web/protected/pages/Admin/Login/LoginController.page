@@ -1,15 +1,18 @@
 <com:TContent ID="MainContent">
+    <com:TCallback ID="loginBtn" OnCallback="login" />
 	<div class="LoginPanel">
+	    <div class="row msgpanel">
+	    </div>
 	    <div class="row">
 	       <label for="username" class="inlineblock title">Username:</label>
-	       <span class="inlineblock content"><input id="username" class="rdcrnr padding5 lightBrdr fullwith" placeholder="Username"/></span>
+	       <span class="inlineblock content"><input class="username rdcrnr padding5 lightBrdr fullwith" placeholder="Username"/></span>
 	    </div>
 	    <div class="row">
 	       <label for="password" class="inlineblock title">Password: </label>
-	       <span class="inlineblock content"><input id="password" class="rdcrnr padding5 lightBrdr fullwith"  placeholder="Password"/></span>
+	       <span class="inlineblock content"><input type="password" class="password rdcrnr padding5 lightBrdr fullwith"  placeholder="Password"/></span>
 	    </div>
 	    <div class="row">
-	       <input type="button" class="button fullwith rdcrnr upperTxt" value="login" />
+	       <input type="button" class="button fullwith rdcrnr upperTxt" value="login" onclick="pageJs.login(this);"/>
 	    </div>
 	</div>
 </com:TContent>

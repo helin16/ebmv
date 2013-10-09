@@ -13,13 +13,13 @@ class Role extends BaseEntityAbstract
      * 
      * @var int
      */
-    const ID_GUEST = 10;
+    const ID_GUEST = 1;
     /**
      * ID the sysadmin role
      * 
      * @var int
      */
-    const ID_ADMIN = 100;
+    const ID_ADMIN = 10;
     /**
      * The name of the role
      * @var string

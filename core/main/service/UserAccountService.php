@@ -28,7 +28,9 @@ class UserAccountService extends BaseService
      */
     public function getUserByUsernameAndPassword($username, $password)
     {
-        $userAccounts = $this->findByCriteria("`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => sha1($password)));
+        $query = EntityDao::getInstance($this->_entityName)->getQuery();
+        $query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
+        $userAccounts = $this->findByCriteria("`UserName` = :username AND `Password` = :password AND r.id != :roleId", array('username' => $username, 'password' => sha1($password), 'roleId' => Role::ID_GUEST), false, 1, 2);
         if(count($userAccounts) === 1)
             return $userAccounts[0];
         else if(count($userAccounts) > 1)
@@ -47,7 +49,9 @@ class UserAccountService extends BaseService
      */
     public function getUserByUsername($username)
     {
-        $userAccounts = $this->findByCriteria("`UserName` = :username ", array('username' => $username));
+        $query = EntityDao::getInstance($this->_entityName)->getQuery();
+        $query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
+        $userAccounts = $this->findByCriteria("`UserName` = :username  AND r.id != :roleId ", array('username' => $username, 'roleId' => Role::ID_GUEST), false, 1, 2);
         if(count($userAccounts) === 1)
             return $userAccounts[0];
         else if(count($userAccounts) > 1)

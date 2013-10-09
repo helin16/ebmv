@@ -51,6 +51,23 @@ body {
     box-shadow: none;
 }
 
+.upperTxt {
+	text-transform: uppercase;
+}
+
+.capTxt {
+	text-transform: capitalize;
+}
+
+.errmsg {
+	color: red;
+	text-shadow: purple;
+}
+
+.smalltxt {
+	font-size: 10px;
+}
+
 ul.btn-group {
 	list-style: none;
 	margin: 0px;

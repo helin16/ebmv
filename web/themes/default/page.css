@@ -121,3 +121,22 @@
 	font-weight: bold;
 	padding: 4px 0 ;
 }
+
+.LoginPanel {
+	margin: 20px auto;
+	width: 400px;
+}
+
+.LoginPanel .row {
+	margin: 10px 0;
+}
+
+.LoginPanel .row .title {
+	width: 100px;
+	vertical-align: top;
+	padding: 5px 0 0 0;
+}
+.LoginPanel .row .content {
+    width: 290px;
+	vertical-align: top;
+}
