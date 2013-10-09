@@ -34,7 +34,7 @@ abstract class FrontEndPageAbstract extends TPage
 	 */
 	protected function _getEndJs() 
 	{
-	    return '';
+	    return 'var pageJs = new PageJs()';
 	}
 	/**
 	 * (non-PHPdoc)

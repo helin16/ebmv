@@ -3,9 +3,22 @@
  */
 var FrontPageJs = new Class.create();
 FrontPageJs.prototype = {
+	
+	//the callback ids
+	callbackIds: {}
 
 	//constructor
-	initialize: function () {}
+	,initialize: function () {}
+	
+	,setCallbackId: function(key, callbackid) {
+		this.callbackIds[key] = callbackid;
+	}
+	
+	,getCallbackId: function(key) {
+		if(this.callbackIds[key] === undefined || this.callbackIds[key] === null)
+			throw 'Callback ID is not set for:' + key;
+		return this.callbackIds[key];
+	}
 	
 	//posting an ajax request
 	,postAjax: function(callbackId, data, requestProperty) {
