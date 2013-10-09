@@ -6,5 +6,20 @@
 	<meta name="description" content="">
 	<meta name="keywords" content="">
 </com:THead>
-<body><com:TForm><div class="frontend contentwrapper"><com:TContentPlaceHolder ID="MainContent" /></div></com:TForm></body>
+<body>
+<com:TForm>
+    <div class="admin">
+        <div class="menu">
+	        <div class="contentwrapper">
+                <com:Application.layout.Admin.Menu.Menu />
+	        </div>
+        </div>
+        <div class="pagecontent">
+	        <div class="contentwrapper">
+                <com:TContentPlaceHolder ID="MainContent" />
+	        </div>
+        </div>
+    </div>
+</com:TForm>
+</body>
 </html>

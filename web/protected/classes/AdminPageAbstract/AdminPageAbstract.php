@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/../FrontEndPageAbstract/FrontEndPageAbstract.
  * @subpackage Class
  * @author     lhe<helin16@gmail.com>
  */
-abstract class AdminPageAbstract extends TPage 
+abstract class AdminPageAbstract extends FrontEndPageAbstract 
 {
     /**
      * The selected Menu Item name
@@ -24,5 +24,26 @@ abstract class AdminPageAbstract extends TPage
 	    if(!Core::getUser() instanceof UserAccount)
 	        $this->Response->redirect("/admin/login.html");
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see FrontEndPageAbstract::_loadPageJsClass()
+	 */
+	protected function _loadPageJsClass()
+	{
+	    parent::_loadPageJsClass();
+	    $this->getPage()->getClientScript()->registerScriptFile('adminPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . __CLASS__ . '.js', true));
+	    return $this;
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see TPage::onPreInit()
+	 */
+	public function onPreInit($param)
+	{
+	    parent::onPreInit($param);
+	    $this->getPage()->setMasterClass("Application.layout.Admin.PageLayout");
+	}
+	
+	
 }
 ?>

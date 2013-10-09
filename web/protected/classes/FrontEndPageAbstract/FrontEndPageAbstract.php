@@ -44,14 +44,21 @@ abstract class FrontEndPageAbstract extends TPage
 	{
 	    parent::onInit($param);
 	    $this->getClientScript()->registerPradoScript('ajax');
-	    $this->getPage()->getClientScript()->registerScriptFile('jQueryJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . 'jQuery.js', true));
-	    $this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . __CLASS__ . '.js', true));
-
+	    $this->_loadPageJsClass();
         $cScripts = self::getLastestJS(get_class($this));
 	    if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
 	        $this->getPage()->getClientScript()->registerScriptFile('pageJs', $this->publishAsset($lastestJs));
 	    if (isset($cScripts['css']) && ($lastestCss = trim($cScripts['css'])) !== '')
 	        $this->getPage()->getClientScript()->registerStyleSheetFile('pageCss', $this->publishAsset($lastestCss));
+	}
+	/**
+	 * loading the page js class files
+	 */
+	protected function _loadPageJsClass()
+	{
+	    $this->getPage()->getClientScript()->registerScriptFile('jQueryJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . 'jQuery.js', true));
+	    $this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . __CLASS__ . '.js', true));
+	    return $this;
 	}
 	/**
 	 * Getting the lastest version of Js and Css under the Class'file path
