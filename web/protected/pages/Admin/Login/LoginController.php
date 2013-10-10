@@ -18,16 +18,15 @@ class LoginController extends FrontEndPageAbstract
             if(!isset($params->CallbackParameter->password) || ($password = trim($params->CallbackParameter->password)) === '')
                 throw new Exception('password not provided!');
             
-            $authManager=$this->Application->getModule('auth');
-            var_dump($authManager->login($username, $password));
+            $authManager=$this->getApplication()->getModule('auth');
             if($authManager->login($username, $password))
             {
-                $results['url'] = '/admin/';
+            	$results['url'] = '/admin/';
             }
         }
         catch(Exception $ex)
         {
-            $errors[] = $ex->getMessage();
+        	$errors[] = $ex->getMessage();
         }
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
     }
