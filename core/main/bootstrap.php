@@ -40,6 +40,7 @@ abstract class SystemCoreAbstract
 }
 spl_autoload_register(array('SystemCoreAbstract','autoload'));
 // Bootstrap the Prado framework
-require_once dirname(__FILE__) . '/framework/pradolite.php';
+require_once dirname(__FILE__) . '/../3rdParty/framework/pradolite.php';
+require_once dirname(__FILE__) . '/../3rdParty/PHPExcel/PHPExcel.php';
 
 ?>
