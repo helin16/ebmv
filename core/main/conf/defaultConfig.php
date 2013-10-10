@@ -8,7 +8,7 @@ return array(
 						'NASNode' => 'localhost',
 						'CoreDatabase' => 'bmv',
 						'Username' => 'root',
-						'Password' => ''
+						'Password' => 'root'
 					),
 				'Profiler' => array(
 								'SQL' => false,
