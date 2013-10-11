@@ -1,0 +1,16 @@
+<com:TContent ID="MainContent">
+	<com:TCallback ID="templateDownloader" OnCallback="Page.generateTemplate" />
+	<div>
+		<h3>Bulkload Product</h3>
+		<br />
+		<com:TLabel ID = "loadingLabel" style = "display:none;">Loading...</com:TLabel>
+		<com:TLinkButton ID="downloadTemplate" Text="Download Template File" Attributes.OnClick = "pageJs.generateTemplate(this, '<%= $this->loadingLabel->getClientId() %>'); return false;"/>
+		<com:TActiveLabel ID="instruction" />
+		
+	</div>
+
+	<com:TClientScript>
+		pageJs = new PageJs();
+		pageJs.setCallbackId('downloadtemplate', '<%= $this->templateDownloader->getUniqueID() %>');
+	</com:TClientScript>
+</com:TContent>
