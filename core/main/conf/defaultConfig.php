@@ -2,11 +2,8 @@
 return array(
 				'Database' => array(
 						'Driver' => 'mysql',
-						'LoadBalancer' => 'localhost',
-						'ImportNode' => 'localhost',
-						'SecondaryNode' => 'localhost',
-						'NASNode' => 'localhost',
-						'CoreDatabase' => 'bmv',
+						'DBHost' => 'localhost',
+						'DB' => 'bmv',
 						'Username' => 'root',
 						'Password' => 'root'
 					),

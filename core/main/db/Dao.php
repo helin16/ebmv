@@ -56,7 +56,7 @@ abstract class Dao
         try
         {
             // DSN FORMAT: "mysql:host=localhost;dbname=test"
-            $dsn = Config::get('Database', 'Driver') . ':host=' . Config::get('Database', 'LoadBalancer') . ';dbname=' . Config::get('Database', 'CoreDatabase');
+            $dsn = Config::get('Database', 'Driver') . ':host=' . Config::get('Database', 'DBHost') . ';dbname=' . Config::get('Database', 'DB');
             self::$_db = new PDO($dsn, Config::get('Database','Username'), Config::get('Database','Password'), array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             self::$_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
