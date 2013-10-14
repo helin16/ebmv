@@ -106,6 +106,14 @@ class Asset extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::__toString()
+	 */
+	public function __toString()
+	{
+	    return '/assets/' . $assetId . '/get';
+	}
+	/**
+	 * (non-PHPdoc)
 	 * @see HydraEntity::__loadDaoMap()
 	 */
 	public function __loadDaoMap()
