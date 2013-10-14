@@ -7,7 +7,7 @@
  * @author     lhe<helin16@gmail.com>
  *
  */
-class ProductService extends BaseService
+class ProductService extends BaseServiceAbastract
 {
     /**
      * constructor
@@ -115,9 +115,9 @@ class ProductService extends BaseService
         
         //add the attributes
         $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'desciption');
-        $types = BaseService::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
+        $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
         foreach($typeCodes as $typeCode)
-            BaseService::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
+            BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
         
         //add categories
         foreach($categories as $category)
@@ -141,7 +141,7 @@ class ProductService extends BaseService
     {
         if($type instanceof ProductAttributeType || ($attribute = trim($attribute)) === "")
             return $product;
-        return BaseService::getInstance('ProductAttribute')->updateAttributeForProduct($product, $type, $attribute);
+        return BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, $type, $attribute);
     }
     /**
      * Adding a product to a category

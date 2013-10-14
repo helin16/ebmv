@@ -6,7 +6,7 @@
  * @subpackage Service
  * @author     lhe<helin16@gmail.com>
  */
-abstract class BaseService
+abstract class BaseServiceAbastract
 {
 	/**
 	 * @var EntityName

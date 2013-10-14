@@ -7,7 +7,7 @@
  * @author     lhe<helin16@gmail.com>
  *
  */
-class UserAccountService extends BaseService
+class UserAccountService extends BaseServiceAbastract
 {
     /**
      * constructor

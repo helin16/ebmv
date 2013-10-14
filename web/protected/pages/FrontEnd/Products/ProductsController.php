@@ -59,7 +59,7 @@ class ProductsController extends FrontEndPageAbstract
 	{
 	    $array = array();
 	    $flatArray = array();
-	    foreach(BaseService::getInstance('Category')->findAll() as $cate)
+	    foreach(BaseServiceAbastract::getInstance('Category')->findAll() as $cate)
 	    {
 	        $flatArray[$cate->getId()] = $cate;
 	        if(!$cate->getParent() instanceof Category)
@@ -100,8 +100,8 @@ class ProductsController extends FrontEndPageAbstract
 	            $categoryIds = is_array($searchCriteria['categoryIds']) ? $searchCriteria['categoryIds'] : array();
 	        }
 	        
-	        $products = BaseService::getInstance('Product')->findProductsInCategory($searchText, $categoryIds, false, $pageNo, $pageSize, array());
-	        $result['pagination'] = BaseService::getInstance('Product')->getPageStats();
+	        $products = BaseServiceAbastract::getInstance('Product')->findProductsInCategory($searchText, $categoryIds, false, $pageNo, $pageSize, array());
+	        $result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
 	        $result['products'] = array();
 	        foreach($products as $product)
 	        {

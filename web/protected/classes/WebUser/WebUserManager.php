@@ -28,7 +28,7 @@ class WebUserManager extends TModule implements IUserManager
 		if($username === null)
 			return new WebUser($this);
 			
-		if(!($userAccount = BaseService::getInstance('UserAccount')->getUserByUsername($username)) instanceof UserAccount)
+		if(!($userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsername($username)) instanceof UserAccount)
 			return null;
 		
 		$user = new WebUser($this);
@@ -48,7 +48,7 @@ class WebUserManager extends TModule implements IUserManager
 	 */
 	public function validateUser($username, $password)
 	{
-	    $userAccount = BaseService::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
+	    $userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
 		if(!$userAccount instanceof UserAccount)
 			return false;
 		Core::setUser($userAccount);

@@ -7,7 +7,7 @@
  * @author     lhe<helin16@gmail.com>
  *
  */
-class ProductAttributeTypeService extends BaseService
+class ProductAttributeTypeService extends BaseServiceAbastract
 {
     /**
      * constructor

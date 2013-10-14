@@ -7,7 +7,7 @@
  * @author     lhe<helin16@gmail.com>
  *
  */
-class CategoryService extends BaseService
+class CategoryService extends BaseServiceAbastract
 {
     /**
      * constructor

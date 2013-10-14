@@ -25,7 +25,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	
 	public function getProductDetails()
 	{
-	    if(!isset($this->Request['id']) || !(($product = BaseService::getInstance('Product')->get($this->Request['id'])) instanceof Product))
+	    if(!isset($this->Request['id']) || !(($product = BaseServiceAbastract::getInstance('Product')->get($this->Request['id'])) instanceof Product))
 	        return 'No Product Found!';
 	    
 	    $html = "<div class='wrapper'>";
