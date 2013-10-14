@@ -31,5 +31,25 @@ class ProductAttributeService extends BaseService
     {
     	return $this->findByCriteria("productId = ? AND typeId = ?", array($product->getId(), $type->getId()), true, $pageNumber, $pageSize, $orderByParams);
     }
+    /**
+     * update the product attribute, when exsits; otherwise create one
+     * 
+     * @param Product              $product   The product
+     * @param ProductAttributeType $type      The product type
+     * @param string               $attribute The attribute content
+     * @return Ambigous <BaseEntity, BaseEntityAbstract>
+     */
+    public function updateAttributeForProduct(Product $product, ProductAttributeType $type, $attribute)
+    {
+        if(count($atts = $this->getAttributeForProductAndType($product, $type, 1, 1)) === 0)
+            $attr = new ProductAttribute(); 
+        else
+            $attr = $atts[0];
+        
+        $attr->setType($type)
+            ->setProduct($product)
+            ->setAttribute($attribute);
+        return $this->save($attr);
+    }
 }
 ?>
