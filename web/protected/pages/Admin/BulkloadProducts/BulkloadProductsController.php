@@ -27,11 +27,12 @@ class BulkloadProductsController extends AdminPageAbstract
 	
 	private function _getInstructionDetails()
 	{
-		return array("Title" => "<b>Mandatory</b> The title of the product", 
-					 "info2" => "The info 2 of the product",
-					 "info3" => "The info 2 of the product",
-					 "info4" => "The info 2 of the product"
-					);
+		$output = array("SUK" => "The <b>SUK of the product</b>", "Title" => "<b style = 'color:red;'>Mandatory</b> The <b>title</b> of the product");
+		$patArray = BaseService::getInstance("ProductAttributeType")->findAll();
+		foreach($patArray as $pat)
+			$output[$pat->getName()] = "The <b>".$pat->getCode()."</b> of the product";
+		
+		return $output;
 	}
 	
 	public function generateTemplate($sender, $param)
