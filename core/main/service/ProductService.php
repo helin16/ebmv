@@ -55,5 +55,109 @@ class ProductService extends BaseService
             return $this->findAll($searchActiveOnly, $pageNo, $pageSize, $orderBy);
         return $this->findByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
     }
+    /**
+     * Create a product/book
+     * 
+     * @param string $title       The title
+     * @param string $author      The author
+     * @param string $publisher   The publisher
+     * @param string $publishDate The publish date
+     * @param int    $words       The words of the book
+     * @param array  $categories  The category of the book
+     * @param string $image       The image path of the book
+     * @param string $description The description of the book
+     * 
+     * @return Product
+     */
+    public function createProduct($title, $author, $publisher, $publishDate, $words, array $categories, $image, $description)
+    {
+        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publish_date, $no_of_words, $categories, $image, $description);
+    }
+    /**
+     * update a product/book
+     * 
+     * @param Product $product     The Product
+     * @param string  $title       The title
+     * @param string  $author      The author
+     * @param string  $publisher   The publisher
+     * @param string  $publishDate The publish date
+     * @param int     $words       The words of the book
+     * @param array   $categories  The category of the book
+     * @param string  $image       The image path of the book
+     * @param string  $description The description of the book
+     * 
+     * @return Product
+     */
+    public function updateProduct(Product $product, $title, $author, $publisher, $publishDate, $words, array $categories, $image, $description)
+    {
+        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, $categories, $image, $description);
+    }
+    /**
+     * editing a product/book
+     * 
+     * @param Product $product     The Product
+     * @param string  $title       The title
+     * @param string  $author      The author
+     * @param string  $publisher   The publisher
+     * @param string  $publishDate The publish date
+     * @param int     $words       The words of the book
+     * @param array   $categories  The category of the book
+     * @param string  $image       The image path of the book
+     * @param string  $description The description of the book
+     * 
+     * @return Product
+     */
+    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description)
+    {
+        $product->setTitle($title);
+        if(trim($product->getId()) === '')
+            $this->save($product);
+        $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'desciption');
+        $types = BaseService::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
+        foreach($typeCodes as $typeCode)
+            BaseService::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
+        return $product;
+    }
+    /**
+     * Update the product attributes from _editProduct() function
+     * 
+     * @param Product              $product   The product
+     * @param ProductAttributeType $type      The product type
+     * @param string               $attribute The attribute content
+     * 
+     * @return Product
+     */
+    private function _updateAttribute(Product &$product, ProductAttributeType $type = null, $attribute = "")
+    {
+        if($type instanceof ProductAttributeType || ($attribute = trim($attribute)) === "")
+            return $product;
+        return BaseService::getInstance('ProductAttribute')->updateAttributeForProduct($product, $type, $attribute);
+    }
+    /**
+     * Adding a product to a category
+     * 
+     * @param Product  $product  The product
+     * @param Category $category The category
+     * 
+     * @return ProductService
+     */
+    public function addCategory(Product $product, Category $category)
+    {
+        EntityDao::getInstance('Product')->saveManyToManyJoin($category, $product);
+        return $this;
+    } 
+    /**
+     * Removing a product from a category
+     * 
+     * @param Product  $product  The product
+     * @param Category $category The category
+     * 
+     * @return ProductService
+     */
+    public function removeCategory(Product $product, Category $category)
+    {
+        EntityDao::getInstance('Product')->deleteManyToManyJoin($category, $product);
+        return $this;
+    } 
 }
 ?>
