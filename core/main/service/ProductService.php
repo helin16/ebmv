@@ -112,10 +112,20 @@ class ProductService extends BaseService
         $product->setTitle($title);
         if(trim($product->getId()) === '')
             $this->save($product);
+        
+        //add the attributes
         $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'desciption');
         $types = BaseService::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
         foreach($typeCodes as $typeCode)
             BaseService::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
+        
+        //add categories
+        foreach($categories as $category)
+        {
+            if(!$category instanceof Category)
+                continue;
+            $this->addCategory($product, $category);
+        }
         return $product;
     }
     /**
