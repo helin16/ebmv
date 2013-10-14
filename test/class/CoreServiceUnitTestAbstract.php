@@ -20,7 +20,7 @@ abstract class CoreServiceUnitTestAbstract extends CoreUnitTestAbstract
     /**
      * BaseService object to test
      *
-     * @var BaseService
+     * @var BaseServiceAbastract
      */
     protected $_serviceObj;
     /**
