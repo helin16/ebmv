@@ -21,6 +21,7 @@ abstract class SystemCoreAbstract
 			$base . '/conf/',
 			$base . '/db/',
 			$base . '/entity/',
+			$base . '/entity/asset/',
 			$base . '/entity/store/',
 			$base . '/entity/system/',
 			$base . '/exception/',
