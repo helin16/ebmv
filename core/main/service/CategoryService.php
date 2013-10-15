@@ -21,15 +21,20 @@ class CategoryService extends BaseServiceAbastract
      * 
      * @param string   $categoryName The name of the category
      * @param Category $parent       The parent category
+     * @param bool     $isNew        Whether we create a new category for this
      * 
      * @return Category
      */
-    public function updateCategory($categoryName, Category $parent = null)
+    public function updateCategory($categoryName, Category $parent = null, &$isNew = false)
     {
         $category = $this->findByCriteria('name = ?', trim($categoryName), true, 1, 1);
         if(count($category) > 0)
+        {
+            $isNew = false;
             return $category;
+        }
         
+        $isNew = true;
         $category = new Category();
         $category->setName($categoryName);
         return $this->moveCategory($category, $parent);
