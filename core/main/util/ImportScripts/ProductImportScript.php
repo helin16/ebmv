@@ -218,10 +218,7 @@ class ProductImportScript
     public function importImage($imageUrl)
     {
         $transStarted = false;
-        try { Dao::beginTransaction();
-        } catch (Exception $ex) {
-            $transStarted = true;
-        }
+        try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
         try
         {
             if(($imageUrl = trim($imageUrl)) === '')
@@ -229,7 +226,8 @@ class ProductImportScript
             $paths = parse_url($imageUrl);
             $paths = explode('/', $paths['path']);
             $tmpFile = $this->downloadFile($imageUrl, $this->_tmpFileFolder . DIRECTORY_SEPARATOR . md5($imageUrl));
-            $assetId = BaseServiceAbastract::getInstance('Asset')->registerAsset(end($paths), file_get_contents($tmpFile));
+            $assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($this->_tmpFileFolder)->registerAsset(end($paths), $tmpFile);
+            
             if($transStarted === false)
                 Dao::commitTransaction();
             return $assetId;
@@ -237,7 +235,7 @@ class ProductImportScript
         catch(Exception $ex)
         {
             if($transStarted === false)
-            Dao::rollbackTransaction();
+                Dao::rollbackTransaction();
             throw $ex;
         }
     }

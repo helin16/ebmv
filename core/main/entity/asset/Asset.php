@@ -21,11 +21,11 @@ class Asset extends BaseEntityAbstract
 	 */
 	private $mimeType;
 	/**
-	 * The data
+	 * The path
 	 * 
 	 * @var string
 	 */
-	private $data;
+	private $path;
 	/**
 	 * getter assetId
 	 *
@@ -90,24 +90,24 @@ class Asset extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for the data
+	 * Getter for the path
 	 * 
 	 * @return string
 	 */
-	public function getData()
+	public function getPath()
 	{
-	    return $this->data;
+	    return $this->path;
 	}
 	/**
-	 * Setter for the data
+	 * Setter for the path
 	 * 
-	 * @param string $data The data
+	 * @param string $path The path
 	 * 
 	 * @return Asset
 	 */
-	public function setData($data)
+	public function setPath($path)
 	{
-	    $this->data = $data;
+	    $this->path = $path;
 	    return $this;
 	}
 	/**
@@ -129,7 +129,7 @@ class Asset extends BaseEntityAbstract
 		DaoMap::setStringType('assetId', 'varchar', 32);
 		DaoMap::setStringType('filename', 'varchar', 100);
 		DaoMap::setStringType('mimeType', 'varchar', 50);
-		DaoMap::setStringType('data', 'MEDIUMTEXT');
+		DaoMap::setStringType('path', 'varchar', 200);
 		parent::__loadDaoMap();
 		
 		DaoMap::createUniqueIndex('assetId');

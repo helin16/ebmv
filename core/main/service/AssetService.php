@@ -9,12 +9,26 @@
  */
 class AssetService extends BaseServiceAbastract
 {
+    private $_assetRootPath = '';
 	/**
 	 * constructor
 	 */
-	public function __construct()
+	public function __construct($rootPath = '')
 	{
 		parent::__construct('Asset');
+		$this->_assetRootPath = ($rootPath === '' ? dirname(__FILE__) : $rootPath);
+	}
+	/**
+	 * Setting the root path
+	 * 
+	 * @param string $rootPath The root path of the assets
+	 * 
+	 * @return AssetService
+	 */
+	public function setRootPath($rootPath)
+	{
+	    $this->_assetRootPath = $rootPath;
+	    return $this;
 	}
 	/**
 	 * Register a file with the Asset server and get its asset id
@@ -24,20 +38,77 @@ class AssetService extends BaseServiceAbastract
 	 * 
 	 * @return string 32 char MD5 hash
 	 */
-	public function registerAsset($filename, $data)
+	public function registerAsset($filename, $dataOrFile)
 	{
-	    if(!is_string($data))
+	    if(!is_string($dataOrFile) && (!is_file($dataOrFile)))
 	        throw new CoreException(__CLASS__ . '::' . __FUNCTION__ . '() will ONLY take string to save!');
 	    
+	    $assetId = md5($filename . '::' . Core::getUser()->getId() .  '::' . microtime());
+	    $path = $this->_getSmartPath($assetId);
+	    $this->_copyToAssetFolder($path, $dataOrFile);
 		$asset = new Asset();
-		$asset->setFilename($filename);
-		$md5 = $filename . '::' . Core::getUser()->getId() .  '::' . microtime();
-		$assetId = md5($md5);
-		$asset->setAssetId($assetId);
-		$asset->setMimeType(self::getMimeType($filename));
-		$asset->setData($data);
+		$asset->setFilename($filename)
+		    ->setAssetId($assetId)
+		    ->setMimeType(self::getMimeType($filename))
+		    ->setPath($path);
+		Dao::$debug = true;
 		$this->save($asset);
-		return $assetId;
+		Dao::$debug = false;
+		return $asset->getAssetId();
+	}
+	/**
+	 * Getting the smart parth
+	 * 
+	 * @param string $assetId The asset id
+	 * 
+	 * @return string
+	 */
+	private function _getSmartPath($assetId)
+	{
+	    $now = new UDate();
+	    $year = $now->format('Y');
+	    if(!is_dir($yearDir = trim($this->_assetRootPath .DIRECTORY_SEPARATOR . $year)))
+	    {
+	        mkdir($yearDir);
+	        chmod($yearDir, 0777);
+	    }
+	    $month = $now->format('m');
+	    if(!is_dir($monthDir = trim($yearDir .DIRECTORY_SEPARATOR . $month)))
+	    {
+	        mkdir($monthDir);
+	        chmod($monthDir, 0777);
+	    }
+	    return $monthDir . DIRECTORY_SEPARATOR . $assetId;	    
+	}
+	/**
+	 * Remove an asset from the content server
+	 *
+	 * @param string $assetId The assetid of the content
+	 *
+	 * @return bool
+	 */
+	public function removeAsset($assetId)
+	{
+	    if(!($content = $this->getAsset($assetId)) instanceof Asset)
+	        return;
+	    // Delete the item from the database
+	    $this->updateByCriteria('set active = ?', 'assetId = ?', array(0, $assetId));
+	    // Remove the file from the NAS server
+	    unlink($content->getPath());
+	}
+	/**
+	 * copy the provided file or data into the new path
+	 * 
+	 * @param string $filename   The new filename
+	 * @param string $dataOrFile the file or data
+	 * 
+	 * @return number|boolean
+	 */
+	private function _copyToAssetFolder($newFile, $dataOrFile)
+	{
+	    if(!is_file($dataOrFile))
+	        return file_put_contents($newFile, $dataOrFile);
+	    return rename($dataOrFile, $newFile);
 	}
 	/**
 	 * Getting the Asset object
@@ -50,18 +121,6 @@ class AssetService extends BaseServiceAbastract
 	{
 		$content = $this->findByCriteria('assetId = ?', array($assetId), false, 1, 1);
 		return count($content) === 0 ? null : $content[0];
-	}
-	/**
-	 * Remove an asset from the content server
-	 *
-	 * @param string $assetId The assetid of the content
-	 * 
-	 * @return bool
-	 */
-	public function removeAsset($assetId)
-	{
-		EntityDao::getInstance($this->_entityName)->deleteByCriteria('assetId = ?', array($assetId));
-		return $this;
 	}
 	/**
 	 * Simple method for detirmining mime type of a file based on file extension
