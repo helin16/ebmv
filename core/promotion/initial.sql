@@ -5,7 +5,7 @@ CREATE TABLE `asset` (
     `assetId` varchar(32) NOT NULL DEFAULT '',
     `filename` varchar(100) NOT NULL DEFAULT '',
     `mimeType` varchar(50) NOT NULL DEFAULT '',
-    `data` MEDIUMTEXT NOT NULL ,
+    `path` varchar(200) NOT NULL DEFAULT '',
     `active` bool NOT NULL DEFAULT 1,
     `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
     `createdById` int(10) unsigned NOT NULL DEFAULT 0,
