@@ -32,8 +32,7 @@ class CategoryService extends BaseServiceAbastract
         
         $category = new Category();
         $category->setName($categoryName);
-        $category->setParent($parent);
-        return $this->save($category);
+        return $this->moveCategory($category, $parent);
     }
     /**
      * move the category to another
@@ -43,7 +42,7 @@ class CategoryService extends BaseServiceAbastract
      * 
      * @return CategoryService
      */
-    public function moveCategory(Category &$category, Category $parent)
+    public function moveCategory(Category &$category, Category $parent = null)
     {
         $transStarted = false;
         try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
@@ -53,16 +52,31 @@ class CategoryService extends BaseServiceAbastract
             if(($pos = trim($category->getPosition())) === '' || $pos === '1')
                 $category = $this->save($category);
             
-            $newPos = $parent->getNextPosition();
-            $this->updateByCriteria('set position = CONCAT(:newPos, substring(position, :posLen)), rootId = :newRootId', 'rootId = :rootId and position like :oldPos', 
-                array(
-            		'newPos' => $newPos, 
-            		'oldPos' => $pos, 
-            		'posLen' => strlen($pos) + 1,
-            		'newRootId' => $parent->getRoot()->getId(),
-            		'rootId' => $category->getRoot()->getId()
-            	)
-            );
+            if($parent instanceof Category)
+            {
+                $newPos = $parent->getNextPosition();
+                $this->updateByCriteria('set position = CONCAT(:newPos, substring(position, :posLen)), rootId = :newRootId', 'rootId = :rootId and position like :oldPos', 
+                    array(
+                		'newPos' => $newPos, 
+                		'oldPos' => $pos, 
+                		'posLen' => strlen($pos) + 1,
+                		'newRootId' => $parent->getRoot()->getId(),
+                		'rootId' => $category->getRoot()->getId()
+                	)
+                );
+            }
+            else 
+            {
+                $this->updateByCriteria('set position = CONCAT(:newPos, substring(position, :posLen)), rootId = :newRootId', 'rootId = :rootId and position like :oldPos',
+                    array(
+                		'newPos' => '1', 
+                		'oldPos' => $pos, 
+                		'posLen' => strlen($pos) + 1,
+                		'newRootId' => $category->getId(),
+                		'rootId' => $category->getRoot()->getId()
+                    )
+                );
+            }
             
             $category = $this->get($category->getId());
             $category->setPosition($parent->getNextPosition());
