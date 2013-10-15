@@ -21,6 +21,12 @@ class Asset extends BaseEntityAbstract
 	 */
 	private $mimeType;
 	/**
+	 * The data
+	 * 
+	 * @var string
+	 */
+	private $data;
+	/**
 	 * getter assetId
 	 *
 	 * @return string
@@ -110,7 +116,7 @@ class Asset extends BaseEntityAbstract
 	 */
 	public function __toString()
 	{
-	    return '/assets/get/' . $assetId;
+	    return '/assets/get/?id=' . $assetId;
 	}
 	/**
 	 * (non-PHPdoc)
