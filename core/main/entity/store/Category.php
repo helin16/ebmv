@@ -70,13 +70,13 @@ class Category extends TreeEntityAbstract
      */
     public function getNextPosition()
     {
-        $pos = $this->getPosition();
+        $parentPos = trim($this->getPosition());
         $sql="select position from " . strtoupper(get_class($this)) . " where active = 1 and position like '" . $parentAccountNumber . str_repeat('_', self::POS_LENGTH_PER_LEVEL). "' order by position asc";
         $result = Dao::getResultsNative($sql);
         if(count($result) === 0)
-            return $parentAccountNumber . str_repeat('0', AccountEntry::ACC_NO_LENGTH);
+            return $parentPos . str_repeat('0', AccountEntry::ACC_NO_LENGTH);
          
-        $expectedAccountNos = array_map(create_function('$a', 'return "' . $parentAccountNumber . '".str_pad($a, ' . self::POS_LENGTH_PER_LEVEL . ', 0, STR_PAD_LEFT);'), range(0, str_repeat('9', self::POS_LENGTH_PER_LEVEL)));
+        $expectedAccountNos = array_map(create_function('$a', 'return "' . $parentPos . '".str_pad($a, ' . self::POS_LENGTH_PER_LEVEL . ', 0, STR_PAD_LEFT);'), range(0, str_repeat('9', self::POS_LENGTH_PER_LEVEL)));
         $usedAccountNos = array_map(create_function('$a', 'return $a["accountNumber"];'), $result);
         $unUsed = array_diff($expectedAccountNos, $usedAccountNos);
         sort($unUsed);
