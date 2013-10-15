@@ -38,6 +38,6 @@ class AssetController extends TService
     {
         if(!isset($params['id']) || ($assetId = trim($params['id'])) === '' || !($asset = BaseServiceAbastract::getInstance('Asset')->getAsset($assetId)) instanceof Asset)
             throw new Exception('Nothing to get!');
-        $this->getResponse()->writeFile($asset->getFileName(), $asset->getData(), $asset->getMimeType(), null, false);
+        $this->getResponse()->writeFile($asset->getFileName(), file_get_contents($asset->getPath()), $asset->getMimeType(), null, false);
     }
 }
