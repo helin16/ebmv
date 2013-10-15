@@ -27,6 +27,7 @@ abstract class SystemCoreAbstract
 			$base . '/exception/',
 			$base . '/service/',
 			$base . '/util/',
+			$base . '/util/ImportScripts/',
 		);
 		foreach ($autoloadPaths as $path)
 		{
