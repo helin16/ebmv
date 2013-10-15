@@ -141,7 +141,9 @@ class ProductService extends BaseServiceAbastract
                 $this->save($product);
             
             //add the attributes
-            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'description');
+            //TODO:: need to resize the thumbnail
+            $image_thumb = $image;
+            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'image_thumb', 'description');
             $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
             foreach($typeCodes as $typeCode)
                 BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
