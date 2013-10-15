@@ -31,7 +31,10 @@ class ProductDetailsController extends FrontEndPageAbstract
 	    $html = "<div class='wrapper'>";
     	    $html .= "<div class='product listitem'>";
         	    $html .= "<span class='inlineblock listcol left'>";
-            	    $html .= "<div class='product_image noimage'></div>";
+        	        if(($thumb = trim($product->getAttribute('image_thumb'))) === '')
+            	        $html .= "<div class='product_image noimage'></div>";
+        	        else
+            	        $html .= "<div class='product_image'><img  src='/asset/get?id=" . $thumb . "' /></div>";
         	    $html .= "</span>";
         	    $html .= "<span class='inlineblock listcol right'>";
             	    $html .= "<div class='product_title'>" . $product->getTitle() . "</div>";

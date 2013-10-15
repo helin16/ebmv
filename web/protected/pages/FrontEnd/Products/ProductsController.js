@@ -181,6 +181,6 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		var tmp = {};
 		if(images === undefined || images === null || images.size() === 0)
 			return new Element('div', {'class': 'product_image noimage'});
-		return new Element('div', {'class': 'product_image', 'src': images[0].attribute});
+		return new Element('img', {'class': 'product_image', 'src': '/asset/get?id=' + images[0].attribute});
 	}
 });
