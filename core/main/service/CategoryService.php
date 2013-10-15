@@ -73,8 +73,8 @@ class CategoryService extends BaseServiceAbastract
         }
         catch(Exception $ex)
         {
-        if($transStarted === false)
-            Dao::rollbackTransaction();
+            if($transStarted === false)
+                Dao::rollbackTransaction();
             throw $ex;
         }
         
