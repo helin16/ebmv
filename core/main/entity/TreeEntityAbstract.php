@@ -115,7 +115,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
         return $parentPos . str_repeat('0', self::POS_LENGTH_PER_LEVEL);
          
         $expectedAccountNos = array_map(create_function('$a', 'return "' . $parentPos . '".str_pad($a, ' . self::POS_LENGTH_PER_LEVEL . ', 0, STR_PAD_LEFT);'), range(0, str_repeat('9', self::POS_LENGTH_PER_LEVEL)));
-        $usedAccountNos = array_map(create_function('$a', 'return $a["accountNumber"];'), $result);
+        $usedAccountNos = array_map(create_function('$a', 'return $a["position"];'), $result);
         $unUsed = array_diff($expectedAccountNos, $usedAccountNos);
         sort($unUsed);
         if (count($unUsed) === 0)
