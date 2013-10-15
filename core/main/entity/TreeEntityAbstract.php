@@ -109,10 +109,10 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
     public function getNextPosition()
     {
         $parentPos = trim($this->getPosition());
-        $sql="select position from " . strtoupper(get_class($this)) . " where active = 1 and position like '" . $parentAccountNumber . str_repeat('_', self::POS_LENGTH_PER_LEVEL). "' order by position asc";
+        $sql="select position from " . strtolower(get_class($this)) . " where active = 1 and position like '" . $parentPos . str_repeat('_', self::POS_LENGTH_PER_LEVEL). "' order by position asc";
         $result = Dao::getResultsNative($sql);
         if(count($result) === 0)
-        return $parentPos . str_repeat('0', AccountEntry::ACC_NO_LENGTH);
+        return $parentPos . str_repeat('0', self::POS_LENGTH_PER_LEVEL);
          
         $expectedAccountNos = array_map(create_function('$a', 'return "' . $parentPos . '".str_pad($a, ' . self::POS_LENGTH_PER_LEVEL . ', 0, STR_PAD_LEFT);'), range(0, str_repeat('9', self::POS_LENGTH_PER_LEVEL)));
         $usedAccountNos = array_map(create_function('$a', 'return $a["accountNumber"];'), $result);
@@ -126,11 +126,12 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
     public function postSave()
     {
         $class = get_class($this);
-        if(!$this->root instanceof $class)
+        if(!$this->getRoot() instanceof $class)
         {
             $fakeParent = new $class();
             $fakeParent->setProxyMode(true);
             $fakeParent->setId($this->getId());
+            $this->setRoot($fakeParent);
             EntityDao::getInstance($class)->save($this);
         }
     }

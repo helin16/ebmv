@@ -19,7 +19,7 @@ class Product extends BaseEntityAbstract
      * 
      * @var string
      */
-    private $suk;
+    private $suk = '';
 	/**
 	 * The categories that the products are belongin to 
 	 * 
@@ -148,6 +148,11 @@ class Product extends BaseEntityAbstract
             $array['attributes'][$typeId][] = $attr->getJson();
 	    }
 	    return $array;
+	}
+	public function preSave()
+	{
+	    if(trim($this->getSuk()) === '')
+	        $this->setSuk(md5($this->getTitle()));
 	}
 	/**
 	 * (non-PHPdoc)

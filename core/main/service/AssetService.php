@@ -31,7 +31,7 @@ class AssetService extends BaseServiceAbastract
 	    
 		$asset = new Asset();
 		$asset->setFilename($filename);
-		$md5 = $type . '::' . $filename . '::' . Core::getUser()->getId() .  '::' . microtime();
+		$md5 = $filename . '::' . Core::getUser()->getId() .  '::' . microtime();
 		$assetId = md5($md5);
 		$asset->setAssetId($assetId);
 		$asset->setMimeType(self::getMimeType($filename));

@@ -28,7 +28,7 @@ class BulkloadProductsController extends AdminPageAbstract
 	private function _getInstructionDetails()
 	{
 		$output = array("SUK" => "The <b>SUK of the product</b>", "Title" => "<b style = 'color:red;'>Mandatory</b> The <b>title</b> of the product");
-		$patArray = BaseService::getInstance("ProductAttributeType")->findAll();
+		$patArray = BaseServiceAbastract::getInstance("ProductAttributeType")->findAll();
 		foreach($patArray as $pat)
 			$output[$pat->getName()] = "The <b>".$pat->getCode()."</b> of the product";
 		
@@ -47,8 +47,6 @@ class BulkloadProductsController extends AdminPageAbstract
 		{
 			if(!file_exists($fullPath))
 				file_put_contents($fullPath, $content);
-				
-//			chmod($fullPath, 0777);
 			$return = array('fileName' => $this->getApplication()->getAssetManager()->getBaseUrl() . '/' . $fileName);
 		}
 		catch(Exception $ex)
@@ -58,7 +56,83 @@ class BulkloadProductsController extends AdminPageAbstract
 		
 		$param->ResponseData = StringUtilsAbstract::getJson($return, $errors);
 	}
-	
+	/**
+	 * Event handler for download the file
+	 * 
+	 * @param TCallback          $sender The trigger
+	 * @param TCallbackParameter $param  The params
+	 */
+	public function downloadUrl($sender, $param)
+	{
+		$errors = $return = array();
+		try
+		{
+		    $url = trim(isset($param->CallbackParameter->url) ? $param->CallbackParameter->url : '');
+		    $script = new ProductImportScript($this->getApplication()->getAssetManager()->getBasePath());
+		    $filePath = $script->getDataFromUrl($url, true)->getTmpFile();
+		    if(strlen($content = file_get_contents($filePath)) === 0)
+		        throw new Exception('Empty Url found!');
+		    $xml = simplexml_load_file($filePath);
+		    
+		    $return['totalCount'] = count($xml->children());
+		    $return['filePath'] = $filePath;
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($return, $errors);
+	}
+	/**
+	 * Event handler for importing product
+	 * 
+	 * @param TCallback          $sender The trigger
+	 * @param TCallbackParameter $param  The params
+	 */
+	public function importProduct($sender, $param)
+	{
+		$errors = $return = array();
+		try
+		{
+		    $index = trim(isset($param->CallbackParameter->index) ? $param->CallbackParameter->index : '');
+		    $filePath = trim(isset($param->CallbackParameter->filePath) ? $param->CallbackParameter->filePath : '');
+		    
+		    $script = new ProductImportScript($this->getApplication()->getAssetManager()->getBasePath());
+		    $products = $script->parseXmltoProduct($filePath, $index);
+		    if(count($products) === 0)
+		        throw new Exception('Nothing imported');
+		    $return['product'] = $products[0]->getJson();
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($return, $errors);
+	}
+	/**
+	 * Event handler for importing product
+	 * 
+	 * @param TCallback          $sender The trigger
+	 * @param TCallbackParameter $param  The params
+	 */
+	public function deleteImportFile($sender, $param)
+	{
+		$errors = $return = array();
+		try
+		{
+		    $filePath = trim(isset($param->CallbackParameter->filePath) ? $param->CallbackParameter->filePath : '');
+		    $script = new ProductImportScript($this->getApplication()->getAssetManager()->getBasePath());
+		    $products = $script->removeTmpFile($filePath);
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($return, $errors);
+	}
+	/**
+	 * Show the insturctions
+	 */
 	public function showInstruction()
 	{
 		$instructions = "<div>";

@@ -17,6 +17,26 @@ class ProductService extends BaseServiceAbastract
         parent::__construct("Product");
     }
     /**
+     * Searching any product which has that attributetype code and same attribute content
+     * 
+     * @param string $code             The code of the attribute type
+     * @param string $attribute        The content of the attribute
+     * @param bool   $searchActiveOnly Whether we return the inactive products
+     * @param int    $pageNo           The page number
+     * @param int    $pageSize         The page size
+     * @param array  $orderBy          The order by clause
+     * 
+     * @return array
+     */
+    public function findProductWithAttrCode($code, $attribute, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    {
+        $query = EntityDao::getInstance('Product')->getQuery();
+        $query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
+        $where = array('pt.code = ? and pa.attribute = ?');
+        $params = array($code, $attribute);
+        return $this->findByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+    }
+    /**
      * Searching the products in category
      * 
      * @param string $searchText       The searching text
@@ -60,6 +80,7 @@ class ProductService extends BaseServiceAbastract
      * 
      * @param string $title       The title
      * @param string $author      The author
+     * @param string $isbn        The isbn
      * @param string $publisher   The publisher
      * @param string $publishDate The publish date
      * @param int    $words       The words of the book
@@ -69,9 +90,9 @@ class ProductService extends BaseServiceAbastract
      * 
      * @return Product
      */
-    public function createProduct($title, $author, $publisher, $publishDate, $words, array $categories, $image, $description)
+    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description)
     {
-        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publish_date, $no_of_words, $categories, $image, $description);
+        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description);
     }
     /**
      * update a product/book
@@ -79,6 +100,7 @@ class ProductService extends BaseServiceAbastract
      * @param Product $product     The Product
      * @param string  $title       The title
      * @param string  $author      The author
+     * @param string  $isbn        The isbn
      * @param string  $publisher   The publisher
      * @param string  $publishDate The publish date
      * @param int     $words       The words of the book
@@ -88,9 +110,9 @@ class ProductService extends BaseServiceAbastract
      * 
      * @return Product
      */
-    public function updateProduct(Product $product, $title, $author, $publisher, $publishDate, $words, array $categories, $image, $description)
+    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description)
     {
-        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, $categories, $image, $description);
+        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description);
     }
     /**
      * editing a product/book
@@ -98,6 +120,7 @@ class ProductService extends BaseServiceAbastract
      * @param Product $product     The Product
      * @param string  $title       The title
      * @param string  $author      The author
+     * @param string  $isbn        The isbn
      * @param string  $publisher   The publisher
      * @param string  $publishDate The publish date
      * @param int     $words       The words of the book
@@ -109,24 +132,39 @@ class ProductService extends BaseServiceAbastract
      */
     private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description)
     {
-        $product->setTitle($title);
-        if(trim($product->getId()) === '')
-            $this->save($product);
-        
-        //add the attributes
-        $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'desciption');
-        $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
-        foreach($typeCodes as $typeCode)
-            BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
-        
-        //add categories
-        foreach($categories as $category)
+        $transStarted = false;
+        try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
+        try
         {
-            if(!$category instanceof Category)
-                continue;
-            $this->addCategory($product, $category);
+            $product->setTitle($title);
+            if(trim($product->getId()) === '')
+                $this->save($product);
+            
+            //add the attributes
+            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'description');
+            $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
+            foreach($typeCodes as $typeCode)
+                BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
+            
+            //add categories
+            foreach($categories as $category)
+            {
+                if(!$category instanceof Category)
+                    continue;
+                $this->addCategory($product, $category);
+            }
+            
+            $this->save($product);
+            if($transStarted === false)
+                Dao::commitTransaction();
+            return $product;
         }
-        return $product;
+        catch(Exception $ex)
+        {
+            if($transStarted === false)
+            Dao::rollbackTransaction();
+            throw $ex;
+        }
     }
     /**
      * Update the product attributes from _editProduct() function

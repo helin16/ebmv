@@ -239,9 +239,9 @@ abstract class Dao
     public static function save(BaseEntityAbstract $entity)
     {
         $qry = new DaoQuery(get_class($entity));
+        $entity->preSave();
         $params = self::_getParams($entity);
         $id = $entity->getId();
-        $entity->preSave();
         if(trim($id) === '')
         {
             $now = new UDate();

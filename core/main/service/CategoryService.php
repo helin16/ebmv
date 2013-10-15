@@ -27,11 +27,11 @@ class CategoryService extends BaseServiceAbastract
      */
     public function updateCategory($categoryName, Category $parent = null, &$isNew = false)
     {
-        $category = $this->findByCriteria('name = ?', trim($categoryName), true, 1, 1);
+        $category = $this->findByCriteria('name = ?', array($categoryName), true, 1, 1);
         if(count($category) > 0)
         {
             $isNew = false;
-            return $category;
+            return $category[0];
         }
         
         $isNew = true;
@@ -60,7 +60,7 @@ class CategoryService extends BaseServiceAbastract
             if($parent instanceof Category)
             {
                 $newPos = $parent->getNextPosition();
-                $this->updateByCriteria('set position = CONCAT(:newPos, substring(position, :posLen)), rootId = :newRootId', 'rootId = :rootId and position like :oldPos', 
+                $this->updateByCriteria('position = CONCAT(:newPos, substring(position, :posLen)), rootId = :newRootId', 'rootId = :rootId and position like :oldPos', 
                     array(
                 		'newPos' => $newPos, 
                 		'oldPos' => $pos, 
@@ -72,9 +72,10 @@ class CategoryService extends BaseServiceAbastract
             }
             else 
             {
-                $this->updateByCriteria('set position = CONCAT(:newPos, substring(position, :posLen)), rootId = :newRootId', 'rootId = :rootId and position like :oldPos',
+                $newPos = '1';
+                $this->updateByCriteria('position = CONCAT(:newPos, substring(position, :posLen)), rootId = :newRootId', 'rootId = :rootId and position like :oldPos',
                     array(
-                		'newPos' => '1', 
+                		'newPos' => $newPos, 
                 		'oldPos' => $pos, 
                 		'posLen' => strlen($pos) + 1,
                 		'newRootId' => $category->getId(),
@@ -84,10 +85,12 @@ class CategoryService extends BaseServiceAbastract
             }
             
             $category = $this->get($category->getId());
-            $category->setPosition($parent->getNextPosition());
+            $category->setPosition($newPos);
             $category->setParent($parent);
-            $category->setRoot($parent->getRoot());
+            $category->setRoot($parent instanceof Category ? $parent->getRoot() : $category);
             $category = $this->save($category);
+            if($transStarted === false)
+                Dao::commitTransaction();
             return $category;
         }
         catch(Exception $ex)
