@@ -7,7 +7,7 @@ insert into `person`(`firstName`, `lastName`, `active`, `created`, `createdById`
 
 insert into `useraccount`(`id`, `username`, `password`, `personId`, `active`, `created`, `createdById`, `updated`, `updatedById`) values (10, md5('guestusername'), 'disabled', '10', 1, NOW(), 100, NOW(), 100);
 ALTER TABLE `useraccount` AUTO_INCREMENT = 100;
-insert into `useraccount`(`username`, `password`, `personId`, `active`, `created`, `createdById`, `updated`, `updatedById`) values ('admin', md5('admin'), '100', 1, NOW(), 100, NOW(), 100);
+insert into `useraccount`(`username`, `password`, `personId`, `active`, `created`, `createdById`, `updated`, `updatedById`) values ('admin', sha1('admin'), '100', 1, NOW(), 100, NOW(), 100);
 
 insert into `role_useraccount` (`roleId`, `userAccountId`, `created`, `createdById`) values (10, 100, NOW(), 100);
 
