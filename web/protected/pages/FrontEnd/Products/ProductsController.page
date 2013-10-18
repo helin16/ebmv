@@ -5,7 +5,7 @@
     <div class="pageWrapper">
         <span class="left sidebar inlineblock">
             <div ID="menu-accordion" class="sidebarmodule">
-                <h3 class="sidebarmoduletitle">Categories</h3>
+                <h3 class="sidebarmoduletitle">Subjects</h3>
                 <div id="catelist" class="sidebarmodulecontent">
                     <%= $this->getCategories() %>
                     <br style="clear: left" />
@@ -14,10 +14,12 @@
         </span>
         <span class="maincontent inlineblock">
             <div class="controlbtns">
-                <span class="inlineblock" style="width: 50%;">
-                    <input id="searchtxt" type="textbox" class="padding5 fullwith rdcrnr lightBrdr" placeholder="Search Your Books Here.." onkeydown="return pageJs.keydown(event, function(){ $('searchbtn').click();})"/>
+                <span class="inlineblock" style="width: 66%;">
+                    <input id="searchtxt" type="textbox" class="padding5 fullwith rdcrnr lightBrdr" 
+                    	   placeholder="Search Your Books (Magazines,Newspapers,Books, Magazines or Newspapers) by title, author or ISBN" 
+                    	   onkeydown="return pageJs.keydown(event, function(){ $('searchbtn').click();})"/>
                 </span>
-                <span class="inlineblock" style="width: 20%">
+                <span class="inlineblock" style="width: 10%">
                     <input id="searchbtn" type="button" class="button rdcrnr" value="Search" OnClick="window.location='/products/search/' + $F('searchtxt');"/>
                 </span>
                 <span class="inlineblock productlistviewbtns">
