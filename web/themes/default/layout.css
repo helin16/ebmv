@@ -11,80 +11,72 @@ body {
 .inlineblock{
     display: inline-block;
 }
-
-.block{
-	display:block;
-}	
-
 .hidden {
     display: none;
 }
 .padding5 {
-	padding: 5px;
-}
-.padding4 {
-	padding: 4px;
+    padding: 5px;
 }
 .fullwith {
-	width:100%;
+    width:100%;
 }
 .rdcrnr {
-	border-radius: 5px;
+    border-radius: 5px;
 }
 .cursorpntr {
-	cursor: pointer;
+    cursor: pointer;
 }
 .lightBrdr {
-	border: 1px #cccccc solid;
+    border: 1px #cccccc solid;
 }
 
 .rdcrnrfirst {
-	border-radius:5px 0 0 5px;
+    border-radius:5px 0 0 5px;
 }
 .rdcrnrlast {
-	border-radius: 0 5px 5px 0;
+    border-radius: 0 5px 5px 0;
 }
 .button {
-	background: #1C5A80;
-	color: white;
-	padding: 6px;
-	margin: 0px;
-	border: none;
-	box-shadow: 0px 0px 2px 0px #000000;
-	cursor: pointer;
+    background: #1C5A80;
+    color: white;
+    padding: 6px;
+    margin: 0px;
+    border: none;
+    box-shadow: 0px 0px 2px 0px #000000;
+    cursor: pointer;
 }
 .button:hover {
-	background-color: #ADD8E6;
+    background-color: #ADD8E6;
     color: #000080;
     box-shadow: none;
 }
 
 .upperTxt {
-	text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 .capTxt {
-	text-transform: capitalize;
+    text-transform: capitalize;
 }
 
 .errmsg {
-	color: red;
-	text-shadow: purple;
+    color: red;
+    text-shadow: purple;
 }
 
 .smalltxt {
-	font-size: 10px;
+    font-size: 10px;
 }
 
 ul.btn-group {
-	list-style: none;
-	margin: 0px;
+    list-style: none;
+    margin: 0px;
     overflow: hidden;
     padding: 0;
 }
 
 ul.btn-group li {
-	float: left;
+    float: left;
 }
 
 a {
@@ -161,20 +153,24 @@ a {
 }
 
 .menu ul {
-	list-style: none;
+    list-style: none;
 }
 
 .menu ul li {
-	float: left;
+    float: left;
 }
 
 .menu ul li a {
-	display: block;
-	padding: 2px 6px;
+    display: block;
+    padding: 2px 6px;
 }
 
 .menu ul li a:hover {
-	background: #999999;
+    background: #999999;
+}
+
+.controlbtns {
+    vertical-align: bottom;
 }
 
 .content .contentwrapper{
@@ -201,28 +197,28 @@ a {
 }
 
 .pageWrapper {
-	width: 100%;
+    width: 100%;
 }
 .pageWrapper .left.sidebar {
-	width: 20%;
-	padding: 10px;
-	vertical-align: top;
+    width: 20%;
+    padding: 10px;
+    vertical-align: top;
 }
 .pageWrapper .maincontent {
-	width: 74%;
-	padding: 10px;
-	vertical-align: top;
+    width: 74%;
+    padding: 10px;
+    vertical-align: top;
 } 
 
 
 .sidebarmodule {
-	display: block;
+    display: block;
 }
 .sidebarmodule .sidebarmoduletitle {
-	margin: 0px;
-	padding: 4px 2px;
-	background: #999999;
+    margin: 0px;
+    padding: 4px 2px;
+    background: #999999;
 }
 .sidebarmodule .sidebarmodulecontent {
-	padding: 5px;
+    padding: 5px;
 }

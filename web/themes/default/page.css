@@ -1,63 +1,60 @@
-.controlbtns {
-	vertical-align: bottom;
-}
 
 .productlistviewbtns {
-	text-align: right;
-	vertical-align: bottom;
+    text-align: right;
+    vertical-align: bottom;
 }
 
 .productlistviewbtns .button {
-	background: none repeat scroll 0 0 #DDDDDD;
+    background: none repeat scroll 0 0 #DDDDDD;
     border: 1px solid #BBBBBB;
     box-shadow: 0 1px 0 #FFFFFF inset;
     color:inherit;
 }
 .productlistviewbtns .button.active,
 .productlistviewbtns .button:hover {
-	background: none repeat scroll 0 0 #eeeeee;
+    background: none repeat scroll 0 0 #eeeeee;
 }
 
 .productlistviewbtns .button .icon{
-	display: inline-block;
-	height: 26px;
-	width: 34px;
-	vertical-align: middle;
-	background: transparent url('images/product_show_sprite.png') no-repeat left center;
+    display: inline-block;
+    height: 26px;
+    width: 34px;
+    vertical-align: middle;
+    background: transparent url('images/product_show_sprite.png') no-repeat left center;
 }
 .productlistviewbtns .button.list .icon{
-	background-position: -68px -3px;
+    background-position: -68px -3px;
 }
 .productlistviewbtns .button .title{
-	display: inline-block;
-	float: right;
-	margin: 3px 0 0 0;
+    display: inline-block;
+    float: right;
+    margin: 3px 0 0 0;
 }
 
 .productlist {
-	padding: 10px;
+    padding: 10px;
 }
 .productlist .loading {
-	display: block;
-	width: 50px;
-	margin: 30px auto;
-	text-align: center;
+    display: block;
+    width: 50px;
+    margin: 30px auto;
+    text-align: center;
 }
 .product .product_image {
-	display: inline-block;
-	width: 160px;
-	height: 200px;
-	border: 1px #eeeeee solid;
+    display: inline-block;
+    width: 160px;
+    height: 200px;
+    border: 1px #eeeeee solid;
 }
 .product .product_image.noimage {
     background: transparent url('images/no_image_found.jpg') no-repeat center center;
 }
 
 .product.listitem {
-	padding: 10px 0;
+    padding: 10px 0;
 }
 .product .listcol {
-	vertical-align: top;
+    vertical-align: top;
 }
 .product .listcol.left {
     width: 27%;
@@ -66,83 +63,95 @@
     width: 72%;
 }
 .product .listcol label{
-	font-size: 10px;
-	font-weight: bold;
-	padding: 4px 0 0 5px;
-	color: #aaaaaa;
-	font-style: italic;
-	display:block;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 0 0 5px;
+    color: #aaaaaa;
+    font-style: italic;
+    display:block;
 }
 .product .listcol div .inlineblock{
-	width: 49%;
+    width: 49%;
 }
 .product .listcol .product_title {
-	font-size: 20px;
-	font-weight: bold;
+    font-size: 20px;
+    font-weight: bold;
 }
 .product .listcol .product_description {
-	padding: 8px 0 0 0;
-	font-size: 12px;
+    padding: 8px 0 0 0;
+    font-size: 12px;
 }
 
 
 .pagination_wrapper {
-	text-align: right;
+    text-align: right;
 }
 
 .pagination_wrapper .pagin_btn {
-	display: inline-block;
-	padding: 4px;
+    display: inline-block;
+    padding: 4px;
 }
 
 .pagination_wrapper .pagin_btn.selected {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .pagination_wrapper .pagin_btn:hover {
-	background: #1C5A80;
-	color: white;
+    background: #1C5A80;
+    color: white;
 }
 
 .product.griditem {
-	padding: 5px;
-	text-align: center;
+    padding: 5px;
+    text-align: center;
 }
 
 .product.griditem .product_image {
-	border: none;
+    border: none;
 }
 
 .product.griditem:hover {
-	border-radius: 5px;
-	box-shadow: 0px 0px 5px 0px #1C5A80;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px #1C5A80;
 }
 .product.griditem .product_title {
-	font-weight: bold;
-	padding: 4px 0 ;
+    font-weight: bold;
+    padding: 4px 0 ;
 }
 
 .LoginPanel {
-	margin: 20px auto;
-	width: 400px;
+    margin: 20px auto;
+    width: 400px;
 }
 
 .LoginPanel .row {
-	margin: 10px 0;
+    margin: 10px 0;
 }
 
 .LoginPanel .row .title {
-	width: 100px;
-	vertical-align: top;
-	padding: 5px 0 0 0;
+    width: 100px;
+    vertical-align: top;
+    padding: 5px 0 0 0;
 }
 .LoginPanel .row .content {
     width: 290px;
-	vertical-align: top;
+    vertical-align: top;
 }
 
-.asLink {
-	font-weight:bold;
-	font-size:11px;
-	color:red;	
+
+.homepageWrapper .sectionWrapper{
+    min-height: 300px;
+    border: 1px #cccccc solid;
+    border-radius: 4px;
+    margin: 0 0 30px 0;
+}
+
+.homepageWrapper .sectionWrapper .title {
+    font-weight: bold;
+    background: #cccccc;
+    padding: 5px;
+}
+
+.homepageWrapper .sectionWrapper .list {
+    padding: 5px;
 }
