@@ -11,11 +11,19 @@ body {
 .inlineblock{
     display: inline-block;
 }
+
+.block{
+	display:block;
+}	
+
 .hidden {
     display: none;
 }
 .padding5 {
 	padding: 5px;
+}
+.padding4 {
+	padding: 4px;
 }
 .fullwith {
 	width:100%;
