@@ -29,6 +29,7 @@
                     </ul>
                 </span>
             </div>
+            <com:Application.controls.AdvancedSearch.AdvanceSearchControl />
             <div id="productlist" class="productlist">
             </div>
         </span>
