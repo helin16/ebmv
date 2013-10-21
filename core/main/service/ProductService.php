@@ -48,20 +48,43 @@ class ProductService extends BaseServiceAbastract
      * 
      * @return array
      */
-    public function findProductsInCategory($searchText = '', $categorIds = array(), $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    public function findProductsInCategory($searchText = '', $categorIds = array(), $searchOption = '', $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
         $searchMode = false;
-        $where = array();
-        $params = array();
+        $where = $params = array();
+        $searchOption = trim($searchOption);
+        
         $query = EntityDao::getInstance('Product')->getQuery();
         if(($searchText = trim($searchText)) !== '')
         {
-            $query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
-            $where[] = '(pt.searchable = 1 and pa.attribute like ?) or pro.title like ?';
+        	$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
+            if($searchOption === '')
+            {
+            	$criteria = '(pt.searchable = ?';
+            	$params[] = 1;
+            }	
+            else
+            {
+            	$criteria = '(pt.code = ?';
+            	$params[] = $searchOption;
+            }		
+        	$where[] = $criteria.' and pa.attribute like ?) or pro.title like ?';
             $params[] = '%' . $searchText . '%';
             $params[] = '%' . $searchText . '%';
             $searchMode = true;
-        } 
+        }
+        /*
+        else
+        {
+        	if($searchOption !== '')
+        	{
+        		 $query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
+        		 $where[] = "(pt.name = ? And pa.attribute != '')";
+        		 $params[] = $searchOption;
+        		 $searchMode = true;
+        	}
+        }
+		*/
         
         if(count($categorIds = array_filter($categorIds)) > 0)
         {
