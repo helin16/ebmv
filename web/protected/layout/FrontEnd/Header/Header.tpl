@@ -7,10 +7,9 @@
         <a href="/" >Account</a>
     </span>
     <span class="item help inlineblock">
-        <a href="/" >Help</a>
+        <a href="/help.html" >Help</a>
     </span>
-    <!-- 
     <span class="item search inlineblock">
         Search
-    </span>  -->
+    </span>
 </div>
