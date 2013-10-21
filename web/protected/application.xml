@@ -45,7 +45,7 @@
 
 	<!-- configuration for available services -->
 	<services>
-		<service id="page" class="TPageService" DefaultPage="FrontEnd.Products.ProductsController">
+		<service id="page" class="TPageService" DefaultPage="FrontEnd.Home.HomeController">
 		    <pages MasterClass="Application.layout.FrontEnd.PageLayout" Theme="default" />
 			<modules>
 				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="Admin.Login.LoginController" AuthExpire="3600" />

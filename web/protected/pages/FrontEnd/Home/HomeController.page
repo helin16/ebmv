@@ -1,2 +1,16 @@
 <com:TContent ID="MainContent">
+    <div class="homepageWrapper">
+        <div class="sectionWrapper">
+            <div class="title">New Releases</div>
+            <div class="list">
+                fdsfsd
+            </div>
+        </div>
+        <div class="sectionWrapper">
+            <div class="title">Popular Selections</div>
+            <div class="list">
+                fdsfsd
+            </div>
+        </div>
+    </div>
 </com:TContent>
