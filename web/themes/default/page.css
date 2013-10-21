@@ -140,3 +140,9 @@
     width: 290px;
 	vertical-align: top;
 }
+
+.asLink {
+	font-weight:bold;
+	font-size:11px;
+	color:red;	
+}
