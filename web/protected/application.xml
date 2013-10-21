@@ -16,6 +16,9 @@
 		<module id="security" class="TSecurityManager" EncryptionKey="BMVLibSysCool" ValidationKey="bfb9e1b24ba6308e39495a4a78f35d70" />
 		<module id="request" class="THttpRequest" UrlManager="friendly-url" />
 		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
+		
+			<!-- static page -->
+			<url ServiceParameter="FrontEnd.CMS.HelpController" pattern="help.html"/>
 		  
 			<!-- product listing page -->
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/category/{cateid}" parameters.cateid="\d+" />
@@ -24,6 +27,7 @@
 			
 			<!-- product details page -->
 			<url ServiceParameter="FrontEnd.ProductDetails.ProductDetailsController" pattern="product/{id}/" parameters.id="\d+" />
+			
 			
 			<!-- admin pages -->
 			<url ServiceParameter="Admin.Home.HomeController" pattern="admin/" />

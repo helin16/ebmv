@@ -1,0 +1,107 @@
+<com:TContent ID="MainContent">
+<div class="col-main">
+	<div class="padding-s">
+		<div class="std">
+			<div class="page-head">
+				<h2>About Magento Demo Store</h2>
+			</div>
+			<div class="about-padd">
+				<div class="wrapper">
+					<div class="about-col-1">
+						<h3>et dolore magna aliqua</h3>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+						<span></span>
+					</div>
+					<div class="about-col-2">
+						<h3>Ut enim ad minim ven</h3>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+						<span></span>
+					</div>
+					<div class="about-col-3">
+						<h3>quis nostrud exercitation</h3>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+					</div>
+				</div>
+			</div>
+			<div class="about-padd-2">
+				<div class="wrapper">
+					<div class="about-col-4">
+						<h4>d tempor incididunt ut</h4>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+						<ul>
+							<li>Lorem ipsum dolor sit amet</li>
+							<li>Conse ctetur adipisicing elit sed</li>
+							<li>Do eiusmod tempor</li>
+							<li>Incididunt ut labore et dolore</li>
+						</ul>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+							ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
+							aute irure dolor in reprehenderit in voluptate velit esse cillum
+							dolore</p>
+					</div>
+					<div class="about-col-5">
+						<h4>labore et dolore magna aliqua</h4>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+						<ul>
+							<li>Lorem ipsum dolor sit amet</li>
+							<li>Conse ctetur adipisicing elit sed</li>
+							<li>Do eiusmod tempor</li>
+							<li>Incididunt ut labore et dolore</li>
+						</ul>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+							ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
+							aute irure dolor in reprehenderit in voluptate velit esse cillum
+							dolore</p>
+					</div>
+					<div class="about-col-6">
+						<h4>Ut enim ad minim ven</h4>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+						<ul>
+							<li>Lorem ipsum dolor sit amet</li>
+							<li>Conse ctetur adipisicing elit sed</li>
+							<li>Do eiusmod tempor</li>
+							<li>Incididunt ut labore et dolore</li>
+						</ul>
+						<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+							ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
+							aute irure dolor in reprehenderit in voluptate velit esse cillum
+							dolore</p>
+					</div>
+				</div>
+			</div>
+			<div class="about-col-7">
+				<h4>tempor incididunt ut labore et dolore magna aliqua. Ut enim
+					ad minim ven</h4>
+				<p>Lorem ipsum dolor sit amet conse ctetur adipisicing elit, sed
+					do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+					enim ad minim veniam, quis nostrud exercitation ullamco laboris
+					nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+					reprehenderit in voluptate velit esse cillum dolore ipsum dolor sit
+					amet conse ctetur adipisicing elit, sed do eiusmod tempor
+					incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+					veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+					ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+					voluptate velit esse cillum dolore</p>
+			</div>
+		</div>
+	</div>
+</div>
+</com:TContent>
