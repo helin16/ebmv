@@ -33,6 +33,18 @@ class Product extends BaseEntityAbstract
 	 */
 	protected $attributes;
 	/**
+	 * The language of the book
+	 * 
+	 * @var Language
+	 */
+	protected $language;
+	/**
+	 * The ProductType of the book
+	 * 
+	 * @var ProductType
+	 */
+	protected $productType;
+	/**
 	 * Getter for the title
 	 * 
 	 * @return string
@@ -133,6 +145,50 @@ class Product extends BaseEntityAbstract
 	    return $result['attr'];
 	}
 	/**
+	 * Getter for the language
+	 * 
+	 * @return Language
+	 */
+	public function getLanguage()
+	{
+	    $this->loadManyToOne('language');
+	    return $this->language;
+	}
+	/**
+	 * Setter for the language
+	 * 
+	 * @param Language $language The language of the product
+	 * 
+	 * @return Product
+	 */
+	public function setLanguage(Language $language)
+	{
+	    $this->language = $language;
+	    return $this;
+	}
+	/**
+	 * Getter for the ProductType
+	 * 
+	 * @return ProductType
+	 */
+	public function getProductType()
+	{
+	    $this->loadManyToOne('productType');
+	    return $this->productType;
+	}
+	/**
+	 * Setter for the productType
+	 * 
+	 * @param ProductType $productType The productType
+	 * 
+	 * @return Product
+	 */
+	public function setProductType(ProductType $productType)
+	{
+	    $this->productType = $productType;
+	    return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
@@ -165,6 +221,8 @@ class Product extends BaseEntityAbstract
 		DaoMap::setStringType('suk','varchar', 50);
 		DaoMap::setManyToMany("categorys", "Category", DaoMap::LEFT_SIDE, "pcat");
 		DaoMap::setOneToMany("attributes", "ProductAttribute");
+		DaoMap::setManyToOne("language", "Language");
+		DaoMap::setManyToOne("productType", "ProductType");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');

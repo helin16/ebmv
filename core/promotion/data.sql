@@ -20,3 +20,7 @@ insert into `productattributetype` (`name`, `code`, `searchable`, `active`, `cre
 ('Image', 'image', 1, 1, NOW(), 100, NOW(), 100),
 ('ImageThumbnail', 'image_thumb', 1, 1, NOW(), 100, NOW(), 100),
 ('Description', 'description', 1, 1, NOW(), 100, NOW(), 100);
+
+insert into `language` (`name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
+('简体',  1, NOW(), 100, NOW(), 100),
+('繁體',  1, NOW(), 100, NOW(), 100);

@@ -16,6 +16,42 @@ CREATE TABLE `asset` (
     ,INDEX (`updatedById`)
     ,UNIQUE INDEX (`assetId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `productstatics`;
+CREATE TABLE `productstatics` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `productId` int(10) unsigned NOT NULL DEFAULT 0,
+    `attribute` varchar(500) NOT NULL DEFAULT '',
+    `typeId` int(10) unsigned NOT NULL DEFAULT 0,
+    `active` bool NOT NULL DEFAULT 1,
+    `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+    `createdById` int(10) unsigned NOT NULL DEFAULT 0,
+    `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+    ,INDEX (`productId`)
+    ,INDEX (`typeId`)
+    ,INDEX (`createdById`)
+    ,INDEX (`updatedById`)
+    ,INDEX (`attribute`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `productstaticstype`;
+CREATE TABLE `productstaticstype` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(50) NOT NULL DEFAULT '',
+    `code` varchar(50) NOT NULL DEFAULT '',
+    `searchable` bool NOT NULL DEFAULT 0,
+    `active` bool NOT NULL DEFAULT 1,
+    `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+    `createdById` int(10) unsigned NOT NULL DEFAULT 0,
+    `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+    ,INDEX (`createdById`)
+    ,INDEX (`updatedById`)
+    ,INDEX (`name`)
+    ,INDEX (`searchable`)
+    ,UNIQUE INDEX (`code`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -35,17 +71,35 @@ CREATE TABLE `category` (
     ,INDEX (`updatedById`)
     ,INDEX (`name`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `product`;
-CREATE TABLE `product` (
+DROP TABLE IF EXISTS `language`;
+CREATE TABLE `language` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `title` varchar(200) NOT NULL DEFAULT '',
-    `suk` varchar(50) NOT NULL DEFAULT '',
+    `name` varchar(200) NOT NULL DEFAULT '',
     `active` bool NOT NULL DEFAULT 1,
     `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
     `createdById` int(10) unsigned NOT NULL DEFAULT 0,
     `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `updatedById` int(10) unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
+    ,INDEX (`createdById`)
+    ,INDEX (`updatedById`)
+    ,INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `product`;
+CREATE TABLE `product` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `title` varchar(200) NOT NULL DEFAULT '',
+    `suk` varchar(50) NOT NULL DEFAULT '',
+    `languageId` int(10) unsigned NOT NULL DEFAULT 0,
+    `productTypeId` int(10) unsigned NOT NULL DEFAULT 0,
+    `active` bool NOT NULL DEFAULT 1,
+    `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+    `createdById` int(10) unsigned NOT NULL DEFAULT 0,
+    `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+    ,INDEX (`languageId`)
+    ,INDEX (`productTypeId`)
     ,INDEX (`createdById`)
     ,INDEX (`updatedById`)
     ,INDEX (`title`)
@@ -96,6 +150,20 @@ CREATE TABLE `productattributetype` (
     ,INDEX (`name`)
     ,INDEX (`searchable`)
     ,UNIQUE INDEX (`code`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `producttype`;
+CREATE TABLE `producttype` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(200) NOT NULL DEFAULT '',
+    `active` bool NOT NULL DEFAULT 1,
+    `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+    `createdById` int(10) unsigned NOT NULL DEFAULT 0,
+    `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+    ,INDEX (`createdById`)
+    ,INDEX (`updatedById`)
+    ,INDEX (`name`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `person`;
 CREATE TABLE `person` (
