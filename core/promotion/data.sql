@@ -19,7 +19,8 @@ insert into `productattributetype` (`name`, `code`, `searchable`, `active`, `cre
 ('Number Of Words', 'no_of_words', 1, 1, NOW(), 100, NOW(), 100),
 ('Image', 'image', 1, 1, NOW(), 100, NOW(), 100),
 ('ImageThumbnail', 'image_thumb', 1, 1, NOW(), 100, NOW(), 100),
-('Description', 'description', 1, 1, NOW(), 100, NOW(), 100);
+('Description', 'description', 1, 1, NOW(), 100, NOW(), 100),
+('Cno', 'cno', 1, 1, NOW(), 100, NOW(), 100);
 
 insert into `language` (`name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
 ('简体',  1, NOW(), 100, NOW(), 100),
