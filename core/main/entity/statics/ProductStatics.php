@@ -9,19 +9,19 @@
 class ProductStatics extends BaseEntityAbstract
 {
     /**
-     * The type of the attribute
+     * The type of the value
      * 
      * @var ProductStaticsType
      */
     protected $type;
     /**
-     * The attribute of the product
+     * The value of the product
      * 
      * @var string
      */
-    private $attribute;
+    private $value;
     /**
-     * The product this attribute is belonging to
+     * The product this value is belonging to
      * 
      * @var Product
      */
@@ -39,7 +39,7 @@ class ProductStatics extends BaseEntityAbstract
     /**
      * Setter for the ProductStatics type
      * 
-     * @param ProductStaticsType $type The type of the product attribute
+     * @param ProductStaticsType $type The type of the product value
      * 
      * @return ProductStatics
      */
@@ -49,24 +49,24 @@ class ProductStatics extends BaseEntityAbstract
         return $this;
     }
     /**
-     * Getter for the attribute
+     * Getter for the value
      * 
      * @return string
      */
-    public function getAttribute()
+    public function getValue()
     {
-        return $this->attribute;
+        return $this->value;
     }
     /**
-     * Setter for the attribute
+     * Setter for the value
      * 
-     * @param string $attribute The attribute
+     * @param string $value The value
      * 
      * @return ProductStatics
      */
-    public function setAttribute($attribute)
+    public function setValue($value)
     {
-        $this->attribute = $attribute;
+        $this->value = $value;
         return $this;
     }
     /**
@@ -108,10 +108,10 @@ class ProductStatics extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'pstats');
         DaoMap::setManyToOne('product', 'Product');
-        DaoMap::setStringType('attribute','varchar', 500);
+        DaoMap::setIntType('value','int', 100);
         DaoMap::setManyToOne('type', 'ProductStaticsType');
         parent::__loadDaoMap();
-        DaoMap::createIndex('attribute');
+        DaoMap::createIndex('value');
         DaoMap::commit();
     }
 }

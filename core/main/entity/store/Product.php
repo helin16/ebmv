@@ -45,6 +45,12 @@ class Product extends BaseEntityAbstract
 	 */
 	protected $productType;
 	/**
+	 * The ProductStatics of the book
+	 * 
+	 * @var ProductStatics
+	 */
+	protected $productStatics;
+	/**
 	 * Getter for the title
 	 * 
 	 * @return string
@@ -189,6 +195,28 @@ class Product extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Getter for the ProductStatics
+	 * 
+	 * @return ProductStatics
+	 */
+	public function getProductStatics()
+	{
+	    $this->loadOneToMany('productStatics');
+	    return $this->productStatics;
+	}
+	/**
+	 * Setter for the ProductStatics
+	 * 
+	 * @param array $productStatics The array of ProductStatics
+	 * 
+	 * @return Product
+	 */
+	public function setProductStatics($productStatics)
+	{
+	    $this->productStatics = $productStatics;
+	    return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
@@ -205,6 +233,10 @@ class Product extends BaseEntityAbstract
 	    }
 	    return $array;
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::preSave()
+	 */
 	public function preSave()
 	{
 	    if(trim($this->getSuk()) === '')
@@ -223,6 +255,7 @@ class Product extends BaseEntityAbstract
 		DaoMap::setOneToMany("attributes", "ProductAttribute");
 		DaoMap::setManyToOne("language", "Language");
 		DaoMap::setManyToOne("productType", "ProductType");
+		DaoMap::setManyToOne("productStatics", "ProductStatics");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');
