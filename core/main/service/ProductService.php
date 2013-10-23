@@ -232,5 +232,15 @@ class ProductService extends BaseServiceAbastract
         EntityDao::getInstance('Product')->deleteManyToManyJoin($category, $product);
         return $this;
     } 
+    public function getMostPopularProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
+    {
+        
+    }
+    public function getNewReleasedProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
+    {
+        $query = EntityDao::getInstance('Product')->getQuery();productStatics
+        $query->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
+        return $this->findByCriteria('pstatstype.code = ? and (pstats.value = ? or pstats.value is null)', array('no_of_clicks', 0), true, 1, $limit, array('Product.id'=>'desc''))
+    }
 }
 ?>

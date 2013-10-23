@@ -1,9 +1,10 @@
 <?php
 class ProductListShowCase extends TTemplateControl
 {
-    private $title;
-    private $limit;
-    private $dataFunc;
+    private $_title;
+    private $_limit = 10;
+    private $_dataFunc;
+    private $_fetchCallBack;
     /**
      * (non-PHPdoc)
      * @see TPage::render()
@@ -32,41 +33,93 @@ class ProductListShowCase extends TTemplateControl
         }
     }
     /**
+     * Getting the js object variable name
+     * 
+     * @return string
+     */
+    public function getJsObjVar()
+    {
+        return get_class($this) . '_' . $this->getClientID();
+    }
+    /**
      * Getting The end javascript
      *
      * @return string
      */
     protected function _getEndJs()
     {
-        $controlVarName = 'productListShowJs_' . $this->getId();
-        $js = $controlVarName . ' = new ProductListShowCaseJs();';
+        $js = $this->getJsObjVar() . ' = new ProductListShowCaseJs();';
+        $js .= $this->getJsObjVar() . '.pagination.pageSize = ' . $this->getLimit() . ';';
+        $js .= $this->getJsObjVar() . '.fetch("' . $this->fetchProductBtn->getUniqueID() . '", "' . $this->getClientID() . '");';
         return $js;
     }
+    /**
+     * Handler for the fetch data request
+     * 
+     * @param TCallback           $sender The callback object
+     * @param TCallbackParameters $params The callback parameters
+     */
+    public function fetchProducts($sender, $params)
+    {
+        $pageFunc = $this->_dataFunc;
+        return $this->page->$pageFunc($sender, $params);
+    }
+    /**
+     * Getter for the title
+     */
     public function getTitle()
     {
-        return $this->title;
+        return $this->_title;
     }
+    /**
+     * Setter for the title
+     * 
+     * @param string $title The title of the div
+     * 
+     * @return ProductListShowCase
+     */
     public function setTitle($title)
     {
-        $this->title = $title;
+        $this->_title = $title;
         return $this;
     }
+    /**
+     * Getter for the limit
+     * @return number
+     */
     public function getLimit()
     {
-        return $this->limit;
+        return $this->_limit;
     }
+    /**
+     * Setter for the limit
+     * 
+     * @param int $limit How many product we are trying to display here
+     * 
+     * @return ProductListShowCase
+     */
     public function setLimit($limit)
     {
-        $this->limit = $limit;
+        $this->_limit = $limit;
         return $this;
     }
+    /**
+     * Getter for the datafunction
+     */
     public function getDataFunc()
     {
-        return $this->dataFunc;
+        return $this->_dataFunc;
     }
+    /**
+     * Setter for the datafunction
+     * 
+     * @param string $dataFunc The name of the datafunction
+     * 
+     * @return ProductListShowCase
+     */
     public function setDataFunc($dataFunc)
     {
-        $this->dataFunc = $dataFunc;
+        $this->_dataFunc = $dataFunc;
         return $this;
     }
     
