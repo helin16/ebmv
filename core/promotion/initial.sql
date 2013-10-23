@@ -39,7 +39,6 @@ CREATE TABLE `productstaticstype` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(50) NOT NULL DEFAULT '',
     `code` varchar(50) NOT NULL DEFAULT '',
-    `searchable` bool NOT NULL DEFAULT 0,
     `active` bool NOT NULL DEFAULT 1,
     `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
     `createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -49,7 +48,6 @@ CREATE TABLE `productstaticstype` (
     ,INDEX (`createdById`)
     ,INDEX (`updatedById`)
     ,INDEX (`name`)
-    ,INDEX (`searchable`)
     ,UNIQUE INDEX (`code`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `category`;
