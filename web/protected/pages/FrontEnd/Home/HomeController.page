@@ -1,16 +1,6 @@
 <com:TContent ID="MainContent">
     <div class="homepageWrapper">
-        <div class="sectionWrapper">
-            <div class="title">New Releases</div>
-            <div class="list">
-                fdsfsd
-            </div>
-        </div>
-        <div class="sectionWrapper">
-            <div class="title">Popular Selections</div>
-            <div class="list">
-                fdsfsd
-            </div>
-        </div>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newRelease" Title="NEW RELEASE"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="mostPopular" Title="MOST POPULAR"/>
     </div>
 </com:TContent>

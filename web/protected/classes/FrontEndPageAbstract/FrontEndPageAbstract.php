@@ -40,9 +40,9 @@ abstract class FrontEndPageAbstract extends TPage
 	 * (non-PHPdoc)
 	 * @see TPage::render()
 	 */
-	public function onInit($param)
+	public function onPreInit($param)
 	{
-	    parent::onInit($param);
+	    parent::onPreInit($param);
 	    $this->getClientScript()->registerPradoScript('ajax');
 	    $this->_loadPageJsClass();
         $cScripts = self::getLastestJS(get_class($this));
