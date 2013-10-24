@@ -9,6 +9,28 @@
 class ProductsController extends FrontEndPageAbstract  
 {
     public $pageSize = 12;
+    
+    public function onLoad($param)
+    {
+        parent::onLoad($param);
+        if(!$this->IsPostBack && !$this->IsCallBack)
+        {
+        }
+    }
+    
+    public function getProductType()
+    {
+        if(!isset($this->Request['productTypeId']) || !($type = BaseServiceAbastract::getInstance('ProductType')->get(trim($this->Request['productTypeId']))) instanceof ProductType)
+            return;
+        return $type;
+    }
+    
+    public function getLanguage()
+    {
+        if(!isset($this->Request['languageId']) || !($language = BaseServiceAbastract::getInstance('Language')->get(trim($this->Request['languageId']))) instanceof Language)
+            return;
+        return $language;
+    }
 	/**
 	 * (non-PHPdoc)
 	 * @see FrontEndPageAbstract::_getEndJs()
@@ -55,7 +77,8 @@ class ProductsController extends FrontEndPageAbstract
 	    {
 	        if(!isset($categories[$key]))
 	            continue;
-	        $html .= '<li><a href="/products/category/' . $categories[$key]->getId() . '">' . $categories[$key]->getName() . '</a>';
+	        $url = '/products/' . $this->getLanguage()->getId() . '/' . $this->getProductType()->getId() . '/' . $categories[$key]->getId();
+	        $html .= '<li><a href="' .$url  . '">' . $categories[$key]->getName() . '</a>';
 	            unset($categories[$key]);
 	        if(isset($relArray[$key]))
 	            $html .= $this->_getCateLi($relArray[$key], $relArray, $categories);
