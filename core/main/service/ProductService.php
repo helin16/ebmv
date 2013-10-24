@@ -101,65 +101,73 @@ class ProductService extends BaseServiceAbastract
     /**
      * Create a product/book
      * 
-     * @param string $title       The title
-     * @param string $author      The author
-     * @param string $isbn        The isbn
-     * @param string $publisher   The publisher
-     * @param string $publishDate The publish date
-     * @param int    $words       The words of the book
-     * @param array  $categories  The category of the book
-     * @param string $image       The image path of the book
-     * @param string $description The description of the book
+     * @param string      $title       The title
+     * @param string      $author      The author
+     * @param string      $isbn        The isbn
+     * @param string      $publisher   The publisher
+     * @param string      $publishDate The publish date
+     * @param int         $words       The words of the book
+     * @param array       $categories  The category of the book
+     * @param string      $image       The image path of the book
+     * @param string      $description The description of the book
+     * @param Language    $lang        The language of the book
+     * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description)
+    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, Language $lang = null, ProductType $type = null)
     {
-        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description);
+        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $lang, $type);
     }
     /**
      * update a product/book
      * 
-     * @param Product $product     The Product
-     * @param string  $title       The title
-     * @param string  $author      The author
-     * @param string  $isbn        The isbn
-     * @param string  $publisher   The publisher
-     * @param string  $publishDate The publish date
-     * @param int     $words       The words of the book
-     * @param array   $categories  The category of the book
-     * @param string  $image       The image path of the book
-     * @param string  $description The description of the book
+     * @param Product     $product     The Product
+     * @param string      $title       The title
+     * @param string      $author      The author
+     * @param string      $isbn        The isbn
+     * @param string      $publisher   The publisher
+     * @param string      $publishDate The publish date
+     * @param int         $words       The words of the book
+     * @param array       $categories  The category of the book
+     * @param string      $image       The image path of the book
+     * @param string      $description The description of the book
+     * @param Language    $lang        The language of the book
+     * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description)
+    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, Language $lang = null, ProductType $type = null)
     {
-        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description);
+        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $lang, $type);
     }
     /**
      * editing a product/book
      * 
-     * @param Product $product     The Product
-     * @param string  $title       The title
-     * @param string  $author      The author
-     * @param string  $isbn        The isbn
-     * @param string  $publisher   The publisher
-     * @param string  $publishDate The publish date
-     * @param int     $words       The words of the book
-     * @param array   $categories  The category of the book
-     * @param string  $image       The image path of the book
-     * @param string  $description The description of the book
+     * @param Product     $product     The Product
+     * @param string      $title       The title
+     * @param string      $author      The author
+     * @param string      $isbn        The isbn
+     * @param string      $publisher   The publisher
+     * @param string      $publishDate The publish date
+     * @param int         $words       The words of the book
+     * @param array       $categories  The category of the book
+     * @param string      $image       The image path of the book
+     * @param string      $description The description of the book
+     * @param Language    $lang        The language of the book
+     * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description)
+    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, Language $lang = null, ProductType $type = null)
     {
         $transStarted = false;
         try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
         try
         {
             $product->setTitle($title);
+            $product->setLanguage($lang instanceof Language ? $lang : EntityDao::getInstance('Language')->get(1));
+            $product->setProductType($type instanceof ProductType ? $lang : EntityDao::getInstance('ProductType')->get(1));
             if(trim($product->getId()) === '')
                 $this->save($product);
             
