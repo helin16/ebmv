@@ -51,9 +51,7 @@ class AssetService extends BaseServiceAbastract
 		    ->setAssetId($assetId)
 		    ->setMimeType(self::getMimeType($filename))
 		    ->setPath($path);
-		Dao::$debug = true;
 		$this->save($asset);
-		Dao::$debug = false;
 		return $asset->getAssetId();
 	}
 	/**
