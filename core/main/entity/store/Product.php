@@ -37,13 +37,13 @@ class Product extends BaseEntityAbstract
 	 * 
 	 * @var Language
 	 */
-	protected $language;
+	protected $language = 1;
 	/**
 	 * The ProductType of the book
 	 * 
 	 * @var ProductType
 	 */
-	protected $productType;
+	protected $productType = 1;
 	/**
 	 * The ProductStatics of the book
 	 * 
