@@ -48,7 +48,7 @@ class ProductService extends BaseServiceAbastract
      * 
      * @return array
      */
-    public function findProductsInCategory($searchText = '', $categorIds = array(), $searchOption = '', $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    public function findProductsInCategory($searchText = '', $categorIds = array(), $searchOption = '', Language $language = null, ProductType $productType = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
         $searchMode = false;
         $where = $params = array();
@@ -85,6 +85,19 @@ class ProductService extends BaseServiceAbastract
         	}
         }
 		*/
+        
+        if($language instanceof Language)
+        {
+        	$where[] = 'pro.languageId = ?';
+        	$params[] = $language->getId();
+        	$searchMode = true;
+        }
+        if($productType instanceof ProductType)
+        {
+        	$where[] = 'pro.productTypeId = ?';
+        	$params[] = $productType->getId();
+        	$searchMode = true;
+        }
         
         if(count($categorIds = array_filter($categorIds)) > 0)
         {
