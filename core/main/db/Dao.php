@@ -285,21 +285,21 @@ abstract class Dao
         {
             //ignore metadata
             if (trim($field) === '_')
-            continue;
+                continue;
              
             //if it's just a private data for this entity class
             if (!isset($properties['rel']))
-            $params[$field] = self::_getProperty($entity, $field);
+                $params[$field] = self::_getProperty($entity, $field);
             //if it's a relationship then we need to consider repopulate object(s)
             else if ($properties['rel'] === DaoMap::MANY_TO_ONE || ($properties['rel'] === DaoMap::ONE_TO_ONE))
             {
                 $childEntity = self::_getProperty($entity, $field);
                 if ($childEntity instanceof BaseEntityAbstract)
-                $params[$field] = $childEntity->getId();
+                    $params[$field] = $childEntity->getId();
                 else if ($properties['nullable'] === true)
-                $params[$field] = null;
+                    $params[$field] = null;
                 else
-                throw new DaoException('The field(' . $field . ') for "' . get_class($entity) . '" is NOT a BaseEntity!');
+                    throw new DaoException('The field(' . $field . ') for "' . get_class($entity) . '" is NOT a BaseEntity!');
             }
         }
         return $params;

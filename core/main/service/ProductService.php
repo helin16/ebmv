@@ -166,8 +166,8 @@ class ProductService extends BaseServiceAbastract
         try
         {
             $product->setTitle($title);
-            $product->setLanguage($lang instanceof Language ? $lang : EntityDao::getInstance('Language')->get(1));
-            $product->setProductType($type instanceof ProductType ? $lang : EntityDao::getInstance('ProductType')->get(1));
+            $product->setLanguage($lang instanceof Language ? $lang : EntityDao::getInstance('Language')->findById(1));
+            $product->setProductType($type instanceof ProductType ? $lang : EntityDao::getInstance('ProductType')->findById(1));
             if(trim($product->getId()) === '')
                 $this->save($product);
             

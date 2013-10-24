@@ -255,7 +255,7 @@ class Product extends BaseEntityAbstract
 		DaoMap::setOneToMany("attributes", "ProductAttribute");
 		DaoMap::setManyToOne("language", "Language");
 		DaoMap::setManyToOne("productType", "ProductType");
-		DaoMap::setManyToOne("productStatics", "ProductStatics");
+		DaoMap::setOneToMany("productStatics", "ProductStatics");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');
