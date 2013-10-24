@@ -4,7 +4,6 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	
-	productDetailsUrl: '/product/{id}', 
 	resultDivId: '', //the result div for the product list
 	getProductsBtn: '', //the callbackId for getting the products
 	pagination: {'pageNo': 1, 'pageSize': 10},
@@ -155,32 +154,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return tmp.productDiv;
 	}
 	
-	,showDetailsPage: function(productId) {
-		window.location = this.productDetailsUrl.replace('{id}', productId);
-	}
-	
 	//get product grid item
 	,_getProductGridItem: function(product) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.productDiv = new Element('span', {'class': 'product griditem inlineblock cursorpntr'})
-			.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null) })
-			.insert({'bottom': new Element('div', {'class': 'product_details'})
-				.insert({'bottom': new Element('div', {'class': 'product_title'}).update(product.title) })
-			})
-			.observe('click', function(){ tmp.me.showDetailsPage(product.id); })
-		;
-		return tmp.productDiv;
+		return this._getProductThumbnail(product);
 	}
 	
 	,_getAttrString: function(attArray){
 		return attArray.map(function(attr) { return attr.attribute || '';});
-	}
-	
-	,_getProductImgDiv: function (images) {
-		var tmp = {};
-		if(images === undefined || images === null || images.size() === 0)
-			return new Element('div', {'class': 'product_image noimage'});
-		return new Element('img', {'class': 'product_image', 'src': '/asset/get?id=' + images[0].attribute});
 	}
 });

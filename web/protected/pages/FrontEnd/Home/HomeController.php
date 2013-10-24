@@ -6,7 +6,7 @@
  * @subpackage Controller
  * @author     lhe<helin16@gmail.com>
  */
-class HomeController extends FrontEndPageAbstract  
+class HomeController extends FrontEndPageAbstract
 {
     public function getNewRelease($sender, $params)
     {
@@ -39,9 +39,9 @@ class HomeController extends FrontEndPageAbstract
         }
         catch(Exception $ex)
         {
-            $errors[] = $ex->getMessage() . $ex->getTraceAsString();
+            $errors = array($ex->getMessage() . $ex->getTraceAsString());
         }
-        return StringUtilsAbstract::getJson($errors, $result);
+        return StringUtilsAbstract::getJson($result, $errors);
     }
 }
 ?>
