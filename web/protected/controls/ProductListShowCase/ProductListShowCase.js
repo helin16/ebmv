@@ -18,13 +18,13 @@ ProductListShowCaseJs.prototype = Object.extend(new FrontPageJs(), {
 				tmp.listDiv = new Element('ul',{'class': 'jcarousel jcarousel-skin-tango'});
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					if(tmp.result.products.size() > 0) {
-						tmp.result.products.each(function(item){
-							tmp.listDiv.insert({'bottom': tmp.me._getProductThumbnail(item).wrap(new Element('li')) });
-						});
-						$(tmp.resultDiv).update(tmp.listDiv);
-						jQuery('#' + wrapperId + ' .list .jcarousel').jcarousel();
-					}
+					if(tmp.result.products.size() > 0) 
+						throw 'No product found!';
+					tmp.result.products.each(function(item){
+						tmp.listDiv.insert({'bottom': tmp.me._getProductThumbnail(item).wrap(new Element('li')) });
+					});
+					$(tmp.resultDiv).update(tmp.listDiv);
+					jQuery('#' + wrapperId + ' .list .jcarousel').jcarousel();
 					
 				} catch (e) {
 					$(tmp.resultDiv).update(e);
