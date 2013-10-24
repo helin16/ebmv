@@ -34,3 +34,20 @@ insert into `producttype` (`id`, `name`, `active`, `created`, `createdById`, `up
 insert into `productstaticstype` (`name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
 ('Click Rate', 'no_of_clicks',  1, NOW(), 100, NOW(), 100),
 ('Borrow Rate', 'no_of_borrows',  1, NOW(), 100, NOW(), 100);
+
+insert into `supplierinfotype` (`id`,`name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
+(1, 'The URL to import', 'import_url',  1, NOW(), 100, NOW(), 100),
+(2, 'The username to import', 'import_username',  1, NOW(), 100, NOW(), 100),
+(3, 'The password to import', 'import_password',  1, NOW(), 100, NOW(), 100),
+(4, 'The URL to view online', 'view_url',  1, NOW(), 100, NOW(), 100),
+(5, 'The URL to download', 'download_url',  1, NOW(), 100, NOW(), 100);
+
+insert into `supplier` (`id`, `name`, `supplierLocation`,`scheduledTime`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
+(1, 'Xin Hua', 'http://xhestore.com', '', 1, NOW(), 100, NOW(), 100);
+
+insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
+    ('1', '1', 'http://sh.xhestore.com/ReadBook.aspx?uid={uid}&pwd={pass}&bookid={bookid}&errorurl={errUrl}', 1, NOW(), 100, NOW(), 100),
+    ('1', '2', 'test_username', 1, NOW(), 100, NOW(), 100),
+    ('1', '3', 'test_password', 1, NOW(), 100, NOW(), 100),
+    ('1', '4', 'http://sh.xhestore.com/ReadBook.aspx?uid={uid}&pwd={pass}&bookid={bookid}&errorurl={errUrl}', 1, NOW(), 100, NOW(), 100),
+    ('1', '5', 'http://sh.xhestore.com/ReadBook.aspx?uid={uid}&pwd={pass}&bookid={bookid}&errorurl={errUrl}', 1, NOW(), 100, NOW(), 100);

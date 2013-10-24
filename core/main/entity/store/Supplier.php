@@ -20,21 +20,6 @@ class Supplier extends BaseEntityAbstract
      * @var string
      */
     private $name;
-    
-    /**
-     * The username of the supplier
-     * 
-     * @var string
-     */
-    private $username;
-    
-    /**
-     * The password of the supplier
-     * 
-     * @var string
-     */
-    private $password;
-    
     /**
      * The scheduledTime of the supplier
      * 
@@ -64,52 +49,6 @@ class Supplier extends BaseEntityAbstract
 	public function setName($name)
 	{
 	    $this->name = $name;
-	    return $this;
-	}
-	
-	/**
-	 * Getter for the username
-	 * 
-	 * @return string
-	 */
-	public function getUsername()
-	{
-	    return $this->username;
-	}
-	
-	/**
-	 * Setter for 
-	 * 
-	 * @param string $username The username of supplier
-	 * 
-	 * @return Supplier
-	 */
-	public function setUsername($username)
-	{
-	    $this->username = $username;
-	    return $this;
-	}
-	
-	/**
-	 * Getter for the password
-	 * 
-	 * @return string
-	 */
-	public function getPassword()
-	{
-	    return $this->password;
-	}
-	
-	/**
-	 * Setter for 
-	 * 
-	 * @param string $password The password for supplier
-	 * 
-	 * @return Supplier
-	 */
-	public function setPassword($password)
-	{
-	    $this->password = $password;
 	    return $this;
 	}
 	
@@ -198,8 +137,6 @@ class Supplier extends BaseEntityAbstract
 		DaoMap::begin($this, 'supp');
 		DaoMap::setStringType('name','varchar', 200);
 		DaoMap::setStringType('supplierLocation','varchar', 200);
-		DaoMap::setStringType('username','varchar', 200);
-		DaoMap::setStringType('password','varchar', 200);
 		DaoMap::setStringType('scheduledTime','varchar', 200);
 		parent::__loadDaoMap();
 		
