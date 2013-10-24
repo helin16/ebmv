@@ -47,6 +47,12 @@ class ProductsController extends FrontEndPageAbstract
 		$js .= 'var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); ';
 		$js .= 'pageJs.pagination.pageSize = ' . $this->pageSize . ';';
 		$js .= (($catId = trim($this->Request['cateid'])) === '' ? '' : 'pageJs.searchCriteria.categoryIds.push(' . $catId . ');');
+		
+		if(isset($this->Request['languageId']) && (($languageId = $this->Request['languageId']) !== ''))
+			$js .= 'pageJs.searchCriteria.language = '.$languageId.';';
+		if(isset($this->Request['productTypeId']) && (($productTypeId = $this->Request['productTypeId']) !== ''))
+			$js .= 'pageJs.searchCriteria.productType = '.$productTypeId.';';
+		
 		if(($searchtext = trim($this->Request['searchtext'])) !== '')
 		{
 			if (($searchInfo = json_decode($searchtext, true)) !== null)
@@ -128,6 +134,7 @@ class ProductsController extends FrontEndPageAbstract
 	        
 	        $categoryIds = array();
 	        $searchText = $searchOption = $searchCategory = '';
+	        $language = $productType = null;
 	        if(isset($params->CallbackParameter->searchCriteria))
 	        {
 	            $searchCriteria = json_decode(json_encode($params->CallbackParameter->searchCriteria), true);
@@ -135,11 +142,16 @@ class ProductsController extends FrontEndPageAbstract
 	            $categoryIds = is_array($searchCriteria['categoryIds']) ? $searchCriteria['categoryIds'] : array();
 	            $searchOption = (isset($searchCriteria['searchOpt']) && trim($searchCriteria['searchOpt']) !== '' && trim($searchCriteria['searchOpt']) !== '0') ? $searchCriteria['searchOpt'] : '';
 	            $searchCategory = (isset($searchCriteria['searchCat']) && trim($searchCriteria['searchCat']) !== '' && trim($searchCriteria['searchCat']) !== '0') ? $searchCriteria['searchCat'] : '';
+	            $languageId = (isset($searchCriteria['language']) && trim($searchCriteria['language']) !== '') ? trim($searchCriteria['language']) : '';
+	            $productTypeId = (isset($searchCriteria['productType']) && trim($searchCriteria['productType']) !== '') ? trim($searchCriteria['productType']) : '';
+	            $language = BaseServiceAbastract::getInstance('Language')->get($languageId);
+	            $productType = BaseServiceAbastract::getInstance('ProductType')->get($productTypeId);
+	            	
 	            if($searchCategory !== '')
 	            	$categoryIds[] = $searchCategory;
 	        }
 	        
-	        $products = BaseServiceAbastract::getInstance('Product')->findProductsInCategory($searchText, $categoryIds, $searchOption,  false, $pageNo, $pageSize, array());
+	        $products = BaseServiceAbastract::getInstance('Product')->findProductsInCategory($searchText, $categoryIds, $searchOption, $language, $productType, false, $pageNo, $pageSize, array());
 	        $result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
 	        $result['products'] = array();
 	        foreach($products as $product)
