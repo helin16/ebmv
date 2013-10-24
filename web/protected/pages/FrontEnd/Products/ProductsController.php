@@ -9,7 +9,10 @@
 class ProductsController extends FrontEndPageAbstract  
 {
     public $pageSize = 12;
-	
+	/**
+	 * (non-PHPdoc)
+	 * @see FrontEndPageAbstract::_getEndJs()
+	 */
 	protected function _getEndJs()
 	{
 	    $js = 'ddsmoothmenu.init({';
