@@ -76,6 +76,7 @@ class ProductAttribute extends BaseEntityAbstract
      */
     public function getProduct()
     {
+        $this->loadManyToOne('product');
         return $this->product;
     }
     /**
