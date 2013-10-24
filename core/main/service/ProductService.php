@@ -234,13 +234,17 @@ class ProductService extends BaseServiceAbastract
     } 
     public function getMostPopularProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
     {
-        
+        $query = EntityDao::getInstance('Product')->getQuery();
+        $query->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
+        $results = $this->findByCriteria('pstatstype.code = ? or pstatstype.code is null', array('no_of_clicks'), true, 1, $limit, array('pstats.value'=>'desc'));
+        return $results;
     }
     public function getNewReleasedProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
     {
-        $query = EntityDao::getInstance('Product')->getQuery();productStatics
+        $query = EntityDao::getInstance('Product')->getQuery();
         $query->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
-        return $this->findByCriteria('pstatstype.code = ? and (pstats.value = ? or pstats.value is null)', array('no_of_clicks', 0), true, 1, $limit, array('Product.id'=>'desc''))
+        $results = $this->findByCriteria('pstats.value is null or (pstatstype.code = ? and pstats.value = ?)', array(0, 'no_of_clicks'), true, 1, $limit, array('pro.id'=>'desc'));
+        return $results;
     }
 }
 ?>

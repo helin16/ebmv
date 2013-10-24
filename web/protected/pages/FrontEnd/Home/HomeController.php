@@ -10,14 +10,14 @@ class HomeController extends FrontEndPageAbstract
 {
     public function getNewRelease($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params);
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts');
     }
     public function getMostPopular($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params);
+	    $params->ResponseData = $this->_listProducts($params, 'getMostPopularProducts');
     }
     
-    private function _listProducts($params)
+    private function _listProducts($params, $funcName)
     {
         $errors = $result = array();
         try
@@ -30,8 +30,8 @@ class HomeController extends FrontEndPageAbstract
 	            $pageSize = trim(isset($params->CallbackParameter->pagination->pageSize) ? $params->CallbackParameter->pagination->pageSize : $pageSize);
 	        }
 	        
-            $result['pagination'] = BaseServiceAbastract::getInstance('Product')->findByCriteria('');
             $result['products'] = array();
+            $products = BaseServiceAbastract::getInstance('Product')->$funcName($pageSize);
             foreach($products as $product)
             {
                 $result['products'][] = $product->getJson();
