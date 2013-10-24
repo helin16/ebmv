@@ -149,7 +149,8 @@ class ProductImportScript
                     $this->_getAttribute($xml, 'Words'),
                     $categories,
                     $this->importImage($this->_getAttribute($xml, 'FrontCover')),
-                    $this->_getAttribute($xml, 'Introduction')
+                    $this->_getAttribute($xml, 'Introduction'),
+                    $this->_getAttribute($xml, 'NO')
                 );
             }
             //creating new product
@@ -164,7 +165,8 @@ class ProductImportScript
                     $this->_getAttribute($xml, 'Words'),
                     $categories,
                     $this->importImage($this->_getAttribute($xml, 'FrontCover')),
-                    $this->_getAttribute($xml, 'Introduction')
+                    $this->_getAttribute($xml, 'Introduction'),
+                    $this->_getAttribute($xml, 'NO')
                 );
             }
             if($transStarted === false)

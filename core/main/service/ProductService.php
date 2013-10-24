@@ -110,14 +110,15 @@ class ProductService extends BaseServiceAbastract
      * @param array       $categories  The category of the book
      * @param string      $image       The image path of the book
      * @param string      $description The description of the book
+     * @param string      $cno         The supplier's identification no
      * @param Language    $lang        The language of the book
      * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, Language $lang = null, ProductType $type = null)
+    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, Language $lang = null, ProductType $type = null)
     {
-        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $lang, $type);
+        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $lang, $type);
     }
     /**
      * update a product/book
@@ -132,14 +133,15 @@ class ProductService extends BaseServiceAbastract
      * @param array       $categories  The category of the book
      * @param string      $image       The image path of the book
      * @param string      $description The description of the book
+     * @param string      $cno         The supplier's identification no
      * @param Language    $lang        The language of the book
      * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, Language $lang = null, ProductType $type = null)
+    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, Language $lang = null, ProductType $type = null)
     {
-        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $lang, $type);
+        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $lang, $type);
     }
     /**
      * editing a product/book
@@ -154,12 +156,13 @@ class ProductService extends BaseServiceAbastract
      * @param array       $categories  The category of the book
      * @param string      $image       The image path of the book
      * @param string      $description The description of the book
+     * @param string      $cno         The supplier's identification no
      * @param Language    $lang        The language of the book
      * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, Language $lang = null, ProductType $type = null)
+    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, $cno = 0, Language $lang = null, ProductType $type = null)
     {
         $transStarted = false;
         try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
@@ -174,7 +177,7 @@ class ProductService extends BaseServiceAbastract
             //add the attributes
             //TODO:: need to resize the thumbnail
             $image_thumb = $image;
-            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'image_thumb', 'description');
+            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'image_thumb', 'description', 'cno');
             $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
             foreach($typeCodes as $typeCode)
                 BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
