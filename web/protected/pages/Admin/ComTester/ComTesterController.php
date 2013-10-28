@@ -85,6 +85,7 @@ class ComTesterController extends AdminPageAbstract
     		try
     		{
     			$resp = new SimpleXMLElement($respText);
+    			$this->result->Text = $resp->asXML();
     		}
     		catch(Exception $e)
     		{
@@ -132,7 +133,6 @@ class ComTesterController extends AdminPageAbstract
     	catch (Exception $e)
     	{
     		$err = $e->getMessage()."\n\n".$e->getTraceAsString();
-    		echo $err;
     		return $err;
     	}
     }
