@@ -38,6 +38,7 @@
 			<url ServiceParameter="Admin.Login.LoginController" pattern="admin/login.html" />
 			<url ServiceParameter="Admin.BulkloadProducts.BulkloadProductsController" pattern="admin/bulkloadproducts.html" />
 			<url ServiceParameter="Admin.ComTester.ComTesterController" pattern="admin/testcoms.html" />
+			<url ServiceParameter="Admin.Product.AdminProductController" pattern="admin/product" />
 			
 			<!-- asset service -->
 			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
