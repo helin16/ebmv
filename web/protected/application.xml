@@ -19,7 +19,7 @@
 		
 			<!-- static page -->
 			<url ServiceParameter="FrontEnd.CMS.HelpController" pattern="help.html"/>
-		  
+			
 			<!-- product listing page -->
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/{languageId}/{productTypeId}" parameters.languageId="\d+" parameters.productTypeId="\d+" />
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/{languageId}/{productTypeId}/{cateId}" parameters.languageId="\d+" parameters.productTypeId="\d+" parameters.cateId="\d+"/>
@@ -30,6 +30,8 @@
 			<!-- product details page -->
 			<url ServiceParameter="FrontEnd.ProductDetails.ProductDetailsController" pattern="product/{id}/" parameters.id="\d+" />
 			
+			<!-- product borrow:reauth page -->
+			<url ServiceId="reauth" ServiceParameter="" pattern="reauth.html" />
 			
 			<!-- admin pages -->
 			<url ServiceParameter="Admin.Home.HomeController" pattern="admin/" />
@@ -57,6 +59,7 @@
 		</service>
 
 		<service id="asset" class="Application.pages.FrontEnd.Asset.AssetController"></service>
+		<service id="reauth" class="Application.pages.FrontEnd.ReAuth.ReAuthController"></service>
 	</services>
 	<!-- application parameters -->
 	<parameters>
