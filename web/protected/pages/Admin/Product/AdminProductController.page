@@ -1,0 +1,4 @@
+<com:TContent ID="MainContent">
+    <com:TCallback ID="showProductsBtn" OnCallback="showProducts" />
+	<div id = 'allProductDiv'></div>
+</com:TContent>
