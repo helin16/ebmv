@@ -33,6 +33,54 @@ class ProductImportScript
         return $this;
     }
     /**
+     * Download the file from a soup service
+     * 
+     * @param string $wsdl
+     * @param int    $siteId
+     * @param bool   $overWriteExsiting
+     * 
+     * @throws CoreException
+     * @return ProductImportScript
+     */
+    public function getDataFromSoup($wsdl, $siteId, $overWriteExsiting = false)
+    {
+    	if(file_exists($this->_tmpFile))
+    	{
+    		if($overWriteExsiting !== true)
+    			throw new CoreException('file: ' . $this->_tmpFile . ' exsits!');
+    		unlink($this->_tmpFile);
+    	}
+    	file_put_contents($this->_tmpFile, '<Books>', FILE_APPEND);
+    	$this->_downloadFromSoup($wsdl, $this->_tmpFile, $siteId);
+    	file_put_contents($this->_tmpFile, '</Books>', FILE_APPEND);
+    	return $this;
+    }
+    /**
+     * Getting the xml from the data
+     * @param unknown $wsdl
+     * @param unknown $tmpfile
+     * @param unknown $siteId
+     * @param number $pageNo
+     * @param number $pageSize
+     */
+    private function _downloadFromSoup($wsdl, $tmpfile, $siteId, $pageNo = 1, $pageSize = 1200)
+    {
+    	$client = new SoapClient($wsdl);
+    	$result = $client->GetBookList(array("SiteID" => $siteId, "Index" => $pageNo, "Size" => $pageSize));
+    	$xml = new SimpleXMLElement($result->GetBookListResult->any);
+    	
+    	foreach($xml->children() as $bookXml)
+    		file_put_contents($tmpfile, $bookXml->asXml(), FILE_APPEND);
+    	
+    	$pagination = $xml->attributes();
+    	var_dump($pagination);
+    	if(intval($pagination['pageNo']) < intval($pagination['totalPages']))
+    	{
+    		$this->_downloadFromSoup($wsdl, $tmpfile, $siteId, intval($pageNo) + 1, $pageSize);
+    	}
+    	return $this;
+    }
+    /**
      * Getting the tmp file's parth
      * 
      * @return string
