@@ -13,6 +13,7 @@ class Web
 			dirname(__FILE__) . '/protected/',
 			dirname(__FILE__) . '/protected/classes/',
 			dirname(__FILE__) . '/protected/classes/AdminPageAbstract/',
+			dirname(__FILE__) . '/protected/classes/CrudPageAbstract/',
 			dirname(__FILE__) . '/protected/classes/FrontEndPageAbstract/',
 			dirname(__FILE__) . '/protected/pages/ContentLoader/'
 				);

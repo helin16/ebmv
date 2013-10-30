@@ -214,15 +214,3 @@
 	font-size: 13px;
 }
 
-.titleRow {
-	width:100%;
-}
-
-.titleColumn {
-	display:inline-block;
-	padding:5px;
-	margin:5px;
-	width:10%;
-	font-size:14px;
-	font-weight:bold;
-}

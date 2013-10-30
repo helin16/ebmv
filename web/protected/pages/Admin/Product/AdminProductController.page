@@ -1,4 +1,6 @@
 <com:TContent ID="MainContent">
-    <com:TCallback ID="showProductsBtn" OnCallback="showProducts" />
-	<div id = 'allProductDiv'></div>
+	<div class="pagewrapper adminpage productpage">
+	    <com:TCallback ID="showProductsBtn" OnCallback="showProducts" />
+		<div id = 'allProductDiv'></div>
+	</div>
 </com:TContent>

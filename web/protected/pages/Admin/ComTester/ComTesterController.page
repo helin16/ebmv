@@ -1,4 +1,5 @@
 <com:TContent ID="MainContent">
+<div class="pagewrapper adminpage comtesterpage">
 	<com:TClientScript>
 		function preSubmit()
 		{
@@ -55,4 +56,5 @@
 			</com:TTabPanel>
 	</com:TPanel>
 	<com:TActiveLabel ID="xmlOutput" />
+</div>
 </com:TContent>

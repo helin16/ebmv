@@ -1,4 +1,5 @@
 <com:TContent ID="MainContent">
+	<div class="pagewrapper adminpage bulkloadpage">
 	<h3>Bulkload Product</h3>
     <com:TTabPanel>
         <com:TTabView Caption="Load From Url">
@@ -30,4 +31,5 @@
 		pageJs.setCallbackId('importProduct', '<%= $this->importProduct->getUniqueID() %>');
 		pageJs.setCallbackId('deleteTmpFile', '<%= $this->deleteTmpFile->getUniqueID() %>');
 	</com:TClientScript>
+	</div>
 </com:TContent>

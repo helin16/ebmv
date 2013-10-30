@@ -1,0 +1,17 @@
+.adminpage.pagewrapper {
+	padding: 10px;
+}
+
+/** product page **/
+.adminpage.productpage .titleRow {
+	width:100%;
+}
+
+.adminpage.productpage .titleColumn {
+	display:inline-block;
+	padding:5px;
+	margin:5px;
+	width:10%;
+	font-size:14px;
+	font-weight:bold;
+}
