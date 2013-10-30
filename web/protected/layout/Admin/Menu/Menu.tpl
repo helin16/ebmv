@@ -3,6 +3,9 @@
         <a href="/admin/">Home</a>
     </li>
     <li>
+        <a href="/admin/product">Products</a>
+    </li>
+    <li>
         <a href="/admin/bulkloadproducts.html">Import</a>
     </li>
     <li>

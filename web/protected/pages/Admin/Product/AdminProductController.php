@@ -24,15 +24,13 @@ class AdminProductController extends CrudPageAbstract
 	protected function _getEndJs()
     {
         $pageNumber = 1;
-        $pageSize = 12;
+        $pageSize = 10;
         $productId = 0;
     	
     	$js = parent::_getEndJs();
-        $js .= 'pageJs.setCallbackId("showProduct", "' . $this->showProductsBtn->getUniqueID() . '");';
-        $js .= 'pageJs.setCallbackId("pageNumber", '.$pageNumber.');';
-        $js .= 'pageJs.setCallbackId("pageSize", '.$pageSize.');';
-        $js .= 'pageJs.setCallbackId("productId", '.$productId.');';
-        $js .= 'pageJs.showProducts();';
+        $js .= 'pageJs.setCallbackId("showItems", "' . $this->showProductsBtn->getUniqueID() . '");';
+        $js .= 'pageJs.resultDivId="allProductDiv";';
+        $js .= 'pageJs.showItems(' . $pageNumber . ', ' . $pageSize . ', ' . $productId . ');';
         return $js;
     }
     
@@ -41,19 +39,28 @@ class AdminProductController extends CrudPageAbstract
     	$result = $errors = $productArray = array();
     	try 
     	{
-	    	$pageNumber = (isset($param->CallbackParameter->pageNumber) && trim($param->CallbackParameter->pageNumber) !== '' && is_numeric($param->CallbackParameter->pageNumber)) ? trim($param->CallbackParameter->pageNumber) : null;
-	    	$pageSize = (isset($param->CallbackParameter->pageSize) && trim($param->CallbackParameter->pageSize) !== '' && is_numeric($param->CallbackParameter->pageSize)) ? trim($param->CallbackParameter->pageSize) : 30;
-	    	$productId = (isset($param->CallbackParameter->productId) && trim($param->CallbackParameter->productId) !== '' && is_numeric($param->CallbackParameter->productId)) ? trim($param->CallbackParameter->productId) : '0';
+    		$pageNumber = 1;
+    		$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
+    		if(isset($param->CallbackParameter->pagination))
+    		{
+    			$pagination = $param->CallbackParameter->pagination;
+    			$pageNumber = (isset($pagination->pageNo) && trim($pagination->pageNo) !== '' && is_numeric($pagination->pageNo)) ? trim($pagination->pageNo) : $pageNumber;
+		    	$pageSize = (isset($pagination->pageSize) && trim($pagination->pageSize) !== '' && is_numeric($pagination->pageSize)) ? trim($pagination->pageSize) : $pageSize;
+    		}
+	    	$productId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
 	    	
 	    	if($productId === '' || $productId === '0')
+	    	{
 	    		$productArray = BaseServiceAbastract::getInstance('Product')->findAll(false, $pageNumber, $pageSize, array());
+	    		$result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
+	    	}
 	    	else
 	    	{
 	    		
 	    	}
 	    	
 	    	foreach($productArray as $product)
-	    		$result['products'][] = $product->getJson();
+	    		$result['items'][] = $product->getJson();
     	}
     	catch(Exception $ex)
     	{

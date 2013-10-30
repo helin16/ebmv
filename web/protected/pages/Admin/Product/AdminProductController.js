@@ -4,44 +4,22 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new CrudPageJs(), {
 	
-	showProducts:  function() {
+	_getResultDiv: function(items, includetitlerow, itemrowindex) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.includetitlerow = (includetitlerow === false ? false : true);
 		
-		tmp.me.postAjax(tmp.me.getCallbackId('showProduct'), 
-						{'pageNumber' : tmp.me.getCallbackId('pageNumber'), 
-						 'pageSize' : tmp.me.getCallbackId('pageSize'),
-						 'productId' : tmp.me.getCallbackId('productId'),
-						}, 
-			{
-			'onLoading': function (sender, param) {
-				
-			},
-			'onComplete': function (sender, param) {
-				// TODO -- need to fix the column width in the css file //
-				try 
-				{
-					tmp.result = tmp.me.getResp(param, false, true);
-					if(tmp.result.products && tmp.result.products !== undefined && tmp.result.products !== null) 
-					{
-						$('allProductDiv').insert({'bottom':  tmp.me._getItemRow('id', 'suk', 'title', 'active', 'option').addClassName('titleRow') });
-						tmp.i = 0;
-						tmp.result.products.each(function(item) {
-							$('allProductDiv').insert({'bottom':  tmp.me._getItemRow(item.id, item.suk, item.title, item.active,  new Element('img', {'editId': item.id, 'class': 'btn', 'src': '/themes/default/images/edit.png', 'alt': 'EDIT'})
-								.observe('click', function() {tmp.me.editProduct(this); }) ).addClassName(tmp.i % 2 === 0 ? 'even' : 'odd')
-							});
-							tmp.i++;
-						});
-					}
-					else
-						throw 'No Product found/generated'; 
-					return;
-				}
-				catch(e) {
-					alert(e);
-				}
-			}
+		tmp.resultDiv = new Element('div');
+		if(tmp.includetitlerow === true)
+			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow('id', 'suk', 'title', 'active', 'option').addClassName('titleRow') });
+		tmp.i = (itemrowindex || 0);
+		items.each(function(item) {
+			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item.id, item.suk, item.title, item.active,  new Element('img', {'editId': item.id, 'class': 'btn', 'src': '/themes/default/images/edit.png', 'alt': 'EDIT'})
+				.observe('click', function() {tmp.me.editItem(this); }) ).addClassName(tmp.i % 2 === 1 ? 'even' : 'odd')
+			});
+			tmp.i++;
 		});
+		return tmp.resultDiv;
 	}
 
 	,_getItemRow: function (id, suk, title, active, option) {
@@ -56,8 +34,4 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		return tmp.div;
 	}
 
-	,editProduct : function()
-	{
-		alert('fsdfd');
-	}
 });
