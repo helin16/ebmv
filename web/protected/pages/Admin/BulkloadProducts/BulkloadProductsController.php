@@ -69,7 +69,7 @@ class BulkloadProductsController extends AdminPageAbstract
 		{
 		    $url = trim(isset($param->CallbackParameter->url) ? $param->CallbackParameter->url : '');
 		    $script = new ProductImportScript($this->getApplication()->getAssetManager()->getBasePath());
-		    $filePath = $script->getDataFromUrl($url, true)->getTmpFile();
+		    $filePath = $script->getDataFromSoup($url, 37, true)->getTmpFile();
 		    if(strlen($content = file_get_contents($filePath)) === 0)
 		        throw new Exception('Empty Url found!');
 		    $xml = simplexml_load_file($filePath);
