@@ -13,7 +13,7 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 						 'pageSize' : tmp.me.getCallbackId('pageSize'),
 						 'productId' : tmp.me.getCallbackId('productId'),
 						}, 
-		{
+			{
 			'onLoading': function (sender, param) {
 				
 			},
@@ -24,24 +24,13 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(tmp.result.products && tmp.result.products !== undefined && tmp.result.products !== null) 
 					{
-						$('allProductDiv').insert({'bottom': new Element('div', {'class' : 'titleRow'})
-																.insert({'bottom' : new Element('span', {'class' : 'titleColumn'}).update('ID') })
-																.insert({'bottom' : new Element('span', {'class' : 'titleColumn'}).update('SUK') })	
-																.insert({'bottom' : new Element('span', {'class' : 'titleColumn'}).update('TITLE') })	
-																.insert({'bottom' : new Element('span', {'class' : 'titleColumn'}).update('ACTIVE') })	
-																.insert({'bottom' : new Element('span', {'class' : 'titleColumn'}).update('Option') })	
-						});
-						tmp.result.products.each(function(key, value) {
-							$('allProductDiv').insert({'bottom': new Element('div', {'class': 'titleRow'})
-																	.insert({'bottom': new Element('span', {'class': 'titleColumn'}).update(key.id) })
-																	.insert({'bottom': new Element('span', {'class': 'titleColumn'}).update(key.suk) })
-																	.insert({'bottom': new Element('span', {'class': 'titleColumn'}).update(key.title) })
-																	.insert({'bottom': new Element('span', {'class': 'titleColumn'}).update(key.active) })
-																	.insert({'bottom': new Element('span', {'class': 'titleColumn'}).insert({'bottom': new Element('img', {'editId': key.id, 'src': '/themes/default/images/edit.png', 'alt': 'EDIT'})
-																																					.observe('click', tmp.me.editProduct)
-																																			}) 
-																			})
+						$('allProductDiv').insert({'bottom':  tmp.me._getItemRow('id', 'suk', 'title', 'active', 'option').addClassName('titleRow') });
+						tmp.i = 0;
+						tmp.result.products.each(function(item) {
+							$('allProductDiv').insert({'bottom':  tmp.me._getItemRow(item.id, item.suk, item.title, item.active,  new Element('img', {'editId': item.id, 'class': 'btn', 'src': '/themes/default/images/edit.png', 'alt': 'EDIT'})
+								.observe('click', function() {tmp.me.editProduct(this); }) ).addClassName(tmp.i % 2 === 0 ? 'even' : 'odd')
 							});
+							tmp.i++;
 						});
 					}
 					else
@@ -53,6 +42,18 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 				}
 			}
 		});
+	}
+
+	,_getItemRow: function (id, suk, title, active, option) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.div = new Element('div', {'class' : 'row'})
+			.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(id) })
+			.insert({'bottom' : new Element('span', {'class' : 'col suk'}).update(suk) })	
+			.insert({'bottom' : new Element('span', {'class' : 'col title'}).update(title) })	
+			.insert({'bottom' : new Element('span', {'class' : 'col active'}).update(active) })	
+			.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) });
+		return tmp.div;
 	}
 
 	,editProduct : function()
