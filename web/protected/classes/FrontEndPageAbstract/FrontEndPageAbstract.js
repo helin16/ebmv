@@ -23,10 +23,16 @@ FrontPageJs.prototype = {
 	}
 	
 	//posting an ajax request
-	,postAjax: function(callbackId, data, requestProperty) {
+	,postAjax: function(callbackId, data, requestProperty, timeout) {
 		var tmp = {};
 		tmp.request = new Prado.CallbackRequest(callbackId, requestProperty);
 		tmp.request.setCallbackParameter(data);
+		tmp.timeout = (timeout || 30000);
+		if(tmp.timeout < 30000) {
+			tmp.timeout = 30000;
+		}
+		console.debug(tmp.timeout);
+		tmp.request.setRequestTimeOut(tmp.timeout);
 		tmp.request.dispatch();
 		return tmp.request;
 	}
