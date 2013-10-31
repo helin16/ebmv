@@ -55,5 +55,6 @@ class ImportProduct
 	}
 }
 
+Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(100));
 $script = new ImportProduct();
 $script->run("http://au.xhestore.com/AULibService.asmx?wsdl");
