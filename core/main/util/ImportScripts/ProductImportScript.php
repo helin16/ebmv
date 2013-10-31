@@ -178,7 +178,7 @@ class ProductImportScript
             $result = $xml->xpath("//Books/Book");
             if(trim($index) === '')
             {
-                foreach($result as $node) {
+                foreach($result as $child) {
                    $products[] = $this->importProduct($child);
                 }
             }
