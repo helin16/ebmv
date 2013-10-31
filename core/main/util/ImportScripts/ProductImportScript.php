@@ -79,7 +79,6 @@ class ProductImportScript
     	try
     	{
 	    	$xmlString = '';
-	    	var_dump($pageNo . ": " . $pageSize);
 	    	$xml = $this->_getFromSoup($wsdl, $siteId, $pageNo, $pageSize);
 	    	if(!$xml instanceof SimpleXMLElement)
 	    		throw new Exception('Invalid Xml found for PageNo: ' . $pageNo . '.');
