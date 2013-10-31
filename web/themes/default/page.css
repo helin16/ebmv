@@ -104,6 +104,7 @@
 .product.griditem {
     padding: 5px;
     text-align: center;
+    width: 160px;
 }
 
 .product.griditem .product_image {

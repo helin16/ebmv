@@ -8,10 +8,16 @@
  */
 class ProductDetailsController extends FrontEndPageAbstract  
 {
+	/**
+	 * @var Product
+	 */
+	private $_product;
 	
 	public function __construct()
 	{
 		parent::__construct();
+		if(isset($this->Request['id']))
+			$this->_product = BaseServiceAbastract::getInstance('Product')->get($this->Request['id']);
 	}
 	
 	/**
@@ -22,12 +28,28 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 	    parent::onLoad($param);
 	}
+	/**
+	 * Getting The end javascript
+	 *
+	 * @return string
+	 */
+	protected function _getEndJs()
+	{
+		$js = parent::_getEndJs();
+		$js .= 'pageJs.product = ' . json_encode($this->_product->getJson()) . ';';
+		return $js;
+	}
 	
 	public function getProductDetails()
 	{
-	    if(!isset($this->Request['id']) || !(($product = BaseServiceAbastract::getInstance('Product')->get($this->Request['id'])) instanceof Product))
+	    if(!$this->_product instanceof Product)
 	        return 'No Product Found!';
 	    
+	    $url = "http://au.xhestore.com/book/readbook";
+	    $siteId = Config::get('site', 'id');
+	    $uid = 0;
+	    $pwd = 0;
+	    $product = $this->_product;
 	    $html = "<div class='wrapper'>";
     	    $html .= "<div class='product listitem'>";
         	    $html .= "<span class='inlineblock listcol left'>";
@@ -47,7 +69,7 @@ class ProductDetailsController extends FrontEndPageAbstract
                 	    $html .= $this->_getAtts($product, 'publish_date', 'Publisher Date', 'product_publish_date');
             	    $html .= "</div>";
             	    $html .= "<div class='row btns'>";
-                	    $html .= '<input type="button" value="Borrow" />';
+                	    $html .= '<input type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $url . "', $siteId, $uid, $pwd" . ');"/>';
             	    $html .= "</div>";
             	    $html .= "<div class='row product_description'>";
                     	    $html .= $product->getAttribute('description');
