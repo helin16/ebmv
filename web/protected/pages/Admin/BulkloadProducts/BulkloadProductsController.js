@@ -38,7 +38,7 @@ PageJs.prototype = Object.extend(new AdminPageJs(), {
 				try {
 					tmp.result = pageJs.getResp(param, false, true);
 					if(!tmp.result.totalCount || !tmp.result.filePath)
-						throw 'System Error!'
+						throw 'System Error!';
 					$(outputDiv).update(tmp.result.totalCount == 0 ? new Element('h1', {'class': 'errmsg'}).update('No record found!') : tmp.me._getStartImportDiv(downloadbtn, tmp.result.totalCount, outputDiv, tmp.result.filePath));
 				} catch(e) {
 					alert(e);
@@ -46,7 +46,7 @@ PageJs.prototype = Object.extend(new AdminPageJs(), {
 				}
 				$$('.loading').each(function(item) {item.remove();});
 			}
-		});
+		}, 240000);
 	}
 	
 	,_getStartImportDiv: function(downloadbtn, totalCount, outputDiv, filePath) {

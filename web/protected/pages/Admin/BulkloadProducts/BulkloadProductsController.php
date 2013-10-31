@@ -69,7 +69,10 @@ class BulkloadProductsController extends AdminPageAbstract
 		{
 		    $url = trim(isset($param->CallbackParameter->url) ? $param->CallbackParameter->url : '');
 		    $script = new ProductImportScript($this->getApplication()->getAssetManager()->getBasePath());
-		    $filePath = $script->getDataFromSoup($url, 37, true)->getTmpFile();
+		    $errors = array();
+		    $filePath = $script->getDataFromSoup($url, Config::get('site', 'id'), true, 1, 1000, $errors)->getTmpFile();
+		    if(count(array_keys($errors)) > 0)
+		    	throw new Exception('Error Page Index: ' . implode(', ', array_keys($errors)));
 		    if(strlen($content = file_get_contents($filePath)) === 0)
 		        throw new Exception('Empty Url found!');
 		    $xml = simplexml_load_file($filePath);
@@ -79,7 +82,7 @@ class BulkloadProductsController extends AdminPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage();
+			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($return, $errors);
 	}

@@ -42,7 +42,7 @@ class ProductImportScript
      * @throws CoreException
      * @return ProductImportScript
      */
-    public function getDataFromSoup($wsdl, $siteId, $overWriteExsiting = false)
+    public function getDataFromSoup($wsdl, $siteId, $overWriteExsiting = false, $pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, &$errorPageNos = array())
     {
     	if(file_exists($this->_tmpFile))
     	{
@@ -50,35 +50,66 @@ class ProductImportScript
     			throw new CoreException('file: ' . $this->_tmpFile . ' exsits!');
     		unlink($this->_tmpFile);
     	}
+    	
+    	//try to get the pagination info
+    	$xml = $this->_getFromSoup($wsdl, $siteId, 1, 1);
+    	if(!$xml instanceof SimpleXMLElement)
+    		throw new CoreException('Can NOT get the pagination information from ' . $wsdl . '!');
+    	$pagination = $xml->attributes();
+    	
     	file_put_contents($this->_tmpFile, '<Books>', FILE_APPEND);
-    	$this->_downloadFromSoup($wsdl, $this->_tmpFile, $siteId);
+    	$xmlString = '';
+    	for($pageNo = 1; $pageNo <= ceil($pagination['totalRecords'] / $pageSize); $pageNo++)
+    	{
+    		$xmlString .= $this->_downloadFromSoup($wsdl, $siteId, $pageNo, $pageSize, $errorPageNos);
+    	}
+    	file_put_contents($this->_tmpFile, $xmlString, FILE_APPEND);
     	file_put_contents($this->_tmpFile, '</Books>', FILE_APPEND);
     	return $this;
     }
     /**
      * Getting the xml from the data
      * @param unknown $wsdl
-     * @param unknown $tmpfile
      * @param unknown $siteId
      * @param number $pageNo
      * @param number $pageSize
      */
-    private function _downloadFromSoup($wsdl, $tmpfile, $siteId, $pageNo = 1, $pageSize = 1200)
+    private function _downloadFromSoup($wsdl, $siteId, $pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, &$errorPageNos = array())
     {
-    	$client = new SoapClient($wsdl);
-    	$result = $client->GetBookList(array("SiteID" => $siteId, "Index" => $pageNo, "Size" => $pageSize));
-    	$xml = new SimpleXMLElement($result->GetBookListResult->any);
-    	
-    	foreach($xml->children() as $bookXml)
-    		file_put_contents($tmpfile, $bookXml->asXml(), FILE_APPEND);
-    	
-    	$pagination = $xml->attributes();
-    	var_dump($pagination);
-    	if(intval($pagination['pageNo']) < intval($pagination['totalPages']))
+    	try
     	{
-    		$this->_downloadFromSoup($wsdl, $tmpfile, $siteId, intval($pageNo) + 1, $pageSize);
+	    	$xmlString = '';
+	    	var_dump($pageNo . ": " . $pageSize);
+	    	$xml = $this->_getFromSoup($wsdl, $siteId, $pageNo, $pageSize);
+	    	if(!$xml instanceof SimpleXMLElement)
+	    		throw new Exception('Invalid Xml found for PageNo: ' . $pageNo . '.');
+	    	foreach($xml->children() as $bookXml)
+	    		$xmlString .= $bookXml->asXml();
+	    	return $xmlString;
     	}
-    	return $this;
+    	catch(Exception $e)
+    	{
+    		$errorPageNos[$pageNo] = $e;
+    		return '';
+    	}
+    }
+    /**
+     * Getting the xml response form the soup server
+     * 
+     * @param string $wsdl     The WSDL for the soup
+     * @param int    $siteId   The site id
+     * @param int    $pageNo   The pageno
+     * @param int    $pageSize The pageSize
+     * 
+     * @return NULL|SimpleXMLElement
+     */
+    private function _getFromSoup($wsdl, $siteId, $pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+    {
+    	$client = new SoapClient($wsdl, array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP));
+    	$result = $client->GetBookList(array("SiteID" => $siteId, "Index" => $pageNo, "Size" => $pageSize));
+    	if(!isset($result->GetBookListResult) || !isset($result->GetBookListResult->any) || trim($result->GetBookListResult->any) === '')
+    		return null;
+    	return new SimpleXMLElement($result->GetBookListResult->any);
     }
     /**
      * Getting the tmp file's parth

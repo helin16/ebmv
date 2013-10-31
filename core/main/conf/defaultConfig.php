@@ -2,10 +2,10 @@
 return array(
 				'Database' => array(
 						'Driver' => 'mysql',
-						'DBHost' => 'localhost',
+						'DBHost' => 'lin.bsuite.net',
 						'DB' => 'bmv',
-						'Username' => 'root',
-						'Password' => 'root'
+						'Username' => 'developers',
+						'Password' => 'hydraworks'
 					),
 				'Profiler' => array(
 								'SQL' => false,
@@ -16,7 +16,11 @@ return array(
 					),
 				'time'=>array(
 						'defaultTimeZone'=>'Australia/Melbourne'
-					)
+					),
+				'site' => array (
+					'id' => 37,
+					'name' => 'test lib'
+				)
 			);
 
 ?>
