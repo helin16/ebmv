@@ -15,7 +15,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			return;
 		}
 		
-		tmp.params = {'isbn': tmp.me.product.attributes.isbn[0].attribute, 'no': tmp.me.product.attributes.cno[0].attribute, 'siteID': tmp.me.siteId};
+		tmp.params = {'isbn': tmp.me.product.attributes.isbn[0].attribute, 'no': tmp.me.product.attributes.cno[0].attribute, 'siteID': siteId, 'uid': uid, 'pwd': pwd};
 		window.open(tmp.readUrl + '?' + $H(tmp.params).toQueryString());
 	}
 });
