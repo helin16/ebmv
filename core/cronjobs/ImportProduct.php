@@ -48,4 +48,4 @@ class ImportProduct
 }
 
 $script = new ImportProduct();
-$script->run();
+$script->run("http://au.xhestore.com/AULibService.asmx?wsdl");
