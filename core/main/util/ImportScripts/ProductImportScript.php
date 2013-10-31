@@ -170,7 +170,7 @@ class ProductImportScript
         try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
         try
         {
-            try{ $xml = simplexml_load_file($filePath); } catch(Exception $ex) {
+            try{ $xml = ($filePath instanceof SimpleXMLElement ? $filePath : simplexml_load_file($filePath)); } catch(Exception $ex) {
                 throw new CoreException("Error when parsing the downloaded file: " . $filePath);
             }
             

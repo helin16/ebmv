@@ -19,10 +19,10 @@ class ImportProduct
 	{
 		try
 		{
-			echo "\n\n";
+			echo "== Start import script @ " . new UDate() . "=============================\n";
 			$xml = $this->_downloadXML($url);
 			$this->_importPrducts($xml);
-			echo "\n\n";
+			echo "== Finished import script  @ " . new UDate() . "=============================\n";
 		}
 		catch(Exception $ex)
 		{
