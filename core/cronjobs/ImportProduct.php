@@ -26,7 +26,8 @@ class ImportProduct
 		}
 		catch(Exception $ex)
 		{
-			echo $ex->getMessage();
+			echo $ex->getMessage() . "\n";
+			echo $ex->getTraceAsString() . "\n";
 			return;
 		}
 	}
