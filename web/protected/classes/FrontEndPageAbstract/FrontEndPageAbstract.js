@@ -31,7 +31,6 @@ FrontPageJs.prototype = {
 		if(tmp.timeout < 30000) {
 			tmp.timeout = 30000;
 		}
-		console.debug(tmp.timeout);
 		tmp.request.setRequestTimeOut(tmp.timeout);
 		tmp.request.dispatch();
 		return tmp.request;
