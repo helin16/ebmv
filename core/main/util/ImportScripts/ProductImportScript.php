@@ -166,36 +166,19 @@ class ProductImportScript
      */
     public function parseXmltoProduct($filePath, $index = null)
     {
-        $transStarted = false;
-        try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
-        try
-        {
-            try{ $xml = ($filePath instanceof SimpleXMLElement ? $filePath : simplexml_load_file($filePath)); } catch(Exception $ex) {
-                throw new CoreException("Error when parsing the downloaded file: " . $filePath);
-            }
-            
-            $products = array();
-            $result = $xml->xpath("//Books/Book");
-            if(trim($index) === '')
-            {
-                foreach($result as $child) {
-                   $products[] = $this->importProduct($child);
-                }
-            }
-            else
-            {
-                $products[] = $this->importProduct($result[$index]);
-            }
-            if($transStarted === false)
-                Dao::commitTransaction();
-            return $products;
-        }
-        catch(Exception $ex)
-        {
-            if($transStarted === false)
-                Dao::rollbackTransaction();
-            throw $ex;
-        }
+    	try { $xml = ($filePath instanceof SimpleXMLElement ? $filePath : simplexml_load_file ( $filePath ));}
+    	catch ( Exception $ex ) { throw new CoreException ( "Error when parsing the downloaded file: " . $filePath );}
+		
+		$products = array ();
+		$result = $xml->xpath ( "//Books/Book" );
+		if (trim ( $index ) === '') 
+		{
+			foreach ( $result as $child )
+				$products [] = $this->importProduct ( $child );
+		} else {
+			$products [] = $this->importProduct ( $result [$index] );
+		}
+		return $products;
     }
     /**
      * Importing the product
