@@ -23,13 +23,29 @@ class WebAuth
 		$response = new SimpleXMLElement('<Response />');
 		$response->addAttribute('Time', trim($now));
 		$response->addAttribute('TimeZone',trim($now->getTimeZone()->getName()));
-	
+		//check details completion
+		if(trim($CDKey) === '' || trim($SiteID) === '' || trim($Uid) === '' || trim($Pwd) === '')
+		{
+			$response->addAttribute('ResultCode', self::RESULT_CODE_IMCOMPLETE);
+			$response->addAttribute('Info', 'Incomplete, more details needed!');
+			return $response->asXML();
+		}
+		//check user
+		if(trim($SiteID) !== '37' || trim($Uid) !== 'test_user' || trim($Pwd) === 'test_pass')
+		{
+			$response->addAttribute('ResultCode', self::RESULT_CODE_FAIL);
+			$response->addAttribute('Info', 'No such a user!');
+			return $response->asXML();
+		}
+		
 		$response->addAttribute('CDkey', $CDKey);
 		$user = $response->addChild('User');
 		$user->addAttribute('libraryId', $SiteID);
 		$user->addAttribute('LoginName', $Uid);
+		
 		try
 		{
+			
 			$user_name = $user_mobile = $user_email = $msg = '';
 			$user->addAttribute('Password', $Pwd);
 			$user->addAttribute('Name', $user_name);
