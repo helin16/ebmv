@@ -10,9 +10,9 @@ class ImportProduct
 	 * constructor
 	 * @throws Exception
 	 */
-	public function __construct()
+	public function __construct($tmpDir)
 	{
-		$this->_importScript = new ProductImportScript('/tmp/');
+		$this->_importScript = new ProductImportScript($tmpDir);
 	}
 	
 	public function run($url)
@@ -56,5 +56,5 @@ class ImportProduct
 }
 
 Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(100));
-$script = new ImportProduct();
+$script = new ImportProduct(dirname(__FILE__) . '/../../assets');
 $script->run("http://au.xhestore.com/AULibService.asmx?wsdl");
