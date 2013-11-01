@@ -50,7 +50,7 @@ class ImportProduct
 		{
 			echo 'Importing Product No: ' . $i . ' ... ';
 			$this->_importScript->importProductFromXml($xml, $i);
-			echo 'Done\n';
+			echo "Done\n";
 		}
 		echo "Finished importing (" . $childrenCount . ") products: \n";
 	}
