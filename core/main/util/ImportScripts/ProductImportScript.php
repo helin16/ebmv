@@ -195,23 +195,25 @@ class ProductImportScript
         {
             if(($isbn = $this->_getAttribute($xml, 'Isbn')) === '')
                 throw new Exception('No ISBN provided!');
+            if(($no = $this->_getAttribute($xml, 'NO')) === '')
+                $no = 0;
             
             $categories = (count($categories) > 0 ? $categories : $this->importCategories($xml));
-            $products = BaseServiceAbastract::getInstance('Product')->findProductWithAttrCode('isbn', $isbn, true, 1, 1);
             //updating the product
-            if(count($products) > 0)
+            if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no)) instanceof Product)
             {
-                $product = BaseServiceAbastract::getInstance('Product')->updateProduct($products[0],
+                $product = BaseServiceAbastract::getInstance('Product')->updateProduct($product,
                     $this->_getAttribute($xml, 'BookName'),
                     $this->_getAttribute($xml, 'Author'),
-                    $this->_getAttribute($xml, 'Isbn'),
+                    $isbn,
                     $this->_getAttribute($xml, 'Press'),
                     $this->_getAttribute($xml, 'PublicationDate'),
                     $this->_getAttribute($xml, 'Words'),
                     $categories,
                     $this->importImage($this->_getAttribute($xml, 'FrontCover')),
                     $this->_getAttribute($xml, 'Introduction'),
-                    $this->_getAttribute($xml, 'NO')
+                    $no,
+                    $this->_getAttribute($xml, 'Cip')
                 );
             }
             //creating new product
@@ -220,14 +222,15 @@ class ProductImportScript
                 $product = BaseServiceAbastract::getInstance('Product')->createProduct(
                     $this->_getAttribute($xml, 'BookName'),
                     $this->_getAttribute($xml, 'Author'),
-                    $this->_getAttribute($xml, 'Isbn'),
+                    $isbn,
                     $this->_getAttribute($xml, 'Press'),
                     $this->_getAttribute($xml, 'PublicationDate'),
                     $this->_getAttribute($xml, 'Words'),
                     $categories,
                     $this->importImage($this->_getAttribute($xml, 'FrontCover')),
                     $this->_getAttribute($xml, 'Introduction'),
-                    $this->_getAttribute($xml, 'NO')
+                    $no,
+                    $this->_getAttribute($xml, 'Cip')
                 );
             }
             if($transStarted === false)
