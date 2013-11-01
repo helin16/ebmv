@@ -31,7 +31,7 @@ class WebAuth
 			return $response->asXML();
 		}
 		//check user
-		if(trim($SiteID) !== '37' || trim($Uid) !== 'test_user' || trim($Pwd) === 'test_pass')
+		if(trim($SiteID) !== '37' || trim($Uid) !== 'test_user' || trim($Pwd) !== 'test_pass')
 		{
 			$response->addAttribute('ResultCode', self::RESULT_CODE_FAIL);
 			$response->addAttribute('Info', 'No such a user!');
