@@ -54,6 +54,11 @@ class DaoQuery
      */
     private $_joins = array();
     /**
+     * selecting active record only
+     * @var bool
+     */
+    public static $selectActiveOnly = true;
+    /**
      * Creates a new DaoQuery, initialised to a focus object
      *
      * @param string $entityName The name of the focus entity
@@ -96,15 +101,14 @@ class DaoQuery
      *
      * @return DaoQuery
      */
-    public function eagerLoad($relationship, $joinType = self::DEFAULT_JOIN_TYPE, $alias = null)
+    public function eagerLoad($relationship, $joinType = self::DEFAULT_JOIN_TYPE, $alias = null, $overrideCond = '')
     {
         list($joinClass, $joinField) = explode('.', $relationship);
         DaoMap::loadMap($joinClass);
         if(!isset(DaoMap::$map[strtolower($joinClass)]) || !isset(DaoMap::$map[strtolower($joinClass)][$joinField]))
             throw new DaoException('Invalid relationship for: ' . $relationship);
-         
         $alias = ($alias = trim($alias)) === '' ? DaoMap::$map[strtolower($joinClass)][$joinField]['alias'] : $alias;
-        $this->_buildJoin($joinField, $joinClass, $alias, $joinType);
+        $this->_buildJoin($joinField, $joinClass, $alias, $joinType, $overrideCond);
         return $this;
     }
     /**
@@ -188,7 +192,8 @@ class DaoQuery
         //get all joins
         $sql .= count($this->_joins) === 0 ? '' : implode(' ', array_map(create_function('$a', 'return $a["joinType"] . " " . $a["joinClass"] . " `" . $a["joinAlias"] . "` on (" . $a["joinCondition"] . ")";'), $this->_joins)) . ' ';
         //get whereclause
-        $this->where($fAlias . '.active = 1');
+        if(self::$selectActiveOnly === true)
+        	$this->where($fAlias . '.active = 1');
         $sql .= count($this->_whereClause) === 0 ? '' : 'where (' . implode(') AND (', $this->_whereClause) . ')';
         //get orderby
         $sql .= count($orders = $this->_buildOrderByForSelect()) === 0 ? '' : ' order by ' . implode(', ', $orders);
@@ -342,8 +347,9 @@ class DaoQuery
      *
      * @return DaoQuery
      */
-    private function _buildJoin($field, $joinClass, $alias, $joinType = self::DEFAULT_JOIN_TYPE)
+    private function _buildJoin($field, $joinClass, $alias, $joinType = self::DEFAULT_JOIN_TYPE, $overrideCond = "")
     {
+    	$overrideCond = trim($overrideCond);
         //load the dao map of the join class
         DaoMap::loadMap($joinClass);
         $focus = strtolower($this->_focus);
@@ -364,24 +370,28 @@ class DaoQuery
                     $this->_addJoin($mtmJoinTable, $mtmJoinTable, $fAlias . '.id = ' . $mtmJoinTable . '.' . StringUtilsAbstract::lcFirst($joinClass) . 'Id', $joinType);
                      
                     //join in the target table
-                    $this->_addJoin($joinTableMap, $fieldMap['alias'], $fieldMap['alias'] . '.id = ' . $mtmJoinTable . '.' . StringUtilsAbstract::lcFirst($fieldMap['class']) . 'Id', $joinType);
+                    $joinCondition = ($overrideCond === '' ? $fieldMap['alias'] . '.id = ' . $mtmJoinTable . '.' . StringUtilsAbstract::lcFirst($fieldMap['class']) . 'Id' : $overrideCond);
+                    $this->_addJoin($joinTableMap, $fieldMap['alias'], $joinCondition, $joinType);
                     break;
                 }
             case DaoMap::ONE_TO_MANY:
                 {
-                    $this->_addJoin($fieldMap['class'], $alias, $fAlias . '.id = ' . $alias . '.' . StringUtilsAbstract::lcFirst($joinClass) . 'Id', $joinType);
+                    $joinCondition = ($overrideCond === '' ? $fAlias . '.id = ' . $alias . '.' . StringUtilsAbstract::lcFirst($joinClass) . 'Id' : $overrideCond);
+                    $this->_addJoin($fieldMap['class'], $alias, $joinCondition, $joinType);
                     break;
                 }
             case DaoMap::MANY_TO_ONE:
                 {
-                    $this->_addJoin($fieldMap['class'], $alias, $fAlias . '.' . $field . 'Id = ' . $alias . '.id', $joinType);
+                    $joinCondition = ($overrideCond === '' ? $fAlias . '.' . $field . 'Id = ' . $alias . '.id' : $overrideCond);
+                    $this->_addJoin($fieldMap['class'], $alias, $joinCondition, $joinType);
                     break;
                 }
             case DaoMap::ONE_TO_ONE:
                 {
                     if($fieldMap['owner']) //like MANY_TO_ONE
-                    $this->_addJoin($joinClass, $alias, $fAlias . '.' . $field . 'Id = ' . $alias . '.id', $joinType);
+	                    $joinCondition = ($overrideCond === '' ? $fAlias . '.' . $field . 'Id = ' . $alias . '.id' : $overrideCond);
                     else //ONE_TO_MANY
+	                    $joinCondition = ($overrideCond === '' ? '.id = ' . $alias . '.' . StringUtilsAbstract::lcFirst($joinClass) . 'Id' : $overrideCond);
                     $this->_addJoin($joinClass, $alias, $fAlias . '.id = ' . $alias . '.' . StringUtilsAbstract::lcFirst($joinClass) . 'Id', $joinType);
                     break;
                 }
