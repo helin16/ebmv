@@ -37,6 +37,24 @@ class ProductService extends BaseServiceAbastract
         return $this->findByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
     }
     /**
+     * Get the product with isbn and cno
+     * 
+     * @param string $isbn The ISBN string
+     * @param string $cno  The cno
+     * 
+     * @return Product|null
+     */
+    public function findProductWithISBNnCno($isbn, $cno)
+    {
+    	$query = EntityDao::getInstance('Product')->getQuery();
+    	$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
+    	$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa1')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt1', 'pa1.typeId = pt1.id');
+    	$where = array('pt.code = ? and pa.attribute = ? and pt1.code = ? and pa1.attribute = ?');
+    	$params = array('isbn', $isbn, 'cno', $cno);
+    	$results = $this->findByCriteria(implode(' AND ', $where), $params, true, 1, 1);
+    	return count($results) > 0 ? $results[0] : null;
+    }
+    /**
      * Searching the products in category
      * 
      * @param string $searchText       The searching text
@@ -124,14 +142,15 @@ class ProductService extends BaseServiceAbastract
      * @param string      $image       The image path of the book
      * @param string      $description The description of the book
      * @param string      $cno         The supplier's identification no
+     * @param string      $cip         The supplier's category ip
      * @param Language    $lang        The language of the book
      * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, Language $lang = null, ProductType $type = null)
+    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', Language $lang = null, ProductType $type = null)
     {
-        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $lang, $type);
+        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $lang, $type);
     }
     /**
      * update a product/book
@@ -147,14 +166,15 @@ class ProductService extends BaseServiceAbastract
      * @param string      $image       The image path of the book
      * @param string      $description The description of the book
      * @param string      $cno         The supplier's identification no
+     * @param string      $cip         The supplier's category ip
      * @param Language    $lang        The language of the book
      * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, Language $lang = null, ProductType $type = null)
+    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', Language $lang = null, ProductType $type = null)
     {
-        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $lang, $type);
+        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $lang, $type);
     }
     /**
      * editing a product/book
@@ -170,12 +190,13 @@ class ProductService extends BaseServiceAbastract
      * @param string      $image       The image path of the book
      * @param string      $description The description of the book
      * @param string      $cno         The supplier's identification no
+     * @param string      $cip         The supplier's category ip
      * @param Language    $lang        The language of the book
      * @param ProductType $type        The type of the book
      * 
      * @return Product
      */
-    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, $cno = 0, Language $lang = null, ProductType $type = null)
+    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, $cno = 0, $cip = '', Language $lang = null, ProductType $type = null)
     {
         $transStarted = false;
         try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
@@ -190,7 +211,7 @@ class ProductService extends BaseServiceAbastract
             //add the attributes
             //TODO:: need to resize the thumbnail
             $image_thumb = $image;
-            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'image_thumb', 'description', 'cno');
+            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'image_thumb', 'description', 'cno', 'cip');
             $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
             foreach($typeCodes as $typeCode)
                 BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, (isset($types[$typeCode]) && $types[$typeCode] instanceof ProductAttributeType) ? $types[$typeCode] : null, trim($$typeCode));
@@ -214,6 +235,29 @@ class ProductService extends BaseServiceAbastract
             Dao::rollbackTransaction();
             throw $ex;
         }
+    }
+    /**
+     * Adding a supplier to a product
+     * 
+     * @param Product  $product  The product 
+     * @param Supplier $supplier The new supplier
+     * @param string   $price    The price
+     * 
+     * @return ProductService
+     */
+    public function addSupplier(Product $product, Supplier $supplier, $price = '0.00')
+    {
+    	$orginal = DaoQuery::$selectActiveOnly;
+    	DaoQuery::$selectActiveOnly = false;
+    	//check whether the product_supplier exsits
+    	$results = EntityDao::getInstance('SupplierPrice')->findByCriteria('productId = ? and supplierId = ?', array($product->getId(), $supplier->getId()), 1, 1);
+    	$record = (count($results) === 0 ? new SupplierPrice() : $results[0]);
+    	$record->setSupplier($supplier);
+    	$record->setProduct($product);
+    	$record->setPice($price);
+    	EntityDao::getInstance('SupplierPrice')->save($record);
+    	DaoQuery::$selectActiveOnly = $orginal;
+    	return $this;
     }
     /**
      * Update the product attributes from _editProduct() function
