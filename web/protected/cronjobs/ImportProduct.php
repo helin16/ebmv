@@ -50,7 +50,12 @@ class ImportProduct
 	{
 		$childrenCount = count($xml->children());
 		echo "Start to import (" . $childrenCount . ") products: \n";
-		$this->_importScript->parseXmltoProduct($xml);
+		for($i = 0; $i< $childrenCount; $i++)
+		{
+			echo 'Importing Product No: ' . $i . ' ... ';
+				$this->_importScript->parseXmltoProduct($xml, $i);
+			echo 'Done'
+		}
 		echo "Finished importing (" . $childrenCount . ") products: \n";
 	}
 }
