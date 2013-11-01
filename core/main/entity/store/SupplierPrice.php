@@ -19,7 +19,7 @@ class SupplierPrice extends BaseEntityAbstract
      * 
      * @var string
      */
-    private $price;
+    private $price ='0.00';
     /**
      * The product this attribute is belonging to
      * 
@@ -64,7 +64,7 @@ class SupplierPrice extends BaseEntityAbstract
      * 
      * @return SupplierPrice
      */
-    public function setPice($price)
+    public function setPrice($price)
     {
         $this->price = $price;
         return $this;

@@ -40,6 +40,15 @@ class SupplierConnector
 		$this->_wsdlUrl = $urls[0];
 	}
 	/**
+	 * Getting the import url
+	 * 
+	 * @return string
+	 */
+	public function getImportUrl()
+	{
+		return $this->_wsdlUrl;
+	}
+	/**
 	 * Gettht product List
 	 * 
 	 * @throws CoreException
@@ -50,7 +59,10 @@ class SupplierConnector
 		$xml = $this->_getFromSoup($this->_wsdlUrl, Config::get('site', 'id'), 1, 1);
 		if(!$xml instanceof SimpleXMLElement)
 			throw new CoreException('Can NOT get the pagination information from ' . $wsdl . '!');
-		return $xml->attributes();
+		$array = array();
+		foreach($xml->attributes() as $key => $value)
+			$array[$key] = trim($value);
+		return $array;
 	}
 	/**
 	 * Getting xml product list
@@ -236,10 +248,15 @@ class SupplierConnector
 		{
 			if(($imageUrl = trim($imageUrl)) === '')
 				return '';
+			
+			$tmpDir = explode(',', $this->_supplier->getInfo('default_img_dir'));
+			$tmpDir = $tmpDir[0];
+			if(!is_dir($tmpDir))
+				mkdir($tmpDir);
 			$paths = parse_url($imageUrl);
 			$paths = explode('/', $paths['path']);
-			$tmpFile = $this->downloadFile($imageUrl, $this->_tmpFileFolder . DIRECTORY_SEPARATOR . md5($imageUrl));
-			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($this->_tmpFileFolder)->registerAsset(end($paths), $tmpFile);
+			$tmpFile = $this->_downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
+			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($tmpDir)->registerAsset(end($paths), $tmpFile);
 	
 			if($transStarted === false)
 				Dao::commitTransaction();
@@ -251,6 +268,29 @@ class SupplierConnector
 				Dao::rollbackTransaction();
 			throw $ex;
 		}
+	}
+	/**
+	 * download the url to a local file
+	 *
+	 * @param string $url       The url
+	 * @param string $localFile The local file path
+	 *
+	 * @return string The local file path
+	 */
+	public function _downloadFile($url, $localFile, $timeout = null)
+	{
+		$timeout = trim($timeout);
+		$fp = fopen($localFile, 'w+');
+		$options = array(
+				CURLOPT_FILE    => $fp,
+				CURLOPT_TIMEOUT =>  (!is_numeric($timeout) ? 8*60*60 : $timeout), // set this to 8 hours so we dont timeout on big files
+				CURLOPT_URL     => $url
+		);
+		$ch = curl_init();
+		curl_setopt_array($ch, $options);
+		curl_exec($ch);
+		fclose($fp);
+		return $localFile;
 	}
 	/**
 	 * Getting the value of the attribute

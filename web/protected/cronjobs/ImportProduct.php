@@ -3,24 +3,24 @@ require_once dirname(__FILE__) . '/../../bootstrap.php';
 class ImportProduct
 {
 	/**
-	 * @var ProductImportScript
+	 * @var SupplierConnector
 	 */
 	private $_importScript;
 	/**
 	 * constructor
 	 * @throws Exception
 	 */
-	public function __construct($tmpDir)
+	public function __construct()
 	{
-		$this->_importScript = new ProductImportScript($tmpDir);
+		$this->_importScript = new SupplierConnector(BaseServiceAbastract::getInstance('Supplier')->get(1));
 	}
-	
-	public function run($url)
+
+	public function run()
 	{
 		try
 		{
 			echo "== Start import script @ " . new UDate() . "=============================\n";
-			$xml = $this->_downloadXML($url);
+			$xml = $this->_downloadXML();
 			$this->_importPrducts($xml);
 			echo "== Finished import script  @ " . new UDate() . "=============================\n";
 		}
@@ -31,21 +31,17 @@ class ImportProduct
 			return;
 		}
 	}
-	
-	private function _downloadXML($url)
+
+	private function _downloadXML()
 	{
 		$errors = array();
-		echo "Start to download xml file from : " . $url . " by soap.\n";
-		$filePath = $this->_importScript->getDataFromSoup($url, Config::get('site', 'id'), true, 1, 1000, $errors)->getTmpFile();
-		if(count(array_keys($errors)) > 0)
-			throw new Exception('Error Page Index: ' . implode(', ', array_keys($errors)));
-		if(strlen($content = file_get_contents($filePath)) === 0)
-			throw new Exception('Empty Url found!');
-		echo "xml downloaded to:" . $filePath . ".\n";
-		$xml = simplexml_load_file($filePath);
+		echo "Start to download xml file from : " . $this->_importScript->getImportUrl() . " by soap.\n";
+		$pageInfo = $this->_importScript->getProductListInfo();
+		$xml = $this->_importScript->getProductList(1, $pageInfo['totalRecords']);
+		echo "xml downloaded.\n";
 		return $xml;
 	}
-	
+
 	private function _importPrducts(SimpleXMLElement $xml)
 	{
 		$childrenCount = count($xml->children());
@@ -53,7 +49,7 @@ class ImportProduct
 		for($i = 0; $i< $childrenCount; $i++)
 		{
 			echo 'Importing Product No: ' . $i . ' ... ';
-				$this->_importScript->parseXmltoProduct($xml, $i);
+			$this->_importScript->importProductFromXml($xml, $i);
 			echo 'Done\n';
 		}
 		echo "Finished importing (" . $childrenCount . ") products: \n";
@@ -61,5 +57,5 @@ class ImportProduct
 }
 
 Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(100));
-$script = new ImportProduct(dirname(__FILE__) . '/../../assets');
-$script->run("http://au.xhestore.com/AULibService.asmx?wsdl");
+$script = new ImportProduct();
+$script->run();

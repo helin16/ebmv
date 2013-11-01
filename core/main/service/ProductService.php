@@ -204,7 +204,7 @@ class ProductService extends BaseServiceAbastract
         {
             $product->setTitle($title);
             $product->setLanguage($lang instanceof Language ? $lang : EntityDao::getInstance('Language')->findById(1));
-            $product->setProductType($type instanceof ProductType ? $lang : EntityDao::getInstance('ProductType')->findById(1));
+            $product->setProductType($type instanceof ProductType ? $type : EntityDao::getInstance('ProductType')->findById(1));
             if(trim($product->getId()) === '')
                 $this->save($product);
             
@@ -258,7 +258,7 @@ class ProductService extends BaseServiceAbastract
     	$record = (count($results) === 0 ? new SupplierPrice() : $results[0]);
     	$record->setSupplier($supplier);
     	$record->setProduct($product);
-    	$record->setPice($price);
+    	$record->setPrice($price);
     	EntityDao::getInstance('SupplierPrice')->save($record);
     	DaoQuery::$selectActiveOnly = $orginal;
     	return $this;
