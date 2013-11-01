@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/../main/bootstrap.php';
+require_once dirname(__FILE__) . '/../../bootstrap.php';
 class ImportProduct
 {
 	/**
