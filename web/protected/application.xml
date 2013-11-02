@@ -67,7 +67,7 @@
 	</services>
 	<!-- application parameters -->
 	<parameters>
-		<parameter id="AppTitle" value="BMV Library System" />
+		<parameter id="AppTitle" value="BMV eResource Interface" />
 		<parameter id="AppVersion" value="1.0.0" />
 	</parameters>
 
