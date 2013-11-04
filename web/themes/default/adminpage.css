@@ -46,3 +46,41 @@
 .adminpage.productpage .col.btns {
 	width: 70px;
 }
+
+.adminpage.productpage .editProductDiv {
+	width:100%;
+}
+
+.adminpage.productpage .eSukLabel {
+	padding: 5px;
+	font-size:12px;
+	font-weight:bold;
+}
+.adminpage.productpage .eSukBox {
+	padding: 5px;
+	width:280px;
+	
+}
+.adminpage.productpage .eTitleLabel {
+	padding: 5px;
+	font-size:12px;
+	font-weight:bold;
+}
+.adminpage.productpage .eTitleBox {
+	padding: 5px;
+	width:380px;
+}
+
+.adminpage.productpage .eActiveBox {
+	padding: 5px;
+	width:30px;
+}
+
+.adminpage.productpage .editBtn {
+	padding:5px;
+}
+
+.adminpage.productpage .cancelBtn {
+	padding:5px;
+}
+
