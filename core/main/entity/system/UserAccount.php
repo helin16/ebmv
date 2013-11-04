@@ -45,6 +45,12 @@ class UserAccount extends BaseEntityAbstract
      */
     protected $roles;
     /**
+     * The library the user is belonging to
+     * 
+     * @var Library
+     */
+    protected $library;
+    /**
      * getter UserName
      *
      * @return String
@@ -131,6 +137,27 @@ class UserAccount extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Getter for the library
+     * 
+     * @return Library
+     */ 
+    public function getLibrary() 
+    {
+        return $this->library;
+    }
+    /**
+     * Setter for the library
+     * 
+     * @param Library $value The library the user belongs to
+     * 
+     * @return UserAccount
+     */
+    public function setLibrary(Library $value) 
+    {
+        $this->library = $value;
+        return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */
@@ -147,8 +174,9 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::begin($this, 'ua');
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
-        DaoMap::setOneToOne("person", "Person", true, "p");
+        DaoMap::setManyToOne("person", "Person", true, "p");
         DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
+        DaoMap::setManyToOne('library', 'Library', 'lib');
         parent::__loadDaoMap();
         
         DaoMap::createUniqueIndex('username');
