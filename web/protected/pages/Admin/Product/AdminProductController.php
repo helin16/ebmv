@@ -56,7 +56,8 @@ class AdminProductController extends CrudPageAbstract
 	    	}
 	    	else
 	    	{
-	    		
+	    		$productArray[] = BaseServiceAbastract::getInstance('Product')->get($productId);
+	    		$result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
 	    	}
 	    	
 	    	foreach($productArray as $product)
