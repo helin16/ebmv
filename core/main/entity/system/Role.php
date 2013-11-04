@@ -15,6 +15,12 @@ class Role extends BaseEntityAbstract
      */
     const ID_GUEST = 1;
     /**
+     * ID the READER role
+     * 
+     * @var int
+     */
+    const ID_READER = 2;
+    /**
      * ID the sysadmin role
      * 
      * @var int
