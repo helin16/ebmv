@@ -21,7 +21,10 @@ class LoginController extends FrontEndPageAbstract
             $authManager=$this->getApplication()->getModule('auth');
             if($authManager->login($username, $password))
             {
-            	$results['url'] = '/admin/';
+            	if(Core::getRole() instanceof Role && trim(Core::getRole()->getId()) === trim(role::ID_ADMIN))
+            		$results['url'] = '/admin/';
+            	else
+            		$results['url'] = '/user.html';
             }
         }
         catch(Exception $ex)

@@ -48,10 +48,19 @@ class WebUserManager extends TModule implements IUserManager
 	 */
 	public function validateUser($username, $password)
 	{
-	    $userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
-		if(!$userAccount instanceof UserAccount)
-			return false;
-		Core::setUser($userAccount);
+		if(!Core::getUser() instanceof UserAccount)
+		{
+			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
+			if(!$userAccount instanceof UserAccount)
+				return false;
+			$role = null;
+			if(!Core::getRole() instanceof Role)
+			{
+				if(count($roles = $userAccount->getRoles()) > 0)
+					$role = $roles[0];
+			}
+			Core::setUser($userAccount, $role);
+		}
 		return true;
 	}
 	

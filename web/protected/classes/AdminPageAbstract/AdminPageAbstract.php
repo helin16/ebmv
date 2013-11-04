@@ -21,8 +21,8 @@ abstract class AdminPageAbstract extends FrontEndPageAbstract
 	public function __construct()
 	{
 	    parent::__construct();
-	    if(!Core::getUser() instanceof UserAccount)
-	        $this->Response->redirect("/admin/login.html");
+	    if(!Core::getUser() instanceof UserAccount || !Core::getRole() instanceof Role || trim(Core::getRole()->getId()) != Role::ID_ADMIN)
+	        $this->Response->redirect("/login.html");
 	}
 	/**
 	 * (non-PHPdoc)
