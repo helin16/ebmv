@@ -9,7 +9,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.panel = $(btn).up('.LoginPanel');
 		tmp.usernamebox = tmp.panel.down('.username');
-		tmp.passwordbox = tmp.panel.down('.username');
+		tmp.passwordbox = tmp.panel.down('.password');
 		if(tmp.me._preSubmit(tmp.usernamebox, tmp.passwordbox) === false) {
 			return;
 		}
@@ -17,7 +17,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.loadingMsg = new Element('div', {'class': 'loadingMsg'}).update('log into system ...');
 		tmp.me.postAjax(tmp.me.getCallbackId('login'), {'username': $F(tmp.usernamebox), 'password': $F(tmp.passwordbox)}, {
 			'onLoading': function () {
-				$(btn).hide().insert({'after': tmp.loadingMsg })
+				$(btn).hide().insert({'after': tmp.loadingMsg });
 			}
 			,'onComplete': function(sender, param) {
 				try {

@@ -27,8 +27,8 @@ class WebUserManager extends TModule implements IUserManager
 	{
 		if($username === null)
 			return new WebUser($this);
-			
-		if(!($userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsername($username)) instanceof UserAccount)
+		
+		if(!($userAccount = (Core::getUser() instanceof UserAccount ? Core::getUser(): BaseServiceAbastract::getInstance('UserAccount')->getUserByUsername($username))) instanceof UserAccount)
 			return null;
 		
 		$user = new WebUser($this);
