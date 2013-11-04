@@ -17,28 +17,35 @@
 		<module id="request" class="THttpRequest" UrlManager="friendly-url" />
 		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
 		
-			<!-- static page -->
+			<!-- FrontEnd:: static page -->
 			<url ServiceParameter="FrontEnd.CMS.HelpController" pattern="help.html"/>
 			
-			<!-- product listing page -->
+			<!-- FrontEnd:: login page -->
+			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />
+			
+			<!-- FrontEnd:: user page -->
+			<url ServiceParameter="FrontEnd.User.UserController" pattern="user.html" />
+			
+			<!-- FrontEnd:: product listing page -->
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/{languageId}/{productTypeId}" parameters.languageId="\d+" parameters.productTypeId="\d+" />
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/{languageId}/{productTypeId}/{cateId}" parameters.languageId="\d+" parameters.productTypeId="\d+" parameters.cateId="\d+"/>
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/category/{cateid}" parameters.cateid="\d+" />
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/search/category/{cateid}/{searchtext}" parameters.cateid="\d+" parameters.searchtext=".+"/>
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/search/{searchtext}" parameters.searchtext=".+" />
 			
-			<!-- product details page -->
+			<!-- FrontEnd:: product details page -->
 			<url ServiceParameter="FrontEnd.ProductDetails.ProductDetailsController" pattern="product/{id}/" parameters.id="\d+" />
 			
-			<!-- product borrow:reauth page -->
+			<!-- FrontEnd:: product borrow:reauth page -->
 			<url ServiceId="reauth" ServiceParameter="" pattern="reauth.html" />
 			
-			<!-- admin pages -->
+			<!-- AdminPage:: home -->
 			<url ServiceParameter="Admin.Home.HomeController" pattern="admin/" />
-			<url ServiceParameter="Admin.Login.LoginController" pattern="admin/login.html" />
+			
+			<!-- AdminPage:: product -->
+			<url ServiceParameter="Admin.Product.AdminProductController" pattern="admin/product" />
 			<url ServiceParameter="Admin.BulkloadProducts.BulkloadProductsController" pattern="admin/bulkloadproducts.html" />
 			<url ServiceParameter="Admin.ComTester.ComTesterController" pattern="admin/testcoms.html" />
-			<url ServiceParameter="Admin.Product.AdminProductController" pattern="admin/product" />
 			
 			<!-- asset service -->
 			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
@@ -54,7 +61,7 @@
 		<service id="page" class="TPageService" DefaultPage="FrontEnd.Home.HomeController">
 		    <pages MasterClass="Application.layout.FrontEnd.PageLayout" Theme="default" />
 			<modules>
-				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="Admin.Login.LoginController" AuthExpire="3600" />
+				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="FrontEnd.Login.LoginController" AuthExpire="3600" />
 				<module id="users" class="Application.classes.WebUser.WebUserManager" />
 			</modules>
 		</service>
