@@ -61,7 +61,11 @@ abstract class BaseServiceAbastract
 	 */
 	public function get($id)
 	{
-		return EntityDao::getInstance($this->_entityName)->findById($id);
+		$orginal = DaoQuery::$selectActiveOnly;
+		DaoQuery::$selectActiveOnly = false;
+		$entity = EntityDao::getInstance($this->_entityName)->findById($id);
+		DaoQuery::$selectActiveOnly = $orginal;
+		return $entity;
 	}
 	/**
 	 * Save an Entity
@@ -87,7 +91,12 @@ abstract class BaseServiceAbastract
 	 */
 	public function findAll($searchActiveOnly = true, $page = null, $pagesize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
 	{
+		$orginal = DaoQuery::$selectActiveOnly;
+		if($searchActiveOnly === false)
+			DaoQuery::$selectActiveOnly = false;
 		$temp = EntityDao::getInstance($this->_entityName)->findAll($page, $pagesize, $orderBy);
+		if($searchActiveOnly === false)
+			DaoQuery::$selectActiveOnly = $orginal;
 		$this->_pageStats = Dao::getPageStats();
 		return $temp;
 	}
@@ -105,7 +114,12 @@ abstract class BaseServiceAbastract
 	 */
 	public function findByCriteria($where, $params = array(), $searchActiveOnly = true, $page = null, $pagesize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
 	{
+		$orginal = DaoQuery::$selectActiveOnly;
+		if($searchActiveOnly === false)
+			DaoQuery::$selectActiveOnly = false;
 		$temp = EntityDao::getInstance($this->_entityName)->findByCriteria($where, $params, $page, $pagesize, $orderBy);
+		if($searchActiveOnly === false)
+			DaoQuery::$selectActiveOnly = $orginal;
 		$this->_pageStats = Dao::getPageStats();
 		return $temp;
 	}
