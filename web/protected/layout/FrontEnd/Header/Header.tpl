@@ -4,7 +4,7 @@
         <a href="/" >Home</a>
     </span>
     <span class="item user inlineblock">
-        <a href="/" >Account</a>
+        <a href="/user.html" >Account</a>
     </span>
     <span class="item help inlineblock">
         <a href="/help.html" >Help</a>
