@@ -12,12 +12,20 @@ class ProductDetailsController extends FrontEndPageAbstract
 	 * @var Product
 	 */
 	private $_product;
+	/**
+	 * The cheapest supplier
+	 * @var Supplier
+	 */
+	private $_supplier;
 	
 	public function __construct()
 	{
 		parent::__construct();
 		if(isset($this->Request['id']))
+		{
 			$this->_product = BaseServiceAbastract::getInstance('Product')->get($this->Request['id']);
+			$this->_supplier = BaseServiceAbastract::getInstance('Supplier')->getCheapestSupplier($this->_product);
+		}
 	}
 	
 	/**
@@ -37,6 +45,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.product = ' . json_encode($this->_product->getJson()) . ';';
+		$js .= 'pageJs.setCallbackId("download", "' . $this->getDownloadUrlBtn->getUniqueID(). '");';
 		return $js;
 	}
 	
@@ -44,9 +53,6 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 	    if(!$this->_product instanceof Product)
 	        return 'No Product Found!';
-	    
-	    $url = "http://au.xhestore.com/book/readbook";
-	    $siteId = Config::get('site', 'id');
 	    $uid = 0;
 	    $pwd = 0;
 	    $product = $this->_product;
@@ -69,7 +75,12 @@ class ProductDetailsController extends FrontEndPageAbstract
                 	    $html .= $this->_getAtts($product, 'publish_date', 'Publisher Date', 'product_publish_date');
             	    $html .= "</div>";
             	    $html .= "<div class='row btns'>";
-                	    $html .= '<input type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $url . "', $siteId, $uid, $pwd" . ');"/>';
+	            	    $viewUrl = "";
+	            	    if($this->_supplier instanceof Supplier)
+	            	    	$viewUrl = trim($this->_supplier->getInfo('view_url'));
+	            	    $siteId = Config::get('site', 'id');
+                	    $html .= '<input type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $viewUrl . "', $siteId, $uid, $pwd" . ');"/>';
+                	    $html .= '<input type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
             	    $html .= "</div>";
             	    $html .= "<div class='row product_description'>";
                     	    $html .= $product->getAttribute('description');
@@ -87,6 +98,37 @@ class ProductDetailsController extends FrontEndPageAbstract
     	    $html .="<span>" . $product->getAttribute('author') . "</span>";
 	    $html .= "</span>";
 	    return $html;
+	}
+	
+	public function getDownloadUrl($sender, $params)
+	{
+		$uid = 0;
+		$pwd = 0;
+		$errors = $results = array();
+        try 
+        {
+        	if(!$this->_supplier instanceof Supplier)
+        		throw new Exception('System Error: no supplier found for this book!');
+        	$downloadUrl = trim($this->_supplier->getInfo('download_url'));
+        	$urlParams = array('SiteID' => Config::get('site', 'id'), 
+        			'Isbn' => $this->_product->getAttribute('isbn'),
+        			'NO' => $this->_product->getAttribute('cno'),
+        			'Format' => 'xml',
+        			'Uid' => 0,
+        			'Pwd' => 0
+        	);
+        	$url = $downloadUrl . '?' . http_build_query($urlParams);
+        	$result = SupplierConnector::readUrl($url);
+        	$xml = new SimpleXMLElement($result);
+        	if(trim($xml->Code) !== '0')
+        		throw new Exception('Error:' . trim($xml->Value));
+        	$results['url'] = trim($xml->Value);
+        }
+        catch(Exception $ex)
+        {
+        	$errors[] = $ex->getMessage();
+        }
+        $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
 }
 ?>

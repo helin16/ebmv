@@ -1,4 +1,5 @@
 <com:TContent ID="MainContent">
+	<com:TCallback ID="getDownloadUrlBtn" OnCallback="getDownloadUrl" />
     <div class="product_details">
     	<%= $this->getProductDetails() %>
     </div>
