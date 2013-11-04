@@ -1,4 +1,8 @@
 ALTER TABLE `useraccount` ADD COLUMN `libraryId` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `personId`;
+ALTER TABLE  `language` ADD  `code` VARCHAR( 10 ) NOT NULL DEFAULT  '' AFTER  `name`;
+update `language` set `code`='zh_CN' where id = 1;
+update `language` set `code`='zh_TW' where id = 2;
+ALTER TABLE  `language` ADD UNIQUE  `code` (  `code` ) COMMENT  '';
 insert into `role`(`id`, `name`,`active`, `created`, `createdById`, `updated`, `updatedById`) values 
 (1, 'Guest', 1, NOW(), 100, NOW(), 100),
 (2, 'Reader', 1, NOW(), 100, NOW(), 100);
