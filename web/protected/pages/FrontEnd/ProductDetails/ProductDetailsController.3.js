@@ -38,7 +38,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				}
 				$(btn).disabled = false;
 				$(btn).value = tmp.originalValue;
-			}
+			}, 120000
 		});
 	}
 });
