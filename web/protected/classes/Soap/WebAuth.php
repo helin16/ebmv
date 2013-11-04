@@ -31,7 +31,19 @@ class WebAuth
 			return $response->asXML();
 		}
 		//check user
-		if(trim($SiteID) !== '37' || trim($Uid) !== 'test_user' || trim($Pwd) !== 'test_pass')
+		if(trim($SiteID) !== '37') //TODO:: need to associate siteID with user!
+		{
+			$response->addAttribute('ResultCode', self::RESULT_CODE_OTHER_ERROR);
+			$response->addAttribute('Info', 'SiteID is NOT valid!');
+			return $response->asXML();
+		}
+		try
+		{
+			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
+			if(!$userAccount instanceof UserAccount)
+				throw new Exception('No UserAccount found!');
+		}
+		catch(Exception $ex)
 		{
 			$response->addAttribute('ResultCode', self::RESULT_CODE_FAIL);
 			$response->addAttribute('Info', 'No such a user!');
@@ -42,7 +54,6 @@ class WebAuth
 		$user = $response->addChild('User');
 		$user->addAttribute('libraryId', $SiteID);
 		$user->addAttribute('LoginName', $Uid);
-		
 		try
 		{
 			
