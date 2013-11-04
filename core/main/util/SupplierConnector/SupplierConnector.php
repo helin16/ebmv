@@ -255,7 +255,7 @@ class SupplierConnector
 				mkdir($tmpDir);
 			$paths = parse_url($imageUrl);
 			$paths = explode('/', $paths['path']);
-			$tmpFile = $this->_downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
+			$tmpFile = $this->downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
 			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($tmpDir)->registerAsset(end($paths), $tmpFile);
 	
 			if($transStarted === false)
@@ -277,7 +277,7 @@ class SupplierConnector
 	 *
 	 * @return string The local file path
 	 */
-	public function _downloadFile($url, $localFile, $timeout = null)
+	public function downloadFile($url, $localFile, $timeout = null)
 	{
 		$timeout = trim($timeout);
 		$fp = fopen($localFile, 'w+');
@@ -290,7 +290,30 @@ class SupplierConnector
 		curl_setopt_array($ch, $options);
 		curl_exec($ch);
 		fclose($fp);
+		curl_close($ch);
 		return $localFile;
+	}
+	/**
+	 * read from a url
+	 * 
+	 * @param string $url     The url
+	 * @param int    $timeout The timeout in seconds
+	 * 
+	 * @return mixed
+	 */
+	public static function readUrl($url, $timeout = null)
+	{
+		$timeout = trim($timeout);
+		$options = array(
+				CURLOPT_RETURNTRANSFER => 1, 
+				CURLOPT_TIMEOUT =>  (!is_numeric($timeout) ? 8*60*60 : $timeout), // set this to 8 hours so we dont timeout on big files
+				CURLOPT_URL     => $url
+		);
+		$ch = curl_init();
+		curl_setopt_array($ch, $options);
+		$data =curl_exec($ch);
+		curl_close($ch);
+		return $data;
 	}
 	/**
 	 * Getting the value of the attribute
