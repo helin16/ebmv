@@ -217,6 +217,24 @@ class Product extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Getting the suppliers for this product
+	 * 
+	 * @param int   $pageNo   The page number
+	 * @param int   $pageSize The page size
+	 * @param array $orderBy  The order by array
+	 * 
+	 * @return multitype:|Ambigous <multitype:, multitype:BaseEntityAbstract >
+	 */
+	public function getSuppliers($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+	{
+		$sql = 'select distinct sp.supplierId from supplierprice sp where sp.productId = ?';
+		$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
+		if(count($result) === 0)
+			return array();
+		$supplierIds = array_map(create_function('$a', 'return $a["supplierId"];'), $result);
+		return EntityDao::getInstance('Supplier')->findByCriteria("id in (" . implode(', ', array_fill(0, count($supplierIds), '?')). ")", $supplierIds, $pageNo, $pageSize, $orderBy);
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
