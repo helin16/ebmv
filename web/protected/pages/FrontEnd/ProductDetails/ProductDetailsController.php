@@ -53,8 +53,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 	    if(!$this->_product instanceof Product)
 	        return 'No Product Found!';
-	    $uid = 0;
-	    $pwd = 0;
+	    list($uid, $pwd) = $this_getUserInfo();
 	    $product = $this->_product;
 	    $html = "<div class='wrapper'>";
     	    $html .= "<div class='product listitem'>";
@@ -102,8 +101,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	
 	public function getDownloadUrl($sender, $params)
 	{
-		$uid = 0;
-		$pwd = 0;
+		list($uid, $pwd) = $this_getUserInfo();
 		$errors = $results = array();
         try 
         {
@@ -114,8 +112,8 @@ class ProductDetailsController extends FrontEndPageAbstract
         			'Isbn' => $this->_product->getAttribute('isbn'),
         			'NO' => $this->_product->getAttribute('cno'),
         			'Format' => 'xml',
-        			'Uid' => 0,
-        			'Pwd' => 0
+        			'Uid' => $uid,
+        			'Pwd' => $pwd
         	);
         	$url = $downloadUrl . '?' . http_build_query($urlParams);
         	$result = SupplierConnector::readUrl($url);
@@ -129,6 +127,22 @@ class ProductDetailsController extends FrontEndPageAbstract
         	$errors[] = $ex->getMessage();
         }
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
+	/**
+	 * Getting the userinformation of the current user
+	 * 
+	 * @return multitype:number Ambigous <number, string>
+	 */
+	private function _getUserInfo()
+	{
+		$uid = 0;
+		$pwd = 0;
+		if (($user = Core::getUser()) instanceof UserAccount)
+		{
+			$uid = $user->getUserName();
+			$pwd = $user->getPassword();
+		}
+		return array($uid, $pwd);
 	}
 }
 ?>
