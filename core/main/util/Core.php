@@ -14,6 +14,10 @@ abstract class Core
      * @var array
      */
 	private static $_storage = array('user' => null, 'role' => null);
+	/**
+	 * @var Library
+	 */
+	private static $_lib = null;
     /**
      * Setting the role in the core
      * 
@@ -86,6 +90,17 @@ abstract class Core
 		self::$_storage = unserialize($string);
 		Core::setUser(self::$_storage['user'], self::$_storage['role']);
 		return self::$_storage;
+	}
+	/**
+	 * Getting the current library
+	 * 
+	 * @return Library
+	 */
+	public static function getLibrary()
+	{
+		if(!self::$_lib instanceof Library)
+			self::$_lib = BaseServiceAbastract::getInstance('Library')->get(Config::get('Site', 'id'));
+		return self::$_lib;
 	}
 }
 
