@@ -53,7 +53,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 	    if(!$this->_product instanceof Product)
 	        return 'No Product Found!';
-	    list($uid, $pwd) = $this_getUserInfo();
+	    list($uid, $pwd) = $this->_getUserInfo();
 	    $product = $this->_product;
 	    $html = "<div class='wrapper'>";
     	    $html .= "<div class='product listitem'>";
@@ -101,7 +101,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	
 	public function getDownloadUrl($sender, $params)
 	{
-		list($uid, $pwd) = $this_getUserInfo();
+		list($uid, $pwd) = $this->_getUserInfo();
 		$errors = $results = array();
         try 
         {
