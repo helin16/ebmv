@@ -78,7 +78,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	            	    $viewUrl = "";
 	            	    if($this->_supplier instanceof Supplier)
 	            	    	$viewUrl = trim($this->_supplier->getInfo('view_url'));
-	            	    $siteId = Config::get('site', 'id');
+	            	    $siteId = Config::get('site', 'code');
                 	    $html .= '<input type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $viewUrl . "', $siteId, $uid, $pwd" . ');"/>';
                 	    $html .= '<input type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
             	    $html .= "</div>";
@@ -110,7 +110,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	if(!$this->_supplier instanceof Supplier)
         		throw new Exception('System Error: no supplier found for this book!');
         	$downloadUrl = trim($this->_supplier->getInfo('download_url'));
-        	$urlParams = array('SiteID' => Config::get('site', 'id'), 
+        	$urlParams = array('SiteID' => Config::get('site', 'code'), 
         			'Isbn' => $this->_product->getAttribute('isbn'),
         			'NO' => $this->_product->getAttribute('cno'),
         			'Format' => 'xml',

@@ -56,7 +56,7 @@ class SupplierConnector
 	 */
 	public function getProductListInfo()
 	{
-		$xml = $this->_getFromSoup($this->_wsdlUrl, Config::get('site', 'id'), 1, 1);
+		$xml = $this->_getFromSoup($this->_wsdlUrl, Config::get('site', 'code'), 1, 1);
 		if(!$xml instanceof SimpleXMLElement)
 			throw new CoreException('Can NOT get the pagination information from ' . $wsdl . '!');
 		$array = array();
@@ -74,7 +74,7 @@ class SupplierConnector
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
 	{
-		return $this->_getFromSoup($this->_wsdlUrl, Config::get('site', 'id'), $pageNo, $pageSize);
+		return $this->_getFromSoup($this->_wsdlUrl, Config::get('site', 'code'), $pageNo, $pageSize);
 	}
 	/**
 	 * Parsing the Xml file

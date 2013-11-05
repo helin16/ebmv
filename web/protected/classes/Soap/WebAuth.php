@@ -23,39 +23,19 @@ class WebAuth
 		$response = new SimpleXMLElement('<Response />');
 		$response->addAttribute('Time', trim($now));
 		$response->addAttribute('TimeZone',trim($now->getTimeZone()->getName()));
-		//check details completion
-		if(trim($CDKey) === '' || trim($SiteID) === '' || trim($Uid) === '' || trim($Pwd) === '')
-		{
-			$response->addAttribute('ResultCode', self::RESULT_CODE_IMCOMPLETE);
-			$response->addAttribute('Info', 'Incomplete, more details needed!');
-			return $response->asXML();
-		}
-		//check user
-		if(trim($SiteID) !== '37') //TODO:: need to associate siteID with user!
-		{
-			$response->addAttribute('ResultCode', self::RESULT_CODE_OTHER_ERROR);
-			$response->addAttribute('Info', 'SiteID is NOT valid!');
-			return $response->asXML();
-		}
 		try
 		{
-			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
-			if(!$userAccount instanceof UserAccount)
-				throw new Exception('No UserAccount found!');
-		}
-		catch(Exception $ex)
-		{
-			$response->addAttribute('ResultCode', self::RESULT_CODE_FAIL);
-			$response->addAttribute('Info', 'No such a user!');
-			return $response->asXML();
-		}
-		
-		$response->addAttribute('CDkey', $CDKey);
-		$user = $response->addChild('User');
-		$user->addAttribute('libraryId', $SiteID);
-		$user->addAttribute('LoginName', $Uid);
-		try
-		{
+			//check details completion
+			if(trim($CDKey) === '' || trim($SiteID) === '' || trim($Uid) === '' || trim($Pwd) === '')
+				throw new Exception('Incomplete, more details needed!',self::RESULT_CODE_IMCOMPLETE);
+			
+			$supplier = $this->_getSupplier($CDkey);
+			$user = $this->_getUser($SiteID, $Uid, $Pwd);
+			
+			$response->addAttribute('CDkey', $CDKey);
+			$user = $response->addChild('User');
+			$user->addAttribute('libraryId', $SiteID);
+			$user->addAttribute('LoginName', $Uid);
 			
 			$user_name = $user_mobile = $user_email = $msg = '';
 			$user->addAttribute('Password', $Pwd);
@@ -67,19 +47,39 @@ class WebAuth
 		}
 		catch (Exception $ex)
 		{
-			$response->addAttribute('ResultCode', self::RESULT_CODE_OTHER_ERROR);
+			$response->addAttribute('ResultCode', $ex->getCode());
 			$response->addAttribute('Info', trim($ex->getMessage()));
 		}
 		return $response->asXML();
 	}
 	/**
-	 * @param string $params
+	 * validating the CDKey
 	 * 
-	 * @return string
-	 * @soapmethod
+	 * @param string $CDkey The secrect
+	 * 
+	 * @throws Exception
+	 * @return Ambigous <Supplier, NULL>
 	 */
-	public function helloWorld($params)
+	private function _getSupplier($CDkey)
 	{
-		return 'hello, world!';
+		//getting the supplier
+		$supplier = BaseServiceAbastract::getInstance('Supplier')->get(1);;
+		if(!$supplier instanceof Supplier)
+			throw new Exception('Unauthorized connection!',self::RESULT_CODE_OTHER_ERROR);
+		//getting the supplier's key
+		$keys = explode(',', $supplier->getInfo('skey'));
+		if(($key = trim($keys[0])) === '')
+			throw new Exception('Unauthorized connection with supplier settings!',self::RESULT_CODE_OTHER_ERROR);
+		if(($wantedCDKey = md5($key . $Uid . $SiteID)) !== trim($CDKey))
+			throw new Exception('Invalid Connection!',self::RESULT_CODE_FAIL);
+		return $supplier;
+	}
+	private function _getUser($siteId, $username, $password)
+	{
+		//getting the user
+		$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
+		if(!$userAccount instanceof UserAccount)
+			throw new Exception('No UserAccount found!', self::RESULT_CODE_FAIL);
+		return $userAccount;
 	}
 }
