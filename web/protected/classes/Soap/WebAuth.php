@@ -94,7 +94,8 @@ class WebAuth
 		$keys = explode(',', $supplier->getInfo('skey'));
 		if(($key = trim($keys[0])) === '')
 			throw new Exception('Unauthorized connection with supplier settings!',self::RESULT_CODE_OTHER_ERROR);
-		if(($wantedCDKey = strtolower(trim(md5($key . $Uid . $SiteID)))) !== strtolower(trim($CDKey)))
+		$wantedCDKey = strtolower(trim(md5($key . $Uid . $SiteID)));
+		if($wantedCDKey !== strtolower(trim($CDKey)))
 			throw new Exception('Invalid Connection!', self::RESULT_CODE_FAIL);
 		return $supplier;
 	}
@@ -114,9 +115,14 @@ class WebAuth
 		if (!$lib instanceof Library)
 			throw new Exception('No Such a Site/Library!', self::RESULT_CODE_FAIL);
 		//getting the user
-		$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $lib, true);
-		if(!$userAccount instanceof UserAccount)
-			throw new Exception('No UserAccount found!', self::RESULT_CODE_FAIL);
-		return $userAccount;
+		try
+		{
+			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $lib, true);
+			return $userAccount;
+		}
+		catch(Exception $ex)
+		{
+			throw new Exception($ex->getMessage(), self::RESULT_CODE_FAIL);
+		}
 	}
 }
