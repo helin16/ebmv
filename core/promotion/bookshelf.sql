@@ -1,4 +1,5 @@
 ALTER TABLE `useraccount` ADD COLUMN `libraryId` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `personId`;
+update `useraccount` set `libraryId` = 1 where id in (1, 10, 100);
 ALTER TABLE  `language` ADD  `code` VARCHAR( 10 ) NOT NULL DEFAULT  '' AFTER  `name`;
 update `language` set `code`='zh_CN' where id = 1;
 update `language` set `code`='zh_TW' where id = 2;
@@ -50,7 +51,7 @@ CREATE TABLE `library` (
 	,INDEX (`name`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 insert into `library` (`id`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
-(37, 'test lib', 1, NOW(), 100, NOW(), 100);
+(1, 'test lib', 1, NOW(), 100, NOW(), 100);
 
 DROP TABLE IF EXISTS `libraryinfo`;
 CREATE TABLE `libraryinfo` (
@@ -70,7 +71,7 @@ CREATE TABLE `libraryinfo` (
 	,INDEX (`updatedById`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
-    ('37', '1', '8985A41E813AE00A78EE4AACF606F643', 1, NOW(), 100, NOW(), 100);
+    ('37', '1', '37', 1, NOW(), 100, NOW(), 100);
 
 DROP TABLE IF EXISTS `libraryinfotype`;
 CREATE TABLE `libraryinfotype` (
@@ -89,4 +90,4 @@ CREATE TABLE `libraryinfotype` (
 	,UNIQUE INDEX (`code`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 insert into libraryinfotype (`id`, `name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
-(1, 'The secret key', 'regno',  1, NOW(), 100, NOW(), 100);
+(1, 'The Australian Library Code', 'aus_code',  1, NOW(), 100, NOW(), 100);
