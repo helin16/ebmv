@@ -228,3 +228,15 @@ a {
 .sidebarmodule .sidebarmodulecontent {
     padding: 5px;
 }
+
+.leftmenu.singlelevel {
+	display: block;
+}
+.leftmenu.singlelevel ul {
+	list-style: none;
+	padding: 0px;
+	margin: 0px 0px 0px 8px;
+}
+.leftmenu.singlelevel ul li {
+	padding: 5px;
+}

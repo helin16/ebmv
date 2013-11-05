@@ -318,5 +318,13 @@ class ProductService extends BaseServiceAbastract
         $results = $this->findByCriteria('pstats.value is null or (pstatstype.code = ? and pstats.value = ?)', array(0, 'no_of_clicks'), true, 1, $limit, array('pro.id'=>'desc'));
         return $results;
     }
+    public function getShelfItems(UserAccount $user, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    {
+    	$sql = "select distinct p.id from product p inner join productshelfitem psi on (psi.active = 1 and psi.ownerId = ? and psi.productId = p.id) where p.active = 1";
+    	$pIds = array_map(create_function('$a', 'return $a["id"];'), Dao::getResultsNative($sql, array($user->getId())));
+    	if(count($pIds) === 0)
+    		return array();
+    	return  $this->findByCriteria('id in (' . array_fill(0, count($pIds), '?') . ')', $pIds, true, $pageNo, $pageSize, $orderBy);
+    }
 }
 ?>

@@ -215,3 +215,18 @@
 	font-size: 13px;
 }
 
+/** userpage **/
+.pageWrapper.userpage .leftmenu.singlelevel ul li.active,
+.pageWrapper.userpage .leftmenu.singlelevel ul li:hover {
+    background: #1C5A80;
+    color: white;
+}
+.pageWrapper.userpage .newpadding {
+	padding: 10px 0 10px 10px;
+}
+.pageWrapper.userpage .maincontent{
+	border:1px #1C5A80 solid;
+	border-radius: 5px;
+	min-height: 300px;
+}
+
