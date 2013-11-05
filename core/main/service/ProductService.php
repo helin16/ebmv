@@ -303,7 +303,14 @@ class ProductService extends BaseServiceAbastract
     {
         EntityDao::getInstance('Product')->deleteManyToManyJoin($category, $product);
         return $this;
-    } 
+    }
+    /**
+     * Getting the Most popular products
+     * 
+     * @param int $limit How many we are getting
+     * 
+     * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
     public function getMostPopularProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
     {
         $query = EntityDao::getInstance('Product')->getQuery();
@@ -311,6 +318,13 @@ class ProductService extends BaseServiceAbastract
         $results = $this->findByCriteria('pstatstype.code = ? or pstatstype.code is null', array('no_of_clicks'), true, 1, $limit, array('pstats.value'=>'desc'));
         return $results;
     }
+    /**
+     * Getting the lastest products
+     * 
+     * @param int $limit How many we are getting
+     * 
+     * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
     public function getNewReleasedProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
     {
         $query = EntityDao::getInstance('Product')->getQuery();
@@ -318,6 +332,16 @@ class ProductService extends BaseServiceAbastract
         $results = $this->findByCriteria('pstats.value is null or (pstatstype.code = ? and pstats.value = ?)', array(0, 'no_of_clicks'), true, 1, $limit, array('pro.id'=>'desc'));
         return $results;
     }
+    /**
+     * Getting the products that on the bookshelf
+     * 
+     * @param UserAccount $user     The owner of the bookshelf
+     * @param int         $pageNo   The pageNumber
+     * @param int         $pageSize The pageSize
+     * @param array       $orderBy  The order by clause
+     * 
+     * @return multitype:|Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
     public function getShelfItems(UserAccount $user, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
     	$sql = "select distinct p.id from product p inner join productshelfitem psi on (psi.active = 1 and psi.ownerId = ? and psi.productId = p.id) where p.active = 1";
