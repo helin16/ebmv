@@ -117,7 +117,13 @@ class ProductDetailsController extends FrontEndPageAbstract
         	);
         	$url = $downloadUrl . '?' . http_build_query($urlParams);
         	$result = SupplierConnector::readUrl($url);
-        	$xml = new SimpleXMLElement($result);
+        	try{
+        		$xml = new SimpleXMLElement($result);
+        	}
+        	catch(Exception $ex)
+        	{
+        		throw new Exception('tring to get from Url: ' . $url . "\n\nGot:\n" . $result);
+        	}
         	if(trim($xml->Code) !== '0')
         		throw new Exception('Error:' . trim($xml->Value));
         	$results['url'] = trim($xml->Value);
