@@ -78,7 +78,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	            	    if($this->_supplier instanceof Supplier)
 	            	    	$viewUrl = trim($this->_supplier->getInfo('view_url'));
 	            	    $siteId = Config::get('site', 'code');
-                	    $html .= '<input type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $viewUrl . "', $siteId, $uid, $pwd" . ');"/>';
+                	    $html .= '<input type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
                 	    $html .= '<input type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
             	    $html .= "</div>";
             	    $html .= "<div class='row product_description'>";
