@@ -99,7 +99,7 @@ abstract class Core
 	public static function getLibrary()
 	{
 		if(!self::$_lib instanceof Library)
-			self::$_lib = BaseServiceAbastract::getInstance('Library')->get(Config::get('Site', 'id'));
+			self::$_lib = BaseServiceAbastract::getInstance('Library')->get(Config::get('site', 'id'));
 		return self::$_lib;
 	}
 }

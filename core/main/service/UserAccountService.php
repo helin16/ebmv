@@ -19,18 +19,23 @@ class UserAccountService extends BaseServiceAbastract
     /**
      * Getting UserAccount
      *
-     * @param string $username    The username string
-     * @param string $password    The password string
+     * @param string  $username The username string
+     * @param string  $password The password string
+     * @param Library $library  The library the user belongs to
      *
      * @throws AuthenticationException
      * @throws Exception
      * @return Ambigous <BaseEntityAbstract>|NULL
      */
-    public function getUserByUsernameAndPassword($username, $password)
+    public function getUserByUsernameAndPassword($username, $password, Library $library = null, $noHashPass = false)
     {
+    	$library = ($library instanceof Library ? $library : Core::getLibrary());
+    	if(!$library instanceof Library)
+    		throw new CoreException('System Error: Invalid Library in system settings!');
         $query = EntityDao::getInstance($this->_entityName)->getQuery();
         $query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
-        $userAccounts = $this->findByCriteria("`UserName` = :username AND `Password` = :password AND r.id != :roleId", array('username' => $username, 'password' => sha1($password), 'roleId' => Role::ID_GUEST), false, 1, 2);
+        $query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
+        $userAccounts = $this->findByCriteria("`UserName` = :username AND `Password` = :password AND r.id != :roleId and lib.id = :libId", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password)), 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
         if(count($userAccounts) === 1)
             return $userAccounts[0];
         else if(count($userAccounts) > 1)
@@ -47,11 +52,15 @@ class UserAccountService extends BaseServiceAbastract
      * @throws Exception
      * @return Ambigous <BaseEntityAbstract>|NULL
      */
-    public function getUserByUsername($username)
+    public function getUserByUsername($username, Library $library = null)
     {
+    	$library = ($library instanceof Library ? $library : Core::getLibrary());
+    	if(!$library instanceof Library)
+    		throw new CoreException('System Error: Invalid Library in system settings!');
         $query = EntityDao::getInstance($this->_entityName)->getQuery();
         $query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
-        $userAccounts = $this->findByCriteria("`UserName` = :username  AND r.id != :roleId ", array('username' => $username, 'roleId' => Role::ID_GUEST), false, 1, 2);
+        $query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
+        $userAccounts = $this->findByCriteria("`UserName` = :username  AND r.id != :roleId and lib.id = :libId", array('username' => $username, 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
         if(count($userAccounts) === 1)
             return $userAccounts[0];
         else if(count($userAccounts) > 1)
