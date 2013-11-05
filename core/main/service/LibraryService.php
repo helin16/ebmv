@@ -31,7 +31,7 @@ class LibraryService extends BaseServiceAbastract
     {
     	$query = EntityDao::getInstance('Library')->getQuery();
     	$query->eagerLoad('Library.infos', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_info')->eagerLoad('LibraryInfo.type', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_info_type');
-    	return $this->findByCriteria('lib_info_type.code = ?', array($code), $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+    	return $this->findByCriteria('lib_info_type.code = ? and lib_info.value = ?', array('aus_code', $code), $searchActiveOnly, $pageNo, $pageSize, $orderBy);
     }
    /**
     * Getting the libraray from the code

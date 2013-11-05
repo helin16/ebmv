@@ -71,7 +71,7 @@ CREATE TABLE `libraryinfo` (
 	,INDEX (`updatedById`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
-    ('37', '1', '37', 1, NOW(), 100, NOW(), 100);
+    ('1', '1', '37', 1, NOW(), 100, NOW(), 100);
 
 DROP TABLE IF EXISTS `libraryinfotype`;
 CREATE TABLE `libraryinfotype` (

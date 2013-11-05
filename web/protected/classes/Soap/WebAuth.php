@@ -29,7 +29,7 @@ class WebAuth
 			if(trim($CDKey) === '' || trim($SiteID) === '' || trim($Uid) === '' || trim($Pwd) === '')
 				throw new Exception('Incomplete, more details needed!',self::RESULT_CODE_IMCOMPLETE);
 			
-			$supplier = $this->_getSupplier($CDkey);
+			$supplier = $this->_getSupplier($CDKey, $Uid, $SiteID);
 			$user = $this->_getUser($SiteID, $Uid, $Pwd);
 			
 			$response->addAttribute('CDkey', $CDKey);
@@ -60,7 +60,7 @@ class WebAuth
 	 * @throws Exception
 	 * @return Ambigous <Supplier, NULL>
 	 */
-	private function _getSupplier($CDkey)
+	private function _getSupplier($CDKey, $Uid, $SiteID)
 	{
 		//getting the supplier
 		$supplier = BaseServiceAbastract::getInstance('Supplier')->get(1);;
@@ -74,10 +74,23 @@ class WebAuth
 			throw new Exception('Invalid Connection!',self::RESULT_CODE_FAIL);
 		return $supplier;
 	}
-	private function _getUser($siteId, $username, $password)
+	/**
+	 * Getting the user
+	 * 
+	 * @param string $libCode
+	 * @param string $username
+	 * @param string $password
+	 * 
+	 * @throws Exception
+	 * @return UserAccount
+	 */
+	private function _getUser($libCode, $username, $password)
 	{
+		$lib = BaseServiceAbastract::getInstance('Library')->getLibFromCode($libCode);
+		if (!$lib instanceof Library)
+			throw new Exception('No Such a Site/Library!', self::RESULT_CODE_FAIL);
 		//getting the user
-		$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
+		$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $lib, true);
 		if(!$userAccount instanceof UserAccount)
 			throw new Exception('No UserAccount found!', self::RESULT_CODE_FAIL);
 		return $userAccount;
