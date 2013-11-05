@@ -46,7 +46,7 @@ class UserController extends FrontEndPageAbstract
 				$pageNo = trim(isset($params->CallbackParameter->pagination->pageNo) ? $params->CallbackParameter->pagination->pageNo : $pageNo);
 				$pageSize = trim(isset($params->CallbackParameter->pagination->pageSize) ? $params->CallbackParameter->pagination->pageSize : $pageSize);
 			}
-			$products = BaseServiceAbastract::getInstance('Product')->getShelfItems(Core::getUser(), $pageNo, $pageSize);
+			$products = BaseServiceAbastract::getInstance('Product')->getShelfItems(Core::getUser(), null, $pageNo, $pageSize);
 			$result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
 			$result['products'] = array();
 			foreach($products as $product)

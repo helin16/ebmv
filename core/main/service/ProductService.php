@@ -342,9 +342,13 @@ class ProductService extends BaseServiceAbastract
      * 
      * @return multitype:|Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
      */
-    public function getShelfItems(UserAccount $user, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    public function getShelfItems(UserAccount $user, Supplier $supplier = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
-    	$sql = "select distinct p.id from product p inner join productshelfitem psi on (psi.active = 1 and psi.ownerId = ? and psi.productId = p.id) where p.active = 1";
+    	$sql = "select distinct p.id 
+    			from product p 
+    			inner join productshelfitem psi on (psi.active = 1 and psi.ownerId = ? and psi.productId = p.id) 
+    			" . ($supplier instanceof Supplier ? "inner join supplierprice supp on (supp.supplierId = " . $supplier->getId() . " and supp.productId = p.id" : "") . "
+    			where p.active = 1";
     	$pIds = array_map(create_function('$a', 'return $a["id"];'), Dao::getResultsNative($sql, array($user->getId())));
     	if(count($pIds) === 0)
     		return array();
