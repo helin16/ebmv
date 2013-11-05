@@ -100,7 +100,7 @@ class ProductShelfItem extends BaseEntityAbstract
      * 
      * @return ProductShelfItem
      */
-    public function setType(UserAccount $owner)
+    public function setOwner(UserAccount $owner)
     {
         $this->owner = $owner;
         return $this;

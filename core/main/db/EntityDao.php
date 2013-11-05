@@ -260,7 +260,7 @@ class EntityDao
      */
     public function countByCriteria($criteria, $params = array())
     {
-        return Dao::countByCriteria($this->_query, $setClause, $criteria, $params);
+        return Dao::countByCriteria($this->_query, $criteria, $params);
     }
     /**
      * delete a table for the search criteria

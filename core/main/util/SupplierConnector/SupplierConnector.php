@@ -21,7 +21,7 @@ class SupplierConnector
 	 * 
 	 * @param Supplier $supplier The supplier
 	 * 
-	 * @return multitype:
+	 * @return SupplierConnector
 	 */
 	public static function getInstance(Supplier $supplier)
 	{
@@ -115,7 +115,15 @@ class SupplierConnector
 		$resultTagName = (trim($resultTagName) === '' ? $funcName . 'Result' : $resultTagName);
 		if(!isset($result->$resultTagName) || !isset($result->$resultTagName->any) || trim($result->$resultTagName->any) === '')
 			return null;
-		return new SimpleXMLElement($result->$resultTagName->any);
+		try 
+		{
+			$xml = new SimpleXMLElement($result->$resultTagName->any);
+			return $xml;
+		}
+		catch (Exception $ex)
+		{
+			throw new Exception("Error for getting \$result->$resultTagName->any: " . $result);
+		}
 	}
 	/**
 	 * Importing the product
@@ -347,19 +355,92 @@ class SupplierConnector
 					'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookShelfList", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new CoreException($xml['Value']);
+			throw new Exception($xml['Value']);
 		return $xml;
 	}
+	/**
+	 * Synchronize user's bookshelf
+	 * 
+	 * @param UserAccount      $user
+	 * @param SimpleXMLElement $xml
+	 * 
+	 * @return SupplierConnector
+	 */
 	public function syncUserBookShelf(UserAccount $user, SimpleXMLElement $xml)
 	{
-		$products = array();
-		foreach($xml->BookShelfList->children() as $bookXml)
+		$transStarted = false;
+		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
+		try
 		{
-			$product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno(trim($bookXml['Isbn']), trim($bookXml['NO']));
-			if($product instanceof Product)
-				$products[$product->getId()] = array('borrowTime' => trim($bookXml['BorrowTime']), 'craeteTime' => trim($bookXml['CraeteTime']), 'state' => trim($bookXml['State']), 'stateInfo' => trim($bookXml['StateInfo']));
+			foreach ($xml->BookShelfList->children() as $bookXml)
+				$this->syncShelfItem($user, trim($bookXml['Isbn']), trim($bookXml['NO']), trim($bookXml['BorrowTime']), trim($bookXml['State']));
+			if($transStarted === false)
+				Dao::commitTransaction();
+			return $this;
+		}
+		catch(Exception $ex)
+		{
+			if($transStarted === false)
+				Dao::rollbackTransaction();
+			throw $ex;
 		}
 	}
+	/**
+	 * Synchronizing an indivdual product with supplier
+	 * 
+	 * @param UserAccount $user
+	 * @param string      $isbn
+	 * @param string      $no
+	 * @param string      $borrowTime
+	 * @param string      $status
+	 * 
+	 * @return SupplierConnector
+	 */
+	public function syncShelfItem(UserAccount $user, $isbn, $no, $borrowTime, $status)
+	{
+		$product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier);
+		if($product instanceof Product)
+			$this->_syncBookShelfItem($user, $product, $borrowTime, $status);
+		return $this;
+	}
+	/**
+	 * synchronize shelf item with local database
+	 * 
+	 * @param UserAccount $user
+	 * @param Product     $product
+	 * @param string      $borrowTime
+	 * @param int         $status
+	 * 
+	 * @return SupplierConnector
+	 */
+	private function _syncBookShelfItem(UserAccount $user, Product $product, $borrowTime, $status)
+	{
+		$where = '`productId` = ? and `ownerId` = ?';
+		$params = array($product->getId(), $user->getId());
+		$count = EntityDao::getInstance('ProductShelfItem')->countByCriteria($where, $params);
+		if($count == 0 )
+		{
+			$item = new ProductShelfItem();
+			$item->setOwner($user);
+			$item->setProduct($product);
+			$item->setBorrowTime($borrowTime);
+			$item->setStatus($status);
+			EntityDao::getInstance('ProductShelfItem')->save($item);
+		}
+		else 
+			EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`borrowTime` = ?, `status` = ?', $where, array_merge(array($borrowTime, $status), $params));
+		return $this;
+	}
+	/**
+	 * Adding a product to the user's bookshelf
+	 * 
+	 * @param UserAccount $user
+	 * @param Product     $product
+	 * @param Library     $lib
+	 * 
+	 * @throws CoreException
+	 * @return Ambigous <NULL, SimpleXMLElement>
+	 */
 	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib)
 	{
 		$username = trim($user->getUserName());
@@ -371,10 +452,20 @@ class SupplierConnector
 				"Pwd" => trim($user->getPassword()),
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "AddToBookShelf", $params);
-		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new CoreException($xml['Value']);
+		if(trim($xml->Code) !== trim(self::CODE_SUCC))
+			throw new Exception($xml->Value);
 		return $xml;
 	}
+	/**
+	 * Removing a product from the book shelf
+	 * 
+	 * @param UserAccount $user
+	 * @param Product     $product
+	 * @param Library     $lib
+	 * 
+	 * @throws CoreException
+	 * @return Ambigous <NULL, SimpleXMLElement>
+	 */
 	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib)
 	{
 		$username = trim($user->getUserName());
@@ -386,8 +477,8 @@ class SupplierConnector
 				"Pwd" => trim($user->getPassword()),
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "RemoveFromBookShelf", $params);
-		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new CoreException($xml['Value']);
+		if(trim($xml->Code) !== trim(self::CODE_SUCC))
+			throw new Exception($xml->Value);
 		return $xml;
 	}
 }

@@ -39,18 +39,25 @@ class ProductService extends BaseServiceAbastract
     /**
      * Get the product with isbn and cno
      * 
-     * @param string $isbn The ISBN string
-     * @param string $cno  The cno
+     * @param string   $isbn     The ISBN string
+     * @param string   $cno      The cno
+     * @param Supplier $supplier A supplier we are looking in
      * 
-     * @return Product|null
+     * @return Ambigous <NULL, BaseEntityAbstract>
      */
-    public function findProductWithISBNnCno($isbn, $cno)
+    public function findProductWithISBNnCno($isbn, $cno, Supplier $supplier = null)
     {
     	$query = EntityDao::getInstance('Product')->getQuery();
     	$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
     	$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa1')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt1', 'pa1.typeId = pt1.id');
     	$where = array('pt.code = ? and pa.attribute = ? and pt1.code = ? and pa1.attribute = ?');
     	$params = array('isbn', $isbn, 'cno', $cno);
+    	if($supplier instanceof Supplier)
+    	{
+    		$query->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price');
+	    	$where[] = 'sup_price.supplierId = ?';
+	    	$params[] = $supplier->getId();
+    	}
     	$results = $this->findByCriteria(implode(' AND ', $where), $params, true, 1, 1);
     	return count($results) > 0 ? $results[0] : null;
     }
@@ -344,14 +351,15 @@ class ProductService extends BaseServiceAbastract
      */
     public function getShelfItems(UserAccount $user, Supplier $supplier = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
+    	$query = EntityDao::getInstance('Product')->getQuery();
     	$where = 'shelf_item.ownerId = ?';
     	$params = array($user->getId());
     	if($supplier instanceof Supplier)
     	{
-	    	$where .= ' AND shelf_item.supplierId = ?';
+    		$query->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price');
+	    	$where .= ' AND sup_price.supplierId = ?';
 	    	$params[] = $supplier->getId();
     	}
-    	$query = EntityDao::getInstance('Product')->getQuery();
     	$query->eagerLoad('Product.shelfItems', DaoQuery::DEFAULT_JOIN_TYPE, 'shelf_item');
     	return  $this->findByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy);
     }
