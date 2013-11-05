@@ -344,15 +344,16 @@ class ProductService extends BaseServiceAbastract
      */
     public function getShelfItems(UserAccount $user, Supplier $supplier = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
-    	$sql = "select distinct p.id 
-    			from product p 
-    			inner join productshelfitem psi on (psi.active = 1 and psi.ownerId = ? and psi.productId = p.id) 
-    			" . ($supplier instanceof Supplier ? "inner join supplierprice supp on (supp.supplierId = " . $supplier->getId() . " and supp.productId = p.id" : "") . "
-    			where p.active = 1";
-    	$pIds = array_map(create_function('$a', 'return $a["id"];'), Dao::getResultsNative($sql, array($user->getId())));
-    	if(count($pIds) === 0)
-    		return array();
-    	return  $this->findByCriteria('id in (' . array_fill(0, count($pIds), '?') . ')', $pIds, true, $pageNo, $pageSize, $orderBy);
+    	$where = 'shelf_item.ownerId = ?';
+    	$params = array($user->getId());
+    	if($supplier instanceof Supplier)
+    	{
+	    	$where .= ' AND shelf_item.supplierId = ?';
+	    	$params[] = $supplier->getId();
+    	}
+    	$query = EntityDao::getInstance('Product')->getQuery();
+    	$query->eagerLoad('Product.shelfItems', DaoQuery::DEFAULT_JOIN_TYPE, 'shelf_item');
+    	return  $this->findByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy);
     }
 }
 ?>

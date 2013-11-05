@@ -51,6 +51,18 @@ class Product extends BaseEntityAbstract
 	 */
 	protected $productStatics;
 	/**
+	 * The supplier prices
+	 * 
+	 * @var multiple:SupplierPrice
+	 */
+	protected $supplierPrices;
+	/**
+	 * The shelf items
+	 * 
+	 * @var multiple:ProductShelfItem
+	 */
+	protected $shelfItems;
+	/**
 	 * Getter for the title
 	 * 
 	 * @return string
@@ -235,6 +247,50 @@ class Product extends BaseEntityAbstract
 		return EntityDao::getInstance('Supplier')->findByCriteria("id in (" . implode(', ', array_fill(0, count($supplierIds), '?')). ")", $supplierIds, $pageNo, $pageSize, $orderBy);
 	}
 	/**
+	 * Getter for the supplierPrices
+	 * 
+	 * @return multiple:SupplierPrice
+	 */
+	public function getSupplierPrices() 
+	{
+		$this->loadOneToMany('supplierPrices');
+	    return $this->supplierPrices;
+	}
+	/**
+	 * Setter for the supplierPrices
+	 * 
+	 * @param array $value The supplierprice
+	 * 
+	 * @return Product
+	 */
+	public function setSupplierPrices($value) 
+	{
+	    $this->supplierPrices = $value;
+	    return $this;
+	}
+	/**
+	 * Getter for the shelfItems
+	 * 
+	 * @return multiple:ProductShelfItem
+	 */
+	public function getShelfItems() 
+	{
+		$this->loadOneToMany('shelfItems');
+	    return $this->shelfItems;
+	}
+	/**
+	 * Setter for the shelfItems
+	 * 
+	 * @param array $value The shelf items
+	 * 
+	 * @return Product
+	 */
+	public function setShelfItems($value) 
+	{
+	    $this->shelfItems = $value;
+	    return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
@@ -274,6 +330,8 @@ class Product extends BaseEntityAbstract
 		DaoMap::setManyToOne("language", "Language");
 		DaoMap::setManyToOne("productType", "ProductType");
 		DaoMap::setOneToMany("productStatics", "ProductStatics");
+		DaoMap::setOneToMany("supplierPrices", "SupplierPrice");
+		DaoMap::setOneToMany("shelfItems", "ProductShelfItem");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');
