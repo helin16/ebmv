@@ -1,17 +1,40 @@
 <?php
+/**
+ * The soap authentication server for web services
+ * 
+ * @package    Web
+ * @subpackage Class
+ * @author     lhe<helin16@gmail.com>
+ */
 class WebAuth
 {
+	/**
+	 * Result code for success
+	 * @var int
+	 */
 	const RESULT_CODE_SUCC = 0;
+	/**
+	 * Result code for fail
+	 * @var int
+	 */
 	const RESULT_CODE_FAIL = 1;
+	/**
+	 * Result code for imcomplete
+	 * @var int
+	 */
 	const RESULT_CODE_IMCOMPLETE = 2;
+	/**
+	 * Result code for other error
+	 * @var int
+	 */
 	const RESULT_CODE_OTHER_ERROR = 3;
 	/**
 	 * Authentication method
 	 * 
-	 * @param string $CDKey
-	 * @param int    $SiteID
-	 * @param string $Uid
-	 * @param string $Pwd
+	 * @param string $CDKey  The scecret key
+	 * @param int    $SiteID The library code
+	 * @param string $Uid    The username
+	 * @param string $Pwd    The hashed password
 	 * 
 	 * @return string
 	 * @soapmethod
@@ -28,8 +51,9 @@ class WebAuth
 			//check details completion
 			if(trim($CDKey) === '' || trim($SiteID) === '' || trim($Uid) === '' || trim($Pwd) === '')
 				throw new Exception('Incomplete, more details needed!',self::RESULT_CODE_IMCOMPLETE);
-			
+			//get the supplier
 			$supplier = $this->_getSupplier($CDKey, $Uid, $SiteID);
+			//get the User
 			$user = $this->_getUser($SiteID, $Uid, $Pwd);
 			
 			$response->addAttribute('CDkey', $CDKey);
@@ -37,13 +61,13 @@ class WebAuth
 			$user->addAttribute('libraryId', $SiteID);
 			$user->addAttribute('LoginName', $Uid);
 			
-			$user_name = $user_mobile = $user_email = $msg = '';
+			$user_mobile = $user_email = '';
 			$user->addAttribute('Password', $Pwd);
-			$user->addAttribute('Name', $user_name);
+			$user->addAttribute('Name', trim($user->getPerson()));
 			$user->addAttribute('Mobile', $user_mobile);
 			$user->addAttribute('Email', $user_email);
 			$response->addAttribute('ResultCode', self::RESULT_CODE_SUCC);
-			$response->addAttribute('Info', $msg);
+			$response->addAttribute('Info', '');
 		}
 		catch (Exception $ex)
 		{
