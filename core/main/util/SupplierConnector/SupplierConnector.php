@@ -1,6 +1,7 @@
 <?php
 class SupplierConnector
 {
+	const CODE_SUCC = 0;
 	/**
 	 * @var Supplier
 	 */
@@ -56,7 +57,7 @@ class SupplierConnector
 	 */
 	public function getProductListInfo()
 	{
-		$xml = $this->_getFromSoup($this->_wsdlUrl, Config::get('site', 'code'), 1, 1);
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Config::get('site', 'code'), "Index" => 1, "Size" => 1));
 		if(!$xml instanceof SimpleXMLElement)
 			throw new CoreException('Can NOT get the pagination information from ' . $wsdl . '!');
 		$array = array();
@@ -74,7 +75,7 @@ class SupplierConnector
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
 	{
-		return $this->_getFromSoup($this->_wsdlUrl, Config::get('site', 'code'), $pageNo, $pageSize);
+		return $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Config::get('site', 'code'), "Index" => $pageNo, "Size" => $pageSize));
 	}
 	/**
 	 * Parsing the Xml file
@@ -107,13 +108,14 @@ class SupplierConnector
 	 *
 	 * @return NULL|SimpleXMLElement
 	 */
-	private function _getFromSoup($wsdl, $siteId, $pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	private function _getFromSoap($wsdl, $funcName, $params = array(), $resultTagName = null)
 	{
 		$client = new SoapClient($wsdl, array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP));
-		$result = $client->GetBookList(array("SiteID" => $siteId, "Index" => $pageNo, "Size" => $pageSize));
-		if(!isset($result->GetBookListResult) || !isset($result->GetBookListResult->any) || trim($result->GetBookListResult->any) === '')
+		$result = $client->$funcName($params);
+		$resultTagName = (trim($resultTagName) === '' ? $funcName . 'Result' : $resultTagName);
+		if(!isset($result->$resultTagName) || !isset($result->$resultTagName->any) || trim($result->$resultTagName->any) === '')
 			return null;
-		return new SimpleXMLElement($result->GetBookListResult->any);
+		return new SimpleXMLElement($result->$resultTagName->any);
 	}
 	/**
 	 * Importing the product
@@ -326,5 +328,66 @@ class SupplierConnector
 	protected function _getAttribute(SimpleXMLElement $xml, $attributeName)
 	{
 		return (isset($xml->$attributeName) && ($attribute = trim($xml->$attributeName)) !== '') ? $attribute : '';
+	}
+	/**
+	 * Getting the book shelf
+	 * 
+	 * @param UserAccount $user
+	 * @param Library     $lib
+	 * 
+	 * @return Ambigous <NULL, SimpleXMLElement>
+	 */
+	public function getBookShelfList(UserAccount $user, Library $lib)
+	{
+		$username = trim($user->getUserName());
+		$libCode = trim($lib->getInfo('aus_code'));
+		$params = array("SiteID" => $libCode, 
+					"Uid" => $username, 
+					"Pwd" => trim($user->getPassword()), 
+					'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookShelfList", $params);
+		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
+			throw new CoreException($xml['Value']);
+		return $xml;
+	}
+	public function syncUserBookShelf(UserAccount $user, SimpleXMLElement $xml)
+	{
+		$products = array();
+		foreach($xml->BookShelfList->children() as $bookXml)
+		{
+			$product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno(trim($bookXml['Isbn']), trim($bookXml['NO']));
+			if($product instanceof Product)
+				$products[$product->getId()] = array('borrowTime' => trim($bookXml['BorrowTime']), 'craeteTime' => trim($bookXml['CraeteTime']), 'state' => trim($bookXml['State']), 'stateInfo' => trim($bookXml['StateInfo']));
+		}
+	}
+	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib)
+	{
+		$username = trim($user->getUserName());
+		$libCode = trim($lib->getInfo('aus_code'));
+		$params = array("SiteID" => $libCode,
+				'Isbn' => trim($product->getAttribute('isbn')),
+				'NO' => trim($product->getAttribute('cno')),
+				"Uid" => $username,
+				"Pwd" => trim($user->getPassword()),
+				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "AddToBookShelf", $params);
+		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
+			throw new CoreException($xml['Value']);
+		return $xml;
+	}
+	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib)
+	{
+		$username = trim($user->getUserName());
+		$libCode = trim($lib->getInfo('aus_code'));
+		$params = array("SiteID" => $libCode,
+				'Isbn' => trim($product->getAttribute('isbn')),
+				'NO' => trim($product->getAttribute('cno')),
+				"Uid" => $username,
+				"Pwd" => trim($user->getPassword()),
+				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "RemoveFromBookShelf", $params);
+		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
+			throw new CoreException($xml['Value']);
+		return $xml;
 	}
 }
