@@ -7,4 +7,5 @@
         <li class="mainMenuItem"><a href="/products/2/2">繁體報紙</a></li>
         <li class="mainMenuItem"><a href="/products/2/3">繁體雜誌</a></li>
     </ul>
+    <span class="welcome_user inlineblock">Welcome, <%= Core::getUser() instanceof UserAccount ? "<a href='/user.html'>" . Core::getUser()->getPerson() . "</a>" : 'Guest' %></span>
 </div>

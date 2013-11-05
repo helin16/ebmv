@@ -155,7 +155,7 @@ a {
     list-style: none;
     padding: 0px;
     margin: 0px;
-    display: block;
+    display: inline-block;
 }
 
 .menu ul li {
@@ -170,6 +170,9 @@ a {
 .menu ul li a:hover {
     background: #999999;
     border-radius: 4px;
+}
+.menu .welcome_user {
+	float: right;
 }
 
 .controlbtns {
