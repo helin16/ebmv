@@ -3,7 +3,6 @@
  */
 var FrontPageJs = new Class.create();
 FrontPageJs.prototype = {
-		
 	productDetailsUrl: '/product/{id}' 
 	
 	//the callback ids
@@ -103,11 +102,138 @@ FrontPageJs.prototype = {
 	,showDetailsPage: function(productId) {
 		window.location = this.productDetailsUrl.replace('{id}', productId);
 	}
-	
+	//getting the product image div
 	,_getProductImgDiv: function (images) {
-		var tmp = {};
 		if(images === undefined || images === null || images.size() === 0)
 			return new Element('div', {'class': 'product_image noimage'});
 		return new Element('img', {'class': 'product_image', 'src': '/asset/get?id=' + images[0].attribute});
+	}
+	//getting the current user
+	,getUser: function(btn, afterFunc, loadingFunc) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.postAjax(tmp.me.getCallbackId('getUser'), {}, {
+			'onLoading': function () {
+				if(typeof(loadingFunc) === 'function')
+					loadingFunc();
+			}
+			,'onComplete': function(sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(typeof(afterFunc) === 'function')
+						afterFunc();
+				} catch(e) {
+					tmp.me.showLoginPanel(btn);
+				}
+			}
+		});
+	}
+	//showing login panel
+	,showLoginPanel: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.newDiv = new Element('div', {'class': 'floatingpanel'})
+			.insert({'bottom': new Element('div', {'class': 'row msgpanel'}) })
+			.insert({'bottom': new Element('div', {'class': 'row'})
+				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('用户名/用戶名:') 
+					.insert({'bottom': new Element('div', {'class': 'subtitle'}).update('Username:') })
+				})
+				.insert({'bottom': new Element('span', {'class': 'inlineblock content'})
+					.insert({'bottom': new Element('input', {'type': 'textbox', 'class': 'username rdcrnr padding5 lightBrdr ', 'placeholder': 'Username'}) 
+						.observe('keydown', function(event) {
+							pageJs.keydown(event, function(){$(Event.element(event)).up('.loginpanel').down('.loginbtn').click();});
+						})
+					})
+				})
+			})
+			.insert({'bottom': new Element('div', {'class': 'row'})
+				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('密码/密碼:')
+					.insert({'bottom': new Element('div', {'class': 'subtitle'}).update('Password:') })
+				})
+				.insert({'bottom': new Element('span', {'class': 'inlineblock content'})
+					.insert({'bottom': new Element('input', {'type': 'password', 'class': 'password rdcrnr padding5 lightBrdr ', 'placeholder': 'Password'}) 
+						.observe('keydown', function(event) {
+							pageJs.keydown(event, function(){$(Event.element(event)).up('.loginpanel').down('.loginbtn').click();});
+						})
+					})
+				})
+			})
+			.insert({'bottom': new Element('div', {'class': 'row btns'})
+				.insert({'bottom': new Element('input', {'class': 'loginbtn button rdcrnr', 'value': 'Login', 'type': 'button'})
+						.observe('click', function() {
+							tmp.me._login(this, null, function() {
+								window.location = document.URL;
+							});
+					})
+				})
+				.insert({'bottom': new Element('input', {'class': 'cancelbtn button rdcrnr', 'value': 'Cancel', 'type': 'button'})
+					.observe('click', function() {
+						$(this).up('.floatpanelwrapper').remove();
+						$(btn).disabled = false;
+						$(btn).value = $(btn).readAttribute('originvalue');
+					})
+				})
+			});
+		$(btn).insert({'after': tmp.newDiv.wrap(new Element('div', {'class': 'loginpanel floatpanelwrapper'}))});
+		tmp.newDiv.down('.username').focus();
+	}
+	
+	,_getErrMsg: function (msg) {
+		return new Element('span', {'class': 'errmsg smalltxt'}).update(msg);
+	}
+
+	,_login: function (btn, loadingFunc, afterFunc) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.panel = $(btn).up('.loginpanel');
+		tmp.usernamebox = tmp.panel.down('.username');
+		tmp.passwordbox = tmp.panel.down('.password');
+		if(tmp.me._preLogin(tmp.usernamebox, tmp.passwordbox) === false) {
+			return;
+		}
+		
+		tmp.loadingMsg = new Element('div', {'class': 'loadingMsg'}).update('log into system ...');
+		tmp.me.postAjax(tmp.me.getCallbackId('loginUser'), {'username': $F(tmp.usernamebox), 'password': $F(tmp.passwordbox)}, {
+			'onLoading': function () {
+				$(btn).up('.row').hide().insert({'after': tmp.loadingMsg });
+				tmp.panel.down('.msgpanel').update('');
+				if(typeof(loadingFunc) === 'function')
+					loadingFunc();
+			}
+			,'onComplete': function(sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(typeof(afterFunc) === 'function')
+						afterFunc();
+				}
+				catch(e)
+				{
+					tmp.panel.down('.msgpanel').update(tmp.me._getErrMsg(e));
+				}
+				tmp.loadingMsg.remove();
+				$(btn).up('.row').show();
+			}
+		});
+	}
+	,_preLogin: function (usernamebox, passwordbox) {
+		var tmp = {};
+		tmp.me = this;
+		//cleanup error msg
+		$(usernamebox).up('.loginpanel').getElementsBySelector('.errmsg').each(function(item) {
+			item.remove();
+		});
+		
+		if($F(usernamebox).blank()) {
+			$(usernamebox).insert({'after': tmp.me._getErrMsg('Please provide an username!') });
+			$(usernamebox).focus();
+			return false;
+		}
+		
+		if($F(passwordbox).blank()) {
+			$(passwordbox).insert({'after': tmp.me._getErrMsg('Please provide an password!') });
+			$(passwordbox).focus();
+			return false;
+		}
+		return true;
 	}
 };
