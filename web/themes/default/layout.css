@@ -103,6 +103,7 @@ a {
 .floatpanelwrapper .floatingpanel {
 	position: absolute;
 	border: 10px #cccccc solid;
+	background: #cccccc;
 	border-radius: 5px;
 	padding: 5px;
 	width: 300px;
