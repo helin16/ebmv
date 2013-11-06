@@ -5,7 +5,7 @@ var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	product: null //the product object
 	
-	,readOnline: function(readUrl, siteId, uid, pwd) {
+	,readOnline: function(btn, readUrl, siteId, uid, pwd) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.readUrl = (readUrl || '');
