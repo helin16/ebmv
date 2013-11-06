@@ -54,7 +54,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.morePages = true; 
 		if(pagination.totalPages < tmp.windowSize) {
 			tmp.morePages = false;
-			tmp.windowSize = pagination.totalPages
+			tmp.windowSize = pagination.totalPages;
 		}
 		//if the page we are at is at 
 		if(Math.ceil( tmp.windowSize / 2) > pagination.pageNumber) {
@@ -83,6 +83,28 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			;
 		}
 		return tmp.paginationDiv;
+	}
+	
+	,removeItem: function(btn, productid) {
+		var tmp = {};
+		tmp.me = this;
+		if(!confirm('You are removing this BOOK from your book shelf?\n\nContinue?'))
+			return;
+		pageJs.postAjax(tmp.me.getCallbackId("removeProduct"), {'productid': productid}, {
+			'onLoading': function () {
+				$(btn).writeAttribute('originvalue', $F(btn)).setValue('Removing ... ').disabled = true;
+			}
+			,'onComplete': function(sender, param) {
+				try {
+					tmp.result = pageJs.getResp(param, false, true);
+					tmp.me.showBookShelf();
+				} catch (e) {
+					alert(e);
+					$(btn).setValue($(btn).readAttribute('originvalue')).disabled = false;
+				}
+			}
+		});
+		return this;
 	}
 	
 	,changePage: function (pageNo, pageSize) {
@@ -136,6 +158,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					.insert({'bottom': new Element('span', {'class': 'product_publish_date inlineblock textright'})
 						.insert({'bottom': new Element('label').update('Publisher Date:')})
 						.insert({'bottom': new Element('span').update(product.attributes.publish_date ? tmp.me._getAttrString(product.attributes.publish_date).join(' ') : '')})
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('input', {'class': 'button rdcrnr', 'value': 'Remove'})
+						.observe('click', function(){
+							tmp.me.removeItem(this, product.id);
+						})
 					})
 				})
 				.insert({'bottom': new Element('div', {'class': 'product_description'}).update((product.attributes.description ? tmp.me._getAttrString(product.attributes.description).join(' ') : '')) })

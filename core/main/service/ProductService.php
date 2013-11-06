@@ -352,8 +352,8 @@ class ProductService extends BaseServiceAbastract
     public function getShelfItems(UserAccount $user, Supplier $supplier = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
     	$query = EntityDao::getInstance('Product')->getQuery();
-    	$where = 'shelf_item.ownerId = ?';
-    	$params = array($user->getId());
+    	$where = 'shelf_item.ownerId = ? and shelf_item.active = ?';
+    	$params = array($user->getId(), 1);
     	if($supplier instanceof Supplier)
     	{
     		$query->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price');
@@ -361,7 +361,8 @@ class ProductService extends BaseServiceAbastract
 	    	$params[] = $supplier->getId();
     	}
     	$query->eagerLoad('Product.shelfItems', DaoQuery::DEFAULT_JOIN_TYPE, 'shelf_item');
-    	return  $this->findByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy);
+    	$result = $this->findByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy);
+    	return $result;
     }
 }
 ?>

@@ -24,6 +24,7 @@ class UserController extends FrontEndPageAbstract
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.resultDivId = "resultdiv";';
 		$js .= 'pageJs.setCallbackId("getProducts", "' . $this->getProductsBtn->getUniqueID() . '");';
+		$js .= 'pageJs.setCallbackId("removeProduct", "' . $this->removeFromShelfBtn->getUniqueID() . '");';
 		$js .= '$$(".leftmenu.singlelevel .menulist .menuitem .menulink").first().click();';
 		return $js;
 	}
@@ -68,12 +69,11 @@ class UserController extends FrontEndPageAbstract
 		{
 			if(!isset($params->CallbackParameter->productid) || !($product = BaseServiceAbastract::getInstance('Product')->get(trim($params->CallbackParameter->productid))) instanceof Product)
 				throw new Exception("System Error: invalid product!");
-			$result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
-			$result['products'] = array();
-			foreach($products as $product)
+			foreach($product->getSuppliers() as $supplier)
 			{
-				$result['products'][] = $product->getJson();
+				BaseServiceAbastract::getInstance('ProductShelfItem')->removeItem(Core::getUser(), $product, Core::getLibrary(), $supplier);
 			}
+			$result['product'] = $product->getJson();
 		}
 		catch(Exception $ex)
 		{

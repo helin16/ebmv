@@ -424,8 +424,8 @@ class SupplierConnector
 				"Pwd" => trim($user->getPassword()),
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "AddToBookShelf", $params);
-		if(trim($xml->Code) !== trim(self::CODE_SUCC))
-			throw new Exception($xml->Value);
+		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
+			throw new Exception("Connector Error: " .$xml->Value);
 		return $xml;
 	}
 	/**
@@ -449,8 +449,8 @@ class SupplierConnector
 				"Pwd" => trim($user->getPassword()),
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "RemoveFromBookShelf", $params);
-		if(trim($xml->Code) !== trim(self::CODE_SUCC))
-			throw new Exception($xml->Value);
+		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
+			throw new Exception("Connector Error: " . $xml->Value);
 		return $xml;
 	}
 	/**
@@ -482,7 +482,7 @@ class SupplierConnector
 		}
 		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem($user, $product, Core::getLibrary(), $this->_supplier);
 		if(trim($xml->Code) !== trim(self::CODE_SUCC))
-			throw new Exception('Error:' . trim($xml->Value));
+			throw new Exception("Connector Error: " . trim($xml->Value));
 		return trim($xml->Value);
 	}
 }
