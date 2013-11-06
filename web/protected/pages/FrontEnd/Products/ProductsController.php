@@ -46,7 +46,7 @@ class ProductsController extends FrontEndPageAbstract
 		$js .= '});';
 		$js .= 'var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); ';
 		$js .= 'pageJs.pagination.pageSize = ' . $this->pageSize . ';';
-		$js .= (($catId = trim($this->Request['cateId'])) === '' ? '' : 'pageJs.searchCriteria.categoryIds.push(' . $catId . ');');
+		$js .= (($catId = trim($this->Request['cateid'])) === '' ? '' : 'pageJs.searchCriteria.categoryIds.push(' . $catId . ');');
 		
 		if(isset($this->Request['languageId']) && (($languageId = $this->Request['languageId']) !== ''))
 			$js .= 'pageJs.searchCriteria.language = '.$languageId.';';
