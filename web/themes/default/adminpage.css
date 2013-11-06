@@ -45,10 +45,10 @@
 	width: 400px;
 }
 .adminpage.productpage .col.active {
-	width: 30px;
+	width: 50px;
 }
 .adminpage.productpage .col.btns {
-	width: 70px;
+	width: 50px;
 }
 
 .adminpage.productpage .editProductDiv {
@@ -77,14 +77,15 @@
 
 .adminpage.productpage .eActiveBox {
 	padding: 5px;
-	width:30px;
+	width:50px;
 }
 
 .adminpage.productpage .editBtn {
-	padding:5px;
+	padding:2px;
+	
 }
 
 .adminpage.productpage .cancelBtn {
-	padding:5px;
+	padding:2px;
 }
 
