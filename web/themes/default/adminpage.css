@@ -17,6 +17,10 @@
 	background: #ddd;
 }
 
+.adminpage.productpage .singleRowDiv.even {
+	background: #ddd;
+}
+
 .adminpage.productpage .row.titleRow{
 	font-weight:bold;
 	font-size:14px;
