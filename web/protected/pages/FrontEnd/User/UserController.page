@@ -1,5 +1,6 @@
 <com:TContent ID="MainContent">
     <com:TCallback ID="getProductsBtn" OnCallback="getProducts" />
+    <com:TCallback ID="removeFromShelfBtn" OnCallback="removeFromShelf" />
 	<div class="pageWrapper userpage">
 	   <span class="left sidebar inlineblock newpadding">
 	       <h3 class="sidebarmoduletitle">Welcome, <%= Core::getUser()->getPerson() %></h3>

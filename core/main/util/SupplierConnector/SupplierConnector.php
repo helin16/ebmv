@@ -400,35 +400,7 @@ class SupplierConnector
 	{
 		$product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier);
 		if($product instanceof Product)
-			$this->_syncBookShelfItem($user, $product, $borrowTime, $status);
-		return $this;
-	}
-	/**
-	 * synchronize shelf item with local database
-	 * 
-	 * @param UserAccount $user
-	 * @param Product     $product
-	 * @param string      $borrowTime
-	 * @param int         $status
-	 * 
-	 * @return SupplierConnector
-	 */
-	private function _syncBookShelfItem(UserAccount $user, Product $product, $borrowTime, $status)
-	{
-		$where = '`productId` = ? and `ownerId` = ?';
-		$params = array($product->getId(), $user->getId());
-		$count = EntityDao::getInstance('ProductShelfItem')->countByCriteria($where, $params);
-		if($count == 0 )
-		{
-			$item = new ProductShelfItem();
-			$item->setOwner($user);
-			$item->setProduct($product);
-			$item->setBorrowTime($borrowTime);
-			$item->setStatus($status);
-			EntityDao::getInstance('ProductShelfItem')->save($item);
-		}
-		else 
-			EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`borrowTime` = ?, `status` = ?', $where, array_merge(array($borrowTime, $status), $params));
+			BaseServiceAbastract::getInstance('ProductShelfItem')->syncShelfItem($user, $product, $borrowTime, $status);
 		return $this;
 	}
 	/**
@@ -480,5 +452,37 @@ class SupplierConnector
 		if(trim($xml->Code) !== trim(self::CODE_SUCC))
 			throw new Exception($xml->Value);
 		return $xml;
+	}
+	/**
+	 * Getting the download url for a book
+	 * 
+	 * @param Product     $product The product we are trying to get the url for
+	 * @param UserAccount $user    Who wants to download it
+	 * 
+	 * @throws Exception
+	 */
+	public function getDownloadUrl(Product $product, UserAccount $user)
+	{
+		$downloadUrl = trim($this->_supplier->getInfo('download_url'));
+		$urlParams = array('SiteID' => Config::get('site', 'code'),
+				'Isbn' => $product->getAttribute('isbn'),
+				'NO' => $product->getAttribute('cno'),
+				'Format' => 'xml',
+				'Uid' => $user->getUserName(),
+				'Pwd' => $user->getPassword()
+		);
+		$url = $downloadUrl . '?' . http_build_query($urlParams);
+		$result = self::readUrl($url);
+		try
+		{
+			$xml = new SimpleXMLElement($result);
+		}
+		catch(Exception $ex)
+		{
+		}
+		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem($user, $product, Core::getLibrary(), $this->_supplier);
+		if(trim($xml->Code) !== trim(self::CODE_SUCC))
+			throw new Exception('Error:' . trim($xml->Value));
+		return trim($xml->Value);
 	}
 }

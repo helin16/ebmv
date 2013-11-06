@@ -109,27 +109,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         {
         	if(!$this->_supplier instanceof Supplier)
         		throw new Exception('System Error: no supplier found for this book!');
-        	$downloadUrl = trim($this->_supplier->getInfo('download_url'));
-        	$urlParams = array('SiteID' => Config::get('site', 'code'), 
-        			'Isbn' => $this->_product->getAttribute('isbn'),
-        			'NO' => $this->_product->getAttribute('cno'),
-        			'Format' => 'xml',
-        			'Uid' => $uid,
-        			'Pwd' => $pwd
-        	);
-        	$url = $downloadUrl . '?' . http_build_query($urlParams);
-        	$result = SupplierConnector::readUrl($url);
-        	try
-        	{
-        		$xml = new SimpleXMLElement($result);
-        		SupplierConnector::getInstance($this->_supplier)->addToBookShelfList(Core::getUser(), $this->_product, Core::getLibrary());
-        	}
-        	catch(Exception $ex)
-        	{
-        	}
-        	if(trim($xml->Code) !== '0')
-        		throw new Exception('Error:' . trim($xml->Value));
-        	$results['url'] = trim($xml->Value);
+        	$results['url'] = SupplierConnector::getInstance($this->_supplier)->getDownloadUrl($this->_product, Core::getUser());
         	$results['redirecturl'] = '/user.html';
         }
         catch(Exception $ex)

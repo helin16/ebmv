@@ -46,7 +46,28 @@ class UserController extends FrontEndPageAbstract
 				$pageNo = trim(isset($params->CallbackParameter->pagination->pageNo) ? $params->CallbackParameter->pagination->pageNo : $pageNo);
 				$pageSize = trim(isset($params->CallbackParameter->pagination->pageSize) ? $params->CallbackParameter->pagination->pageSize : $pageSize);
 			}
-			$products = BaseServiceAbastract::getInstance('Product')->getShelfItems(Core::getUser(), null, $pageNo, $pageSize);
+			$products = BaseServiceAbastract::getInstance('Product')->getShelfItems(Core::getUser(), null, $pageNo, $pageSize, array('shelf_item.updated' => 'desc'));
+			$result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
+			$result['products'] = array();
+			foreach($products as $product)
+			{
+				$result['products'][] = $product->getJson();
+			}
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+		}
+		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	
+	public function removeFromShelf($sender, $params)
+	{
+		$errors = $result = array();
+		try
+		{
+			if(!isset($params->CallbackParameter->productid) || !($product = BaseServiceAbastract::getInstance('Product')->get(trim($params->CallbackParameter->productid))) instanceof Product)
+				throw new Exception("System Error: invalid product!");
 			$result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
 			$result['products'] = array();
 			foreach($products as $product)
