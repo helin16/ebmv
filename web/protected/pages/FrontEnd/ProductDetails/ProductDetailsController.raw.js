@@ -14,9 +14,14 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			alert('System Error: no where to read it!');
 			return;
 		}
+		$(btn).writeAttribute('originvalue', $F(btn));
 		tmp.me.getUser(btn, function(){
 				tmp.params = {'isbn': tmp.me.product.attributes.isbn[0].attribute, 'no': tmp.me.product.attributes.cno[0].attribute, 'siteID': siteId, 'uid': uid, 'pwd': pwd};
 				window.open(tmp.readUrl + '?' + $H(tmp.params).toQueryString());
+			}
+			,function () {
+				$(btn).disabled = true;
+				$(btn).value = "Processing ...";
 			}
 		);
 	}
