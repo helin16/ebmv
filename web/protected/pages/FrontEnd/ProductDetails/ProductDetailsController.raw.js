@@ -18,6 +18,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me.getUser(btn, function(){
 				tmp.params = {'isbn': tmp.me.product.attributes.isbn[0].attribute, 'no': tmp.me.product.attributes.cno[0].attribute, 'siteID': siteId, 'uid': uid, 'pwd': pwd};
 				window.open(tmp.readUrl + '?' + $H(tmp.params).toQueryString());
+				$(btn).setValue($(btn).readAttribute('originvalue')).disabled = false;
 			}
 			,function () {
 				$(btn).disabled = true;
