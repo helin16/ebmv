@@ -19,7 +19,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				try {
 					tmp.result = pageJs.getResp(param, false, true);
 					if(!tmp.result.pagination || tmp.result.pagination.totalRows === 0 || tmp.result.products.size() === 0)
-						throw 'Nothing found!';
+						throw 'Nothing on your shelf!';
 					
 					tmp.resultDiv.insert({'bottom': tmp.me._getPaginationDiv(tmp.result.pagination) });
 					tmp.result.products.each(function(item){
