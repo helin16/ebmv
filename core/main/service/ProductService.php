@@ -127,7 +127,7 @@ class ProductService extends BaseServiceAbastract
         if(count($categorIds = array_filter($categorIds)) > 0)
         {
             $query->eagerLoad('Product.categorys');
-            $where[] = '(pcat.id in (' . implode(', ', array_fill(0, count($categorIds), '?')) . '))';
+            $where[] = '(pcat.id IN (' . implode(', ', array_fill(0, count($categorIds), '?')) . '))';
             $params = array_merge($params, $categorIds);
             $searchMode = true;
         }
