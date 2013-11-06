@@ -131,13 +131,13 @@
 }
 
 .LoginPanel .row .title {
-    width: 100px;
+    width: 110px;
     vertical-align: top;
-    padding: 5px 0 0 0;
+    text-align: right;
 }
 .LoginPanel .row .content {
-    width: 290px;
-    vertical-align: top;
+    width: 280px;
+    vertical-align: middle;
 }
 
 /** homepage **/
