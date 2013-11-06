@@ -23,7 +23,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					
 					tmp.resultDiv.insert({'bottom': tmp.me._getPaginationDiv(tmp.result.pagination) });
 					tmp.result.products.each(function(item){
-						tmp.resultDiv.insert({'bottom': tmp.me[tmp.me.getProductItemFunc](item) });
+						tmp.resultDiv.insert({'bottom': tmp.me._getProductListItem(item) });
 					});
 					tmp.resultDiv.insert({'bottom':tmp.me._getPaginationDiv(tmp.result.pagination) });
 				} catch (e) {
@@ -142,11 +142,6 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			})
 		;
 		return tmp.productDiv;
-	}
-	
-	//get product grid item
-	,_getProductGridItem: function(product) {
-		return this._getProductThumbnail(product);
 	}
 	
 	,_getAttrString: function(attArray){

@@ -110,5 +110,57 @@ abstract class FrontEndPageAbstract extends TPage
 	    }
 	    return $array;
 	}
+	/**
+	 * Trying to get the current user
+	 * 
+	 * @param TCallback           $sender
+	 * @param TCallbackParameters $param
+	 * 
+	 * @throws Exception
+	 */
+	public function getCurrentUser($sender, $params)
+	{
+		$errors = $results = array();
+		try
+		{
+			if(!Core::getUser() instanceof UserAccount)
+				throw new Exception('Invalid user!');
+			$results['user'] = array('id' => Core::getUser()->getId(), 'name' => trim(Core::getUser()->getPerson()));
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
+	/**
+	 * Trying to get the current user
+	 * 
+	 * @param TCallback           $sender
+	 * @param TCallbackParameters $param
+	 * 
+	 * @throws Exception
+	 */
+	public function login($sender, $params)
+	{
+		$errors = $results = array();
+        try 
+        {
+            if(!isset($params->CallbackParameter->username) || ($username = trim($params->CallbackParameter->username)) === '')
+                throw new Exception('username not provided!');
+            if(!isset($params->CallbackParameter->password) || ($password = trim($params->CallbackParameter->password)) === '')
+                throw new Exception('password not provided!');
+            
+            $authManager=$this->getApplication()->getModule('auth');
+            if(!$authManager->login($username, $password))
+            	throw new Exception('Invalid user!');
+            $results['user'] = array('id' => Core::getUser()->getId(), 'name' => trim(Core::getUser()->getPerson()));
+        }
+        catch(Exception $ex)
+        {
+        	$errors[] = $ex->getMessage();
+        }
+        $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
 }
 ?>

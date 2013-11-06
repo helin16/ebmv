@@ -90,6 +90,24 @@ a {
     margin: 0 auto;
 }
 
+.floatpanelwrapper {
+	position: relative;
+}
+.floatpanelwrapper .floatingpanel {
+	position: absolute;
+	border: 10px #cccccc solid;
+	border-radius: 5px;
+	padding: 5px;
+	width: 300px;
+}
+
+.floatpanelwrapper .floatingpanel .row {
+	padding: 3px 0;
+}
+.floatpanelwrapper .floatingpanel .row .inlineblock {
+	width: 100px;
+}
+
 .header {
     box-shadow: none;
     background: #ffffff;

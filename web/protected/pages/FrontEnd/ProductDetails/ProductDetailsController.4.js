@@ -22,12 +22,20 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,download: function(btn) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.originalValue = $F(btn);
-		tmp.me.postAjax(tmp.me.getCallbackId('download'), {}, {
-			'onLoading': function () {
+		$(btn).writeAttribute('originvalue', $F(btn));
+		tmp.me.getUser(btn, function(){
+				tmp.me._getDownLoadLink(btn);
+			}, function () {
 				$(btn).disabled = true;
 				$(btn).value = "Processing ...";
 			}
+		);
+	}
+	,_getDownLoadLink: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.postAjax(tmp.me.getCallbackId('download'), {}, {
+			'onLoading': function () {}
 			,'onComplete': function(sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
@@ -37,7 +45,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					alert(e);
 				}
 				$(btn).disabled = false;
-				$(btn).value = tmp.originalValue;
+				$(btn).value = $(btn).readAttribute('originvalue');
 			}
 		}, 120000);
 	}
