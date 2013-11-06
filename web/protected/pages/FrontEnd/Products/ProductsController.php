@@ -46,7 +46,7 @@ class ProductsController extends FrontEndPageAbstract
 		$js .= '});';
 		$js .= 'var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); ';
 		$js .= 'pageJs.pagination.pageSize = ' . $this->pageSize . ';';
-		$js .= (($catId = trim($this->Request['cateid'])) === '' ? '' : 'pageJs.searchCriteria.categoryIds.push(' . $catId . ');');
+		$js .= (($catId = trim($this->Request['cateId'])) === '' ? '' : 'pageJs.searchCriteria.categoryIds.push(' . $catId . ');');
 		
 		if(isset($this->Request['languageId']) && (($languageId = $this->Request['languageId']) !== ''))
 			$js .= 'pageJs.searchCriteria.language = '.$languageId.';';
@@ -83,7 +83,7 @@ class ProductsController extends FrontEndPageAbstract
 	    {
 	        if(!isset($categories[$key]))
 	            continue;
-	        $url = '/products/' . $this->getLanguage()->getId() . '/' . $this->getProductType()->getId() . '/' . $categories[$key]->getId();
+	        $url = '/products/category/' . $categories[$key]->getId();
 	        $html .= '<li><a href="' .$url  . '">' . $categories[$key]->getName() . '</a>';
 	            unset($categories[$key]);
 	        if(isset($relArray[$key]))
@@ -146,7 +146,7 @@ class ProductsController extends FrontEndPageAbstract
 	            $productTypeId = (isset($searchCriteria['productType']) && trim($searchCriteria['productType']) !== '') ? trim($searchCriteria['productType']) : '';
 	            $language = BaseServiceAbastract::getInstance('Language')->get($languageId);
 	            $productType = BaseServiceAbastract::getInstance('ProductType')->get($productTypeId);
-	            	
+	            
 	            if($searchCategory !== '')
 	            	$categoryIds[] = $searchCategory;
 	        }
