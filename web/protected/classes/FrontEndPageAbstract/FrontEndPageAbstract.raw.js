@@ -208,6 +208,7 @@ FrontPageJs.prototype = {
 				}
 				catch(e)
 				{
+					$(tmp.usernamebox).select();
 					tmp.panel.down('.msgpanel').update(tmp.me._getErrMsg(e));
 				}
 				tmp.loadingMsg.remove();
