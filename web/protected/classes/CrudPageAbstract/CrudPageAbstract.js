@@ -53,8 +53,24 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 	
 	//editing an item
 	,editItem: function (btn) {
-		 alert('editing: ');
+		this._hideShowAllEditPens(btn, false); 
+		this.showEditPanel(btn);
 		 return;
+	}
+	
+	,_hideShowAllEditPens: function(btn, show) {
+		var tmp = {};
+		tmp.me = this;
+		
+		tmp.show = (show === true) ? true : false;
+		
+		$(btn).up('div#' + this.resultDivId).select('[alt="EDIT"]')
+	 	.each(function(item) {
+	 		if(tmp.show === true)
+	 			item.show();	
+	 		else	
+	 			item.hide();	
+	 	});
 	}
 	
 	//deleting an item
@@ -68,4 +84,18 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 		alert('creating: ');
 		return;
 	}
+	
+	// create function for deafult behaviour of edit panel
+	,showEditPanel: function (btn) {
+		return;
+	}
+	
+	,cancelEdit: function(btn) {
+		return;
+	}
+	
+	,saveEditedItem: function(btn) {
+		return;
+	}
+	
 });
