@@ -146,14 +146,14 @@ FrontPageJs.prototype = {
 				})
 			})
 			.insert({'bottom': new Element('div', {'class': 'row btns'})
-				.insert({'bottom': new Element('input', {'class': 'loginbtn', 'value': 'Login', 'type': 'button'})
+				.insert({'bottom': new Element('input', {'class': 'loginbtn button rdcrnr', 'value': 'Login', 'type': 'button'})
 						.observe('click', function() {
 							tmp.me._login($F($(this).up('.floatingpanel').down('.username')), $F($(this).up('.floatingpanel').down('.password')), null, function() {
 								window.location = document.URL;
 							});
 					})
 				})
-				.insert({'bottom': new Element('input', {'class': 'loginbtn', 'value': 'Cancel', 'type': 'button'})
+				.insert({'bottom': new Element('input', {'class': 'loginbtn button rdcrnr', 'value': 'Cancel', 'type': 'button'})
 					.observe('click', function() {
 						$(this).up('.floatpanelwrapper').remove();
 						$(btn).disabled = false;

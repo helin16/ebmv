@@ -41,6 +41,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(tmp.result.url)
 						window.open(tmp.result.url);
+					if(tmp.result.redirecturl)
+						window.location = tmp.result.redirecturl;
 				} catch(e) {
 					alert(e);
 				}

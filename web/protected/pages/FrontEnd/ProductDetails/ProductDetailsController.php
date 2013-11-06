@@ -80,8 +80,8 @@ class ProductDetailsController extends FrontEndPageAbstract
 	            	    if($this->_supplier instanceof Supplier)
 	            	    	$viewUrl = trim($this->_supplier->getInfo('view_url'));
 	            	    $siteId = Config::get('site', 'code');
-                	    $html .= '<input type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
-                	    $html .= '<input type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
+                	    $html .= '<input class="button rdcrnr" type="button" value="Read Online" onClick="pageJs.readOnline('. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
+                	    $html .= ' <input class="button rdcrnr" type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
             	    $html .= "</div>";
             	    $html .= "<div class='row product_description'>";
                     	    $html .= $product->getAttribute('description');
@@ -119,16 +119,18 @@ class ProductDetailsController extends FrontEndPageAbstract
         	);
         	$url = $downloadUrl . '?' . http_build_query($urlParams);
         	$result = SupplierConnector::readUrl($url);
-        	try{
+        	try
+        	{
         		$xml = new SimpleXMLElement($result);
+        		SupplierConnector::getInstance($this->_supplier)->addToBookShelfList(Core::getUser(), $this->_product, Core::getLibrary());
         	}
         	catch(Exception $ex)
         	{
-        		throw new Exception('tring to get from Url: ' . $url . "\n\nGot:\n" . $result);
         	}
         	if(trim($xml->Code) !== '0')
         		throw new Exception('Error:' . trim($xml->Value));
         	$results['url'] = trim($xml->Value);
+        	$results['redirecturl'] = '/user.html';
         }
         catch(Exception $ex)
         {
@@ -151,11 +153,6 @@ class ProductDetailsController extends FrontEndPageAbstract
 			$pwd = $user->getPassword();
 		}
 		return array($uid, $pwd);
-	}
-	private function _addToMyShelf(Product $product)
-	{
-		SupplierConnector::getInstance($this->_supplier)->addToBookShelfList(Core::getUser(), $product, Core::getLibrary());
-		return $this;
 	}
 }
 ?>
