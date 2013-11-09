@@ -15,11 +15,11 @@ class Supplier extends BaseEntityAbstract
      */
     private $name;
     /**
-     * The suppliedLocation
+     * The supplierLocation
      * 
      * @var string
      */
-    private $suppliedLocation;
+    private $supplierLocation;
 	
 	/**
 	 * Getter for the title
@@ -50,7 +50,7 @@ class Supplier extends BaseEntityAbstract
 	 */
 	public function getSupplierLocation()
 	{
-	    return $this->suppliedLocation;
+	    return $this->supplierLocation;
 	}
 	
 	/**
@@ -62,7 +62,7 @@ class Supplier extends BaseEntityAbstract
 	 */
 	public function setSupplierLocation($supplierLocation)
 	{
-	    $this->suppliedLocation = $supplierLocation;
+	    $this->supplierLocation = $supplierLocation;
 	    return $this;
 	}
 	/**
