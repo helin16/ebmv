@@ -316,7 +316,7 @@ abstract class BaseEntityAbstract
      *
      * @return array The associative arary for json
      */
-    protected function getJson()
+    public function getJson()
     {
         $array = array('id' => trim($this->getId()));
         DaoMap::loadMap(get_class($this));
