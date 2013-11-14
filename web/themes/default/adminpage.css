@@ -89,3 +89,22 @@
 	padding:2px;
 }
 
+.adminpage.productpage .attrs_wrapper {
+	padding: 0 0 0 100px;
+}
+.adminpage.productpage .attrs_wrapper .attr_type_wrapper {
+	min-height: 23px;
+	border-bottom: 1px black solid;
+}
+
+.adminpage.productpage .attrs_wrapper .attr_wrapper{
+	width: 100%;
+	padding: 4px 0;
+	border-top: 1px #ccc solid;
+}
+.adminpage.productpage .attrs_wrapper .attr_wrapper .attr_name {
+	width: 200px;
+	vertical-align: top;
+}
+
+
