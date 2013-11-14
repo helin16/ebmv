@@ -13,35 +13,48 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		
 		tmp.resultDiv = new Element('div');
 		if(tmp.includetitlerow === true)
-			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow({'id': 'id', 'suk': 'suk', 'title': 'title', 'active': 'active', 'istitle': true}, 'option').addClassName('titleRow') });
-		tmp.i = (itemrowindex || 0);
+			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow({'id': 'id', 'suk': 'suk', 'title': 'title', 'active': 'active', 'istitle': true}, 'option', false).addClassName('titleRow') });
+		tmp.i = (itemrowindex || 1);
 		items.each(function(item) {
 			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item, new Element('img', {'editId': item.id, 'class': 'btn', 'src': '/themes/default/images/edit.png', 'alt': 'EDIT'})
-				.observe('click', function() {tmp.me.editItem(this); }) ).addClassName(tmp.i % 2 === 1 ? 'even' : 'odd')
+				.observe('click', function() {tmp.me.editItem(this); }), false).addClassName(tmp.i % 2 === 0 ? 'even' : 'odd')
 			});
 			tmp.i++;
 		});
 		return tmp.resultDiv;
 	}
 
-	,_getItemRow: function (item, option) {
+	,_getItemRow: function (item, option, isEdit) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.div = new Element('div', {'class' : 'row singleRowDiv'}).store('main_item', item)
-			.insert({'bottom': new Element('div', {'class': 'viewProductDiv'})
-				.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(item.id) })
-				.insert({'bottom' : new Element('span', {'class' : 'col suk'}).update(item.sku) })	
-				.insert({'bottom' : new Element('span', {'class' : 'col title', 'item': 'title'}).update(item.title) })	
-				.insert({'bottom' : new Element('span', {'class' : 'col active', 'item': 'active',  'itemedittype': 'checkbox'}).update(item.active) })	
-				.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) })
-			})
-			.insert({'bottom' : tmp.me._getAdditionalProductInfo(item) });
+		tmp.isEditing = ((isEdit === true) ? true : false);
+		
+		tmp.divClassName = (tmp.isEditing === true) ? 'editProductDiv' : 'viewProductDiv';
+		tmp.contentDiv = new Element('div', {'class': tmp.divClassName})
+							.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(item.id) })
+							.insert({'bottom' : new Element('span', {'class' : 'col suk'}).update(item.suk) })	
+							.insert({'bottom' : (tmp.isEditing === false) ? new Element('span', {'class' : 'col title', 'item': 'title'}).update(item.title) : new Element('input', {'type' : 'text', 'class' : 'eTitleBox rdcrnr lightBrdr', 'value' : item.title}) })	
+							.insert({'bottom' : (tmp.isEditing === false) ? new Element('span', {'class' : 'col active', 'item': 'active',  'itemedittype': 'checkbox'}).update(item.active) : new Element('input', {'type' : 'checkbox', 'name' : 'activeFlag', 'checked': (item.active ? 'checked' : '')}) })	
+							.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) })
+							.insert({'bottom' : tmp.me._getAdditionalProductInfo(item, tmp.isEditing) });
+		
+		if(tmp.isEditing === false)
+		{
+			tmp.div = new Element('div', {'class' : 'row singleRowDiv'}).store('main_item', item)
+						.insert({'bottom' : tmp.contentDiv});
+		}
+		else
+			tmp.div = tmp.contentDiv;
+		
 		return tmp.div;
 	}
 	
-	,_getAdditionalProductInfo: function (item, isedit) {
+	,_getAdditionalProductInfo: function (item, isEdit) {
 		var tmp = {};
 		tmp.me = this;
+		
+		tmp.isEditing = (isEdit === true ? true : false);
+		
 		tmp.div = new Element('div', {'class': 'attrs_wrapper'});
 		tmp.code = '';
 		$H(item.attributes).each(function(itemArr) {
@@ -58,7 +71,11 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 				//getting the value div
 				tmp.attrValeusDiv = new Element('span', {'class': 'attr_values_wrapper inlineblock'}); 
 				itemArr.value.each(function(attr) {
-					tmp.attrValeusDiv.insert({'bottom': new Element('div', {'class': 'attr_value' }).update(attr.attribute) });
+					if(tmp.isEditing === false)
+						tmp.attrValeusDiv.insert({'bottom': new Element('div', {'class': 'attr_value' }).update(attr.attribute) });
+					else
+						tmp.attrValeusDiv.insert({'bottom': new Element('input', {'type': 'text', 'class' : 'attr_value_edit rdcrnr lightBrdr', 'value' : attr.attribute}) });
+						
 				});
 				tmp.attrDiv.insert({'bottom': tmp.attrValeusDiv });
 				
@@ -73,33 +90,46 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		tmp.me = this;
 		tmp.editProductId = $(btn).readAttribute('editId');
 		tmp.btnSpan = $(btn).up('span.col.btns');
-		tmp.suk = tmp.btnSpan.previous('span.col.suk').innerHTML;
-		tmp.title = tmp.btnSpan.previous('span.col.title').innerHTML;
-		tmp.active = tmp.btnSpan.previous('span.col.active').innerHTML;
-		tmp.id = tmp.btnSpan.previous('span.col.id').innerHTML;
+		tmp.mainItem = tmp.btnSpan.up('div.row.singleRowDiv').retrieve('main_item');
 		
-		tmp.activeOptions1 = new Element('option', {'value': 'true'}).update('true');
-		tmp.activeOptions2 = new Element('option', {'value': 'false'}).update('false');
-		
-		tmp.editPanel = new Element('div', {'class' : 'editProductDiv'})
-							.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(tmp.id) })
-							.insert({'bottom' : new Element('span', {'class' : 'eSukLabel'}).update('Suk') })
-							.insert({'bottom' : new Element('input', {'type' : 'text', 'class' : 'eSukBox rdcrnr lightBrdr', 'value' : tmp.suk}) })
-							.insert({'bottom' : new Element('span', {'class' : 'eTitleLabel'}).update('Title') })
-							.insert({'bottom' : new Element('input', {'type' : 'text', 'class' : 'eTitleBox rdcrnr lightBrdr', 'value' : tmp.title}) })
-							.insert({'bottom' : new Element('select', {'class' : 'eActiveBox rdcrnr lightBrdr'}) 
-									.insert(tmp.activeOptions1)
-									.insert(tmp.activeOptions2)
-							})
-							.insert({'bottom' : new Element('span', {'class' : 'col btns'}) 
-								.insert({'bottom' : new Element('img', {'class' : 'editBtn', 'src': '/themes/default/images/save.png', 'alt': 'Save', 'title' : 'Save'})
-									.observe('click', function() {tmp.me.saveEditedItem(this); }) })
-								.insert({'bottom' : new Element('img', {'class' : 'cancelBtn', 'src': '/themes/default/images/cancel.gif', 'alt': 'Cancel', 'title' : 'Cancel'})
-									.observe('click', function() {tmp.me.cancelEdit(this); })
-								})
+		tmp.option = new Element('span', {'class' : 'col btns'}) 
+						.insert({'bottom' : new Element('img', {'class' : 'editBtn', 'src': '/themes/default/images/save.png', 'alt': 'Save', 'title' : 'Save'})
+							.observe('click', function() {tmp.me.saveEditedItem(this); }) })
+						.insert({'bottom' : new Element('img', {'class' : 'cancelBtn', 'src': '/themes/default/images/cancel.gif', 'alt': 'Cancel', 'title' : 'Cancel'})
+							.observe('click', function() {tmp.me.cancelEdit(this); })
 						});
 		
-		tmp.btnSpan.up('div.singleRowDiv').insert({'bottom' : tmp.editPanel}).down('div.viewProductDiv').hide();
+		tmp.editDiv = tmp.me._getItemRow(tmp.mainItem, tmp.option, true);
+		
+		tmp.btnSpan.up('div.row.singleRowDiv').insert({'bottom' : tmp.editDiv}).down('div.viewProductDiv').hide();
+		
+//		tmp.suk = tmp.btnSpan.previous('span.col.suk').innerHTML;
+//		tmp.title = tmp.btnSpan.previous('span.col.title').innerHTML;
+//		tmp.active = tmp.btnSpan.previous('span.col.active').innerHTML;
+//		tmp.id = tmp.btnSpan.previous('span.col.id').innerHTML;
+//		
+//		tmp.activeOptions1 = new Element('option', {'value': 'true'}).update('true');
+//		tmp.activeOptions2 = new Element('option', {'value': 'false'}).update('false');
+//		
+//		tmp.editPanel = new Element('div', {'class' : 'editProductDiv'})
+//							.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(tmp.id) })
+//							.insert({'bottom' : new Element('span', {'class' : 'eSukLabel'}).update('Suk') })
+//							.insert({'bottom' : new Element('input', {'type' : 'text', 'class' : 'eSukBox rdcrnr lightBrdr', 'value' : tmp.suk}) })
+//							.insert({'bottom' : new Element('span', {'class' : 'eTitleLabel'}).update('Title') })
+//							.insert({'bottom' : new Element('input', {'type' : 'text', 'class' : 'eTitleBox rdcrnr lightBrdr', 'value' : tmp.title}) })
+//							.insert({'bottom' : new Element('select', {'class' : 'eActiveBox rdcrnr lightBrdr'}) 
+//									.insert(tmp.activeOptions1)
+//									.insert(tmp.activeOptions2)
+//							})
+//							.insert({'bottom' : new Element('span', {'class' : 'col btns'}) 
+//								.insert({'bottom' : new Element('img', {'class' : 'editBtn', 'src': '/themes/default/images/save.png', 'alt': 'Save', 'title' : 'Save'})
+//									.observe('click', function() {tmp.me.saveEditedItem(this); }) })
+//								.insert({'bottom' : new Element('img', {'class' : 'cancelBtn', 'src': '/themes/default/images/cancel.gif', 'alt': 'Cancel', 'title' : 'Cancel'})
+//									.observe('click', function() {tmp.me.cancelEdit(this); })
+//								})
+//						});
+//		
+//		tmp.btnSpan.up('div.singleRowDiv').insert({'bottom' : tmp.editPanel}).down('div.viewProductDiv').hide();
 	}
 	
 	,cancelEdit: function(btn) {
