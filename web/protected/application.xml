@@ -45,6 +45,11 @@
 			<!-- AdminPage:: product -->
 			<url ServiceParameter="Admin.Product.AdminProductController" pattern="admin/product" />
 			<url ServiceParameter="Admin.BulkloadProducts.BulkloadProductsController" pattern="admin/bulkloadproducts.html" />
+			
+			<!-- AdminPage:: supplier -->
+			<url ServiceParameter="Admin.Supplier.AdminSupplierController" pattern="admin/supplier.html" />
+			
+			<!-- AdminPage:: test comm -->
 			<url ServiceParameter="Admin.ComTester.ComTesterController" pattern="admin/testcoms.html" />
 			
 			<!-- asset service -->

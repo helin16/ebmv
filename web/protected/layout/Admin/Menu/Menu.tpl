@@ -9,6 +9,9 @@
         <a href="/admin/bulkloadproducts.html">Import</a>
     </li>
     <li>
+        <a href="/admin/supplier.html">Suppliers</a>
+    </li>
+    <li>
         <a href="/admin/testcoms.html">Test Comms</a>
     </li>
     <li>
