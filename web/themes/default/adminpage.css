@@ -107,4 +107,12 @@
 	vertical-align: top;
 }
 
+.adminpage.productpage .attrs_wrapper .attr_wrapper .attr_values_wrapper {
+	width:500px;
+}
+
+.adminpage.productpage .attrs_wrapper .attr_wrapper .attr_value_edit {
+	width:100%;
+}
+
 
