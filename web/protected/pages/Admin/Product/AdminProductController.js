@@ -15,10 +15,10 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		tmp.i = (itemrowindex || 0);
 		items.each(function(item) {
 			tmp.oneRowDiv = new Element('div', {'class' : 'singleRowDiv'});
-			tmp.viewDiv = new Element('div', {'class' : 'viewProductDiv'});
+			tmp.viewDiv = new Element('div', {'class' : 'viewProductDiv'}).store('main_item', item);
 			tmp.viewDiv.insert({'bottom':  tmp.me._getItemRow(item.id, item.suk, item.title, item.active,  new Element('img', {'editId': item.id, 'class': 'btn', 'src': '/themes/default/images/edit.png', 'alt': 'EDIT'})
 				.observe('click', function() {tmp.me.editItem(this); }) )
-			});
+			}).insert({'bottom' : tmp.me._getAdditionalProductInfo(item) });
 			tmp.oneRowDiv.insert({'bottom' : tmp.viewDiv}).addClassName(tmp.i % 2 === 1 ? 'even' : 'odd');
 			tmp.resultDiv.insert({'bottom': tmp.oneRowDiv});
 			tmp.i++;
@@ -35,6 +35,37 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 			.insert({'bottom' : new Element('span', {'class' : 'col title'}).update(title) })	
 			.insert({'bottom' : new Element('span', {'class' : 'col active'}).update(active) })	
 			.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) });
+		return tmp.div;
+	}
+	
+	,_getAdditionalProductInfo: function (item) {
+		var tmp = {};
+		tmp.me = this;
+		
+		tmp.outputArray = new Hash();
+		
+		console.debug(item);
+		tmp.attributeArray = $H(item.attributes);
+		tmp.keyArray = tmp.attributeArray.keys();
+		tmp.keyArray.each(function(key) {
+			tmp.attributeArray.get(key).each(function(item) {
+				if(!tmp.outputArray[item.type.code + '~' + item.type.name])
+					tmp.outputArray[item.type.code + '~' + item.type.name] = new Array();
+				tmp.outputArray[item.type.code + '~' + item.type.name].push(item.attribute);
+			})
+		});
+		
+		tmp.div = new Element('div');
+		console.debug(tmp.outputArray);
+		
+		tmp.outputArray.keys().each(function(key) {
+			console.debug(key);
+			tmp.div.insert({'bottom' : new Element('span').update(key)});
+			tmp.outputArray.get(key).each(function(value) {
+				tmp.div.insert({'bottom' : new Element('span').update(value)});
+			});
+			tmp.div.insert({'bottom' : new Element('span').update('--------------------------')});
+		});
 		return tmp.div;
 	}
 	
