@@ -88,13 +88,14 @@ class SupplierConnector
 	 */
 	public function importProductFromXml(SimpleXMLElement $xml, $index = null)
 	{
-		$products = array ();
-		$result = $xml->xpath ( "//Books/Book" );
+		$children  = $xml->children();
 		if (trim ( $index ) !== '')
-			$products [] = $this->_importProduct($result [$index]);
-		else {
-			foreach ( $result as $child )
-				$products [] = $this->_importProduct( $child );
+			return array($this->_importProduct($children[$index]));
+		
+		$products = array ();
+		foreach($xml->children() as $child)
+		{
+			$products [] = $this->_importProduct( $child );
 		}
 		return $products;
 	}
@@ -130,17 +131,17 @@ class SupplierConnector
 	 * 
 	 * @param SimpleXMLElement $xml        The xml of the product list
 	 * @param array            $categories The array of the categories a product should be in
-	 * @param Language         $lang       The language
-	 * @param ProductType      $type       The type of the product
 	 * 
 	 * @throws Exception
 	 * @return unknown
 	 */
-	protected function _importProduct(SimpleXMLElement $xml, array $categories = array(), Language $lang = null, ProductType $type = null)
+	protected function _importProduct(SimpleXMLElement $xml, array $categories = array())
 	{
-		list($defaultLang, $defaultType) = $this->_getDefaulLangNType(); 
-		$lang = ($lang instanceof Language ? $lang : $defaultLang);
-		$type = ($type instanceof ProductType ? $type : $defaultType);
+		//list($defaultLang, $defaultType) = $this->_getDefaulLangNType(); 
+		if(!($lang = BaseServiceAbastract::getInstance('Language')->getLangByCode($this->_getAttribute($xml, 'Language'))) instanceof Language)
+			throw new Exception("Invalid lanuage code: " . $this->_getAttribute($xml, 'Language'));
+		if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName(strtolower(trim($xml->getName())))) instanceof ProductType)
+			throw new Exception("Invalid ProductType: " . strtolower(trim($xml->getName())));
 		
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }

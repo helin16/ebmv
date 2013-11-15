@@ -56,6 +56,6 @@ class ImportProduct
 	}
 }
 
-Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(100));
+Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 $script = new ImportProduct();
 $script->run();
