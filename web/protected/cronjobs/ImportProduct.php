@@ -10,9 +10,9 @@ class ImportProduct
 	 * constructor
 	 * @throws Exception
 	 */
-	public function __construct()
+	public function __construct(Supplier $supplier)
 	{
-		$this->_importScript = new SupplierConnector(BaseServiceAbastract::getInstance('Supplier')->get(1));
+		$this->_importScript = new SupplierConnector($supplier);
 	}
 
 	public function run()
@@ -57,5 +57,8 @@ class ImportProduct
 }
 
 Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
-$script = new ImportProduct();
-$script->run();
+foreach(BaseServiceAbastract::getInstance('Supplier')->findAll() as $supplier)
+{
+	$script = new ImportProduct();
+	$script->run();
+}
