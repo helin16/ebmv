@@ -1,0 +1,1 @@
+ALTER TABLE `language` ADD UNIQUE INDEX `code`(`code`);
