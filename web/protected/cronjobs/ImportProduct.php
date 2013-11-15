@@ -59,6 +59,6 @@ class ImportProduct
 Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 foreach(BaseServiceAbastract::getInstance('Supplier')->findAll() as $supplier)
 {
-	$script = new ImportProduct();
+	$script = new ImportProduct($supplier);
 	$script->run();
 }
