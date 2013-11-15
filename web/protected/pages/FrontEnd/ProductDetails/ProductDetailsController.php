@@ -93,8 +93,8 @@ class ProductDetailsController extends FrontEndPageAbstract
 	private function _getAtts(Product $product, $attrcode, $title, $className = '')
 	{
 	    $html = "<span class='inlineblock $className'>";
-    	    $html .="<label>Author: </label>";
-    	    $html .="<span>" . $product->getAttribute('author') . "</span>";
+    	    $html .="<label>$title: </label>";
+    	    $html .="<span>" . $product->getAttribute($attrcode) . "</span>";
 	    $html .= "</span>";
 	    return $html;
 	}
