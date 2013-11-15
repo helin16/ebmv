@@ -10,7 +10,7 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 		tmp.me.pagination.pageSize = (pageSize || tmp.me.pagination.pageSize);
 		tmp.itemId = (itemId || null);
 		tmp.resetResult = (resetResult === false ? false : true);
-		tmp.me.postAjax(tmp.me.getCallbackId('showItems'), {'pagination': tmp.me.pagination, 'itemId': tmp.itemId}, {
+		tmp.me.postAjax(tmp.me.getCallbackId('getItems'), {'pagination': tmp.me.pagination, 'itemId': tmp.itemId}, {
 			'onLoading': function (sender, param) {},
 			'onComplete': function (sender, param) {
 				try {

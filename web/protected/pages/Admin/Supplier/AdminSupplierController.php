@@ -28,7 +28,6 @@ class AdminSupplierController extends CrudPageAbstract
         $supplierId = 0;
     	
     	$js = parent::_getEndJs();
-        $js .= 'pageJs.setCallbackId("showItems", "' . $this->showSuppliersBtn->getUniqueID() . '");';
         $js .= 'pageJs.resultDivId="allSupplierDiv";';
         $js .= 'pageJs.showItems(' . $pageNumber . ', ' . $pageSize . ', ' . $supplierId . ');';
         return $js;

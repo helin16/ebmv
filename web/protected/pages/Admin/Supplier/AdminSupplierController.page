@@ -1,6 +1,5 @@
 <com:TContent ID="MainContent">
 	<div class="pagewrapper adminpage supplierpage">
-	    <com:TCallback ID="showSuppliersBtn" OnCallback="showSuppliers" />
 		<div id = 'allSupplierDiv' class="allSupplierDiv"></div>
 	</div>
 </com:TContent>
