@@ -156,6 +156,13 @@ class SupplierConnector
 			//updating the product
 			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no)) instanceof Product)
 			{
+				//delete the thumb
+				if(!($thumbs = explode(',', $product->getAttribute('image_thumb'))) !== false)
+					BaseServiceAbastract::getInstance('Asset')->removeAssets($thumbs);
+				//delete the img
+				if(!($imgs = explode(',', $product->getAttribute('image'))) !== false)
+					BaseServiceAbastract::getInstance('Asset')->removeAssets($imgs);
+				
 				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product,
 						$this->_getAttribute($xml, 'BookName'),
 						$this->_getAttribute($xml, 'Author'),

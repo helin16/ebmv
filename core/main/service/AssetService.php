@@ -81,18 +81,25 @@ class AssetService extends BaseServiceAbastract
 	/**
 	 * Remove an asset from the content server
 	 *
-	 * @param string $assetId The assetid of the content
+	 * @param array $assetIds The assetids of the content
 	 *
 	 * @return bool
 	 */
-	public function removeAsset($assetId)
+	public function removeAssets($assetIds)
 	{
-	    if(!($content = $this->getAsset($assetId)) instanceof Asset)
-	        return;
-	    // Delete the item from the database
-	    $this->updateByCriteria('set active = ?', 'assetId = ?', array(0, $assetId));
-	    // Remove the file from the NAS server
-	    unlink($content->getPath());
+		if(count($assetIds) === 0)
+			return $this;
+		
+		$where = "assetId in (" . implode(', ', array_fill(0, count($assetIds), '?')) . ")";
+		$params = $assetIds;
+		foreach($this->findByCriteria($where, $assetIds) as $asset)
+		{
+		    // Remove the file from the NAS server
+		    unlink($asset->getPath());
+		}
+		// Delete the item from the database
+		$this->updateByCriteria('set active = ?', $where, array_merge(array(0), $params));
+		return $this;
 	}
 	/**
 	 * copy the provided file or data into the new path
