@@ -46,8 +46,6 @@ class ProductDetailsController extends FrontEndPageAbstract
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.product = ' . json_encode($this->_product->getJson()) . ';';
 		$js .= 'pageJs.setCallbackId("download", "' . $this->getDownloadUrlBtn->getUniqueID(). '");';
-		$js .= 'pageJs.setCallbackId("getUser", "' . $this->getUserBtn->getUniqueID(). '");';
-		$js .= 'pageJs.setCallbackId("loginUser", "' . $this->loginUserBtn->getUniqueID(). '");';
 		return $js;
 	}
 	

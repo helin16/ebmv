@@ -9,11 +9,37 @@
 abstract class FrontEndPageAbstract extends TPage 
 {
 	/**
+	 * @var TCallback
+	 */
+	protected $_getUserBtn = null;
+	/**
+	 * @var TCallback
+	 */
+	protected $_loginUserBtn = null;
+	/**
 	 * constructor
 	 */
 	public function __construct()
 	{
 	    parent::__construct();
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see TControl::onInit()
+	 */
+	public function onInit($param)
+	{
+		parent::onInit($param);
+		
+		$this->_getUserBtn = new TCallback();
+		$this->_getUserBtn->ID = 'getUserBtn';
+		$this->_getUserBtn->OnCallback = 'Page.getCurrentUser';
+		$this->getControls()->add($this->_getUserBtn);
+		
+		$this->_loginUserBtn = new TCallback();
+		$this->_loginUserBtn->ID = 'loginUserBtn';
+		$this->_loginUserBtn->OnCallback = 'Page.login';
+		$this->getControls()->add($this->_loginUserBtn);
 	}
 	
 	/**
@@ -34,7 +60,7 @@ abstract class FrontEndPageAbstract extends TPage
 	 */
 	protected function _getEndJs() 
 	{
-	    return 'if(typeof(PageJs) !== "undefined"){var pageJs = new PageJs();}';
+	    return 'if(typeof(PageJs) !== "undefined"){var pageJs = new PageJs(); pageJs.setCallbackId("getUser", "' . $this->_getUserBtn->getUniqueID() . '"); pageJs.setCallbackId("loginUser", "' . $this->_loginUserBtn->getUniqueID() . '"); }';
 	}
 	/**
 	 * (non-PHPdoc)

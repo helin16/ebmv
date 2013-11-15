@@ -1,7 +1,5 @@
 <com:TContent ID="MainContent">
-	<com:TCallback ID="getUserBtn" OnCallback="getCurrentUser" />
 	<com:TCallback ID="getDownloadUrlBtn" OnCallback="getDownloadUrl" />
-	<com:TCallback ID="loginUserBtn" OnCallback="login" />
     <div class="product_details">
     	<%= $this->getProductDetails() %>
     </div>
