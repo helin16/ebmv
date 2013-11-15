@@ -28,13 +28,12 @@ class AdminProductController extends CrudPageAbstract
         $productId = 0;
     	
     	$js = parent::_getEndJs();
-        $js .= 'pageJs.setCallbackId("showItems", "' . $this->showProductsBtn->getUniqueID() . '");';
         $js .= 'pageJs.resultDivId="allProductDiv";';
         $js .= 'pageJs.showItems(' . $pageNumber . ', ' . $pageSize . ', ' . $productId . ');';
         return $js;
     }
     
-    public function showProducts($sender, $param)
+    public function getItems($sender, $param)
     {
     	$result = $errors = $productArray = array();
     	try 
