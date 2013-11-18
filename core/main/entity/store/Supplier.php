@@ -15,11 +15,11 @@ class Supplier extends BaseEntityAbstract
      */
     private $name;
     /**
-     * The supplierLocation
+     * The supplierConnector
      * 
      * @var string
      */
-    private $supplierLocation;
+    private $connector;
 	
 	/**
 	 * Getter for the title
@@ -48,21 +48,23 @@ class Supplier extends BaseEntityAbstract
 	 * 
 	 * @return string
 	 */
-	public function getSupplierLocation()
+	public function getConnector()
 	{
-	    return $this->supplierLocation;
+		if(!class_exists($this->connector))
+			throw new CoreException("System Error: " . $this->connector . " does NOT exsits!");
+	    return $this->connector;
 	}
 	
 	/**
-	 * Setter for 
+	 * Setter for connector
 	 * 
-	 * @param string $supplierLocation The location of the supplier
+	 * @param string $connector The connector script for this supplier
 	 * 
 	 * @return Supplier
 	 */
-	public function setSupplierLocation($supplierLocation)
+	public function setConnector($connector)
 	{
-	    $this->supplierLocation = $supplierLocation;
+	    $this->connector = $connector;
 	    return $this;
 	}
 	/**
@@ -88,7 +90,7 @@ class Supplier extends BaseEntityAbstract
 	{
 		DaoMap::begin($this, 'supp');
 		DaoMap::setStringType('name','varchar', 200);
-		DaoMap::setStringType('supplierLocation','varchar', 200);
+		DaoMap::setStringType('connector','varchar', 200);
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('name');

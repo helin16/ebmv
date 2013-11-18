@@ -1,53 +1,21 @@
 <?php
-class SupplierConnector
+class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 {
 	const CODE_SUCC = 0;
-	/**
-	 * @var Supplier
-	 */
-	private $_supplier;
 	/**
 	 * Where to get the product list
 	 * @var string
 	 */
 	private $_wsdlUrl;
 	/**
-	 * The connectors
-	 * @var array
-	 */
-	private static $_connectors = array();
-	/**
-	 * singleton getter
-	 * 
-	 * @param Supplier $supplier The supplier
-	 * 
-	 * @return SupplierConnector
-	 */
-	public static function getInstance(Supplier $supplier)
-	{
-		$className = __CLASS__;
-		if(!isset($_connectors[$supplier->getId()]))
-			self::$_connectors[$supplier->getId()] = new $className($supplier);
-		return self::$_connectors[$supplier->getId()];
-	}
-	/**
 	 * construtor
+	 * 
 	 * @param Supplier $supplier The supplier
 	 */
 	public function __construct(Supplier $supplier)
 	{
-		$this->_supplier = $supplier;
-		$urls = explode(',', $this->_supplier->getInfo('import_url'));
-		$this->_wsdlUrl = $urls[0];
-	}
-	/**
-	 * Getting the import url
-	 * 
-	 * @return string
-	 */
-	public function getImportUrl()
-	{
-		return $this->_wsdlUrl;
+		parent::__construct($supplier);
+		$this->_wsdlUrl = $this->getImportUrl();
 	}
 	/**
 	 * Gettht product List
@@ -209,17 +177,6 @@ class SupplierConnector
 				Dao::rollbackTransaction();
 			throw $ex;
 		}
-	}
-	/**
-	 * Getting the default language and product type for a supplier
-	 * 
-	 * @return multitype:Language ProductType
-	 */
-	private function _getDefaulLangNType()
-	{
-		$defaultLangIds = explode(',', $this->_supplier->getInfo('default_lang_id'));
-		$defaultTypeIds = explode(',', $this->_supplier->getInfo('default_product_type_id'));
-		return array(BaseServiceAbastract::getInstance('Language')->get($defaultLangIds[0]), BaseServiceAbastract::getInstance('ProductType')->get($defaultTypeIds[0]));
 	}
 	/**
 	 * Importing the categories

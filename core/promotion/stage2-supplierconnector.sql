@@ -1,0 +1,1 @@
+update supplier set connector='SC_XinHua' where id = 1;
