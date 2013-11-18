@@ -15,7 +15,21 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	public function __construct(Supplier $supplier)
 	{
 		parent::__construct($supplier);
-		$this->_wsdlUrl = $this->getImportUrl();
+		$this->_getImportUrl();
+	}
+	/**
+	 * Getting the import url
+	 *
+	 * @return string
+	 */
+	public function _getImportUrl()
+	{
+		if(trim($this->_wsdlUrl) !== '')
+			return $this->_wsdlUrl;
+		
+		$urls = explode(',', $this->_supplier->getInfo('import_url'));
+		$this->_wsdlUrl = ($urls === false ? null : $urls[0]);
+		return $this->_wsdlUrl;
 	}
 	/**
 	 * Gettht product List
@@ -34,34 +48,31 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		return $array;
 	}
 	/**
-	 * Getting xml product list
-	 * 
-	 * @param number $pageNo   The page no
-	 * @param number $pageSize the page size
-	 * 
-	 * @return Ambigous <NULL, SimpleXMLElement>
+	 * (non-PHPdoc)
+	 * @see SupplierConn::getProductList()
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
 	{
-		return $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Config::get('site', 'code'), "Index" => $pageNo, "Size" => $pageSize));
+		$array = array();
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Config::get('site', 'code'), "Index" => $pageNo, "Size" => $pageSize));
+		var_dump(count($xml->children()));
+		foreach($xml->children() as $childXml)
+		{
+			$array[] = $childXml;
+		}
+		return $array;
 	}
 	/**
-	 * Parsing the Xml file
-	 *
-	 * @param string $filePath The path of the downloaded file
-	 * @param int    $index    Which product of the file to import
-	 *
-	 * @throws CoreException
-	 * @return array
+	 * (non-PHPdoc)
+	 * @see SupplierConn::importProducts()
 	 */
-	public function importProductFromXml(SimpleXMLElement $xml, $index = null)
+	public function importProducts($productList, $index = null)
 	{
-		$children  = $xml->children();
 		if (trim ( $index ) !== '')
-			return array($this->_importProduct($children[$index]));
+			return array($this->_importProduct($productList[$index]));
 		
 		$products = array ();
-		foreach($xml->children() as $child)
+		foreach($productList as $child)
 		{
 			$products [] = $this->_importProduct( $child );
 		}
@@ -230,7 +241,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				mkdir($tmpDir);
 			$paths = parse_url($imageUrl);
 			$paths = explode('/', $paths['path']);
-			$tmpFile = $this->downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
+			$tmpFile = self::downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
 			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($tmpDir)->registerAsset(end($paths), $tmpFile);
 	
 			if($transStarted === false)
@@ -243,52 +254,6 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				Dao::rollbackTransaction();
 			throw $ex;
 		}
-	}
-	/**
-	 * download the url to a local file
-	 *
-	 * @param string $url       The url
-	 * @param string $localFile The local file path
-	 *
-	 * @return string The local file path
-	 */
-	public function downloadFile($url, $localFile, $timeout = null)
-	{
-		$timeout = trim($timeout);
-		$fp = fopen($localFile, 'w+');
-		$options = array(
-				CURLOPT_FILE    => $fp,
-				CURLOPT_TIMEOUT =>  (!is_numeric($timeout) ? 8*60*60 : $timeout), // set this to 8 hours so we dont timeout on big files
-				CURLOPT_URL     => $url
-		);
-		$ch = curl_init();
-		curl_setopt_array($ch, $options);
-		curl_exec($ch);
-		fclose($fp);
-		curl_close($ch);
-		return $localFile;
-	}
-	/**
-	 * read from a url
-	 * 
-	 * @param string $url     The url
-	 * @param int    $timeout The timeout in seconds
-	 * 
-	 * @return mixed
-	 */
-	public static function readUrl($url, $timeout = null)
-	{
-		$timeout = trim($timeout);
-		$options = array(
-				CURLOPT_RETURNTRANSFER => 1, 
-				CURLOPT_TIMEOUT =>  (!is_numeric($timeout) ? 8*60*60 : $timeout), // set this to 8 hours so we dont timeout on big files
-				CURLOPT_URL     => $url
-		);
-		$ch = curl_init();
-		curl_setopt_array($ch, $options);
-		$data =curl_exec($ch);
-		curl_close($ch);
-		return $data;
 	}
 	/**
 	 * Getting the value of the attribute
@@ -324,14 +289,10 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		return $xml;
 	}
 	/**
-	 * Synchronize user's bookshelf
-	 * 
-	 * @param UserAccount      $user
-	 * @param SimpleXMLElement $xml
-	 * 
-	 * @return SupplierConnector
+	 * (non-PHPdoc)
+	 * @see SupplierConnectorAbstract::syncUserBookShelf()
 	 */
-	public function syncUserBookShelf(UserAccount $user, SimpleXMLElement $xml)
+	public function syncUserBookShelf(UserAccount $user, array $shelfItems)
 	{
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}

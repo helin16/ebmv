@@ -7,16 +7,16 @@ interface SupplierConn
 	 * @throws CoreException
 	 * @return SimpleXMLElement
 	 */
-	public function getProductListInfo(){}
+	public function getProductListInfo();
 	/**
 	 * Getting xml product list
 	 *
 	 * @param number $pageNo   The page no
 	 * @param number $pageSize the page size
 	 *
-	 * @return Ambigous <NULL, SimpleXMLElement>
+	 * @return array The list which can be used in ImportProduct()
 	 */
-	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE){}
+	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE);
 	/**
 	 * importing the products from the supplier
 	 *
@@ -26,7 +26,7 @@ interface SupplierConn
 	 * @throws CoreException
 	 * @return array
 	 */
-	public function importProducts($productList, $index = null) {}
+	public function importProducts($productList, $index = null);
 	/**
 	 * Getting the book shelf
 	 *
@@ -35,7 +35,7 @@ interface SupplierConn
 	 *
 	 * @return Mixed The ProductShelfItem array
 	 */
-	public function getBookShelfList(UserAccount $user, Library $lib) {}
+	public function getBookShelfList(UserAccount $user, Library $lib);
 	/**
 	 * Synchronize user's bookshelf from supplier to local
 	 *
@@ -44,7 +44,7 @@ interface SupplierConn
 	 *
 	 * @return SupplierConnector
 	 */
-	public function syncUserBookShelf(UserAccount $user, array $shelfItems) {}
+	public function syncUserBookShelf(UserAccount $user, array $shelfItems);
 	/**
 	 * Adding a product to the user's bookshelf
 	 *
@@ -55,7 +55,7 @@ interface SupplierConn
 	 * @throws CoreException
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib) {}
+	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib);
 	/**
 	 * Removing a product from the book shelf
 	 *
@@ -66,7 +66,7 @@ interface SupplierConn
 	 * @throws CoreException
 	 * @return mixed
 	 */
-	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib) {}
+	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib);
 	/**
 	 * Getting the download url for a book
 	 *
@@ -76,5 +76,5 @@ interface SupplierConn
 	 * @throws Exception
 	 * @return string
 	 */
-	public function getDownloadUrl(Product $product, UserAccount $user) {}
+	public function getDownloadUrl(Product $product, UserAccount $user);
 }

@@ -9,7 +9,7 @@ class SupplierConnectorAbstract
 	 * The connectors
 	 * @var array
 	 */
-	private static $_connectors = array();
+	protected static $_connectors = array();
 	/**
 	 * singleton getter
 	 * 
@@ -20,11 +20,11 @@ class SupplierConnectorAbstract
 	public static function getInstance(Supplier $supplier)
 	{
 		$className = $supplier->getConnector();
-		if(!isset($_connectors[$supplier->getId()]))
+		if(!isset(self::$_connectors[$supplier->getId()]))
 		{
 			if(!($sc = new $className($supplier)) instanceof SupplierConn)
 				throw new CoreException("$className is NOT a SupplierConn!");
-			self::$_connectors[$supplier->getId()] = new $className($supplier);
+			self::$_connectors[$supplier->getId()] = $sc;
 		}
 		return self::$_connectors[$supplier->getId()];
 	}
@@ -35,128 +35,6 @@ class SupplierConnectorAbstract
 	public function __construct(Supplier $supplier)
 	{
 		$this->_supplier = $supplier;
-	}
-	/**
-	 * Getting the import url
-	 * 
-	 * @return string
-	 */
-	public function getImportUrl()
-	{
-		$urls = explode(',', $this->_supplier->getInfo('import_url'));
-		return $urls === false ? null : $urls[0];
-	}
-	/**
-	 * Gettht product List
-	 * 
-	 * @throws CoreException
-	 * @return SimpleXMLElement
-	 */
-	public function getProductListInfo()
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Getting xml product list
-	 * 
-	 * @param number $pageNo   The page no
-	 * @param number $pageSize the page size
-	 * 
-	 * @return Ambigous <NULL, SimpleXMLElement>
-	 */
-	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Parsing the Xml file
-	 *
-	 * @param string $productList The list of product from supplier
-	 * @param int    $index       Which product of the file to import
-	 *
-	 * @throws CoreException
-	 * @return array
-	 */
-	public function importProduct($productList, $index = null)
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Importing a single product
-	 * 
-	 * @param Mixed $productInfo The product information for a single product
-	 * @param array $categories  The array of the categories a product should be in
-	 * 
-	 * @throws Exception
-	 * @return unknown
-	 */
-	protected function _importProduct($productInfo, array $categories = array())
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Getting the book shelf
-	 * 
-	 * @param UserAccount $user The current user
-	 * @param Library     $lib  Which library the user has been assigned to 
-	 * 
-	 * @return Mixed The ProductShelfItem array
-	 */
-	public function getBookShelfList(UserAccount $user, Library $lib)
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Synchronize user's bookshelf from supplier to local
-	 * 
-	 * @param UserAccount $user       The library current user
-	 * @param array       $shelfItems The
-	 * 
-	 * @return SupplierConnector
-	 */
-	public function syncUserBookShelf(UserAccount $user, array $shelfItems)
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Adding a product to the user's bookshelf
-	 * 
-	 * @param UserAccount $user
-	 * @param Product     $product
-	 * @param Library     $lib
-	 * 
-	 * @throws CoreException
-	 * @return Ambigous <NULL, SimpleXMLElement>
-	 */
-	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib)
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Removing a product from the book shelf
-	 * 
-	 * @param UserAccount $user
-	 * @param Product     $product
-	 * @param Library     $lib
-	 * 
-	 * @throws CoreException
-	 * @return mixed
-	 */
-	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib)
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
-	}
-	/**
-	 * Getting the download url for a book
-	 * 
-	 * @param Product     $product The product we are trying to get the url for
-	 * @param UserAccount $user    Who wants to download it
-	 * 
-	 * @throws Exception
-	 */
-	public function getDownloadUrl(Product $product, UserAccount $user)
-	{
-		throw new Exception(__FUNCTION__ . "() in class " . get_class($this) . " need to be overide to start!");
 	}
 	/**
 	 * Getting the default language and product type for a supplier
