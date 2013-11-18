@@ -55,7 +55,6 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	{
 		$array = array();
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Config::get('site', 'code'), "Index" => $pageNo, "Size" => $pageSize));
-		var_dump(count($xml->children()));
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
