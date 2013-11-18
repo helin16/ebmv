@@ -8,9 +8,9 @@ class ImportProduct
 		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
 		{
-			echo "== Start import script @ " . new UDate() . "=============================\n";
 			foreach(BaseServiceAbastract::getInstance('Supplier')->findAll() as $supplier)
 			{
+				echo "== Start import script @ " . new UDate() . " for " . $supplier->getName() . "=============================\n";
 				try {$script = SupplierConnectorAbstract::getInstance($supplier); }
 				catch(Exception $ex) 
 				{
@@ -36,8 +36,8 @@ class ImportProduct
 					echo "Done\n";
 				}
 				echo "Finished importing (" . $childrenCount . ") products: \n";
+				echo "== Finished import script  @ " . new UDate() . "=============================\n";
 			}
-			echo "== Finished import script  @ " . new UDate() . "=============================\n";
 		}
 		catch(Exception $ex)
 		{
