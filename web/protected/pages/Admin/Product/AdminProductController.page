@@ -1,5 +1,5 @@
 <com:TContent ID="MainContent">
 	<div class="pagewrapper adminpage productpage">
-		<div id = 'allProductDiv' class="allProductDiv"></div>
+		<div id = 'allProductDiv' class="allProductDiv items_div_wrapper"></div>
 	</div>
 </com:TContent>

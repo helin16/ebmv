@@ -33,7 +33,7 @@ class AdminSupplierController extends CrudPageAbstract
         return $js;
     }
     
-    public function showSuppliers($sender, $param)
+    public function getItems($sender, $param)
     {
     		$result = $errors = $supplierArray = array();
     		try
@@ -52,7 +52,7 @@ class AdminSupplierController extends CrudPageAbstract
     			if($supplierId === '' || $supplierId === '0')
     			{
     				$supplierArray = BaseServiceAbastract::getInstance('Supplier')->findAll(false, $pageNumber, $pageSize, array());
-    				$result['pagination'] = BaseServiceAbastract::getInstance('Supplier')->getPageStats();
+    				$result['pagination'] = BaseServiceAbastract::getInstance('Supplier')->getPageStats();Supplier
     			}
     			else
     			{
@@ -70,5 +70,5 @@ class AdminSupplierController extends CrudPageAbstract
     		 
     		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
     	}
-    	}
-    	?>
+}
+?>

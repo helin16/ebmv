@@ -61,16 +61,13 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 	,_hideShowAllEditPens: function(btn, show) {
 		var tmp = {};
 		tmp.me = this;
-		
-		tmp.show = (show === true) ? true : false;
-		
-		$(btn).up('div#' + this.resultDivId).select('[alt="EDIT"]')
-	 	.each(function(item) {
-	 		if(tmp.show === true)
-	 			item.show();	
-	 		else	
-	 			item.hide();	
-	 	});
+		tmp.btnsDiv = $(btn).up('.row').getElementsBySelector('.btns').first();
+		if (show === true) {
+			tmp.btnsDiv.show();
+		} else {
+			tmp.btnsDiv.hide();
+		}
+		return this;
 	}
 	
 	//deleting an item
@@ -87,15 +84,15 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 	
 	// create function for deafult behaviour of edit panel
 	,showEditPanel: function (btn) {
-		return;
+		throw 'function showEditPanel needs to be overrided!';
 	}
 	
 	,cancelEdit: function(btn) {
-		return;
+		throw 'function cancelEdit needs to be overrided!';
 	}
 	
 	,saveEditedItem: function(btn) {
-		return;
+		throw 'function saveEditedItem needs to be overrided!';
 	}
 	
 });

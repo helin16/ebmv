@@ -9,32 +9,72 @@
 	cursor: pointer;
 }
 
-/** product page **/
-.adminpage.productpage .allProductDiv {
+.adminpage .items_div_wrapper {
 	border: 1px #aaa solid;
+	width: 100%;
 }
-.adminpage.productpage .row.even {
+
+.adminpage .items_div_wrapper .row {
+	padding: 2px 0;
+}
+.adminpage .items_div_wrapper .row.even {
 	background: #ddd;
 }
 
-.adminpage.productpage .singleRowDiv.even {
-	background: #ddd;
-}
-
-.adminpage.productpage .row.titleRow{
+.adminpage .items_div_wrapper .row.titleRow {
 	font-weight:bold;
 	font-size:14px;
 	color: white;
 	background: #aaa;
 }
-
-.adminpage.productpage .col {
+.adminpage .items_div_wrapper .row .col {
 	display:inline-block;
-	padding:5px;
-	margin:5px;
+	padding:5px 0 ;
 	font-size: 13px;
+	vertical-align: top;
+}
+.adminpage .items_div_wrapper .row .btns {
+	text-align: right;
+	width: auto;
+}
+.adminpage .items_div_wrapper .row .editbtn {
+	cursor:pointer;
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	background: transparent url(images/admin_sprite.png) left bottom no-repeat;
+	background-position: -480px 0px;
 }
 
+.adminpage .addDiv,
+.adminpage .editDiv{
+	background: #dddddd;
+	padding: 5px;
+}
+
+.adminpage .attrs_wrapper {
+	padding: 0 0 0 100px;
+}
+.adminpage .attrs_wrapper .attr_type_wrapper {
+	min-height: 23px;
+	border-bottom: 1px black solid;
+}
+
+.adminpage .attrs_wrapper .attr_wrapper{
+	width: 100%;
+	padding: 4px 0;
+	border-top: 1px #ccc solid;
+}
+.adminpage .attrs_wrapper .attr_wrapper .attr_name {
+	width: 200px;
+	vertical-align: top;
+}
+
+.adminpage .attrs_wrapper .attr_wrapper .attr_values_wrapper {
+	width:500px;
+}
+
+/** product page **/
 .adminpage.productpage .col.id {
 	width: 20px;
 }
@@ -50,11 +90,6 @@
 .adminpage.productpage .col.btns {
 	width: 50px;
 }
-
-.adminpage.productpage .editProductDiv {
-	width:100%;
-}
-
 .adminpage.productpage .eSukLabel {
 	padding: 5px;
 	font-size:12px;
@@ -89,30 +124,35 @@
 	padding:2px;
 }
 
-.adminpage.productpage .attrs_wrapper {
-	padding: 0 0 0 100px;
-}
-.adminpage.productpage .attrs_wrapper .attr_type_wrapper {
-	min-height: 23px;
-	border-bottom: 1px black solid;
-}
-
-.adminpage.productpage .attrs_wrapper .attr_wrapper{
-	width: 100%;
-	padding: 4px 0;
-	border-top: 1px #ccc solid;
-}
-.adminpage.productpage .attrs_wrapper .attr_wrapper .attr_name {
-	width: 200px;
-	vertical-align: top;
-}
-
-.adminpage.productpage .attrs_wrapper .attr_wrapper .attr_values_wrapper {
-	width:500px;
-}
-
 .adminpage.productpage .attrs_wrapper .attr_wrapper .attr_value_edit {
 	width:100%;
+}
+
+/** ADMIN supplier page **/
+.adminpage.supplierpage .items_div_wrapper{
+	width: 100%;
+}
+.adminpage.supplierpage .row .col.id,
+.adminpage.supplierpage .row .col.active {
+	width: 50px;
+}
+.adminpage.supplierpage .row .col.name {
+	width: 400px;
+}
+.adminpage.supplierpage .row .col.connector {
+	width: 200px;
+}
+
+.adminpage.supplierpage .savePanel .fielddiv {
+	width: 23%;
+}
+.adminpage.supplierpage .savePanel .fielddiv .title{
+	display: block;
+	font-size: 10px;
+	color: #888888;
+}
+.adminpage.supplierpage .savePanel .fielddiv .content{
+	width: 100%;
 }
 
 
