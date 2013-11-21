@@ -97,7 +97,7 @@ class SupplierInfo extends BaseEntityAbstract
      */
     public function __loadDaoMap()
     {
-        DaoMap::begin($this, 'sup_info_type');
+        DaoMap::begin($this, 'sup_info');
         DaoMap::setManyToOne('supplier', 'Supplier');
         DaoMap::setManyToOne('type', 'SupplierInfoType');
         DaoMap::setStringType('value', 'varchar', '255');

@@ -20,6 +20,12 @@ class Supplier extends BaseEntityAbstract
      * @var string
      */
     private $connector;
+    /**
+     * The suppliers information
+     * 
+     * @var multiple:SupplierInfo
+     */
+    protected $supplierInfo;
 	
 	/**
 	 * Getter for the title
@@ -67,6 +73,28 @@ class Supplier extends BaseEntityAbstract
 	    $this->connector = $connector;
 	    return $this;
 	}
+	/**  
+	 * Getters for the supplier Information
+	 * 
+	 * @return multiple:SupplierInfo
+	 */  
+	public function getSupplierInfo() 
+	{
+		$this->loadOneToMany('supplierInfo');
+	    return $this->supplierInfo;
+	}
+	/**
+	 * Setters for the supplier information
+	 * 
+	 * @param array $value The supplier information array
+	 * 
+	 * @return Supplier
+	 */
+	public function setSupplierInfo($value) 
+	{
+	    $this->supplierInfo = $value;
+	    return $this;
+	}
 	/**
 	 * Getting the info
 	 *
@@ -81,7 +109,26 @@ class Supplier extends BaseEntityAbstract
 		$result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
 		return $result['info'];
 	}
-	
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson()
+	{
+		$infoArray = array();
+		$sql = "select distinct supIn.id `infoId`, supIn.value `infoValue`, supInType.id `typeId`, supInType.name `typeName` from supplierinfo supIn inner join supplierinfotype supInType on (supIn.typeId = supInType.id) where supIn.supplierId = ?";
+		$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
+		foreach($result as $row)
+		{
+			if(!isset($infoArray[$row['typeId']]))
+				$infoArray[$row['typeId']] = array();
+			$infoArray[$row['typeId']][] = array("id" => $row['infoId'], "value" => $row["infoValue"], "type" => array("id" => $row["typeId"], "name" => $row["typeName"]));
+		}
+		
+		$array = parent::getJson();
+		$array['info'] = $infoArray;
+		return $array;
+	}
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
@@ -91,6 +138,7 @@ class Supplier extends BaseEntityAbstract
 		DaoMap::begin($this, 'supp');
 		DaoMap::setStringType('name','varchar', 200);
 		DaoMap::setStringType('connector','varchar', 200);
+		DaoMap::setOneToMany('supplierInfo', 'supplierInfo', 'sup_info');
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('name');
