@@ -10,6 +10,7 @@ if(!is_writable($runtimePath))
 	die("Please make sure that the directory $runtimePath is writable by Web server process.");
 
 require 'bootstrap.php';
+Config::setConfFile($_SERVER['SERVER_NAME']);
 $application=new TApplication;
 $application->run();
 ?>

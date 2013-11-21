@@ -40,8 +40,35 @@ abstract class FrontEndPageAbstract extends TPage
 		$this->_loginUserBtn->ID = 'loginUserBtn';
 		$this->_loginUserBtn->OnCallback = 'Page.login';
 		$this->getControls()->add($this->_loginUserBtn);
+		
+		$this->getPage()->setTheme($this->_getThemeByName(Config::get('theme', 'name')));
 	}
-	
+	/**
+	 * getting the theme by name
+	 *
+	 * @param string $themeName The name of the theme
+	 *
+	 * @throws Exception
+	 * @return TTheme
+	 */
+	private function _getThemeByName($themeName)
+	{
+		try
+		{
+			$currentTheme = $this->getPage()->getTheme();
+			$currentThemeName = $currentTheme->getName();
+			$currentThemePath = $currentTheme->getBasePath();
+			$currentThemeUrl = $currentTheme->getBaseUrl();
+				
+			$newThemePath = str_replace($currentThemeName,$themeName,$currentTheme->getBasePath());
+			$newThemeUrl = str_replace($currentThemeName,$themeName,$currentTheme->getBaseUrl());
+			return new TTheme($newThemePath,$newThemeUrl);
+		}
+		catch(Exception $e)
+		{
+			throw new Exception("Can't create new theme '".$themeName."' : ".$e->getMessage());
+		}
+	}
 	/**
 	 * (non-PHPdoc)
 	 * @see TControl::onLoad()
