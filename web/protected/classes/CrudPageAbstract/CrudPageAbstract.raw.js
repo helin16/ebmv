@@ -92,7 +92,7 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 		throw 'function _collectSavePanel needs to be overrided!';
 	}
 	//after saving the items
-	,_afterSaveItems: function (result) {
+	,_afterSaveItems: function (saveBtn, result) {
 		throw 'function _afterSaveItems needs to be overrided!';
 	}
 	//trying to save the item
@@ -109,7 +109,7 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 						tmp.result = tmp.me.getResp(param, false, true);
 						if(tmp.result.items === undefined || tmp.result.items === null || tmp.result.items.size() === 0)
 							throw 'System Error: not items returned after saving!';
-						tmp.me._afterSaveItems(tmp.result);
+						tmp.me._afterSaveItems(btn, tmp.result);
 					} catch(e) {
 						alert(e);
 					}
