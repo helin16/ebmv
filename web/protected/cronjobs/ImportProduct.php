@@ -2,13 +2,13 @@
 require_once dirname(__FILE__) . '/../../bootstrap.php';
 class ImportProduct
 {
-	public static function run($totalRecords = null)
+	public static function run($totalRecords = null, array $supplierIds = array())
 	{
 		$totalRecords = trim($totalRecords);
 		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
 		{
-			foreach(BaseServiceAbastract::getInstance('Supplier')->findAll() as $supplier)
+			foreach(self::_getSuppliers($supplierIds) as $supplier)
 			{
 				echo "== Start import script @ " . new UDate() . " for " . $supplier->getName() . "=============================\n";
 				try {$script = SupplierConnectorAbstract::getInstance($supplier); }
@@ -45,6 +45,14 @@ class ImportProduct
 			echo $ex->getTraceAsString() . "\n";
 			return;
 		}
+	}
+	private static function _getSuppliers($supplierIds = array())
+	{
+		if(!is_array($supplierIds))
+			throw new Exception("System Error: supplids has to be a array!");
+		if(count($supplierIds) === 0)
+			return BaseServiceAbastract::getInstance('Supplier')->findAll();
+		return BaseServiceAbastract::getInstance('Supplier')->findByCriteria('id in (' . implode(', ', array_fill(0, count($supplierIds), '?')) . ')', $supplierIds);
 	}
 }
 
