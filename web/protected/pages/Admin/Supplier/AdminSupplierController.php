@@ -73,8 +73,10 @@ class AdminSupplierController extends CrudPageAbstract
     			$supplierArray[] = BaseServiceAbastract::getInstance('Supplier')->get($supplierId);
     			$result['pagination'] = BaseServiceAbastract::getInstance('Supplier')->getPageStats();
     		}
+    		$items = array();
     		foreach($supplierArray as $supplier)
-    			$result['items'][] = $supplier->getJson();
+    			$items[] = $supplier->getJson();
+    		$result['items'] = $items;
     	}
     	catch(Exception $ex)
     	{
@@ -91,31 +93,37 @@ class AdminSupplierController extends CrudPageAbstract
     	$result = $errors = $supplierArray = array();
     	try
     	{
-    		$pageNumber = 1;
-    		$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
-    		if(isset($param->CallbackParameter->pagination))
-    		{
-    			$pagination = $param->CallbackParameter->pagination;
-    			$pageNumber = (isset($pagination->pageNo) && trim($pagination->pageNo) !== '' && is_numeric($pagination->pageNo)) ? trim($pagination->pageNo) : $pageNumber;
-    			$pageSize = (isset($pagination->pageSize) && trim($pagination->pageSize) !== '' && is_numeric($pagination->pageSize)) ? trim($pagination->pageSize) : $pageSize;
+    		Dao::beginTransaction();
+    		if(!isset($param->CallbackParameter->id))
+    			throw new Exception("System Error: No item id passed in!");
+    		
+    		$supplier = ($supplier = BaseServiceAbastract::getInstance('Supplier')->get(trim($param->CallbackParameter->id))) instanceof Supplier ? $supplier : new Supplier();
+    		$supplier->setName(trim($param->CallbackParameter->name));
+    		$connector = trim($param->CallbackParameter->connector);
+    		try {
+    			$script = new $connector($supplier);
+    		} catch (Exception $e) {
+    			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage());
     		}
-    		$supplierId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
-    		if($supplierId === '' || $supplierId === '0')
+    		$supplier->setConnector($connector);
+    		$supplier->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on');
+    		BaseServiceAbastract::getInstance('Supplier')->save($supplier);
+    		foreach($param->CallbackParameter->info as $info)
     		{
-    			$supplierArray = BaseServiceAbastract::getInstance('Supplier')->findAll(false, $pageNumber, $pageSize, array());
-    			$result['pagination'] = BaseServiceAbastract::getInstance('Supplier')->getPageStats();
+    			$supplierInfo = (($supplierInfo = BaseServiceAbastract::getInstance('SupplierInfo')->get(trim($info->id))) instanceof SupplierInfo ? $supplierInfo : new SupplierInfo());
+    			$supplierInfo->setType(BaseServiceAbastract::getInstance('SupplierInfoType')->get(trim($info->typeId)));
+    			$supplierInfo->setValue(trim($info->value));
+    			$supplierInfo->setSupplier($supplier);
+    			BaseServiceAbastract::getInstance('SupplierInfo')->save($supplierInfo);
     		}
-    		else
-    		{
-    			$supplierArray[] = BaseServiceAbastract::getInstance('Supplier')->get($supplierId);
-    			$result['pagination'] = BaseServiceAbastract::getInstance('Supplier')->getPageStats();
-    		}
-    		foreach($supplierArray as $supplier)
-    			$result['items'][] = $supplier->getJson();
+    		
+    		Dao::commitTransaction();
+    		$result['items'] = array($supplier->getJson());
     	}
     	catch(Exception $ex)
     	{
-    		$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+    		Dao::rollbackTransaction();
+    		$errors[] = $ex->getMessage() ;
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
     }

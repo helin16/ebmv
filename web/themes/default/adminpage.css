@@ -37,13 +37,18 @@
 	text-align: right;
 	width: auto;
 }
-.adminpage .items_div_wrapper .row .editbtn {
+.adminpage .items_div_wrapper .row .btns .btn {
 	cursor:pointer;
 	display: inline-block;
 	width: 32px;
 	height: 32px;
 	background: transparent url(images/admin_sprite.png) left bottom no-repeat;
+}
+.adminpage .items_div_wrapper .row .btns .btn.editbtn {
 	background-position: -480px 0px;
+}
+.adminpage .items_div_wrapper .row .btns .btn.delbtn {
+	background-position: -448px 0px;
 }
 
 .adminpage .addDiv,
@@ -72,6 +77,13 @@
 
 .adminpage .attrs_wrapper .attr_wrapper .attr_values_wrapper {
 	width:500px;
+}
+
+.adminpage .savePanel .fielddiv {
+	vertical-align: top;
+}
+.adminpage .savePanel .fielddiv.hasError .value{
+	border: 1px red solid;
 }
 
 /** product page **/
