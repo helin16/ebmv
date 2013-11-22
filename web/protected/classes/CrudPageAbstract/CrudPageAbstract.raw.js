@@ -45,57 +45,103 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 			});
 		return tmp.paginDiv;
 	}
-	
 	//getting the result div
 	,_getResultDiv: function(items, notitlerow, itemrowindex) {
 		return null;
 	}
-	
+	//what to do after the items are deleted
+	,_afterDelItems: function (itemIds) {
+		var tmp = {};
+		tmp.me = this;
+		itemIds.each(function(itemId) {
+			tmp.row = $(tmp.me.resultDivId).down('.row[item_id=' + itemId + ']');
+			if(tmp.row)
+				tmp.row.remove();
+		});
+		return this;
+	}
+	//deleting an item
+	,delItems: function (itemIds) {
+		var tmp = {};
+		tmp.me = this;
+		if(confirm('You are about to delete this item.\n Continue?')) {
+			tmp.me.postAjax(tmp.me.getCallbackId('deleteItems'), {'itemIds': itemIds}, {
+				'onLoading': function (sender, param) {},
+				'onComplete': function (sender, param) {
+					try {
+						tmp.result = tmp.me.getResp(param, false, true);
+						tmp.me._afterDelItems(itemIds);
+					} catch(e) {
+						alert(e);
+					}
+				}
+			});
+		}
+		return this;
+	}
+	// create function for deafult behaviour of edit panel
+	,showEditPanel: function (btn, isNEW) {
+		throw 'function showEditPanel needs to be overrided!';
+	}
+	//cancel editing the item
+	,cancelEdit: function(btn) {
+		throw 'function cancelEdit needs to be overrided!';
+	}
+	//collecting the data from the save panel before saving
+	,_collectSavePanel: function(saveBtn) {
+		throw 'function _collectSavePanel needs to be overrided!';
+	}
+	//after saving the items
+	,_afterSaveItems: function (result) {
+		throw 'function _afterSaveItems needs to be overrided!';
+	}
+	//trying to save the item
+	,saveEditedItem: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		//collect and precheck all the user input in the save panel
+		tmp.data = tmp.me._collectSavePanel(btn);
+		if(tmp.data !== null) {
+			tmp.me.postAjax(tmp.me.getCallbackId('saveItems'), tmp.data, {
+				'onLoading': function (sender, param) {},
+				'onComplete': function (sender, param) {
+					try {
+						tmp.result = tmp.me.getResp(param, false, true);
+						if(tmp.result.items === undefined || tmp.result.items === null || tmp.result.items.size() === 0)
+							throw 'System Error: not items returned after saving!';
+						tmp.me._afterSaveItems(tmp.result);
+					} catch(e) {
+						alert(e);
+					}
+				}
+			});
+		}
+		return this;
+	}
 	//editing an item
 	,editItem: function (btn) {
 		this._hideShowAllEditPens(btn, false); 
 		this.showEditPanel(btn);
-		 return;
+		return this;
 	}
-	
+	//create an item
+	,createItem: function (btn) {
+		this._hideShowAllEditPens(btn, false); 
+		this.showEditPanel(btn, true);
+		return this;
+	}
+	//hiding the editing row
 	,_hideShowAllEditPens: function(btn, show) {
 		var tmp = {};
 		tmp.me = this;
-		
-		tmp.show = (show === true) ? true : false;
-		
-		$(btn).up('div#' + this.resultDivId).select('[alt="EDIT"]')
-	 	.each(function(item) {
-	 		if(tmp.show === true)
-	 			item.show();	
-	 		else	
-	 			item.hide();	
-	 	});
+		tmp.btnsDiv = $(btn).up('.row').getElementsBySelector('.btns').first();
+		if (show === true) {
+			tmp.btnsDiv.show();
+		} else {
+			tmp.btnsDiv.hide();
+		}
+		return this;
 	}
 	
-	//deleting an item
-	,delItem: function (btn) {
-		alert('deleting: ');
-		return;
-	}
-	
-	//create an item
-	,createItem: function (btn) {
-		alert('creating: ');
-		return;
-	}
-	
-	// create function for deafult behaviour of edit panel
-	,showEditPanel: function (btn) {
-		return;
-	}
-	
-	,cancelEdit: function(btn) {
-		return;
-	}
-	
-	,saveEditedItem: function(btn) {
-		return;
-	}
 	
 });
