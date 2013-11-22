@@ -74,12 +74,17 @@ class ProductDetailsController extends FrontEndPageAbstract
                 	    $html .= $this->_getAtts($product, 'publish_date', 'Publisher Date', 'product_publish_date');
             	    $html .= "</div>";
             	    $html .= "<div class='row btns'>";
-	            	    $viewUrl = "";
+	            	    $viewUrl = $downloadUrl = "";
 	            	    if($this->_supplier instanceof Supplier)
+	            	    {
 	            	    	$viewUrl = trim($this->_supplier->getInfo('view_url'));
+	            	    	$downloadUrl = trim($this->_supplier->getInfo('download_url'));
+	            	    }
 	            	    $siteId = Config::get('site', 'code');
-                	    $html .= '<input class="button rdcrnr" type="button" value="Read Online" originvalue="Read Online" onClick="pageJs.readOnline(this, '. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
-                	    $html .= ' <input class="button rdcrnr" type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
+	            	    if(trim($viewUrl) !== '')
+                	    	$html .= '<input class="button rdcrnr" type="button" value="Read Online" originvalue="Read Online" onClick="pageJs.readOnline(this, '. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
+	            	    if(trim($downloadUrl) !== '')
+	                	    $html .= ' <input class="button rdcrnr" type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
             	    $html .= "</div>";
             	    $html .= "<div class='row product_description'>";
                     	    $html .= $product->getAttribute('description');
