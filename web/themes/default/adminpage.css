@@ -49,7 +49,7 @@
 .adminpage .addDiv,
 .adminpage .editDiv{
 	background: #dddddd;
-	padding: 5px;
+	padding: 10px;
 }
 
 .adminpage .attrs_wrapper {
@@ -151,8 +151,19 @@
 	font-size: 10px;
 	color: #888888;
 }
+.adminpage.supplierpage .savePanel .fielddiv .title .btns {
+	float: right;
+}
+.adminpage.supplierpage .savePanel .fielddiv .title .btns .delBtn{
+	color: red;
+	font-weight: bold;
+	font-size: 12px;
+}
 .adminpage.supplierpage .savePanel .fielddiv .content{
 	width: 100%;
+}
+.adminpage.supplierpage .savePanel .fielddiv .content .txt {
+	width: 95%;
 }
 
 
