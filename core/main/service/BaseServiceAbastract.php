@@ -39,7 +39,7 @@ abstract class BaseServiceAbastract
 	 * 
 	 * @param string $entityName The name of the entity
 	 * 
-	 * @return BaseService
+	 * @return BaseServiceAbastract
 	 */
 	public static function getInstance($serviceName)
 	{
