@@ -56,4 +56,4 @@ class ImportProduct
 	}
 }
 
-ImportProduct::run();
+ImportProduct::run(10, array(1));

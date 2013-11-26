@@ -568,6 +568,21 @@ abstract class Dao
         return Dao::_execSql('delete from ' . strtolower($qry->getFocusClass()) . ' where (' . $criteria . ')', $params);
     }
     /**
+     * replace into
+     * 
+     * @param string $table   The table name
+     * @param array  $columns The name of the columns
+     * @param array  $values  The values that will match agains the column names
+     * @param array  $params  The params
+     * 
+     * @return PDOStatement
+     */
+    public static function replaceInto($table, $columns, $values, $params = array())
+    {
+        self::connect();
+        return Dao::_execSql('REPLACE INTO ' . $table . ' (`' . implode('`, `', $columns) . '`) values (' . implode(', ', $values) . ')', $params);
+    }
+    /**
      * Add a join table record for many to many relationship
      *
      * @param DaoQuery $qry         The dao query

@@ -33,11 +33,11 @@ class Product extends BaseEntityAbstract
 	 */
 	protected $attributes;
 	/**
-	 * The language of the book
+	 * The languages of the book
 	 * 
-	 * @var Language
+	 * @var multiple:Language
 	 */
-	protected $language;
+	protected $languages;
 	/**
 	 * The ProductType of the book
 	 * 
@@ -165,12 +165,12 @@ class Product extends BaseEntityAbstract
 	/**
 	 * Getter for the language
 	 * 
-	 * @return Language
+	 * @return Multiple:Language
 	 */
-	public function getLanguage()
+	public function getLanguages()
 	{
-	    $this->loadManyToOne('language');
-	    return $this->language;
+	    $this->loadManyToMany('languages');
+	    return $this->languages;
 	}
 	/**
 	 * Setter for the language
@@ -179,10 +179,32 @@ class Product extends BaseEntityAbstract
 	 * 
 	 * @return Product
 	 */
-	public function setLanguage(Language $language)
+	public function setLanguages(array $languages)
 	{
-	    $this->language = $language;
+	    $this->languages = $languages;
 	    return $this;
+	}
+	/**
+	 * updating the languages
+	 * 
+	 * @param array $languages The wanted languages
+	 * 
+	 * @return Product
+	 */
+	public function updateLanguages(array $languages)
+	{
+		if(count($languages) === 0)
+			return;
+		
+		$values = array();
+		$langIds = array();
+		foreach($languages as $lang)
+		{
+			$values[] = '?, ' . $this->getId() . ', ' . Core::getUser()->getId();
+			$langIds[] = $lang->getId();
+		}
+		EntityDao::getInstance('Product')->replaceInto('language_product', array('languageId', 'productId', 'createdById'), $values, $langIds);
+		return $this;
 	}
 	/**
 	 * Getter for the ProductType
@@ -327,7 +349,7 @@ class Product extends BaseEntityAbstract
 		DaoMap::setStringType('suk','varchar', 50);
 		DaoMap::setManyToMany("categorys", "Category", DaoMap::LEFT_SIDE, "pcat");
 		DaoMap::setOneToMany("attributes", "ProductAttribute");
-		DaoMap::setManyToOne("language", "Language");
+		DaoMap::setManyToMany("languages", "Language", DaoMap::LEFT_SIDE, 'lang');
 		DaoMap::setManyToOne("productType", "ProductType");
 		DaoMap::setOneToMany("productStatics", "ProductStatics");
 		DaoMap::setOneToMany("supplierPrices", "SupplierPrice");

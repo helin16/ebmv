@@ -26,9 +26,9 @@ class ProductType extends BaseEntityAbstract
     /**
      * Setters for the name
      * 
-     * @param string $name The name of the language
+     * @param string $name The name of the ProductType
      * 
-     * @return Language
+     * @return ProductType
      */
     public function setName($name)
     {

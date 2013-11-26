@@ -113,7 +113,8 @@ class ProductService extends BaseServiceAbastract
         
         if($language instanceof Language)
         {
-        	$where[] = 'pro.languageId = ?';
+        	$query->eagerLoad('Product.languages', DaoQuery::DEFAULT_JOIN_TYPE, 'lang');
+        	$where[] = 'lang.id = ?';
         	$params[] = $language->getId();
         	$searchMode = true;
         }
@@ -139,81 +140,83 @@ class ProductService extends BaseServiceAbastract
     /**
      * Create a product/book
      * 
-     * @param string      $title       The title
-     * @param string      $author      The author
-     * @param string      $isbn        The isbn
-     * @param string      $publisher   The publisher
-     * @param string      $publishDate The publish date
-     * @param int         $words       The words of the book
-     * @param array       $categories  The category of the book
-     * @param string      $image       The image path of the book
-     * @param string      $description The description of the book
-     * @param string      $cno         The supplier's identification no
-     * @param string      $cip         The supplier's category ip
-     * @param Language    $lang        The language of the book
-     * @param ProductType $type        The type of the book
+     * @param string               $title       The title
+     * @param string               $author      The author
+     * @param string               $isbn        The isbn
+     * @param string               $publisher   The publisher
+     * @param string               $publishDate The publish date
+     * @param int                  $words       The words of the book
+     * @param array                $categories  The category of the book
+     * @param string               $image       The image path of the book
+     * @param string               $description The description of the book
+     * @param string               $cno         The supplier's identification no
+     * @param string               $cip         The supplier's category ip
+     * @param Multiple:Language    $langs       The languages of the book
+     * @param ProductType          $type        The type of the book
      * 
      * @return Product
      */
-    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', Language $lang = null, ProductType $type = null)
+    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', array $langs = array(), ProductType $type = null)
     {
-        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $lang, $type);
+        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $langs, $type);
     }
     /**
      * update a product/book
      * 
-     * @param Product     $product     The Product
-     * @param string      $title       The title
-     * @param string      $author      The author
-     * @param string      $isbn        The isbn
-     * @param string      $publisher   The publisher
-     * @param string      $publishDate The publish date
-     * @param int         $words       The words of the book
-     * @param array       $categories  The category of the book
-     * @param string      $image       The image path of the book
-     * @param string      $description The description of the book
-     * @param string      $cno         The supplier's identification no
-     * @param string      $cip         The supplier's category ip
-     * @param Language    $lang        The language of the book
-     * @param ProductType $type        The type of the book
+     * @param Product              $product     The Product
+     * @param string               $title       The title
+     * @param string               $author      The author
+     * @param string               $isbn        The isbn
+     * @param string               $publisher   The publisher
+     * @param string               $publishDate The publish date
+     * @param int                  $words       The words of the book
+     * @param array                $categories  The category of the book
+     * @param string               $image       The image path of the book
+     * @param string               $description The description of the book
+     * @param string               $cno         The supplier's identification no
+     * @param string               $cip         The supplier's category ip
+     * @param Multiple:Language    $langs       The languages of the book
+     * @param ProductType          $type        The type of the book
      * 
      * @return Product
      */
-    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', Language $lang = null, ProductType $type = null)
+    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', array $langs = array(), ProductType $type = null)
     {
-        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $lang, $type);
+        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $langs, $type);
     }
     /**
      * editing a product/book
      * 
-     * @param Product     $product     The Product
-     * @param string      $title       The title
-     * @param string      $author      The author
-     * @param string      $isbn        The isbn
-     * @param string      $publisher   The publisher
-     * @param string      $publishDate The publish date
-     * @param int         $words       The words of the book
-     * @param array       $categories  The category of the book
-     * @param string      $image       The image path of the book
-     * @param string      $description The description of the book
-     * @param string      $cno         The supplier's identification no
-     * @param string      $cip         The supplier's category ip
-     * @param Language    $lang        The language of the book
-     * @param ProductType $type        The type of the book
+     * @param Product              $product     The Product
+     * @param string               $title       The title
+     * @param string               $author      The author
+     * @param string               $isbn        The isbn
+     * @param string               $publisher   The publisher
+     * @param string               $publishDate The publish date
+     * @param int                  $words       The words of the book
+     * @param array                $categories  The category of the book
+     * @param string               $image       The image path of the book
+     * @param string               $description The description of the book
+     * @param string               $cno         The supplier's identification no
+     * @param string               $cip         The supplier's category ip
+     * @param Multiple:Language    $langs       The languages of the book
+     * @param ProductType          $type        The type of the book
      * 
      * @return Product
      */
-    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, $cno = 0, $cip = '', Language $lang = null, ProductType $type = null)
+    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, $cno = 0, $cip = '', array $langs = array(), ProductType $type = null)
     {
         $transStarted = false;
         try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
         try
         {
             $product->setTitle($title);
-            $product->setLanguage($lang instanceof Language ? $lang : EntityDao::getInstance('Language')->findById(1));
             $product->setProductType($type instanceof ProductType ? $type : EntityDao::getInstance('ProductType')->findById(1));
             if(trim($product->getId()) === '')
                 $this->save($product);
+            if(count($langs) === 0 )
+            	$langs = array(EntityDao::getInstance('Language')->findById(1));
+            $product->updateLanguages($langs);
             
             //add the attributes
             //TODO:: need to resize the thumbnail

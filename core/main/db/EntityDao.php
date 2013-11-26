@@ -275,6 +275,20 @@ class EntityDao
         return Dao::deleteByCriteria($this->_query, $criteria, $params);
     }
     /**
+     * replace into
+     * 
+     * @param string $table   The table name
+     * @param array  $columns The name of the columns
+     * @param array  $values  The values that will match agains the column names
+     * @param array  $params  The params
+     * 
+     * @return PDOStatement
+     */
+    public function replaceInto($table, $columns, $values, $params = array())
+    {
+        return Dao::replaceInto($table, $columns, $values, $params);
+    }
+    /**
      * Add a join table record for many to many relationship
      *
      * @param BaseEntityAbstract $leftEntity  The left entity

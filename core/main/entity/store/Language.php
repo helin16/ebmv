@@ -15,6 +15,12 @@ class Language extends BaseEntityAbstract
      */
     private $name;
     /**
+     * The products that using this language
+     * 
+     * @var multiple:Product
+     */
+    protected $products;
+    /**
      * Getters for the name
      * 
      * @return string
@@ -36,6 +42,27 @@ class Language extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Getting the products of the language
+     * 
+     * @return multiple:Product
+     */
+    public function getProducts() 
+    {
+        return $this->products;
+    }
+    /**
+     * setting the products for the language
+     * 
+     * @param array $value The products
+     * 
+     * @return Language
+     */
+    public function setProducts($value) 
+    {
+        $this->products = $value;
+        return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
      */
@@ -43,6 +70,7 @@ class Language extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'lan');
         DaoMap::setStringType('name','varchar', 200);
+        DaoMap::setManyToMany("products", "Product", DaoMap::RIGHT_SIDE, 'pro');
         parent::__loadDaoMap();
     
         DaoMap::createIndex('name');
