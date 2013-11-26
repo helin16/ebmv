@@ -32,7 +32,15 @@ class ImportProduct
 				for($i = 0; $i< $childrenCount; $i++)
 				{
 					echo 'Importing Product No: ' . $i . ' ... ';
-					$script->importProducts($productList, $i);
+					try
+					{
+						$script->importProducts($productList, $i);
+					}
+					catch(Exception $ex)
+					{
+						echo $ex->getMessage();
+						continue;
+					}
 					echo "Done\n";
 				}
 				echo "Finished importing (" . $childrenCount . ") products: \n";
