@@ -82,9 +82,9 @@ class ProductDetailsController extends FrontEndPageAbstract
 	            	    }
 	            	    $siteId = Config::get('site', 'code');
 	            	    if(trim($viewUrl) !== '')
-                	    	$html .= '<input class="button rdcrnr" type="button" value="Read Online" originvalue="Read Online" onClick="pageJs.readOnline(this, '. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
+                	    	$html .= '<input class="button rdcrnr" type="button" value="在线阅读/在線閱讀&#x00A;Read Online" onClick="pageJs.readOnline(this, '. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
 	            	    if(trim($downloadUrl) !== '')
-	                	    $html .= ' <input class="button rdcrnr" type="button" value="Download This Book" onClick="pageJs.download(this);"/>';
+	                	    $html .= ' <input class="button rdcrnr" type="button" value="下载阅读/下載閱讀&#x00A;Download This Book" onClick="pageJs.download(this);"/>';
             	    $html .= "</div>";
             	    $html .= "<div class='row product_description'>";
                     	    $html .= $product->getAttribute('description');
