@@ -34,7 +34,7 @@ class AdminLibraryController extends CrudPageAbstract
         $supplierId = 0;
     	
     	$js = parent::_getEndJs();
-        $js .= 'pageJs.resultDivId="allSupplierDiv";';
+        $js .= 'pageJs.resultDivId="alllibraryDiv";';
         $js .= 'pageJs.types = ' . json_encode($this->_getInfoTypes()) . ';';
         $js .= 'pageJs.showItems(' . $pageNumber . ', ' . $pageSize . ', ' . $supplierId . ');';
         return $js;
@@ -47,7 +47,7 @@ class AdminLibraryController extends CrudPageAbstract
     private function _getInfoTypes()
     {
         $array = array();
-        foreach(BaseServiceAbastract::getInstance('SupplierInfoType')->findAll() as $type)
+        foreach(BaseServiceAbastract::getInstance('LibraryInfoType')->findAll() as $type)
         	$array[] = $type->getJson();
         return $array;
     }
@@ -71,13 +71,13 @@ class AdminLibraryController extends CrudPageAbstract
     		$supplierId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
     		if($supplierId === '' || $supplierId === '0')
     		{
-    			$supplierArray = BaseServiceAbastract::getInstance('Supplier')->findAll(false, $pageNumber, $pageSize, array());
-    			$result['pagination'] = BaseServiceAbastract::getInstance('Supplier')->getPageStats();
+    			$supplierArray = BaseServiceAbastract::getInstance('Library')->findAll(false, $pageNumber, $pageSize, array());
+    			$result['pagination'] = BaseServiceAbastract::getInstance('Library')->getPageStats();
     		}
     		else
     		{
-    			$supplierArray[] = BaseServiceAbastract::getInstance('Supplier')->get($supplierId);
-    			$result['pagination'] = BaseServiceAbastract::getInstance('Supplier')->getPageStats();
+    			$supplierArray[] = BaseServiceAbastract::getInstance('Library')->get($supplierId);
+    			$result['pagination'] = BaseServiceAbastract::getInstance('Library')->getPageStats();
     		}
     		$items = array();
     		foreach($supplierArray as $supplier)
@@ -103,28 +103,21 @@ class AdminLibraryController extends CrudPageAbstract
     		if(!isset($param->CallbackParameter->id))
     			throw new Exception("System Error: No item id passed in!");
     		
-    		$supplier = ($supplier = BaseServiceAbastract::getInstance('Supplier')->get(trim($param->CallbackParameter->id))) instanceof Supplier ? $supplier : new Supplier();
-    		$supplier->setName(trim($param->CallbackParameter->name));
-    		$connector = trim($param->CallbackParameter->connector);
-    		try {
-    			$script = new $connector($supplier);
-    		} catch (Exception $e) {
-    			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage());
-    		}
-    		$supplier->setConnector($connector);
-    		$supplier->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on');
-    		BaseServiceAbastract::getInstance('Supplier')->save($supplier);
+    		$item = ($item = BaseServiceAbastract::getInstance('Library')->get(trim($param->CallbackParameter->id))) instanceof Library ? $item : new Library();
+    		$item->setName(trim($param->CallbackParameter->name));
+    		$item->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on');
+    		BaseServiceAbastract::getInstance('Library')->save($supplier);
     		foreach($param->CallbackParameter->info as $info)
     		{
-    			$supplierInfo = (($supplierInfo = BaseServiceAbastract::getInstance('SupplierInfo')->get(trim($info->id))) instanceof SupplierInfo ? $supplierInfo : new SupplierInfo());
-    			$supplierInfo->setType(BaseServiceAbastract::getInstance('SupplierInfoType')->get(trim($info->typeId)));
-    			$supplierInfo->setValue(trim($info->value));
-    			$supplierInfo->setSupplier($supplier);
-    			BaseServiceAbastract::getInstance('SupplierInfo')->save($supplierInfo);
+    			$info = (($info = BaseServiceAbastract::getInstance('LibraryInfo')->get(trim($info->id))) instanceof LibraryInfo ? $item : new LibraryInfo());
+    			$info->setType(BaseServiceAbastract::getInstance('LibraryInfoType')->get(trim($info->typeId)));
+    			$info->setValue(trim($info->value));
+    			$info->setLibrary($item);
+    			BaseServiceAbastract::getInstance('LibraryInfo')->save($info);
     		}
     		
     		Dao::commitTransaction();
-    		$result['items'] = array($supplier->getJson());
+    		$result['items'] = array($info->getJson());
     	}
     	catch(Exception $ex)
     	{
@@ -145,7 +138,7 @@ class AdminLibraryController extends CrudPageAbstract
     		if(!isset($param->CallbackParameter->itemIds))
     			throw new Exception("System Error: No item ids passed in!");
     		$itemIds = $param->CallbackParameter->itemIds;
-    		BaseServiceAbastract::getInstance('Supplier')->updateByCriteria('active = 0', 'id in (' . implode(', ', array_fill(0, count($itemIds), '?')). ')', $itemIds);
+    		BaseServiceAbastract::getInstance('Library')->updateByCriteria('active = 0', 'id in (' . implode(', ', array_fill(0, count($itemIds), '?')). ')', $itemIds);
     	}
     	catch(Exception $ex)
     	{
