@@ -14,7 +14,7 @@ abstract class AdminPageAbstract extends FrontEndPageAbstract
      * 
      * @var string
      */
-	public $menuItemName;
+	public $menuItemCode;
 	/**
 	 * constructor
 	 */

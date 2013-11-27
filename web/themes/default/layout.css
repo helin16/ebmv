@@ -199,6 +199,7 @@ a {
 
 .menu ul li {
     display: inline-block;
+    padding: 0 4px;
 }
 
 .menu ul li a {
@@ -206,6 +207,7 @@ a {
     padding: 2px 6px;
 }
 
+.menu ul li a.active,
 .menu ul li a:hover {
     background: #999999;
     border-radius: 4px;

@@ -1,0 +1,5 @@
+<com:TContent ID="MainContent">
+	<div class="pagewrapper adminpage librarypage">
+		<div id = 'alllibraryDiv' class="items_div_wrapper"></div>
+	</div>
+</com:TContent>

@@ -23,6 +23,9 @@
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />
 			
+			<!-- FrontEnd:: logout page -->
+			<url ServiceParameter="FrontEnd.Logout.LogoutController" pattern="logout.html" />
+			
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="FrontEnd.User.UserController" pattern="user.html" />
 			
@@ -48,6 +51,9 @@
 			
 			<!-- AdminPage:: supplier -->
 			<url ServiceParameter="Admin.Supplier.AdminSupplierController" pattern="admin/supplier.html" />
+			
+			<!-- AdminPage:: library -->
+			<url ServiceParameter="Admin.Library.AdminLibraryController" pattern="admin/library.html" />
 			
 			<!-- AdminPage:: test comm -->
 			<url ServiceParameter="Admin.ComTester.ComTesterController" pattern="admin/testcoms.html" />

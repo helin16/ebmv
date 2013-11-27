@@ -1,6 +1,12 @@
 <?php
 class AdminProductController extends CrudPageAbstract
 {
+	/**
+	 * The selected Menu Item name
+	 *
+	 * @var string
+	 */
+	public $menuItemCode = 'products';
 	public function __construct()
     {
     	parent::__construct();

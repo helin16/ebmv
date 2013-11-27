@@ -1,12 +1,12 @@
 <?php
-class AdminSupplierController extends CrudPageAbstract
+class AdminLibraryController extends CrudPageAbstract
 {
 	/**
 	 * The selected Menu Item name
 	 *
 	 * @var string
 	 */
-	public $menuItemCode = 'suppliers';
+	public $menuItemCode = 'libraries';
 	public function __construct()
     {
     	parent::__construct();
