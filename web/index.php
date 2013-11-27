@@ -10,6 +10,13 @@ if(!is_writable($runtimePath))
 	die("Please make sure that the directory $runtimePath is writable by Web server process.");
 
 require 'bootstrap.php';
+//enforce https
+if(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on")
+{
+    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+    exit();
+}
+
 try
 {
 	Config::setConfFile($_SERVER['SERVER_NAME']);
