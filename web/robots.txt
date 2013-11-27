@@ -1,5 +1,2 @@
 User-agent: *
 Disallow: /
-Disallow: /cgi-bin/
-Disallow: /bookkeeping/
-Sitemap: www.mylins.com
