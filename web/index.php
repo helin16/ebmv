@@ -26,7 +26,7 @@ catch(Exception $e)
 
 $application=new TApplication;
 //enforce https
-if((!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") && $application->getMode() !== TApplication::STATE_DEBUG)
+if(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on")
 {
     header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
     exit();
