@@ -10,7 +10,17 @@ if(!is_writable($runtimePath))
 	die("Please make sure that the directory $runtimePath is writable by Web server process.");
 
 require 'bootstrap.php';
-Config::setConfFile($_SERVER['SERVER_NAME']);
+try
+{
+	Config::setConfFile($_SERVER['SERVER_NAME']);
+}
+catch(Exception $e)
+{
+	header("HTTP/1.0 404 Not Found");
+	echo "<h1>404 Not Found</h1>";
+    echo "The page that you have requested could not be found.";
+    exit();
+}
 $application=new TApplication;
 $application->run();
 ?>
