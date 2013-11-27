@@ -86,7 +86,7 @@ class AdminLibraryController extends CrudPageAbstract
     	}
     	catch(Exception $ex)
     	{
-    		$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+    		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
     }
@@ -142,7 +142,7 @@ class AdminLibraryController extends CrudPageAbstract
     	}
     	catch(Exception $ex)
     	{
-    		$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+    		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
     }
