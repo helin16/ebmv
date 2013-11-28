@@ -86,6 +86,30 @@
 	border: 1px red solid;
 }
 
+
+.adminpage .savePanel .fielddiv {
+	width: 23%;
+}
+.adminpage .savePanel .fielddiv .title{
+	display: block;
+	font-size: 10px;
+	color: #888888;
+}
+.adminpage .savePanel .fielddiv .title .btns {
+	float: right;
+}
+.adminpage .savePanel .fielddiv .title .btns .delBtn{
+	color: red;
+	font-weight: bold;
+	font-size: 12px;
+}
+.adminpage .savePanel .fielddiv .content{
+	width: 100%;
+}
+.adminpage .savePanel .fielddiv .content .txt {
+	width: 95%;
+}
+
 /** product page **/
 .adminpage.productpage .col.id {
 	width: 20px;
@@ -155,27 +179,14 @@
 	width: 200px;
 }
 
-.adminpage.supplierpage .savePanel .fielddiv {
-	width: 23%;
-}
-.adminpage.supplierpage .savePanel .fielddiv .title{
-	display: block;
-	font-size: 10px;
-	color: #888888;
-}
-.adminpage.supplierpage .savePanel .fielddiv .title .btns {
-	float: right;
-}
-.adminpage.supplierpage .savePanel .fielddiv .title .btns .delBtn{
-	color: red;
-	font-weight: bold;
-	font-size: 12px;
-}
-.adminpage.supplierpage .savePanel .fielddiv .content{
-	width: 100%;
-}
-.adminpage.supplierpage .savePanel .fielddiv .content .txt {
-	width: 95%;
+
+/** library page **/
+.adminpage.librarypage .row .col.id,
+.adminpage.librarypage .row .col.active {
+	width: 50px;
 }
 
+.adminpage.librarypage .row .col.name {
+	width: 400px;
+}
 

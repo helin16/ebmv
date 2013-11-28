@@ -57,7 +57,7 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		
 		tmp.resultDiv = new Element('div');
 		if(tmp.includetitlerow === true)
-			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow({'id': 'id', 'name': 'Name', 'connector': 'Connector Script', 'active': 'active', 'istitle': true}, new Element('span', {'class': 'button padding5 rdcrnr'}).update('Create NEW')
+			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow({'id': 'id', 'name': 'Name', 'active': 'active', 'istitle': true}, new Element('span', {'class': 'button padding5 rdcrnr'}).update('Create NEW')
 					.observe('click', function(){ tmp.me.createItem(this); })
 			).addClassName('titleRow') });
 		tmp.i = (itemrowindex || 0);
@@ -168,7 +168,6 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		tmp.isNew = (item.id === undefined || item.id === null);
 		tmp.newDiv = new Element('div', {'class': 'savePanel'}).addClassName(cssClass).store('item', item)
 			.insert({'bottom':  tmp.me._getSaveFieldDiv('Name', new Element('input', {'value': (tmp.isNew ? '': item.name), "class": "txt value", 'colname': 'name', 'noblank': true}) ) })
-			.insert({'bottom':  tmp.me._getSaveFieldDiv('Connector', new Element('input', {'value': (tmp.isNew ? '': item.connector), "class": "txt value", 'colname': 'connector', 'noblank': true}) ) })
 			.insert({'bottom':  tmp.me._getSaveFieldDiv('Act?', new Element('input', {'type': 'checkbox', "class": "value", 'checked': (tmp.isNew === true ? true : item.active), 'disabled': tmp.isNew, 'colname': 'active'}) ) })
 			.insert({'bottom':  new Element('span', {'class': 'button padding5 rdcrnr saveBtn'}).update('Save').observe('click', function() { tmp.me.saveEditedItem(this); }) })
 			.insert({'bottom':  new Element('span', {'class': 'button padding5 rdcrnr cancelBtn'}).update('Cancel').observe('click', function() { tmp.me.cancelEdit(this); }) })

@@ -104,6 +104,26 @@ class Library extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson()
+	{
+		$infoArray = array();
+		$sql = "select distinct libInfo.id `infoId`, libInfo.value `infoValue`, libInfoType.id `typeId`, libInfoType.name `typeName` from libraryinfo libInfo inner join libraryinfotype libInfoType on (libInfo.typeId = libInfoType.id) where libInfo.libraryId = ?";
+		$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
+		foreach($result as $row)
+		{
+			if(!isset($infoArray[$row['typeId']]))
+				$infoArray[$row['typeId']] = array();
+			$infoArray[$row['typeId']][] = array("id" => $row['infoId'], "value" => $row["infoValue"], "type" => array("id" => $row["typeId"], "name" => $row["typeName"]));
+		}
+	
+		$array = parent::getJson();
+		$array['info'] = $infoArray;
+		return $array;
+	}
+	/**
+	 * (non-PHPdoc)
 	 * @see BaseEntity::loadDaoMap()
 	 */
 	public function __loadDaoMap()

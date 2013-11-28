@@ -106,18 +106,18 @@ class AdminLibraryController extends CrudPageAbstract
     		$item = ($item = BaseServiceAbastract::getInstance('Library')->get(trim($param->CallbackParameter->id))) instanceof Library ? $item : new Library();
     		$item->setName(trim($param->CallbackParameter->name));
     		$item->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on');
-    		BaseServiceAbastract::getInstance('Library')->save($supplier);
+    		BaseServiceAbastract::getInstance('Library')->save($item);
     		foreach($param->CallbackParameter->info as $info)
     		{
-    			$info = (($info = BaseServiceAbastract::getInstance('LibraryInfo')->get(trim($info->id))) instanceof LibraryInfo ? $item : new LibraryInfo());
-    			$info->setType(BaseServiceAbastract::getInstance('LibraryInfoType')->get(trim($info->typeId)));
-    			$info->setValue(trim($info->value));
-    			$info->setLibrary($item);
-    			BaseServiceAbastract::getInstance('LibraryInfo')->save($info);
+    			$infoItem = (($infoItem = BaseServiceAbastract::getInstance('LibraryInfo')->get(trim($info->id))) instanceof LibraryInfo ? $infoItem : new LibraryInfo());
+    			$infoItem->setType(BaseServiceAbastract::getInstance('LibraryInfoType')->get(trim($info->typeId)));
+    			$infoItem->setValue(trim($info->value));
+    			$infoItem->setLibrary($item);
+    			BaseServiceAbastract::getInstance('LibraryInfo')->save($infoItem);
     		}
     		
     		Dao::commitTransaction();
-    		$result['items'] = array($info->getJson());
+    		$result['items'] = array($item->getJson());
     	}
     	catch(Exception $ex)
     	{
@@ -132,7 +132,7 @@ class AdminLibraryController extends CrudPageAbstract
 	 */
 	public function delItems($sender, $param)
     {
-    	$result = $errors = $supplierArray = array();
+    	$result = $errors = array();
     	try
     	{
     		if(!isset($param->CallbackParameter->itemIds))
