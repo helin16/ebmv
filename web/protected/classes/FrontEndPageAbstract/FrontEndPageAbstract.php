@@ -228,6 +228,7 @@ abstract class FrontEndPageAbstract extends TPage
 		header("HTTP/1.0 404 Not Found");
 		$html = "<h1>$title</h1>";
 		$html .= $content;
+		return $html;
 	}
 }
 ?>
