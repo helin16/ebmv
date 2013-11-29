@@ -57,7 +57,16 @@ abstract class Config
 	 */
 	private static function _getConfDir($fileName)
 	{
-		return dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'conf' . DIRECTORY_SEPARATOR . (trim($fileName) === '' ? self::DEFAULT_CONF_FILE : trim($fileName)) . '.php';
+		return self::getConfigDir() . (trim($fileName) === '' ? self::DEFAULT_CONF_FILE : trim($fileName)) . '.php';
+	}
+	/**
+	 * Getting the directory of the config files
+	 * 
+	 * @return string
+	 */
+	public static function getConfigDir()
+	{
+		return dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'conf' . DIRECTORY_SEPARATOR;
 	}
 }
 
