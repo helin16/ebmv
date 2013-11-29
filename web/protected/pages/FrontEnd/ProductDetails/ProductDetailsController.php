@@ -112,7 +112,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         {
         	if(!$this->_supplier instanceof Supplier)
         		throw new Exception('System Error: no supplier found for this book!');
-        	$results['url'] = SupplierConnector::getInstance($this->_supplier)->getDownloadUrl($this->_product, Core::getUser());
+        	$results['url'] = SupplierConnectorAbstract::getInstance($this->_supplier)->getDownloadUrl($this->_product, Core::getUser());
         	$results['redirecturl'] = '/user.html';
         }
         catch(Exception $ex)
