@@ -117,7 +117,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         }
         catch(Exception $ex)
         {
-        	$errors[] = $ex->getMessage();
+        	$errors[] = $ex->getMessage() . $ex->getTraceAsString();
         }
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
