@@ -21,8 +21,13 @@ abstract class AdminPageAbstract extends FrontEndPageAbstract
 	public function __construct()
 	{
 	    parent::__construct();
-	    if(!Core::getUser() instanceof UserAccount || !Core::getRole() instanceof Role || trim(Core::getRole()->getId()) != Role::ID_ADMIN)
+	    if(!Core::getUser() instanceof UserAccount)
 	        $this->Response->redirect("/login.html");
+	    if(!Core::getRole() instanceof Role || trim(Core::getRole()->getId()) != Role::ID_ADMIN)
+	    {
+	    	echo FrontEndPageAbstract::show404Page("404 Not Found", "The page that you have requested could not be found.");
+	    	exit();
+	    }
 	}
 	/**
 	 * (non-PHPdoc)

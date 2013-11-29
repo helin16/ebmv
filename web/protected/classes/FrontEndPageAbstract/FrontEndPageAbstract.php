@@ -215,5 +215,19 @@ abstract class FrontEndPageAbstract extends TPage
         }
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
+	/**
+	 * Getting the 404 page
+	 * 
+	 * @param string $title   The title of the page
+	 * @param string $content The html code content
+	 * 
+	 * @return string The html code of the page
+	 */
+	public function show404Page($title, $content)
+	{
+		header("HTTP/1.0 404 Not Found");
+		$html = "<h1>$title</h1>";
+		$html .= $content;
+	}
 }
 ?>
