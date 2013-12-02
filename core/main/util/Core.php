@@ -98,8 +98,23 @@ abstract class Core
 	 */
 	public static function getLibrary()
 	{
+		return self::$_lib;
+	}
+	/**
+	 * The url of the library
+	 * 
+	 * @param string $url The domain url for a library
+	 * 
+	 * @return Library
+	 */
+	public static function setLibrary($url)
+	{
 		if(!self::$_lib instanceof Library)
-			self::$_lib = BaseServiceAbastract::getInstance('Library')->get(Config::get('site', 'id'));
+		{
+			self::$_lib = BaseServiceAbastract::getInstance('Library')->getLibByURL($url);
+			if(!self::$_lib instanceof Library)
+				throw new Exception("No library found for $url!");
+		}
 		return self::$_lib;
 	}
 }

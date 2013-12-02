@@ -80,7 +80,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	            	    	$viewUrl = trim($this->_supplier->getInfo('view_url'));
 	            	    	$downloadUrl = trim($this->_supplier->getInfo('download_url'));
 	            	    }
-	            	    $siteId = Config::get('site', 'code');
+	            	    $siteId = Core::getLibrary()->getInfo('aus_code');
 	            	    if(trim($viewUrl) !== '')
                 	    	$html .= '<input class="button rdcrnr" type="button" value="在线阅读/在線閱讀&#x00A;Read Online" onClick="pageJs.readOnline(this, '. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
 	            	    if(trim($downloadUrl) !== '')

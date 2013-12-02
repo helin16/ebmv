@@ -41,7 +41,7 @@ abstract class FrontEndPageAbstract extends TPage
 		$this->_loginUserBtn->OnCallback = 'Page.login';
 		$this->getControls()->add($this->_loginUserBtn);
 		
-		$this->getPage()->setTheme($this->_getThemeByName(Config::get('theme', 'name')));
+		$this->getPage()->setTheme($this->_getThemeByName(Core::getLibrary()->getInfo('lib_theme')));
 	}
 	/**
 	 * getting the theme by name

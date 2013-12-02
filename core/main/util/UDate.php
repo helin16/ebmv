@@ -20,9 +20,9 @@ class UDate
 	 */
 	public function __construct($string = "now", $timeZone = "Australia/Melbourne")
 	{
-	    $timeZone = trim($timeZone);
-		if($timeZone === '')
-			$timeZone = Config::get("time", "defaultTimeZone");
+		if(($timeZone = trim($timeZone)) === '')
+			$timeZone = Core::getLibrary()->getInfo('lib_timezone');
+		
 		if ($string == "0000-00-00 00:00:00")
 			$string = trim(UDate::zeroDate());
 		// Is there a difference between UTC and GMT?

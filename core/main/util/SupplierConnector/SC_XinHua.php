@@ -39,7 +39,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductListInfo()
 	{
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Config::get('site', 'code'), "Index" => 1, "Size" => 1));
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Core::getLibrary()->getInfo('aus_code'), "Index" => 1, "Size" => 1));
 		if(!$xml instanceof SimpleXMLElement)
 			throw new CoreException('Can NOT get the pagination information from ' . $wsdl . '!');
 		$array = array();
@@ -54,7 +54,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
 	{
 		$array = array();
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Config::get('site', 'code'), "Index" => $pageNo, "Size" => $pageSize));
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Core::getLibrary()->getInfo('aus_code'), "Index" => $pageNo, "Size" => $pageSize));
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
@@ -211,7 +211,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	public function getDownloadUrl(Product $product, UserAccount $user)
 	{
 		$downloadUrl = trim($this->_supplier->getInfo('download_url'));
-		$urlParams = array('SiteID' => Config::get('site', 'code'),
+		$urlParams = array('SiteID' => Core::getLibrary()->getInfo('aus_code'),
 				'Isbn' => $product->getAttribute('isbn'),
 				'NO' => $product->getAttribute('cno'),
 				'Format' => 'xml',

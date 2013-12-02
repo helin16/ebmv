@@ -8,7 +8,7 @@
  */
 abstract class Config
 {
-    const DEFAULT_CONF_FILE = 'localhost';
+    const DEFAULT_CONF_FILE = 'default.conf';
     /**
      * The values in the config file
      * 

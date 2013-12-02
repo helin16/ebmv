@@ -1,1 +1,0 @@
-insert into language(`name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values ('US English', 'en-us', '1', NOW(), 100, NOW(), 100);

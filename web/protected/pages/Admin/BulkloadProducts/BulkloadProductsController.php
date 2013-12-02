@@ -70,7 +70,7 @@ class BulkloadProductsController extends AdminPageAbstract
 		    $url = trim(isset($param->CallbackParameter->url) ? $param->CallbackParameter->url : '');
 		    $script = new ProductImportScript($this->getApplication()->getAssetManager()->getBasePath());
 		    $errors = array();
-		    $filePath = $script->getDataFromSoup($url, Config::get('site', 'code'), true, 1, 1000, $errors)->getTmpFile();
+		    $filePath = $script->getDataFromSoup($url, Core::getLibrary()->getInfo('aus_code'), true, 1, 1000, $errors)->getTmpFile();
 		    if(count(array_keys($errors)) > 0)
 		    	throw new Exception('Error Page Index: ' . implode(', ', array_keys($errors)));
 		    if(strlen($content = file_get_contents($filePath)) === 0)

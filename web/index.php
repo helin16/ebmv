@@ -10,26 +10,23 @@ if(!is_writable($runtimePath))
 	die("Please make sure that the directory $runtimePath is writable by Web server process.");
 
 require 'bootstrap.php';
-
 //check library availibility
 try
 {
-	Config::setConfFile($_SERVER['SERVER_NAME']);
+	Core::setLibrary($_SERVER['SERVER_NAME']);
 }
 catch(Exception $e)
 {
-	header("HTTP/1.0 404 Not Found");
-	echo "<h1>404 Not Found</h1>";
-    echo "The page that you have requested could not be found.";
+    echo FrontEndPageAbstract::show404Page("404 Not Found", "The page that you have requested could not be found.");
     exit();
 }
 
-$application=new TApplication;
 //enforce https
+$application=new TApplication;
 if(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on")
 {
-    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
-    exit();
+//     header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+//     exit();
 }
 $application->run();
 ?>

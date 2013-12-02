@@ -29,9 +29,7 @@ class LibraryService extends BaseServiceAbastract
      */
     public function getLibsFromCode($code, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
-    	$query = EntityDao::getInstance('Library')->getQuery();
-    	$query->eagerLoad('Library.infos', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_info')->eagerLoad('LibraryInfo.type', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_info_type');
-    	return $this->findByCriteria('lib_info_type.code = ? and lib_info.value = ?', array('aus_code', $code), $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+    	return $this->_getLibsFromInfo($code, 'aus_code', $searchActiveOnly, $pageNo, $pageSize, $orderBy);
     }
    /**
     * Getting the libraray from the code
@@ -43,6 +41,35 @@ class LibraryService extends BaseServiceAbastract
     public function getLibFromCode($code)
     {
     	$result = $this->getLibsFromCode($code, true, 1, 1);
+    	return (count($result) === 0 ? null : $result[0]);
+    }
+    /**
+     * Getting the Libraries for the Li
+     * @param string $infoValue        The value we are searching for
+     * @param int    $typeCode         The code of the type for the information
+     * @param bool   $searchActiveOnly Whether active only
+     * @param int    $pageNo           page number
+     * @param int    $pageSize         Page Size
+     * @param array  $orderBy          Order by what
+     * 
+     * @return multiple:Library
+     */
+    private function _getLibsFromInfo($infoValue, $typeCode, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    {
+    	$query = EntityDao::getInstance('Library')->getQuery();
+    	$query->eagerLoad('Library.infos', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_info')->eagerLoad('LibraryInfo.type', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_info_type');
+    	return $this->findByCriteria('lib_info_type.code = ? and lib_info.value = ?', array($typeCode, $infoValue), $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+    }
+    /**
+     * Getting the library by the url
+     * 
+     * @param string $url The url of the library
+     * 
+     * @return multiple:Library
+     */
+    public function getLibByURL($url)
+    {
+    	$result = $this->_getLibsFromInfo($url, 'lib_url', true, 1, 1);
     	return (count($result) === 0 ? null : $result[0]);
     }
 }
