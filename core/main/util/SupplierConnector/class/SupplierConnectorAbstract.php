@@ -112,7 +112,7 @@ class SupplierConnectorAbstract
 				//delete the img
 				if(!($imgs = explode(',', $product->getAttribute('image'))) !== false)
 					BaseServiceAbastract::getInstance('Asset')->removeAssets($imgs);
-	
+				
 				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product,
 						$this->_getAttribute($xml, 'BookName'),
 						$this->_getAttribute($xml, 'Author'),
@@ -213,6 +213,10 @@ class SupplierConnectorAbstract
 			$paths = parse_url($imageUrl);
 			$paths = explode('/', $paths['path']);
 			$tmpFile = self::downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
+			//checking whether the file is an image
+			try { getimagesize($tmpFile); }
+			catch(Exception $e) {return null;}
+			
 			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($tmpDir)->registerAsset(end($paths), $tmpFile);
 	
 			if($transStarted === false)
