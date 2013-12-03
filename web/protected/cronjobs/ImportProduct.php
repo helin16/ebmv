@@ -49,6 +49,7 @@ class ImportProduct
 						fwrite(STDOUT, '    -- Importing Product No: ' . $i . ' ... ');
 						try
 						{
+							fwrite(STDOUT, $productList[$i]);
 							$script->importProducts($productList, $i);
 							fwrite(STDOUT, "Done");
 						}
