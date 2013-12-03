@@ -76,7 +76,7 @@ class ImportProduct
 	{
 		if(!is_array($supplierIds))
 			throw new Exception("System Error: supplids has to be a array!");
-		if($supplierIds === null || count($libCodes) === 0)
+		if($supplierIds === null || count($supplierIds) === 0)
 			return BaseServiceAbastract::getInstance('Supplier')->findAll();
 		return BaseServiceAbastract::getInstance('Supplier')->findByCriteria('id in (' . implode(', ', array_fill(0, count($supplierIds), '?')) . ')', $supplierIds);
 	}
