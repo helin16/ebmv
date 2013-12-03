@@ -95,9 +95,9 @@ class ImportProduct
 if ($argc != 4)
 	die("Usage: ImportProduct supplierids(1,2,3|all) siteCode(37,werew,121fd|all) totalrecords(30|all)\r\n");
 
-$supplierIds = (($supplierIds = trim($argv[0])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
-$siteCodes = (($siteCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $siteCodes)));
-$totalrecords = (($totalrecords = trim($argv[2])) === 'all' ? null : $totalrecords);
+$supplierIds = (($supplierIds = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
+$siteCodes = (($siteCodes = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $siteCodes)));
+$totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
 
 fwrite(STDOUT, "== Params ===================================================\r\n");
 fwrite(STDOUT, "== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
