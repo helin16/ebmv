@@ -225,9 +225,11 @@ class ProductService extends BaseServiceAbastract
             $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
             foreach($typeCodes as $typeCode)
             {
+            	if(($attr = trim($$typeCode)) === '')
+            		continue;
             	if(!isset($types[$typeCode]) || !$types[$typeCode] instanceof ProductAttributeType)
             		throw new CoreException('Could find the typecode for: ' . $typeCode);
-            	BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, $types[$typeCode], trim($$typeCode));
+            	BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, $types[$typeCode], $attr);
             }
             
             //add categories
