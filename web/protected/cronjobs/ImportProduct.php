@@ -100,7 +100,7 @@ $supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',
 $totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
 
 fwrite(STDOUT, "== Params ===================================================\r\n");
-fwrite(STDOUT, "== Site Codes: '" . implode("', '", $siteCodes). "'\r\n");
+fwrite(STDOUT, "== Site Codes: '" . implode("', '", $libCodes). "'\r\n");
 fwrite(STDOUT, "== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
 fwrite(STDOUT, "== Total Records: '" . $totalrecords. "'\r\n");
 fwrite(STDOUT, "=============================================================\r\n");
