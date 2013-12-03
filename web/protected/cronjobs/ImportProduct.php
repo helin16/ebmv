@@ -15,6 +15,7 @@ class ImportProduct
 			$libraries = self::_getLibs($libCodes);
 			Dao::$debug = false;
 			fwrite(STDOUT,  "  == Found " . count($libraries) . " libraries to go through: \r\n");
+			
 			foreach($libraries as $lib)
 			{
 				//loop through each supplier
@@ -75,7 +76,7 @@ class ImportProduct
 	{
 		if(!is_array($supplierIds))
 			throw new Exception("System Error: supplids has to be a array!");
-		if($supplierIds === null)
+		if($supplierIds === null || count($libCodes) === 0)
 			return BaseServiceAbastract::getInstance('Supplier')->findAll();
 		return BaseServiceAbastract::getInstance('Supplier')->findByCriteria('id in (' . implode(', ', array_fill(0, count($supplierIds), '?')) . ')', $supplierIds);
 	}
@@ -83,7 +84,7 @@ class ImportProduct
 	{
 		if(!is_array($libCodes))
 			throw new Exception("System Error: lib has to be a array!");
-		if($libCodes === null)
+		if($libCodes === null || count($libCodes) === 0)
 			return BaseServiceAbastract::getInstance('Library')->findAll();
 		return BaseServiceAbastract::getInstance('Library')->getLibsFromCodes($libCodes);
 	}
@@ -94,8 +95,11 @@ class ImportProduct
 if ($argc != 4)
 	die("Usage: ImportProduct supplierids(1,2,3|all) siteCode(37,werew,121fd|all) totalrecords(30|all)\r\n");
 
-$supplierIds = (($supplierIds = trim($argv[0])) === 'all' ? null : explode(',', str_replace(' ', '', $supplierIds)));
-$siteCodes = (($siteCodes = trim($argv[1])) === 'all' ? null : explode(',', str_replace(' ', '', $siteCodes)));
-$totalrecords = (($totalrecords = trim($argv[2])) === 'all' ? null : $totalrecords);
+$supplierIds = (($supplierIds = trim($argv[0])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
+$siteCodes = (($siteCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $siteCodes)));
+$totalrecords = (($totalrecords = trim($argv[2])) === 'all' ? array() : $totalrecords);
+
+fwrite(STDOUT, "Params: \r\n");
+fwrite(STDOUT, "Supplier IDS: " . impl. "\r\n");
 
 ImportProduct::run($supplierIds, $siteCodes, $totalrecords);
