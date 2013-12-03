@@ -49,7 +49,7 @@ class ImportProduct
 						fwrite(STDOUT, '    -- Importing Product No: ' . $i . ' ... ');
 						try
 						{
-							fwrite(STDOUT, "(xml: " . $productList[$i] . ")");
+							fwrite(STDOUT, "(xml: " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]) . ")");
 							$script->importProducts($productList, $i);
 							fwrite(STDOUT, "Done");
 						}
