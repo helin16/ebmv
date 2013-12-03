@@ -2,7 +2,7 @@
 require_once dirname(__FILE__) . '/../../bootstrap.php';
 class ImportProduct
 {
-	public static function run(array $supplierIds = array(), array $libCodes = array(), $totalRecords = null)
+	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null)
 	{
 		$totalRecords = trim($totalRecords);
 		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
@@ -93,16 +93,16 @@ class ImportProduct
 
 //checking usage
 if ($argc != 4)
-	die("Usage: ImportProduct supplierids(1,2,3|all) siteCode(37,werew,121fd|all) totalrecords(30|all)\r\n");
+	die("Usage: ImportProduct siteCode(37,werew,121fd|all) supplierids(1,2,3|all) totalrecords(30|all)\r\n");
 
-$supplierIds = (($supplierIds = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
-$siteCodes = (($siteCodes = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $siteCodes)));
+$libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $libCodes)));
+$supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
 $totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
 
 fwrite(STDOUT, "== Params ===================================================\r\n");
-fwrite(STDOUT, "== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
 fwrite(STDOUT, "== Site Codes: '" . implode("', '", $siteCodes). "'\r\n");
+fwrite(STDOUT, "== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
 fwrite(STDOUT, "== Total Records: '" . $totalrecords. "'\r\n");
 fwrite(STDOUT, "=============================================================\r\n");
 
-ImportProduct::run($supplierIds, $siteCodes, $totalrecords);
+ImportProduct::run($libCodes, $supplierIds, $totalrecords);
