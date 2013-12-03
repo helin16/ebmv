@@ -2,49 +2,59 @@
 require_once dirname(__FILE__) . '/../../bootstrap.php';
 class ImportProduct
 {
-	public static function run(array $supplierIds = array(), array $siteIds = array(), $totalRecords = null)
+	public static function run(array $supplierIds = array(), array $libCodes = array(), $totalRecords = null)
 	{
 		$totalRecords = trim($totalRecords);
 		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
 		{
-			foreach(self::_getSuppliers($supplierIds) as $supplier)
+			fwrite(STDOUT,  "== Start import script @ " . new UDate() . "=============================\r\n");
+			//loop through each library
+			foreach(self::_getLibs($libCodes) as $lib)
 			{
-				fwrite(STDOUT,  "== Start import script @ " . new UDate() . " for " . $supplier->getName() . "=============================\r\n");
-				try {$script = SupplierConnectorAbstract::getInstance($supplier); }
-				catch(Exception $ex) 
+				//loop through each supplier
+				foreach(self::_getSuppliers($supplierIds) as $supplier)
 				{
-					echo $ex->getMessage() . "\n";
-					echo $ex->getTraceAsString() . "\n";
-					continue;
-				}
-				fwrite(STDOUT,  "Start to download xml file from supplier.\r\n");
+					fwrite(STDOUT,  "\r\n== import from " . $supplier->getName() . "\r\n");
+					
+					//if there is an error for supplier connector
+					try {$script = SupplierConnectorAbstract::getInstance($supplier); }
+					catch(Exception $ex) 
+					{
+						fwrite(STDOUT,  ":: " . $ex->getMessage() . "\r\n");
+						fwrite(STDOUT,  ":: " . $ex->getTraceAsString() . "\r\n");
+						continue;
+					}
+					
+					//getting how many record we need to run
 					if($totalRecords === '')
 					{
 						$pageInfo = $script->getProductListInfo();
 						$totalRecords = $pageInfo['totalRecords'];
 					}
+					fwrite(STDOUT,  ":: start download the xml ...");
 					$productList = $script->getProductList(1, $totalRecords);
-				fwrite(STDOUT,  "xml downloaded.\r\n");
-				
-				$childrenCount = count($productList);
-				fwrite(STDOUT, "Start to import (" . $childrenCount . ") products: \r\n");
-				for($i = 0; $i< $childrenCount; $i++)
-				{
-					fwrite(STDOUT, 'Importing Product No: ' . $i . ' ... ');
-					try
+					fwrite(STDOUT,  " downloaded.\r\n");
+					
+					//process each record
+					$childrenCount = count($productList);
+					fwrite(STDOUT, ":: Start to import (" . $childrenCount . ") products: \r\n");
+					for($i = 0; $i< $childrenCount; $i++)
 					{
-						$script->importProducts($productList, $i);
+						fwrite(STDOUT, '  -- Importing Product No: ' . $i . ' ... ');
+						try
+						{
+							$script->importProducts($productList, $i);
+							fwrite(STDOUT, "Done");
+						}
+						catch(Exception $ex)
+						{
+							fwrite(STDOUT, "ERROR: " . $ex->getMessage());
+							continue;
+						}
+						fwrite(STDOUT, "\r\n");
 					}
-					catch(Exception $ex)
-					{
-						fwrite(STDOUT, $ex->getMessage());
-						continue;
-					}
-					fwrite(STDOUT, "Done\r\n");
 				}
-				fwrite(STDOUT, "Finished importing (" . $childrenCount . ") products: \r\n");
-				fwrite(STDOUT, "== Finished import script  @ " . new UDate() . "=============================\r\n");
 			}
 		}
 		catch(Exception $ex)
@@ -54,13 +64,21 @@ class ImportProduct
 			return;
 		}
 	}
-	private static function _getSuppliers($supplierIds = array())
+	private static function _getSuppliers($supplierIds = null)
 	{
 		if(!is_array($supplierIds))
 			throw new Exception("System Error: supplids has to be a array!");
-		if(count($supplierIds) === 0)
+		if($supplierIds === null)
 			return BaseServiceAbastract::getInstance('Supplier')->findAll();
 		return BaseServiceAbastract::getInstance('Supplier')->findByCriteria('id in (' . implode(', ', array_fill(0, count($supplierIds), '?')) . ')', $supplierIds);
+	}
+	private static function _getLibs($libCodes = null)
+	{
+		if(!is_array($libIds))
+			throw new Exception("System Error: lib has to be a array!");
+		if($libIds === null)
+			return BaseServiceAbastract::getInstance('Library')->findAll();
+		return BaseServiceAbastract::getInstance('Library')->getLibsFromCodes($libCodes);
 	}
 }
 
@@ -69,8 +87,8 @@ class ImportProduct
 if ($argc != 4)
 	die("Usage: ImportProduct supplierids(1,2,3|all) siteCode(37,werew,121fd|all) totalrecords(30|all)\r\n");
 
-foreach ($argv as $k => $v) {
-	fwrite(STDOUT, $k+1 . ': ' . $v . "\r\n");
-}
+$supplierIds = (($supplierIds = trim($argv[0])) === 'all' ? null : explode(',', replace(' ', '', $supplierIds)));
+$siteCodes = (($siteCodes = trim($argv[1])) === 'all' ? null : explode(',', replace(' ', '', $siteCodes)));
+$totalrecords = (($totalrecords = trim($argv[2])) === 'all' ? null : $totalrecords);
 
-// ImportProduct::run(10, array(1));
+ImportProduct::run($supplierIds, $siteCodes, $totalrecords);
