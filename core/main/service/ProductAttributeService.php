@@ -61,9 +61,10 @@ class ProductAttributeService extends BaseServiceAbastract
      */
     public function removeAttrsForProduct(Product $product, array $typeCodes)
     {
-    	$types = BaseServiceAbastract::getInstance('ProductAttributeType')->findByCriteria('code in (' . implode(', ', array_fill(0, count($typeCodes), '?')). ')');
-    	$params = array_merge(array($product->getId()), array_map(create_function('$a', 'return $a->getId();'), $types));
-    	$this->updateByCriteria('active = 0', "productId = ? AND typeId = ?", $params);
+    	$types = BaseServiceAbastract::getInstance('ProductAttributeType')->findByCriteria('code in (' . implode(', ', array_fill(0, count($typeCodes), '?')) . ')');
+    	$typeIds =  array_map(create_function('$a', 'return $a->getId();'), $types);
+    	$params = array_merge(array($product->getId()), $typeIds);
+    	$this->updateByCriteria('active = 0', "productId = ? AND typeId in (" . implode(', ', array_fill(0, count($typeIds), '?')) . ")", $params);
     	return $this;
     }
     
