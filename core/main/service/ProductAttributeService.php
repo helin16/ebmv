@@ -51,5 +51,21 @@ class ProductAttributeService extends BaseServiceAbastract
             ->setAttribute($attribute);
         return $this->save($attr);
     }
+    /**
+     * removing a product attributes by product and type code
+     * 
+     * @param Product $product   The product we are trying to deleting the attributes from
+     * @param array   $typeCodes The code of the type
+     * 
+     * @return ProductAttributeService
+     */
+    public function removeAttrsForProduct(Product $product, array $typeCodes)
+    {
+    	$types = BaseServiceAbastract::getInstance('ProductAttributeType')->findByCriteria('code in (' . implode(', ', array_fill(0, count($typeCodes), '?')). ')');
+    	$params = array_merge(array($product->getId()), array_map(create_function('$a', 'return $a->getId();'), $types));
+    	$this->updateByCriteria('active = 0', "productId = ? AND typeId = ?", $params);
+    	return $this;
+    }
+    
 }
 ?>

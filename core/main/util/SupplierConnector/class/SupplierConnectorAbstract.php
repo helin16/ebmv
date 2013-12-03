@@ -112,6 +112,8 @@ class SupplierConnectorAbstract
 				//delete the img
 				if(!($imgs = explode(',', $product->getAttribute('image'))) !== false)
 					BaseServiceAbastract::getInstance('Asset')->removeAssets($imgs);
+				//deleting the thumb and image for the product
+				BaseServiceAbastract::getInstance('ProductAttribute')->removeAttrsForProduct($product, array('image_thumb', 'image'));
 				
 				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product,
 						$this->_getAttribute($xml, 'BookName'),
@@ -222,7 +224,6 @@ class SupplierConnectorAbstract
 			catch(Exception $e) {return null;}
 			
 			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($tmpDir)->registerAsset(end($paths), $tmpFile);
-	
 			if($transStarted === false)
 				Dao::commitTransaction();
 			return $assetId;
