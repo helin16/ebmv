@@ -8,7 +8,8 @@ class ImportProduct
 		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
 		{
-			fwrite(STDOUT,  "== Start import script @ " . new UDate() . "=============================\r\n");
+			$startScript = new UDate();
+			fwrite(STDOUT,  "== Start import script @ " . $startScript . "=============================\r\n");
 			//loop through each library
 			foreach(self::_getLibs($libCodes) as $lib)
 			{
@@ -61,8 +62,10 @@ class ImportProduct
 		{
 			fwrite(STDOUT, $ex->getMessage() . "\r\n");
 			fwrite(STDOUT, $ex->getTraceAsString() . "\r\n");
-			return;
 		}
+		$finishScript = new UDate();
+		$scriptRunningtime = $finishScript->diff($startScript);
+		fwrite(STDOUT,  "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%h hours, %I minutes, %s seconds") . ")=============================\r\n");
 	}
 	private static function _getSuppliers($supplierIds = null)
 	{
