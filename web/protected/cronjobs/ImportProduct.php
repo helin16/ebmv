@@ -46,13 +46,14 @@ class ImportProduct
 					fwrite(STDOUT, "  :: Start to import (" . $childrenCount . ") products: \r\n");
 					for($i = 0; $i< $childrenCount; $i++)
 					{
-						fwrite(STDOUT, '    -- Importing Product No: ' . $i . ' ... ');
+						fwrite(STDOUT, "\r\n");
+						fwrite(STDOUT, '    -- Importing Product No: ' . $i . " ... \r\n");
 						try
 						{
-							fwrite(STDOUT, "    -- xml: ");
-							fwrite(STDOUT, "    -- " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]) . ")");
+							fwrite(STDOUT, "    -- xml: \r\n");
+							fwrite(STDOUT, "    -- " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]) . "\r\n" );
 							$script->importProducts($productList, $i);
-							fwrite(STDOUT, "    -- Done");
+							fwrite(STDOUT, "    -- Done\r\n");
 						}
 						catch(Exception $ex)
 						{
