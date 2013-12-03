@@ -11,19 +11,21 @@ class ImportProduct
 			$startScript = new UDate();
 			fwrite(STDOUT,  "== Start import script @ " . $startScript . "=============================\r\n");
 			//loop through each library
-			foreach(self::_getLibs($libCodes) as $lib)
+			$libraries = self::_getLibs($libCodes);
+			fwrite(STDOUT,  "  == Found " . count($libraries) . "libraries to go through: \r\n");
+			foreach($libraries as $lib)
 			{
 				//loop through each supplier
 				foreach(self::_getSuppliers($supplierIds) as $supplier)
 				{
-					fwrite(STDOUT,  "\r\n== import from " . $supplier->getName() . "\r\n");
+					fwrite(STDOUT,  "\r\n  == import from " . $supplier->getName() . "\r\n");
 					
 					//if there is an error for supplier connector
 					try {$script = SupplierConnectorAbstract::getInstance($supplier); }
 					catch(Exception $ex) 
 					{
-						fwrite(STDOUT,  ":: " . $ex->getMessage() . "\r\n");
-						fwrite(STDOUT,  ":: " . $ex->getTraceAsString() . "\r\n");
+						fwrite(STDOUT,  "  :: " . $ex->getMessage() . "\r\n");
+						fwrite(STDOUT,  "  :: " . $ex->getTraceAsString() . "\r\n");
 						continue;
 					}
 					
@@ -33,16 +35,16 @@ class ImportProduct
 						$pageInfo = $script->getProductListInfo();
 						$totalRecords = $pageInfo['totalRecords'];
 					}
-					fwrite(STDOUT,  ":: start download the xml ...");
+					fwrite(STDOUT,  "  :: start download the xml ...");
 					$productList = $script->getProductList(1, $totalRecords);
 					fwrite(STDOUT,  " downloaded.\r\n");
 					
 					//process each record
 					$childrenCount = count($productList);
-					fwrite(STDOUT, ":: Start to import (" . $childrenCount . ") products: \r\n");
+					fwrite(STDOUT, "  :: Start to import (" . $childrenCount . ") products: \r\n");
 					for($i = 0; $i< $childrenCount; $i++)
 					{
-						fwrite(STDOUT, '  -- Importing Product No: ' . $i . ' ... ');
+						fwrite(STDOUT, '    -- Importing Product No: ' . $i . ' ... ');
 						try
 						{
 							$script->importProducts($productList, $i);
@@ -65,7 +67,7 @@ class ImportProduct
 		}
 		$finishScript = new UDate();
 		$scriptRunningtime = $finishScript->diff($startScript);
-		fwrite(STDOUT,  "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%h hours, %I minutes, %s seconds") . ")=============================\r\n");
+		fwrite(STDOUT,  "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================\r\n");
 	}
 	private static function _getSuppliers($supplierIds = null)
 	{
