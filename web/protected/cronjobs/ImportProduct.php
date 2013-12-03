@@ -12,7 +12,7 @@ class ImportProduct
 			fwrite(STDOUT,  "== Start import script @ " . $startScript . "=============================\r\n");
 			//loop through each library
 			$libraries = self::_getLibs($libCodes);
-			fwrite(STDOUT,  "  == Found " . count($libraries) . "libraries to go through: \r\n");
+			fwrite(STDOUT,  "  == Found " . count($libraries) . " libraries to go through: \r\n");
 			foreach($libraries as $lib)
 			{
 				//loop through each supplier
