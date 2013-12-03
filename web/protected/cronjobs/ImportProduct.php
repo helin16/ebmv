@@ -11,7 +11,9 @@ class ImportProduct
 			$startScript = new UDate();
 			fwrite(STDOUT,  "== Start import script @ " . $startScript . "=============================\r\n");
 			//loop through each library
+			Dao::$debug = true;
 			$libraries = self::_getLibs($libCodes);
+			Dao::$debug = false;
 			fwrite(STDOUT,  "  == Found " . count($libraries) . " libraries to go through: \r\n");
 			foreach($libraries as $lib)
 			{
