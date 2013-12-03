@@ -214,7 +214,7 @@ class SupplierConnectorAbstract
 			$paths = explode('/', $paths['path']);
 			$tmpFile = self::downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
 			//checking whether the file is an image
-			try { getimagesize($tmpFile); }
+			try { $size = getimagesize($tmpFile); var_dump($size);}
 			catch(Exception $e) {echo 'Can NOT download the image'; return null;}
 			
 			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($tmpDir)->registerAsset(end($paths), $tmpFile);
