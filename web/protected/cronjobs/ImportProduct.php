@@ -99,9 +99,10 @@ $supplierIds = (($supplierIds = trim($argv[0])) === 'all' ? array() : explode(',
 $siteCodes = (($siteCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $siteCodes)));
 $totalrecords = (($totalrecords = trim($argv[2])) === 'all' ? null : $totalrecords);
 
-fwrite(STDOUT, "Params: \r\n");
-fwrite(STDOUT, "Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
-fwrite(STDOUT, "Site Codes: '" . implode("', '", $siteCodes). "'\r\n");
-fwrite(STDOUT, "Total Records: '" . $totalrecords. "'\r\n");
+fwrite(STDOUT, "== Params ===================================================\r\n");
+fwrite(STDOUT, "== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
+fwrite(STDOUT, "== Site Codes: '" . implode("', '", $siteCodes). "'\r\n");
+fwrite(STDOUT, "== Total Records: '" . $totalrecords. "'\r\n");
+fwrite(STDOUT, "=============================================================\r\n");
 
 ImportProduct::run($supplierIds, $siteCodes, $totalrecords);
