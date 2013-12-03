@@ -74,9 +74,9 @@ class ImportProduct
 	}
 	private static function _getLibs($libCodes = null)
 	{
-		if(!is_array($libIds))
+		if(!is_array($libCodes))
 			throw new Exception("System Error: lib has to be a array!");
-		if($libIds === null)
+		if($libCodes === null)
 			return BaseServiceAbastract::getInstance('Library')->findAll();
 		return BaseServiceAbastract::getInstance('Library')->getLibsFromCodes($libCodes);
 	}
