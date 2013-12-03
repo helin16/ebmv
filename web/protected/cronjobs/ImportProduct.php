@@ -67,7 +67,7 @@ class ImportProduct
 
 //checking usage
 if ($argc != 4)
-	die("Usage: ImportProduct supplierids(1,2,3|all) siteCode(37,werew,121fd|all) totalrecords(30|all)");
+	die("Usage: ImportProduct supplierids(1,2,3|all) siteCode(37,werew,121fd|all) totalrecords(30|all)\r\n");
 
 foreach ($argv as $k => $v) {
 	fwrite(STDOUT, $k+1 . ': ' . $v . "\r\n");
