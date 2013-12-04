@@ -2,6 +2,12 @@
 class SIPTesterController extends AdminPageAbstract 
 {
 	/**
+	 * The selected Menu Item name
+	 *
+	 * @var string
+	 */
+	public $menuItemCode = 'testsip';
+	/**
 	 * Getting The end javascript
 	 *
 	 * @return string

@@ -27,6 +27,7 @@ class Menu extends TTemplateControl
 				,array('name' => 'Products', 'code' => 'products', 'href' => '/admin/product')
 				,array('name' => ' Suppliers ', 'code' => 'suppliers ', 'href' => '/admin/supplier.html')
 				,array('name' => ' Libraries ', 'code' => 'libraries ', 'href' => '/admin/library.html')
+				,array('name' => ' Test SIP ', 'code' => 'testsip ', 'href' => '/admin/testsip.html')
 				,array('name' => ' Logout ', 'code' => 'logout ', 'href' => '/logout.html?url=/admin/')
 			);
 		return $array;
