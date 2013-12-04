@@ -121,7 +121,7 @@ class Supplier extends BaseEntityAbstract
 	{
 		if(trim( $this->getId()) === '')
 			return array();
-		EntityDao::getInstance('Product')->getQuery()->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price', 'p.id = sup_price.productId AND sup_price.supplierId = ' . $this->getId() . ' AND sup_price.active = 1 ' . (count($excludePids) === 0 ? '' : 'AND sup.productId in (' . implode(',', $excludePids).')'));
+		EntityDao::getInstance('Product')->getQuery()->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price', 'pro.id = sup_price.productId AND sup_price.supplierId = ' . $this->getId() . ' AND sup_price.active = 1 ' . (count($excludePids) === 0 ? '' : 'AND pro.id in (' . implode(',', $excludePids).')'));
 		return EntityDao::getInstance('Product')->findAll($pageNo, $pageSize, $orderBy);
 	}
 	/**
