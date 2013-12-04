@@ -18,8 +18,15 @@ class Language extends BaseEntityAbstract
      * The products that using this language
      * 
      * @var multiple:Product
+     * @var multiple:Product
      */
     protected $products;
+    /**
+     * The language codes for this language
+     * 
+     * @var multiple:LanguageCode
+     */
+    protected $codes;
     /**
      * Getters for the name
      * 
@@ -63,6 +70,28 @@ class Language extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Getter for the language code
+     * 
+     * @return multiple:LanguageCode
+     */
+    public function getCodes() 
+    {
+    	$this->loadOneToMany('codes');
+        return $this->codes;
+    }
+    /**
+     * Setter for the LanguageCode
+     * 
+     * @param array $value The array of the LanguageCodes
+     * 
+     * @return Language
+     */
+    public function setCodes($value) 
+    {
+        $this->codes = $value;
+        return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
      */
@@ -71,6 +100,7 @@ class Language extends BaseEntityAbstract
         DaoMap::begin($this, 'lan');
         DaoMap::setStringType('name','varchar', 200);
         DaoMap::setManyToMany("products", "Product", DaoMap::RIGHT_SIDE, 'pro');
+        DaoMap::setOneToMany("code", "LanguageCode");
         parent::__loadDaoMap();
     
         DaoMap::createIndex('name');
