@@ -100,7 +100,7 @@ class Language extends BaseEntityAbstract
         DaoMap::begin($this, 'lan');
         DaoMap::setStringType('name','varchar', 200);
         DaoMap::setManyToMany("products", "Product", DaoMap::RIGHT_SIDE, 'pro');
-        DaoMap::setOneToMany("code", "LanguageCode");
+        DaoMap::setOneToMany("codes", "LanguageCode");
         parent::__loadDaoMap();
     
         DaoMap::createIndex('name');
