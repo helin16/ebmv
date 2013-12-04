@@ -551,7 +551,7 @@ abstract class Dao
     public static function updateByCriteria(DaoQuery $qry, $setClause, $criteria, $params = array())
     {
         self::connect();
-        return Dao::_execSql('update ' . strtolower($qry->getFocusClass()) . ' set ' . $setClause . ' where ' . $criteria, $params);
+        return Dao::_execSql('update ' . strtolower($qry->getFocusClass()) . ' set ' . $setClause . ' , updatedById = ' . Core::getUser()->getId() . ' where ' . $criteria, $params);
     }
     /**
      * delete a table for the search criteria
