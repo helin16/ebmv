@@ -1,0 +1,44 @@
+<com:TContent ID="MainContent">
+<div class="pagewrapper adminpage siptesterpage">
+	<style>
+		.hasError {border: 1px red solid;}
+		.row {padding: 5px 0;}
+		.row .title{ width: 15%; text-align: right;}
+		.row .content{ width: 69%; }
+	</style>
+	<com:TCallback ID="testBtn" OnCallback="page.testSIP" />
+	<div>
+		<b>SIP2 Tester:</b>
+		<p class="smalltxt">This tool is to enable us to be able to communicate with a library's integrated library system (ILS) via 3M's SIP2 (Standard Interchange Protocol).<br />
+		This project is a work in progress, and as such there may be certain features that do not work correctly. You can find the current stable version under the source tab, or download the current stable code here.</p>
+	</div>
+	<div style="padding:10px;" class="requestdiv">
+		<div class="row">
+			<span class="inlineblock title">Server:</span>
+			<span class="inlineblock content">
+				<input sip_request="url" placeholder="Server's url http://test.com:8080" class="fullwith"/>
+			</span>
+		</div> 
+		<div class="row">
+			<span class="inlineblock title">SIP Variable Name:</span>
+			<span class="inlineblock content">
+				<input sip_request="varname" placeholder="The name of the variable passed via SIP. i.e: test_var" class="fullwith"/>
+			</span>
+		</div> 
+		<div class="row">
+			<span class="inlineblock title">SIP Patron:</span>
+			<span class="inlineblock content">
+				<input sip_request="patron" placeholder="The secret to identify a patron" />
+				<input sip_request="patronpwd" placeholder="The password to identify a patron" />
+			</span>
+		</div> 
+		<div class="row">
+			<span class="inlineblock title">&nbsp;</span>
+			<span class="inlineblock content">
+				<input type="button" value="test SIP now" class="button" onclick="pageJs.testSIP(this);"/>
+			</span>
+		</div> 
+	</div>
+	<div id="resultdiv"></div>
+</div>
+</com:TContent>
