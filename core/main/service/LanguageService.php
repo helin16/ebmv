@@ -39,7 +39,7 @@ class LanguageService extends BaseServiceAbastract
     {
     	if(count($codes) === 0)
     		return array();
-    	EntityDao::getInstance('Language')->getQuery()->eagerLoad('Language.codes');
+    	EntityDao::getInstance('Language')->getQuery()->eagerLoad('Language.codes', DaoQuery::DEFAULT_JOIN_TYPE, 'lcode');
     	return $this->findByCriteria('lcode.code in (' . implode(', ', array_fill(0, count($codes), '?')) . ')', $codes, $searchActiveOnly, $pageNo, $pageSize);
     }
 }
