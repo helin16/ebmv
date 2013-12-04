@@ -120,8 +120,7 @@ class SupplierConnectorAbstract
 		{
 			$product = $this->_importProduct($productList[$index]);
 			$products[] = $product;
-			$this->_importedProductIds = $product->getId();
-			$this->_importedProductIds = $product->getId();
+			$this->_importedProductIds[] = $product->getId();
 		}
 		else 
 		{
@@ -129,7 +128,7 @@ class SupplierConnectorAbstract
 			{
 				$product = $this->_importProduct($child);
 				$products[] = $product;
-				$this->_importedProductIds = $product->getId();
+				$this->_importedProductIds[] = $product->getId();
 			}
 		}
 		return $products;
