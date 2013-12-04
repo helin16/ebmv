@@ -13,18 +13,21 @@ PageJs.prototype = Object.extend(new AdminPageJs(), {
 		if(tmp.testData === null)
 			return this;
 		
-		console.debug(tmp.testData);
 		this.postAjax(tmp.me.getCallbackId('testSIP'), {'testdata': tmp.testData}, {
 			'onLoading': function (sender, param) {
 				$(btn).setValue('processing ...').disabled = true;
 			},
 			'onComplete': function (sender, param) {
-				$(tmp.me.resultDivId).update('');
+				$(tmp.me.resultDivId).update(new Element('h3').update('Results:'));
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					console.debug(tmp.result);
+					if(!tmp.result.logs || tmp.result.logs.size() === 0)
+						throw 'System Error: No result return!';
+					tmp.result.logs.each(function(log) {
+						$(tmp.me.resultDivId).insert({'bottom': new Element('div', {'class': 'row'}).update(log) });
+					});
 				} catch(e) {
-					$(tmp.me.resultDivId).update(e);
+					$(tmp.me.resultDivId).insert({'bottom': new Element('div', {'class': 'errmsg'}).update(e) });
 				}
 				$(btn).setValue(tmp.origBtnValue).disabled = false;
 			}
