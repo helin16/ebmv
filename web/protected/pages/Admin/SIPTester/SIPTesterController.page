@@ -10,7 +10,9 @@
 	<div>
 		<b>SIP2 Tester:</b>
 		<p class="smalltxt">This tool is to enable us to be able to communicate with a library's integrated library system (ILS) via 3M's SIP2 (Standard Interchange Protocol).<br />
-		This project is a work in progress, and as such there may be certain features that do not work correctly. You can find the current stable version under the source tab, or download the current stable code here.</p>
+		This project is a work in progress, and as such there may be certain features that do not work correctly. You can find the current stable version under the source tab, or download the current stable code here.<br />
+		This example works against a server that does not require a login step. It is trivial to add if needed by your ILS.</span>
+		</p>
 	</div>
 	<div style="padding:10px;" class="requestdiv">
 		<div class="row">
