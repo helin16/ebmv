@@ -110,6 +110,21 @@ class Supplier extends BaseEntityAbstract
 		return $result['info'];
 	}
 	/**
+	 * Getting the supplier's products
+	 * 
+	 * @param array $excludePids
+	 * @param int   $pageNo      The page number
+	 * @param int   $pageSize    The page size
+	 * @param array $orderBy     The order by array
+	 */
+	public function getProducts(array $excludePids = array(), $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderBy = array())
+	{
+		if(trim( $this->getId()) === '')
+			return array();
+		EntityDao::getInstance('Product')->getQuery()->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price', 'p.id = sup_price.productId AND sup_price.supplierId = ' . $this->getId() . ' AND sup_price.active = 1 ' . (count($excludePids) === 0 ? '' : 'AND sup.productId in (' . implode(',', $excludePids).')'));
+		return EntityDao::getInstance('Product')->findAll($pageNo, $pageSize, $orderBy);
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */

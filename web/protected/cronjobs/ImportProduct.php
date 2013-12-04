@@ -5,6 +5,7 @@ class ImportProduct
 	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null)
 	{
 		$totalRecords = trim($totalRecords);
+		$fullUpdate = ($totalRecords === '');
 		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
 		{
@@ -61,6 +62,15 @@ class ImportProduct
 							continue;
 						}
 						fwrite(STDOUT, "\r\n");
+					}
+					
+					//removing the un-imported products
+					$ids = $supplier->getProducts($script->getImportedProductIds());
+					if($fullUpdate === true && count($ids) > 0)
+					{
+						fwrite(STDOUT,  "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids) . "\r\n");
+						$script->rmUnImportedProducts();
+						fwrite(STDOUT,  "  :: done removing un-imported products. \r\n");
 					}
 				}
 			}

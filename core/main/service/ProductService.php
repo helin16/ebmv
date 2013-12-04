@@ -369,5 +369,27 @@ class ProductService extends BaseServiceAbastract
     	$result = $this->findByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy);
     	return $result;
     }
+    /**
+     * removing the product based on the supplier. 
+     * If the product are with multiple supplier, then just remove the relationship, otherwise removing the product as well as the relatinship
+     * 
+     * @param Product  $product  The product we are trying to remove
+     * @param Supplier $supplier The supplier we are trying to remove from 
+     * 
+     * @return ProductService
+     */
+    public function removeFromProductBySupplier(Product $product, Supplier $supplier)
+    {
+    	$hasMoreSuppliers = (count($product->getSuppliers(1, 2)) > 1);
+    	EntityDao::getInstance('SupplierPrice')->updateByCriteria('active = 0', 'productId = ? and supplierId = ?', array($product->getId(), $supplier->getId()));
+    	
+    	//if the product has just got one supplier, then deactivate the product as well
+    	if($hasMoreSuppliers === false)
+    	{
+    		$product->setActive(false);
+    		$this->save($product);
+    	}
+    	return $this;
+    }
 }
 ?>

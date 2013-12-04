@@ -1,4 +1,11 @@
 <?php
+/**
+ * Supplier connector script for suppliers
+ *
+ * @package    Core
+ * @subpackage Utils
+ * @author     lhe<helin16@gmail.com>
+ */
 class SupplierConnectorAbstract
 {
 	/**
@@ -11,11 +18,17 @@ class SupplierConnectorAbstract
 	 */
 	protected static $_connectors = array();
 	/**
+	 * The id of the imported products
+	 * 
+	 * @var array
+	 */
+	protected $_importedProductIds = array();
+	/**
 	 * singleton getter
 	 * 
 	 * @param Supplier $supplier The supplier
 	 * 
-	 * @return SupplierConnector
+	 * @return SupplierConnectorAbstract
 	 */
 	public static function getInstance(Supplier $supplier)
 	{
@@ -60,18 +73,64 @@ class SupplierConnectorAbstract
 		return (isset($xml->$attributeName) && ($attribute = trim($xml->$attributeName)) !== '') ? $attribute : '';
 	}
 	/**
+	 * resetting the imported product ids
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function resetImportedProductIds()
+	{
+		$this->_importedProductIds = array();
+		return $this;
+	}
+	/**
+	 * Getting the imported product ids
+	 * 
+	 * @return multitype:int
+	 */
+	public function getImportedProductIds()
+	{
+		return $this->_importedProductIds;
+	}
+	/**
+	 * removing all the unimported products, if the supplier not giving us that information anymore, then we treated it as an remove from our system
+	 * 
+	 * @param bool $resetImportedPids Whether we reset the imported product ids after removing
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function rmUnImportedProducts($resetImportedPids = true)
+	{
+		$unImportedProducts = $this->_supplier->getProducts($this->_importedProductIds);
+		foreach($unImportedProducts as $product)
+		{
+			BaseServiceAbastract::getInstance('Product')->removeFromProductBySupplier($product, $this->_supplier);
+		}
+		if($resetImportedPids === true)
+			$this->resetImportedProductIds();
+		return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::importProducts()
 	 */
 	public function importProducts($productList, $index = null)
 	{
-		if (trim ( $index ) !== '')
-			return array($this->_importProduct($productList[$index]));
-	
 		$products = array ();
-		foreach($productList as $child)
+		if (trim ( $index ) !== '')
 		{
-			$products [] = $this->_importProduct( $child );
+			$product = $this->_importProduct($productList[$index]);
+			$products[] = $product;
+			$this->_importedProductIds = $product->getId();
+			$this->_importedProductIds = $product->getId();
+		}
+		else 
+		{
+			foreach($productList as $child)
+			{
+				$product = $this->_importProduct($child);
+				$products[] = $product;
+				$this->_importedProductIds = $product->getId();
+			}
 		}
 		return $products;
 	}

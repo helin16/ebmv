@@ -327,6 +327,9 @@ class Product extends BaseEntityAbstract
 	            $array['attributes'][$typeId] = array();
             $array['attributes'][$typeId][] = $attr->getJson();
 	    }
+	    $array['prices'] = array();
+	    foreach($this->getSupplierPrices() as $price)
+		    $array['prices'][] = $price->getJson();
 	    return $array;
 	}
 	/**
