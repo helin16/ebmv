@@ -79,7 +79,8 @@ insert into `supplierinfotype` (`id`, `name`, `code`, `active`, `created`, `crea
 (5, 'Default Type ID', 'default_product_type_id',  1, NOW(), 100, NOW(), 100),
 (6, 'Default Image Directory for products', 'default_img_dir',  1, NOW(), 100, NOW(), 100),
 (7, 'Supplier Key', 'skey',  1, NOW(), 100, NOW(), 100),
-(8, 'Supplied Product Type Ids', 'stype_ids',  1, NOW(), 100, NOW(), 100);
+(8, 'Supplied Product Type Ids', 'stype_ids',  1, NOW(), 100, NOW(), 100),
+(9, 'The URL to sign in', 'signin_url',  1, NOW(), 100, NOW(), 100);
 
 ############################ add supplier table
 insert into `supplier` (`id`, `name`, `connector`,`active`, `created`, `createdById`, `updated`, `updatedById`) values
@@ -101,7 +102,8 @@ insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`,
     (2, 4, 2, 1, NOW(), 100, NOW(), 100),
     (2, 5, '1', 1, NOW(), 100, NOW(), 100),
     (2, 6, '/var/www/html/protected/asset/supplier2/', 1, NOW(), 100, NOW(), 100),
-    (2, 8, '1,3', 1, NOW(), 100, NOW(), 100);
+    (2, 8, '1,3', 1, NOW(), 100, NOW(), 100),
+    (2, 9, 'http://m2.ebook4rent.tw/pont/1.00/{SiteID}/SignIn/', 1, NOW(), 100, NOW(), 100);
 
 ############################ add library table
 insert into `library` (`id`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
