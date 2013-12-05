@@ -39,7 +39,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.product = ' . json_encode($this->_product->getJson()) . ';';
-		$js .= 'pageJs.setCallbackId("download", "' . $this->getDownloadUrlBtn->getUniqueID(). '");';
+		$js .= 'pageJs.setCallbackId("geturl", "' . $this->getUrlBtn->getUniqueID(). '");';
 		return $js;
 	}
 	
@@ -97,7 +97,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 		            	    }
 		            	    $siteId = Core::getLibrary()->getInfo('aus_code');
 		            	    if(trim($viewUrl) !== '')
-	                	    	$html .= '<input class="button rdcrnr" type="button" value="在线阅读/在線閱讀&#x00A;Read Online" onClick="pageJs.readOnline(this, '. "'" . $viewUrl . "', $siteId, '" . $uid . "', '" . $pwd . "'" . ');"/>';
+	                	    	$html .= '<input class="button rdcrnr" type="button" value="在线阅读/在線閱讀&#x00A;Read Online" onClick="pageJs.readOnline(this);"/>';
 		            	    if(trim($downloadUrl) !== '')
 		                	    $html .= ' <input class="button rdcrnr" type="button" value="下载阅读/下載閱讀&#x00A;Download This Book" onClick="pageJs.download(this);"/>';
             	    	}
@@ -120,7 +120,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	    return $html;
 	}
 	
-	public function getDownloadUrl($sender, $params)
+	public function getUrl($sender, $params)
 	{
 		list($uid, $pwd) = $this->_getUserInfo();
 		$errors = $results = array();
@@ -128,8 +128,26 @@ class ProductDetailsController extends FrontEndPageAbstract
         {
         	if(!$this->_product->getSupplier() instanceof Supplier)
         		throw new Exception('System Error: no supplier found for this book!');
-        	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->getDownloadUrl($this->_product, Core::getUser());
-        	$results['redirecturl'] = '/user.html';
+        	$type = trim($params->CallbackParameter->type);
+        	switch($type)
+        	{
+        		case 'read':
+        			{
+        				$method = "getOnlineReadUrl";
+        				break;
+        			}
+        		case 'download':
+        			{
+        				$method = "getDownloadUrl";
+			        	$results['redirecturl'] = '/user.html';
+        				break;
+        			}
+        		default:
+        			{
+        				throw new Exception("invalid type:" . $type);
+        			}
+        	}
+        	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
         }
         catch(Exception $ex)
         {
@@ -137,6 +155,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         }
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
+	
 	/**
 	 * Getting the userinformation of the current user
 	 * 

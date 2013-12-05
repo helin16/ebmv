@@ -1,1 +1,53 @@
-var PageJs=new Class.create();PageJs.prototype=Object.extend(new FrontPageJs(),{product:null,readOnline:function(c,f,e,b,d){var a={};a.me=this;a.readUrl=(f||"");if(a.readUrl.blank()){alert("System Error: no where to read it!");return}$(c).writeAttribute("originvalue",$F(c));a.me.getUser(c,function(){a.params={isbn:a.me.product.attributes.isbn[0].attribute,no:a.me.product.attributes.cno[0].attribute,siteID:e,uid:b,pwd:d};window.open(a.readUrl+"?"+$H(a.params).toQueryString());$(c).setValue($(c).readAttribute("originvalue")).disabled=false},function(){$(c).disabled=true;$(c).value="Processing ..."})},download:function(b){var a={};a.me=this;$(b).writeAttribute("originvalue",$F(b));a.me.getUser(b,function(){a.me._getDownLoadLink(b)},function(){$(b).disabled=true;$(b).value="Processing ..."})},_getDownLoadLink:function(b){var a={};a.me=this;a.me.postAjax(a.me.getCallbackId("download"),{},{onLoading:function(){},onComplete:function(c,f){try{a.result=a.me.getResp(f,false,true);if(a.result.url){window.open(a.result.url)}if(a.result.redirecturl){window.location=a.result.redirecturl}}catch(d){alert(d)}$(b).disabled=false;$(b).value=$(b).readAttribute("originvalue")}},120000)}});
+/**
+ * The page Js file
+ */
+var PageJs = new Class.create();
+PageJs.prototype = Object.extend(new FrontPageJs(), {
+	product: null //the product object
+	
+	,readOnline: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		$(btn).writeAttribute('originvalue', $F(btn));
+		tmp.me.getUser(btn, function(){
+				tmp.me._getLink(btn, 'read');
+			}, function () {
+				$(btn).disabled = true;
+				$(btn).value = "Processing ...";
+			}
+		);
+	}
+
+	,download: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		$(btn).writeAttribute('originvalue', $F(btn));
+		tmp.me.getUser(btn, function(){
+				tmp.me._getLink(btn, 'download');
+			}, function () {
+				$(btn).disabled = true;
+				$(btn).value = "Processing ...";
+			}
+		);
+	}
+	,_getLink: function(btn, type) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.postAjax(tmp.me.getCallbackId('geturl'), {'type': type}, {
+			'onLoading': function () {}
+			,'onComplete': function(sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(tmp.result.url)
+						window.open(tmp.result.url);
+					if(tmp.result.redirecturl)
+						window.location = tmp.result.redirecturl;
+				} catch(e) {
+					alert(e);
+				}
+				$(btn).disabled = false;
+				$(btn).value = $(btn).readAttribute('originvalue');
+			}
+		}, 120000);
+	}
+});

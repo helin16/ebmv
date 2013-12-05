@@ -5,7 +5,7 @@ var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	product: null //the product object
 	
-	,readOnline: function(btn, readUrl, siteId, uid, pwd) {
+	,readOnline: function(btn) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.readUrl = (readUrl || '');
@@ -32,14 +32,14 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		$(btn).writeAttribute('originvalue', $F(btn));
 		tmp.me.getUser(btn, function(){
-				tmp.me._getDownLoadLink(btn);
+				tmp.me._getUrl(btn);
 			}, function () {
 				$(btn).disabled = true;
 				$(btn).value = "Processing ...";
 			}
 		);
 	}
-	,_getDownLoadLink: function(btn) {
+	,_getUrl: function(btn) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me.postAjax(tmp.me.getCallbackId('download'), {}, {

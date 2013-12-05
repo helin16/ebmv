@@ -74,4 +74,14 @@ interface SupplierConn
 	 * @return string
 	 */
 	public function getDownloadUrl(Product $product, UserAccount $user);
+	/**
+	 * Getting the online read url for a book
+	 *
+	 * @param Product     $product The product we are trying to get the url for
+	 * @param UserAccount $user    Who wants to download it
+	 *
+	 * @throws Exception
+	 * @return string
+	 */
+	public function getOnlineReadUrl(Product $product, UserAccount $user);
 }

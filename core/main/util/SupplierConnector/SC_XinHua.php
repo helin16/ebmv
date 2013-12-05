@@ -243,4 +243,18 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 			throw new Exception("Connector Error: " . trim($xml->Value));
 		return trim($xml->Value);
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::getOnlineReadUrl()
+	 */
+	public function getOnlineReadUrl(Product $product, UserAccount $user)
+	{
+		$url = explode(',', $this->_supplier->getInfo('view_url'));
+		if($url === false || count($url) === 0)
+			throw new CoreException('Invalid view url for supplier: ' . $this->_supplier->getName());
+		$url = $url[0];
+		
+		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'siteID' => $this->_lib->getInfo('aus_code'), 'uid' => $user->getUserName(), 'pwd' => $user->getPassword());
+		return $url . '?' . http_build_query($params);
+	}
 }

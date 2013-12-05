@@ -103,7 +103,8 @@ insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`,
     (2, 5, '1', 1, NOW(), 100, NOW(), 100),
     (2, 6, '/var/www/html/protected/asset/supplier2/', 1, NOW(), 100, NOW(), 100),
     (2, 8, '1,3', 1, NOW(), 100, NOW(), 100),
-    (2, 9, 'http://m2.ebook4rent.tw/pont/1.00/{SiteID}/SignIn/', 1, NOW(), 100, NOW(), 100);
+    (2, 9, 'http://m2.ebook4rent.tw/pont/1.00/{SiteID}/SignIn/', 1, NOW(), 100, NOW(), 100),
+    (2, 2, 'http://m2.ebook4rent.tw/pont/1.00/{SiteID}/launchViewer/', 1, NOW(), 100, NOW(), 100);
 
 ############################ add library table
 insert into `library` (`id`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values

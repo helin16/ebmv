@@ -8,6 +8,12 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private $_importUrl;
 	/**
+	 * The library's code
+	 * 
+	 * @var string
+	 */
+	private $_libCode = '';
+	/**
 	 * construtor
 	 * 
 	 * @param Supplier $supplier The supplier
@@ -16,6 +22,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	public function __construct(Supplier $supplier, Library $lib)
 	{
 		parent::__construct($supplier, $lib);
+		$this->_libCode = $this->_lib->getInfo('aus_code');
 		$this->_getImportUrl();
 	}
 	/**
@@ -29,7 +36,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 			return $this->_importUrl;
 		
 		$urls = explode(',', $this->_supplier->getInfo('import_url'));
-		$this->_importUrl = str_replace('{SiteID}', $this->_lib->getInfo('aus_code'), ($urls === false ? null : $urls[0]));
+		$this->_importUrl = str_replace('{SiteID}', $this->_libCode, ($urls === false ? null : $urls[0]));
 		return $this->_importUrl;
 	}
 	/**
@@ -67,6 +74,17 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		}
 		return $array;
 	}
+	/**
+	 * Getting the xml from url
+	 * 
+	 * @param string      $url
+	 * @param int         $pageNo
+	 * @param int         $pageSize
+	 * @param ProductType $type
+	 * @param string      $format
+	 * 
+	 * @return SimpleXMLElement
+	 */
 	private function _getXmlFromUrl($url, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $format = 'xml')
 	{
 		$params = array('format' => $format, 'size' => $pageSize, 'index' => $pageNo);
@@ -74,6 +92,23 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 			$params['type'] = strtolower(trim($type->getName()));
 		$result = $this->readUrl($url . '?' . http_build_query($params), 120000);
 		return new SimpleXMLElement($result);
+	}
+	/**
+	 * Getting the token for session
+	 * 
+	 * @param bool $forceNew Whether force to renew token
+	 * 
+	 * @return string
+	 */
+	private function _getToken($forceNew = false)
+	{
+		if($forceNew === false && isset($_SESSION['supplier_token']) && isset($_SESSION['supplier_token'][$this->_supplier->getId()]) && ($token = trim($_SESSION['supplier_token'][$this->_supplier->getId()])) !== '')
+			return $token;
+		
+		$urls = explode(',', $this->_supplier->getInfo('signin_url'));
+		$url = str_replace('{SiteID}', $this->_libCode, ($urls === false ? null : $urls[0]));
+		$token = 
+		$_SESSION['supplier_token'][$this->_supplier->getId()] = $token;
 	}
 	/**
 	 * Getting the book shelf
@@ -140,5 +175,13 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getDownloadUrl(Product $product, UserAccount $user)
 	{
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::getOnlineReadUrl()
+	 */
+	public function getOnlineReadUrl(Product $product, UserAccount $user)
+	{
+		$token = $this->_getToken();
 	}
 }
