@@ -206,7 +206,7 @@ class SupplierConnectorAbstract
 			}
 			
 			//added the library
-			$product->updateLibrary($this->_lib, trim($this->_getAttribute($xml, 'AvailableCopies', 0)), trim($this->_getAttribute($xml, 'TotalCopies', 0)));
+			$product->updateLibrary($this->_lib, trim($this->_getAttribute($xml, 'AvailableCopies', 15)), trim($this->_getAttribute($xml, 'TotalCopies', 15)));
 			if($transStarted === false)
 				Dao::commitTransaction();
 			return $product;
