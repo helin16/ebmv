@@ -33,9 +33,9 @@ abstract class SystemCoreAbstract
 		);
 		foreach ($autoloadPaths as $path)
 		{
-			if (file_exists($path . $className . '.php'))
+			if (file_exists($file = trim($path . $className . '.php')))
 			{
-				require_once $path . $className . '.php';
+				require_once $file;
 				return true;
 			}
 		}
