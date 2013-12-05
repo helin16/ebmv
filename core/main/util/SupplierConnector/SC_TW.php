@@ -107,7 +107,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		
 		$urls = explode(',', $this->_supplier->getInfo('signin_url'));
 		$url = str_replace('{SiteID}', $this->_libCode, ($urls === false ? null : $urls[0]));
-		$token = 
+		$token = '';
 		$_SESSION['supplier_token'][$this->_supplier->getId()] = $token;
 	}
 	/**
