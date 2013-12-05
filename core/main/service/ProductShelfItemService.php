@@ -49,7 +49,7 @@ class ProductShelfItemService extends BaseServiceAbastract
 	    	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
 	    	$supplier = ($supplier instanceof Supplier ? $supplier : BaseServiceAbastract::getInstance('Supplier')->getCheapestSupplier($product));
     		$this->syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_BORROWED);
-    		SupplierConnectorAbstract::getInstance($supplier)->addToBookShelfList($user, $product, $lib);
+    		SupplierConnectorAbstract::getInstance($supplier, Core::getLibrary())->addToBookShelfList($user, $product);
 	    	if($transStarted === false)
 	    		Dao::commitTransaction();
     		return $this;
@@ -72,7 +72,7 @@ class ProductShelfItemService extends BaseServiceAbastract
     		
     		EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`active` = 0', '`productId` = ? and `ownerId` = ?', array($product->getId(), $user->getId()));
     		
-    		SupplierConnectorAbstract::getInstance($supplier)->removeBookShelfList($user, $product, $lib);
+    		SupplierConnectorAbstract::getInstance($supplier, Core::getLibrary())->removeBookShelfList($user, $product);
     		if($transStarted === false)
     			Dao::commitTransaction();
     		return $this;

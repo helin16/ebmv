@@ -10,79 +10,79 @@ class ImportProduct
 		try
 		{
 			$startScript = new UDate();
-			fwrite(STDOUT,  "== Start import script @ " . $startScript . "=============================\r\n");
+			self::log( "== Start import script @ " . $startScript . "=============================\r\n");
 			
 			//loop through each library
 			$libraries = self::_getLibs($libCodes);
-			fwrite(STDOUT,  "  == Found " . count($libraries) . " libraries to go through: \r\n");
+			self::log( "  == Found " . count($libraries) . " libraries to go through: \r\n");
 			foreach($libraries as $lib)
 			{
 				Core::setLibrary($lib);
 				//loop through each supplier
 				foreach(self::_getSuppliers($supplierIds) as $supplier)
 				{
-					fwrite(STDOUT,  "\r\n  == import from " . $supplier->getName() . "\r\n");
+					self::log( "\r\n  == import from " . $supplier->getName() . "\r\n");
 					
 					//if there is an error for supplier connector
-					try {$script = SupplierConnectorAbstract::getInstance($supplier); }
+					try {$script = SupplierConnectorAbstract::getInstance($supplier, Core::getLibrary()); }
 					catch(Exception $ex) 
 					{
-						fwrite(STDOUT,  "  :: " . $ex->getMessage() . "\r\n");
-						fwrite(STDOUT,  "  :: " . $ex->getTraceAsString() . "\r\n");
+						self::log( "  :: " . $ex->getMessage() . "\r\n");
+						self::log( "  :: " . $ex->getTraceAsString() . "\r\n");
 						continue;
 					}
 					
-					//getting how many record we need to run
-					if($totalRecords === '')
+					$types = $script->getImportProductTypes();
+					self::log( "  :: Got (" . count($types) . ") types to import:\r\n");
+					foreach($types as $type)
 					{
-						$pageInfo = $script->getProductListInfo();
-						$totalRecords = $pageInfo['totalRecords'];
-					}
-					fwrite(STDOUT,  "  :: start download the xml ...");
-					$productList = $script->getProductList(1, $totalRecords);
-					fwrite(STDOUT,  " downloaded.\r\n");
-					
-					//process each record
-					$childrenCount = count($productList);
-					fwrite(STDOUT, "  :: Start to import (" . $childrenCount . ") products: \r\n");
-					for($i = 0; $i< $childrenCount; $i++)
-					{
-						fwrite(STDOUT, "\r\n");
-						fwrite(STDOUT, '    -- Importing Product No: ' . $i . " ... \r\n");
-						try
+						//getting how many record we need to run
+						self::log( "  :: start download the xml for "  .$type->getName() ."...");
+						$productList = $script->getProductList(1, trim($totalRecords), $type);
+						self::log( " downloaded.\r\n");
+						
+						//process each record
+						$childrenCount = count($productList);
+						self::log("  :: Start to import (" . $childrenCount . ") products: \r\n");
+						for($i = 0; $i< $childrenCount; $i++)
 						{
-							fwrite(STDOUT, "    -- xml: \r\n");
-							fwrite(STDOUT, "    -- " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]) . "\r\n" );
-							$script->importProducts($productList, $i);
-							fwrite(STDOUT, "    -- Done\r\n");
+							self::log("\r\n");
+							self::log('    -- Importing Product No: ' . $i . " ... \r\n");
+							try
+							{
+								self::log("    -- xml: \r\n");
+								self::log("    -- " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]) . "\r\n" );
+								$script->importProducts($productList, $i);
+								self::log("    -- Done\r\n");
+							}
+							catch(Exception $ex)
+							{
+								self::log("ERROR: " . $ex->getMessage());
+								continue;
+							}
+							self::log("\r\n");
 						}
-						catch(Exception $ex)
+						
+						//removing the un-imported products
+						$ids = $supplier->getProducts($script->getImportedProductIds());
+						if($fullUpdate === true && count($ids) > 0)
 						{
-							fwrite(STDOUT, "ERROR: " . $ex->getMessage());
-							continue;
+							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids) . "\r\n");
+							$script->rmUnImportedProducts();
+							self::log( "  :: done removing un-imported products. \r\n");
 						}
-						fwrite(STDOUT, "\r\n");
-					}
-					
-					//removing the un-imported products
-					$ids = $supplier->getProducts($script->getImportedProductIds());
-					if($fullUpdate === true && count($ids) > 0)
-					{
-						fwrite(STDOUT,  "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids) . "\r\n");
-						$script->rmUnImportedProducts();
-						fwrite(STDOUT,  "  :: done removing un-imported products. \r\n");
 					}
 				}
 			}
 		}
 		catch(Exception $ex)
 		{
-			fwrite(STDOUT, $ex->getMessage() . "\r\n");
-			fwrite(STDOUT, $ex->getTraceAsString() . "\r\n");
+			self::log($ex->getMessage() . "\r\n");
+			self::log($ex->getTraceAsString() . "\r\n");
 		}
 		$finishScript = new UDate();
 		$scriptRunningtime = $finishScript->diff($startScript);
-		fwrite(STDOUT,  "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================\r\n");
+		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================\r\n");
 	}
 	private static function _getSuppliers($supplierIds = null)
 	{
@@ -100,21 +100,25 @@ class ImportProduct
 			return BaseServiceAbastract::getInstance('Library')->findAll();
 		return BaseServiceAbastract::getInstance('Library')->getLibsFromCodes($libCodes);
 	}
+	public function log($msg)
+	{
+// 		fwrite(STDOUT, $msg);
+		echo $msg;
+	}
 }
 
-
 //checking usage
-if ($argc != 4)
-	die("Usage: ImportProduct siteCode(37,werew,121fd|all) supplierids(1,2,3|all) totalrecords(30|all)\r\n");
+// if ($argc != 4)
+// 	die("Usage: ImportProduct siteCode(37,werew,121fd|all) supplierids(1,2,3|all) totalrecords(30|all)\r\n");
 
-$libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $libCodes)));
-$supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
-$totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
+// $libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $libCodes)));
+// $supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
+// $totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
 
-fwrite(STDOUT, "== Params ===================================================\r\n");
-fwrite(STDOUT, "== Site Codes: '" . implode("', '", $libCodes). "'\r\n");
-fwrite(STDOUT, "== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
-fwrite(STDOUT, "== Total Records: '" . $totalrecords. "'\r\n");
-fwrite(STDOUT, "=============================================================\r\n");
+// ImportProduct::log("== Params ===================================================\r\n");
+// ImportProduct::log("== Site Codes: '" . implode("', '", $libCodes). "'\r\n");
+// ImportProduct::log("== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
+// ImportProduct::log("== Total Records: '" . $totalrecords. "'\r\n");
+// ImportProduct::log("=============================================================\r\n");
 
-ImportProduct::run($libCodes, $supplierIds, $totalrecords);
+ImportProduct::run(array('37'), array(2), 10);

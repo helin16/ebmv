@@ -11,10 +11,11 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * construtor
 	 * 
 	 * @param Supplier $supplier The supplier
+	 * @param Library  $lib      The library
 	 */
-	public function __construct(Supplier $supplier)
+	public function __construct(Supplier $supplier, Library $lib)
 	{
-		parent::__construct($supplier);
+		parent::__construct($supplier, $lib);
 		$this->_getImportUrl();
 	}
 	/**
@@ -28,7 +29,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 			return $this->_importUrl;
 		
 		$urls = explode(',', $this->_supplier->getInfo('import_url'));
-		$this->_importUrl = ($urls === false ? null : $urls[0]);
+		$this->_importUrl = str_replace('{SiteID}', $this->_lib->getInfo('aus_code'), ($urls === false ? null : $urls[0]));
 		return $this->_importUrl;
 	}
 	/**
@@ -37,9 +38,9 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * @throws CoreException
 	 * @return SimpleXMLElement
 	 */
-	public function getProductListInfo()
+	public function getProductListInfo(ProductType $type = null)
 	{
-		$xml = $this->_getXmlFromUrl($this->_importUrl, 1, 1);
+		$xml = $this->_getXmlFromUrl($this->_importUrl, 1, 1, $type);
 		if(!$xml instanceof SimpleXMLElement)
 			throw new CoreException('Can NOT get the pagination information from ' . $this->_importUrl . '!');
 		$array = array();
@@ -51,19 +52,21 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getProductList()
 	 */
-	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
 	{
 		$array = array();
-		$xml = $this->_getXmlFromUrl($this->_importUrl, $pageNo, $pageSize);
+		$xml = $this->_getXmlFromUrl($this->_importUrl, $pageNo, $pageSize, $type);
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
 		}
 		return $array;
 	}
-	private function _getXmlFromUrl($url, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $format = 'xml')
+	private function _getXmlFromUrl($url, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $format = 'xml')
 	{
 		$params = array('format' => $format, 'size' => $pageSize, 'index' => $pageNo);
+		if($type instanceof ProductType)
+			$params['type'] = strtolower(trim($type->getName()));
 		$result = $this->readUrl($url . '?' . http_build_query($params), 120000);
 		return new SimpleXMLElement($result);
 	}
@@ -71,11 +74,10 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * Getting the book shelf
 	 * 
 	 * @param UserAccount $user
-	 * @param Library     $lib
 	 * 
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function getBookShelfList(UserAccount $user, Library $lib)
+	public function getBookShelfList(UserAccount $user)
 	{
 	}
 	/**
@@ -104,12 +106,11 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * 
 	 * @param UserAccount $user
 	 * @param Product     $product
-	 * @param Library     $lib
 	 * 
 	 * @throws CoreException
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib)
+	public function addToBookShelfList(UserAccount $user, Product $product)
 	{
 	}
 	/**
@@ -117,12 +118,11 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * 
 	 * @param UserAccount $user
 	 * @param Product     $product
-	 * @param Library     $lib
 	 * 
 	 * @throws CoreException
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib)
+	public function removeBookShelfList(UserAccount $user, Product $product)
 	{
 	}
 	/**

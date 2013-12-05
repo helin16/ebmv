@@ -13,7 +13,14 @@ class SupplierConnectorAbstract
 	 */
 	protected $_supplier;
 	/**
+	 * The library we are dealing with
+	 * 
+	 * @var Library
+	 */
+	protected $_lib;
+	/**
 	 * The connectors
+	 * 
 	 * @var array
 	 */
 	protected static $_connectors = array();
@@ -27,27 +34,31 @@ class SupplierConnectorAbstract
 	 * singleton getter
 	 * 
 	 * @param Supplier $supplier The supplier
+	 * @param Library  $lib      The library
 	 * 
 	 * @return SupplierConnectorAbstract
 	 */
-	public static function getInstance(Supplier $supplier)
+	public static function getInstance(Supplier $supplier, Library $lib)
 	{
 		$className = $supplier->getConnector();
+		$key = trim($supplier->getId() . "+" . $lib->getId());
 		if(!isset(self::$_connectors[$supplier->getId()]))
 		{
-			if(!($sc = new $className($supplier)) instanceof SupplierConn)
+			if(!($sc = new $className($supplier, $lib)) instanceof SupplierConn)
 				throw new CoreException("$className is NOT a SupplierConn!");
-			self::$_connectors[$supplier->getId()] = $sc;
+			self::$_connectors[$key] = $sc;
 		}
-		return self::$_connectors[$supplier->getId()];
+		return self::$_connectors[$key];
 	}
 	/**
 	 * construtor
 	 * @param Supplier $supplier The supplier
+	 * @param Library  $lib      The library
 	 */
-	public function __construct(Supplier $supplier)
+	public function __construct(Supplier $supplier, Library $lib)
 	{
 		$this->_supplier = $supplier;
+		$this->_lib = $lib;
 	}
 	/**
 	 * Getting the default language and product type for a supplier
@@ -61,16 +72,25 @@ class SupplierConnectorAbstract
 		return array(BaseServiceAbastract::getInstance('Language')->get($defaultLangIds[0]), BaseServiceAbastract::getInstance('ProductType')->get($defaultTypeIds[0]));
 	}
 	/**
+	 * @return multitype:ProductType
+	 */
+	public function getImportProductTypes()
+	{
+		$importTypeIds = explode(',', $this->_supplier->getInfo('stype_ids'));
+		return BaseServiceAbastract::getInstance('ProductType')->findByCriteria('id in (' . implode(', ', $importTypeIds) . ')', array());
+	}
+	/**
 	 * Getting the value of the attribute
 	 *
 	 * @param SimpleXMLElement $xml           The xml element
 	 * @param string           $attributeName The attr name
+	 * @param string           $defaultValue  The default value
 	 *
 	 * @return string
 	 */
-	protected function _getAttribute(SimpleXMLElement $xml, $attributeName)
+	protected function _getAttribute(SimpleXMLElement $xml, $attributeName, $defaultValue = '')
 	{
-		return (isset($xml->$attributeName) && ($attribute = trim($xml->$attributeName)) !== '') ? $attribute : '';
+		return (isset($xml->$attributeName) && ($attribute = trim($xml->$attributeName)) !== '') ? $attribute : $defaultValue;
 	}
 	/**
 	 * resetting the imported product ids
@@ -103,7 +123,8 @@ class SupplierConnectorAbstract
 		$unImportedProducts = $this->_supplier->getProducts($this->_importedProductIds);
 		foreach($unImportedProducts as $product)
 		{
-			BaseServiceAbastract::getInstance('Product')->removeFromProductBySupplier($product, $this->_supplier);
+			$product->setActive(false);
+			BaseServiceAbastract::getInstance('Product')->save($product);
 		}
 		if($resetImportedPids === true)
 			$this->resetImportedProductIds();
@@ -134,11 +155,11 @@ class SupplierConnectorAbstract
 		return $products;
 	}
 	/**
+	 * 
 	 * Importing the product
 	 *
-	 * @param SimpleXMLElement $xml        The xml of the product list
-	 * @param array            $categories The array of the categories a product should be in
-	 *
+	 * @param SimpleXMLElement $xml         The xml of the product list
+	 * @param array            $categories  The array of the categories a product should be in
 	 * @throws Exception
 	 * @return unknown
 	 */
@@ -150,6 +171,7 @@ class SupplierConnectorAbstract
 			throw new Exception("Invalid lanuage codes: " . implode(', ', $langCodes));
 		if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName(strtolower(trim($xml->getName())))) instanceof ProductType)
 			throw new Exception("Invalid ProductType: " . strtolower(trim($xml->getName())));
+		var_dump($type->getId());
 	
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
@@ -160,7 +182,10 @@ class SupplierConnectorAbstract
 			if(($no = $this->_getAttribute($xml, 'NO')) === '')
 				$no = 0;
 	
+			//getting the categories
+			$categories = array_filter($categories, create_function('$a', 'return $a instanceof Category;'));
 			$categories = (count($categories) > 0 ? $categories : $this->_importCategories(explode('/', $this->_getAttribute($xml, 'BookType'))));
+			
 			//updating the product
 			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier)) instanceof Product)
 			{
@@ -180,6 +205,9 @@ class SupplierConnectorAbstract
 			{
 				$product = BaseServiceAbastract::getInstance('Product')->createProduct($this->_getAttribute($xml, 'BookName'), $type, $this->_supplier, $categories, $langs, $this->_getProductAttributes($xml));
 			}
+			
+			//added the library
+			$product->updateLibrary($this->_lib, trim($this->_getAttribute($xml, 'AvailableCopies', 0)), trim($this->_getAttribute($xml, 'TotalCopies', 0)));
 			if($transStarted === false)
 				Dao::commitTransaction();
 			return $product;
@@ -210,8 +238,6 @@ class SupplierConnectorAbstract
 			'FrontCover' => 'image_thumb',
 			'Cip' => 'cip',
 			'Introduction' => 'description',
-			'TotalCopiesOfBook' => 'total_copies',
-			'AvailableCopiesOfBook' => 'avail_copies'
 		);
 		$array = array();
 		foreach($tagMap as $tag => $typecode)

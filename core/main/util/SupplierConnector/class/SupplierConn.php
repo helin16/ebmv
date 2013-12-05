@@ -7,7 +7,7 @@ interface SupplierConn
 	 * @throws CoreException
 	 * @return SimpleXMLElement
 	 */
-	public function getProductListInfo();
+	public function getProductListInfo(ProductType $type = null);
 	/**
 	 * Getting xml product list
 	 *
@@ -16,7 +16,7 @@ interface SupplierConn
 	 *
 	 * @return array The list which can be used in ImportProduct()
 	 */
-	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE);
+	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null);
 	/**
 	 * importing the products from the supplier
 	 *
@@ -31,11 +31,10 @@ interface SupplierConn
 	 * Getting the book shelf
 	 *
 	 * @param UserAccount $user The current user
-	 * @param Library     $lib  Which library the user has been assigned to
 	 *
 	 * @return Mixed The ProductShelfItem array
 	 */
-	public function getBookShelfList(UserAccount $user, Library $lib);
+	public function getBookShelfList(UserAccount $user);
 	/**
 	 * Synchronize user's bookshelf from supplier to local
 	 *
@@ -50,23 +49,21 @@ interface SupplierConn
 	 *
 	 * @param UserAccount $user    The library current user
 	 * @param Product     $product The product to be added
-	 * @param Library     $lib     Which library we are in now
 	 *
 	 * @throws CoreException
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib);
+	public function addToBookShelfList(UserAccount $user, Product $product);
 	/**
 	 * Removing a product from the book shelf
 	 *
 	 * @param UserAccount $user    The library current user
 	 * @param Product     $product The product to be removed
-	 * @param Library     $lib     Which library we are in now
 	 *
 	 * @throws CoreException
 	 * @return mixed
 	 */
-	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib);
+	public function removeBookShelfList(UserAccount $user, Product $product);
 	/**
 	 * Getting the download url for a book
 	 *

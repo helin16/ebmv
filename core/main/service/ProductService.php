@@ -335,20 +335,5 @@ class ProductService extends BaseServiceAbastract
     	$result = $this->findByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy);
     	return $result;
     }
-    /**
-     * removing the product based on the supplier. 
-     * If the product are with multiple supplier, then just remove the relationship, otherwise removing the product as well as the relatinship
-     * 
-     * @param Product  $product  The product we are trying to remove
-     * @param Supplier $supplier The supplier we are trying to remove from 
-     * 
-     * @return ProductService
-     */
-    public function removeFromProductBySupplier(Product $product, Supplier $supplier)
-    {
-    	$product->setActive(false);
-    	$this->save($product);
-    	return $this;
-    }
 }
 ?>

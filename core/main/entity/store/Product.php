@@ -207,6 +207,56 @@ class Product extends BaseEntityAbstract
 		return $this;
 	}
 	/**
+	 * Adding a library for owning this product
+	 * 
+	 * @param Library $lib         The owner
+	 * @param number  $availCopies How many copies
+	 * @param number  $totalCopies How many copies in total
+	 * 
+	 * @return Product
+	 */
+	public function updateLibrary(Library $lib, $availCopies = 0, $totalCopies = 0)
+	{
+		$owns = $this->getLibraryOwn($lib);
+		if(!$owns instanceof LibraryOwns)
+			$owns = new LibraryOwns();
+		$owns->setLibrary($lib);
+		$owns->setProduct($this);
+		$owns->setAvailCopies($availCopies);
+		$owns->setTotalCopies($totalCopies);
+		EntityDao::getInstance('LibraryOwns')->save($owns);
+		return $this;
+	}
+	/**
+	 * Removing a product form a library
+	 * 
+	 * @param Library $lib The library
+	 * 
+	 * @return Product
+	 */
+	public function removeLibrary(Library $lib)
+	{
+		$owns = $this->getLibraryOwn($lib);
+		if($owns instanceof LibraryOwns)
+		{
+			$owns->setActive(false);
+			EntityDao::getInstance('LibraryOwns')->save($owns);
+		}
+		return $this;
+	}
+	/**
+	 * Getting the library own for this product
+	 * 
+	 * @param Library $lib The owner
+	 * 
+	 * @return NULL|LibraryOwns
+	 */
+	public function getLibraryOwn(Library $lib)
+	{
+		$owns = EntityDao::getInstance('LibraryOwns')->findByCriteria('libraryId = ? and productId = ?', array($lib->getId(), $this->getId()), 1, 1);
+		return (count($owns) === 0 ? null : $owns[0]);
+	}
+	/**
 	 * Getter for the ProductType
 	 * 
 	 * @return ProductType

@@ -11,10 +11,11 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * construtor
 	 * 
 	 * @param Supplier $supplier The supplier
+	 * @param Library  $lib      The library
 	 */
-	public function __construct(Supplier $supplier)
+	public function __construct(Supplier $supplier, Library $lib)
 	{
-		parent::__construct($supplier);
+		parent::__construct($supplier, $lib);
 		$this->_getImportUrl();
 	}
 	/**
@@ -34,12 +35,17 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	/**
 	 * Gettht product List
 	 * 
+	 * @param ProductType $type The product type we are getting the xml for
+	 * 
 	 * @throws CoreException
 	 * @return SimpleXMLElement
 	 */
-	public function getProductListInfo()
+	public function getProductListInfo(ProductType $type = null)
 	{
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Core::getLibrary()->getInfo('aus_code'), "Index" => 1, "Size" => 1));
+		$params = array("SiteID" => $this->_lib->getInfo('aus_code'), "Index" => 1, "Size" => 1);
+		if($type instanceof ProductType)
+			$params['type'] = strtolower(trim($type->getName()));
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", $params);
 		if(!$xml instanceof SimpleXMLElement)
 			throw new CoreException('Can NOT get the pagination information from ' . $wsdl . '!');
 		$array = array();
@@ -51,10 +57,18 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getProductList()
 	 */
-	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
 	{
+		if(trim($pageSize) === '')
+		{
+			$pageInfo = $script->getProductListInfo();
+			$pageSize = $pageInfo['totalRecords'];
+		}
+		$params = array("SiteID" => $this->_lib->getInfo('aus_code'), "Index" => 1, "Size" => 1);
+		if($type instanceof ProductType)
+			$params['type'] = strtolower(trim($type->getName()));
 		$array = array();
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", array("SiteID" => Core::getLibrary()->getInfo('aus_code'), "Index" => $pageNo, "Size" => $pageSize));
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", $params);
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
@@ -92,14 +106,13 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * Getting the book shelf
 	 * 
 	 * @param UserAccount $user
-	 * @param Library     $lib
 	 * 
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function getBookShelfList(UserAccount $user, Library $lib)
+	public function getBookShelfList(UserAccount $user)
 	{
 		$username = trim($user->getUserName());
-		$libCode = trim($lib->getInfo('aus_code'));
+		$libCode = trim($this->_lib->getInfo('aus_code'));
 		$params = array("SiteID" => $libCode, 
 					"Uid" => $username, 
 					"Pwd" => trim($user->getPassword()), 
@@ -155,15 +168,14 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * 
 	 * @param UserAccount $user
 	 * @param Product     $product
-	 * @param Library     $lib
 	 * 
 	 * @throws CoreException
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function addToBookShelfList(UserAccount $user, Product $product, Library $lib)
+	public function addToBookShelfList(UserAccount $user, Product $product)
 	{
 		$username = trim($user->getUserName());
-		$libCode = trim($lib->getInfo('aus_code'));
+		$libCode = trim($this->_lib->getInfo('aus_code'));
 		$params = array("SiteID" => $libCode,
 				'Isbn' => trim($product->getAttribute('isbn')),
 				'NO' => trim($product->getAttribute('cno')),
@@ -180,15 +192,14 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * 
 	 * @param UserAccount $user
 	 * @param Product     $product
-	 * @param Library     $lib
 	 * 
 	 * @throws CoreException
 	 * @return Ambigous <NULL, SimpleXMLElement>
 	 */
-	public function removeBookShelfList(UserAccount $user, Product $product, Library $lib)
+	public function removeBookShelfList(UserAccount $user, Product $product)
 	{
 		$username = trim($user->getUserName());
-		$libCode = trim($lib->getInfo('aus_code'));
+		$libCode = trim($this->_lib->getInfo('aus_code'));
 		$params = array("SiteID" => $libCode,
 				'Isbn' => trim($product->getAttribute('isbn')),
 				'NO' => trim($product->getAttribute('cno')),
@@ -211,7 +222,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	public function getDownloadUrl(Product $product, UserAccount $user)
 	{
 		$downloadUrl = trim($this->_supplier->getInfo('download_url'));
-		$urlParams = array('SiteID' => Core::getLibrary()->getInfo('aus_code'),
+		$urlParams = array('SiteID' => $this->_lib->getInfo('aus_code'),
 				'Isbn' => $product->getAttribute('isbn'),
 				'NO' => $product->getAttribute('cno'),
 				'Format' => 'xml',
@@ -227,7 +238,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		catch(Exception $ex)
 		{
 		}
-		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem($user, $product, Core::getLibrary(), $this->_supplier);
+		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem($user, $product, $this->_lib, $this->_supplier);
 		if(trim($xml->Code) !== trim(self::CODE_SUCC))
 			throw new Exception("Connector Error: " . trim($xml->Value));
 		return trim($xml->Value);
