@@ -99,6 +99,26 @@ CREATE TABLE `languagecode` (
 	,INDEX (`updatedById`)
 	,UNIQUE INDEX (`code`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `libraryowns`;
+CREATE TABLE `libraryowns` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`libraryId` int(10) unsigned NOT NULL DEFAULT 0,
+	`productId` int(10) unsigned NOT NULL DEFAULT 0,
+	`totalCopies` int(10) unsigned NOT NULL DEFAULT 0,
+	`availCopies` int(10) unsigned NOT NULL DEFAULT 0,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`libraryId`)
+	,INDEX (`productId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`availCopies`)
+	,INDEX (`totalCopies`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,

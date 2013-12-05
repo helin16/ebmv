@@ -162,7 +162,7 @@ class SupplierConnectorAbstract
 	
 			$categories = (count($categories) > 0 ? $categories : $this->_importCategories(explode('/', $this->_getAttribute($xml, 'BookType'))));
 			//updating the product
-			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no)) instanceof Product)
+			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier)) instanceof Product)
 			{
 				//delete the thumb
 				if(!($thumbs = explode(',', $product->getAttribute('image_thumb'))) !== false)
@@ -173,42 +173,13 @@ class SupplierConnectorAbstract
 				//deleting the thumb and image for the product
 				BaseServiceAbastract::getInstance('ProductAttribute')->removeAttrsForProduct($product, array('image_thumb', 'image'));
 				
-				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product,
-						$this->_getAttribute($xml, 'BookName'),
-						$this->_getAttribute($xml, 'Author'),
-						$isbn,
-						$this->_getAttribute($xml, 'Press'),
-						$this->_getAttribute($xml, 'PublicationDate'),
-						$this->_getAttribute($xml, 'Words'),
-						$categories,
-						$this->_importImage($this->_getAttribute($xml, 'FrontCover')),
-						$this->_getAttribute($xml, 'Introduction'),
-						$no,
-						$this->_getAttribute($xml, 'Cip'),
-						$langs,
-						$type
-				);
+				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product, $this->_getAttribute($xml, 'BookName'), $type, $this->_supplier, $categories, $langs, $this->_getProductAttributes($xml)); 
 			}
 			//creating new product
 			else
 			{
-				$product = BaseServiceAbastract::getInstance('Product')->createProduct(
-						$this->_getAttribute($xml, 'BookName'),
-						$this->_getAttribute($xml, 'Author'),
-						$isbn,
-						$this->_getAttribute($xml, 'Press'),
-						$this->_getAttribute($xml, 'PublicationDate'),
-						$this->_getAttribute($xml, 'Words'),
-						$categories,
-						$this->_importImage($this->_getAttribute($xml, 'FrontCover')),
-						$this->_getAttribute($xml, 'Introduction'),
-						$no,
-						$this->_getAttribute($xml, 'Cip'),
-						$langs,
-						$type
-				);
+				$product = BaseServiceAbastract::getInstance('Product')->createProduct($this->_getAttribute($xml, 'BookName'), $type, $this->_supplier, $categories, $langs, $this->_getProductAttributes($xml));
 			}
-			BaseServiceAbastract::getInstance('Product')->addSupplier($product, $this->_supplier, $this->_getAttribute($xml, 'Price'));
 			if($transStarted === false)
 				Dao::commitTransaction();
 			return $product;
@@ -219,6 +190,47 @@ class SupplierConnectorAbstract
 				Dao::rollbackTransaction();
 			throw $ex;
 		}
+	}
+	/**
+	 * Translating the xml block into attributes array for importing
+	 * 
+	 * @param mixed $xml The xml attribute block
+	 * 
+	 * @return Ambigous <multitype:multitype: , string>
+	 */
+	protected function _getProductAttributes($xml)
+	{
+		$tagMap = array(
+			'Author' => 'author',
+			'Isbn' => 'isbn',
+			'NO' => 'cno',
+			'Press' => 'publisher',
+			'PublicationDate' => 'publish_date',
+			'Words' => 'no_of_words',
+			'FrontCover' => 'image_thumb',
+			'Cip' => 'cip',
+			'Introduction' => 'description',
+			'TotalCopiesOfBook' => 'total_copies',
+			'AvailableCopiesOfBook' => 'avail_copies'
+		);
+		$array = array();
+		foreach($tagMap as $tag => $typecode)
+		{
+			if(($value = trim($this->_getAttribute($xml, $tag))) === '')
+				continue;
+			if(!isset($array[$typecode]))
+				$array[$typecode] = array();
+			$array[$typecode][] = $this->_getAttribute($xml, $tag);
+		}
+		//download image
+		if(isset($array['image_thumb']) && count($array['image_thumb']) > 0)
+		{
+			$images = array();
+			foreach($array['image_thumb'] as $url)
+				$images[] = $this->_importImage($url);
+			$array['image_thumb'] = $images;
+		}
+		return $array;
 	}
 	/**
 	 * Importing the categories

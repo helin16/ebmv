@@ -54,8 +54,7 @@ class ProductService extends BaseServiceAbastract
     	$params = array('isbn', $isbn, 'cno', $cno);
     	if($supplier instanceof Supplier)
     	{
-    		$query->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price');
-	    	$where[] = 'sup_price.supplierId = ?';
+	    	$where[] = 'pro.supplierId = ?';
 	    	$params[] = $supplier->getId();
     	}
     	$results = $this->findByCriteria(implode(' AND ', $where), $params, true, 1, 1);
@@ -138,98 +137,90 @@ class ProductService extends BaseServiceAbastract
         return $this->findByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
     }
     /**
-     * Create a product/book
+     * Create a product
      * 
-     * @param string               $title       The title
-     * @param string               $author      The author
-     * @param string               $isbn        The isbn
-     * @param string               $publisher   The publisher
-     * @param string               $publishDate The publish date
-     * @param int                  $words       The words of the book
-     * @param array                $categories  The category of the book
-     * @param string               $image       The image path of the book
-     * @param string               $description The description of the book
-     * @param string               $cno         The supplier's identification no
-     * @param string               $cip         The supplier's category ip
-     * @param Multiple:Language    $langs       The languages of the book
-     * @param ProductType          $type        The type of the book
+     * @param string      $title      The title of the product
+     * @param ProductType $type       The product type object
+     * @param Supplier    $supplier   The supplier object
+     * @param array       $categories The categories of the product
+     * @param array       $langs      The array of language objects
+     * @param array       $info       The array of product attributes array('typecode' => array('attribute value', 'attribute_value2'))
+     * @param string      $title      The sku of the product
      * 
      * @return Product
      */
-    public function createProduct($title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', array $langs = array(), ProductType $type = null)
+    public function createProduct($title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array(), $sku = '')
     {
-        return $this->_editProduct(new Product(), $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $langs, $type);
+        return $this->_editProduct(new Product(), $title, $type, $supplier, $categories, $langs, $info, $sku);
     }
     /**
-     * update a product/book
+     * update a product
      * 
-     * @param Product              $product     The Product
-     * @param string               $title       The title
-     * @param string               $author      The author
-     * @param string               $isbn        The isbn
-     * @param string               $publisher   The publisher
-     * @param string               $publishDate The publish date
-     * @param int                  $words       The words of the book
-     * @param array                $categories  The category of the book
-     * @param string               $image       The image path of the book
-     * @param string               $description The description of the book
-     * @param string               $cno         The supplier's identification no
-     * @param string               $cip         The supplier's category ip
-     * @param Multiple:Language    $langs       The languages of the book
-     * @param ProductType          $type        The type of the book
+     * @param string      $title      The title of the product
+     * @param ProductType $type       The product type object
+     * @param Supplier    $supplier   The supplier object
+     * @param array       $categories The categories of the product
+     * @param array       $langs      The array of language objects
+     * @param array       $info       The array of product attributes array('typecode' => array('attribute value', 'attribute_value2'))
+     * @param string      $title      The sku of the product
      * 
      * @return Product
      */
-    public function updateProduct(Product $product, $title, $author, $isbn, $publisher, $publishDate, $words, array $categories, $image, $description, $cno = 0, $cip = '', array $langs = array(), ProductType $type = null)
+    public function updateProduct(Product $product, $title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array(), $sku = '')
     {
-        return $this->_editProduct($product, $title, $author, $isbn, $publisher, $publishDate, $words, $categories, $image, $description, $cno, $cip, $langs, $type);
+        return $this->_editProduct($product, $title, $type, $supplier, $categories, $langs, $info, $sku);
     }
     /**
-     * editing a product/book
+     * editing a product
      * 
-     * @param Product              $product     The Product
-     * @param string               $title       The title
-     * @param string               $author      The author
-     * @param string               $isbn        The isbn
-     * @param string               $publisher   The publisher
-     * @param string               $publishDate The publish date
-     * @param int                  $words       The words of the book
-     * @param array                $categories  The category of the book
-     * @param string               $image       The image path of the book
-     * @param string               $description The description of the book
-     * @param string               $cno         The supplier's identification no
-     * @param string               $cip         The supplier's category ip
-     * @param Multiple:Language    $langs       The languages of the book
-     * @param ProductType          $type        The type of the book
+     * @param string      $title      The title of the product
+     * @param ProductType $type       The product type object
+     * @param Supplier    $supplier   The supplier object
+     * @param array       $categories The categories of the product
+     * @param array       $langs      The array of language objects
+     * @param array       $info       The array of product attributes array('typecode' => array('attribute value', 'attribute_value2'))
+     * @param string      $title      The sku of the product
      * 
      * @return Product
      */
-    private function _editProduct(Product &$product, $title, $author, $isbn, $publisher, $publish_date, $no_of_words, array $categories, $image, $description, $cno = 0, $cip = '', array $langs = array(), ProductType $type = null)
+    private function _editProduct(Product &$product, $title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array(), $sku = '')
     {
         $transStarted = false;
         try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
         try
         {
+        	//setting up the product object
             $product->setTitle($title);
-            $product->setProductType($type instanceof ProductType ? $type : EntityDao::getInstance('ProductType')->findById(1));
+            $product->setProductType($type);
+            $product->setSupplier($supplier);
+            if(trim($sku) !== '')
+            	$product->setSuk($sku);
             if(trim($product->getId()) === '')
                 $this->save($product);
+            
+            //setup the languages
+            $langs = array_filter($langs, create_function('$a', 'return ($a instanceof Language);'));
             if(count($langs) === 0 )
-            	$langs = array(EntityDao::getInstance('Language')->findById(1));
+            	throw new CoreException('At least one lanugage needed!');
             $product->updateLanguages($langs);
             
             //add the attributes
-            //TODO:: need to resize the thumbnail
-            $image_thumb = $image;
-            $typeCodes = array('author', 'isbn', 'publisher', 'publish_date', 'no_of_words', 'image', 'image_thumb', 'description', 'cno', 'cip');
-            $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
-            foreach($typeCodes as $typeCode)
+            if(count($info) > 0)
             {
-            	if(($attr = trim($$typeCode)) === '')
-            		continue;
-            	if(!isset($types[$typeCode]) || !$types[$typeCode] instanceof ProductAttributeType)
-            		throw new CoreException('Could find the typecode for: ' . $typeCode);
-            	BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, $types[$typeCode], $attr);
+	            //TODO:: need to resize the thumbnail
+	            $typeCodes = array_keys($info);
+	            $types = BaseServiceAbastract::getInstance('ProductAttributeType')->getTypesByCodes($typeCodes);
+	            foreach($typeCodes as $typeCode)
+	            {
+	            	if(!isset($types[$typeCode]) || !$types[$typeCode] instanceof ProductAttributeType)
+	            		throw new CoreException('Could find the typecode for: ' . $typeCode);
+	            	foreach($info[$typeCode] as $attr)
+	            	{
+	            		if(($attr = trim($attr)) === '')
+		            		continue;
+	            		BaseServiceAbastract::getInstance('ProductAttribute')->updateAttributeForProduct($product, $types[$typeCode], $attr);
+	            	}
+	            }
             }
             
             //add categories
@@ -240,7 +231,6 @@ class ProductService extends BaseServiceAbastract
                 $this->addCategory($product, $category);
             }
             
-            $this->save($product);
             if($transStarted === false)
                 Dao::commitTransaction();
             return $product;
@@ -251,29 +241,6 @@ class ProductService extends BaseServiceAbastract
             Dao::rollbackTransaction();
             throw $ex;
         }
-    }
-    /**
-     * Adding a supplier to a product
-     * 
-     * @param Product  $product  The product 
-     * @param Supplier $supplier The new supplier
-     * @param string   $price    The price
-     * 
-     * @return ProductService
-     */
-    public function addSupplier(Product $product, Supplier $supplier, $price = '0.00')
-    {
-    	$orginal = DaoQuery::$selectActiveOnly;
-    	DaoQuery::$selectActiveOnly = false;
-    	//check whether the product_supplier exsits
-    	$results = EntityDao::getInstance('SupplierPrice')->findByCriteria('productId = ? and supplierId = ?', array($product->getId(), $supplier->getId()), 1, 1);
-    	$record = (count($results) === 0 ? new SupplierPrice() : $results[0]);
-    	$record->setSupplier($supplier);
-    	$record->setProduct($product);
-    	$record->setPrice($price);
-    	EntityDao::getInstance('SupplierPrice')->save($record);
-    	DaoQuery::$selectActiveOnly = $orginal;
-    	return $this;
     }
     /**
      * Update the product attributes from _editProduct() function
@@ -361,8 +328,7 @@ class ProductService extends BaseServiceAbastract
     	$params = array($user->getId(), 1);
     	if($supplier instanceof Supplier)
     	{
-    		$query->eagerLoad("Product.supplierPrices", DaoQuery::DEFAULT_JOIN_TYPE, 'sup_price');
-	    	$where .= ' AND sup_price.supplierId = ?';
+	    	$where .= ' AND pro.supplierId = ?';
 	    	$params[] = $supplier->getId();
     	}
     	$query->eagerLoad('Product.shelfItems', DaoQuery::DEFAULT_JOIN_TYPE, 'shelf_item');
@@ -380,15 +346,8 @@ class ProductService extends BaseServiceAbastract
      */
     public function removeFromProductBySupplier(Product $product, Supplier $supplier)
     {
-    	$hasMoreSuppliers = (count($product->getSuppliers(1, 2)) > 1);
-    	EntityDao::getInstance('SupplierPrice')->updateByCriteria('active = 0', 'productId = ? and supplierId = ?', array($product->getId(), $supplier->getId()));
-    	
-    	//if the product has just got one supplier, then deactivate the product as well
-    	if($hasMoreSuppliers === false)
-    	{
-    		$product->setActive(false);
-    		$this->save($product);
-    	}
+    	$product->setActive(false);
+    	$this->save($product);
     	return $this;
     }
 }

@@ -25,11 +25,7 @@ class SupplierService extends BaseServiceAbastract
      */
     public function getCheapestSupplier(Product $product)
     {
-    	$sql = 'select supplierId from supplierprice where active = 1 and productId = ? order by price asc limit 1';
-    	$result = Dao::getResultsNative($sql, array($product->getId()));
-    	if(count($result) === 0)
-    		return null;
-    	return $this->get($result[0]['supplierId']);
+    	return $product->getSupplier();
     }
 }
 ?>

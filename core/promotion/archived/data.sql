@@ -57,9 +57,7 @@ insert into `productattributetype` (`name`, `code`, `searchable`, `active`, `cre
 	('ImageThumbnail', 'image_thumb', 1, 1, NOW(), 100, NOW(), 100),
 	('Description', 'description', 1, 1, NOW(), 100, NOW(), 100),
 	('Cno', 'cno', 1, 1, NOW(), 100, NOW(), 100),
-	('Cip', 'cip', 1, 1, NOW(), 100, NOW(), 100),
-	('Total Copies', 'total_copies', 1, 1, NOW(), 100, NOW(), 100),
-	('Available Copies', 'avail_copies', 1, 1, NOW(), 100, NOW(), 100);
+	('Cip', 'cip', 1, 1, NOW(), 100, NOW(), 100);
 
 ############################ add producttype table
 insert into `producttype` (`id`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
@@ -80,7 +78,8 @@ insert into `supplierinfotype` (`id`, `name`, `code`, `active`, `created`, `crea
 (4, 'Default Language ID', 'default_lang_id',  1, NOW(), 100, NOW(), 100),
 (5, 'Default Type ID', 'default_product_type_id',  1, NOW(), 100, NOW(), 100),
 (6, 'Default Image Directory for products', 'default_img_dir',  1, NOW(), 100, NOW(), 100),
-(7, 'Supplier Key', 'skey',  1, NOW(), 100, NOW(), 100);
+(7, 'Supplier Key', 'skey',  1, NOW(), 100, NOW(), 100),
+(8, 'Supplied Product Type Ids', 'stype_ids',  1, NOW(), 100, NOW(), 100);
 
 ############################ add supplier table
 insert into `supplier` (`id`, `name`, `connector`,`active`, `created`, `createdById`, `updated`, `updatedById`) values
@@ -96,11 +95,13 @@ insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`,
     ('1', 5, '1', 1, NOW(), 100, NOW(), 100),
     ('1', 6, '/var/www/html/protected/asset/supplier1/', 1, NOW(), 100, NOW(), 100),
     ('1', 7, '8985A41E813AE00A78EE4AACF606F643', 1, NOW(), 100, NOW(), 100),
+    ('1', 8, '1', 1, NOW(), 100, NOW(), 100),
     
     (2, 1, 'http://m2.ebook4rent.tw/pont/1.00/Z00004/SyncBooks/', 1, NOW(), 100, NOW(), 100),
     (2, 4, 2, 1, NOW(), 100, NOW(), 100),
     (2, 5, '1', 1, NOW(), 100, NOW(), 100),
-    (2, 6, '/var/www/html/protected/asset/supplier2/', 1, NOW(), 100, NOW(), 100);
+    (2, 6, '/var/www/html/protected/asset/supplier2/', 1, NOW(), 100, NOW(), 100),
+    (2, 8, '1,2', 1, NOW(), 100, NOW(), 100);
 
 ############################ add library table
 insert into `library` (`id`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
