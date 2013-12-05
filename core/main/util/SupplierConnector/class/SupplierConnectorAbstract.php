@@ -171,7 +171,6 @@ class SupplierConnectorAbstract
 			throw new Exception("Invalid lanuage codes: " . implode(', ', $langCodes));
 		if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName(strtolower(trim($xml->getName())))) instanceof ProductType)
 			throw new Exception("Invalid ProductType: " . strtolower(trim($xml->getName())));
-		var_dump($type->getId());
 	
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
