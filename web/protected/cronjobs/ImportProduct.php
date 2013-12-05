@@ -100,7 +100,7 @@ class ImportProduct
 			return BaseServiceAbastract::getInstance('Library')->findAll();
 		return BaseServiceAbastract::getInstance('Library')->getLibsFromCodes($libCodes);
 	}
-	public function log($msg)
+	public static function log($msg)
 	{
 		fwrite(STDOUT, $msg);
 	}
