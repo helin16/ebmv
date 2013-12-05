@@ -23,7 +23,7 @@ insert into `useraccount`(`id`, `username`, `password`, `personId`, `libraryId`,
 	(100, 'admin', sha1('admin'), '100', 1, 1, NOW(), 100, NOW(), 100);
 
 ############################ add role_useraccount table
-insert into `role_useraccount` (`roleId`, `userAccountId`, `created`, `createdById`) values 
+insert into `role_useraccount`(`userAccountId`, `roleId`, `created`, `createdById`) values 
 	(1, 1, NOW(), 100),
 	(10, 2, NOW(), 100),
 	(11, 2, NOW(), 100),
