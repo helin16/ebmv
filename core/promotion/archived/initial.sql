@@ -83,13 +83,11 @@ CREATE TABLE `language` (
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `product`;
-CREATE TABLE `product` (
+DROP TABLE IF EXISTS `languagecode`;
+CREATE TABLE `languagecode` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`title` varchar(200) NOT NULL DEFAULT '',
-	`suk` varchar(50) NOT NULL DEFAULT '',
+	`code` varchar(50) NOT NULL DEFAULT '',
 	`languageId` int(10) unsigned NOT NULL DEFAULT 0,
-	`productTypeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -97,7 +95,25 @@ CREATE TABLE `product` (
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 	,INDEX (`languageId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,UNIQUE INDEX (`code`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `product`;
+CREATE TABLE `product` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`title` varchar(200) NOT NULL DEFAULT '',
+	`suk` varchar(50) NOT NULL DEFAULT '',
+	`productTypeId` int(10) unsigned NOT NULL DEFAULT 0,
+	`supplierId` int(10) unsigned NOT NULL DEFAULT 0,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
 	,INDEX (`productTypeId`)
+	,INDEX (`supplierId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`title`)
@@ -112,6 +128,16 @@ CREATE TABLE `category_product` (
 	UNIQUE KEY `uniq_category_product` (`categoryId`,`productId`),
 	KEY `idx_category_product_categoryId` (`categoryId`),
 	KEY `idx_category_product_productId` (`productId`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `language_product`;
+CREATE TABLE `language_product` (
+	`languageId` int(10) unsigned NOT NULL,
+	`productId` int(10) unsigned NOT NULL,
+	`created` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	`createdById` int(10) unsigned NOT NULL,
+	UNIQUE KEY `uniq_language_product` (`languageId`,`productId`),
+	KEY `idx_language_product_languageId` (`languageId`),
+	KEY `idx_language_product_productId` (`productId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `productattribute`;
 CREATE TABLE `productattribute` (
@@ -149,6 +175,26 @@ CREATE TABLE `productattributetype` (
 	,INDEX (`searchable`)
 	,UNIQUE INDEX (`code`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `productshelfitem`;
+CREATE TABLE `productshelfitem` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`productId` int(10) unsigned NOT NULL DEFAULT 0,
+	`ownerId` int(10) unsigned NOT NULL DEFAULT 0,
+	`status` int(1) unsigned NOT NULL DEFAULT 0,
+	`borrowTime` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`productId`)
+	,INDEX (`ownerId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`status`)
+	,INDEX (`borrowTime`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `producttype`;
 CREATE TABLE `producttype` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -167,7 +213,7 @@ DROP TABLE IF EXISTS `supplier`;
 CREATE TABLE `supplier` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(200) NOT NULL DEFAULT '',
-	`supplierLocation` varchar(200) NOT NULL DEFAULT '',
+	`connector` varchar(200) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -177,7 +223,7 @@ CREATE TABLE `supplier` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
-	,INDEX (`supplierLocation`)
+	,INDEX (`connector`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `supplierinfo`;
 CREATE TABLE `supplierinfo` (
@@ -212,23 +258,52 @@ CREATE TABLE `supplierinfotype` (
 	,INDEX (`name`)
 	,UNIQUE INDEX (`code`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `supplierprice`;
-CREATE TABLE `supplierprice` (
+DROP TABLE IF EXISTS `library`;
+CREATE TABLE `library` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`productId` int(10) unsigned NOT NULL DEFAULT 0,
-	`supplierId` int(10) unsigned NOT NULL DEFAULT 0,
-	`price` double(10,4) unsigned NOT NULL DEFAULT 0,
+	`name` varchar(255) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
-	,INDEX (`productId`)
-	,INDEX (`supplierId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
-	,INDEX (`price`)
+	,INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `libraryinfo`;
+CREATE TABLE `libraryinfo` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`libraryId` int(10) unsigned NOT NULL DEFAULT 0,
+	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
+	`value` varchar(255) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`libraryId`)
+	,INDEX (`typeId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `libraryinfotype`;
+CREATE TABLE `libraryinfotype` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(50) NOT NULL DEFAULT '',
+	`code` varchar(50) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+	,UNIQUE INDEX (`code`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `person`;
 CREATE TABLE `person` (
@@ -281,6 +356,7 @@ CREATE TABLE `useraccount` (
 	`username` varchar(100) NOT NULL DEFAULT '',
 	`password` varchar(40) NOT NULL DEFAULT '',
 	`personId` int(10) unsigned NOT NULL DEFAULT 0,
+	`libraryId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -288,6 +364,7 @@ CREATE TABLE `useraccount` (
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 	,INDEX (`personId`)
+	,INDEX (`libraryId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`password`)

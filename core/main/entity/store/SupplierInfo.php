@@ -41,7 +41,7 @@ class SupplierInfo extends BaseEntityAbstract
      * 
      * @param ProductAttributeType $type The type of the product attribute
      * 
-     * @return SupplierPrice
+     * @return SupplierInfo
      */
     public function setSupplier($supplier)
     {

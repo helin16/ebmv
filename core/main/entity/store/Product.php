@@ -51,17 +51,17 @@ class Product extends BaseEntityAbstract
 	 */
 	protected $productStatics;
 	/**
-	 * The supplier prices
-	 * 
-	 * @var multiple:SupplierPrice
-	 */
-	protected $supplierPrices;
-	/**
 	 * The shelf items
 	 * 
 	 * @var multiple:ProductShelfItem
 	 */
 	protected $shelfItems;
+	/**
+	 * The supplier of this product
+	 * 
+	 * @var Supplier
+	 */
+	protected $supplier;
 	/**
 	 * Getter for the title
 	 * 
@@ -253,41 +253,32 @@ class Product extends BaseEntityAbstract
 	/**
 	 * Getting the suppliers for this product
 	 * 
-	 * @param int   $pageNo   The page number
-	 * @param int   $pageSize The page size
-	 * @param array $orderBy  The order by array
-	 * 
 	 * @return multitype:|Ambigous <multitype:, multitype:BaseEntityAbstract >
 	 */
-	public function getSuppliers($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+	public function getSuppliers()
 	{
-		$sql = 'select distinct sp.supplierId from supplierprice sp where sp.productId = ?';
-		$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
-		if(count($result) === 0)
-			return array();
-		$supplierIds = array_map(create_function('$a', 'return $a["supplierId"];'), $result);
-		return EntityDao::getInstance('Supplier')->findByCriteria("id in (" . implode(', ', array_fill(0, count($supplierIds), '?')). ")", $supplierIds, $pageNo, $pageSize, $orderBy);
+		return array($this->getSupplier());
 	}
 	/**
-	 * Getter for the supplierPrices
+	 * Getting the supplier
 	 * 
-	 * @return multiple:SupplierPrice
+	 * @return Supplier
 	 */
-	public function getSupplierPrices() 
+	public function getSupplier() 
 	{
-		$this->loadOneToMany('supplierPrices');
-	    return $this->supplierPrices;
+		$this->loadManyToOne('supplier');
+	    return $this->supplier;
 	}
 	/**
-	 * Setter for the supplierPrices
+	 * Setter for the supplier
 	 * 
-	 * @param array $value The supplierprice
+	 * @param Supplier $value The Supplier
 	 * 
 	 * @return Product
 	 */
-	public function setSupplierPrices($value) 
+	public function setSupplier($value) 
 	{
-	    $this->supplierPrices = $value;
+	    $this->supplier = $value;
 	    return $this;
 	}
 	/**
@@ -327,9 +318,7 @@ class Product extends BaseEntityAbstract
 	            $array['attributes'][$typeId] = array();
             $array['attributes'][$typeId][] = $attr->getJson();
 	    }
-	    $array['prices'] = array();
-	    foreach($this->getSupplierPrices() as $price)
-		    $array['prices'][] = $price->getJson();
+	    $array['supplier'] = $this->getSupplier()->getJson();
 	    return $array;
 	}
 	/**
@@ -355,8 +344,8 @@ class Product extends BaseEntityAbstract
 		DaoMap::setManyToMany("languages", "Language", DaoMap::LEFT_SIDE, 'lang');
 		DaoMap::setManyToOne("productType", "ProductType");
 		DaoMap::setOneToMany("productStatics", "ProductStatics");
-		DaoMap::setOneToMany("supplierPrices", "SupplierPrice");
 		DaoMap::setOneToMany("shelfItems", "ProductShelfItem");
+		DaoMap::setManyToOne('supplier', 'Supplier');
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');

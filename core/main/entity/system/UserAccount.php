@@ -13,7 +13,7 @@ class UserAccount extends BaseEntityAbstract
      * 
      * @var int
      */
-    const ID_GUEST_ACCOUNT = 10;
+    const ID_GUEST_ACCOUNT = 1;
     /**
      * The id of the system account
      * 
@@ -174,7 +174,7 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::begin($this, 'ua');
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
-        DaoMap::setManyToOne("person", "Person", true, "p");
+        DaoMap::setManyToOne("person", "Person", "p");
         DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
         DaoMap::setManyToOne('library', 'Library', 'lib');
         parent::__loadDaoMap();
