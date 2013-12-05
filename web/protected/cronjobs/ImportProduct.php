@@ -102,8 +102,7 @@ class ImportProduct
 	}
 	public function log($msg)
 	{
-// 		fwrite(STDOUT, $msg);
-		echo $msg;
+		fwrite(STDOUT, $msg);
 	}
 }
 
