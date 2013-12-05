@@ -61,7 +61,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if(trim($pageSize) === '')
 		{
-			$pageInfo = $script->getProductListInfo();
+			$pageInfo = $this->getProductListInfo($type);
 			$pageSize = $pageInfo['totalRecords'];
 		}
 		$params = array("SiteID" => $this->_lib->getInfo('aus_code'), "Index" => 1, "Size" => 1);

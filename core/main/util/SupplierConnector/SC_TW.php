@@ -54,6 +54,11 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
 	{
+		if(trim($pageSize) === '')
+		{
+			$pageInfo = $this->getProductListInfo($type);
+			$pageSize = $pageInfo['totalRecords'];
+		}
 		$array = array();
 		$xml = $this->_getXmlFromUrl($this->_importUrl, $pageNo, $pageSize, $type);
 		foreach($xml->children() as $childXml)
