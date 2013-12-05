@@ -151,7 +151,7 @@ class ProductsController extends FrontEndPageAbstract
 	            	$categoryIds[] = $searchCategory;
 	        }
 	        
-	        $products = BaseServiceAbastract::getInstance('Product')->findProductsInCategory($searchText, $categoryIds, $searchOption, $language, $productType, false, $pageNo, $pageSize, array());
+	        $products = BaseServiceAbastract::getInstance('Product')->findProductsInCategory($searchText, $categoryIds, $searchOption, $language, $productType, true, $pageNo, $pageSize, array());
 	        $result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
 	        $result['products'] = array();
 	        foreach($products as $product)
