@@ -121,7 +121,14 @@ class Supplier extends BaseEntityAbstract
 	{
 		if(trim( $this->getId()) === '')
 			return array();
-		return EntityDao::getInstance('Product')->findByCriteria('pro.supplierId = ?', array($this->getId()), $pageNo, $pageSize, $orderBy);
+		$where = 'pro.supplierId = ?';
+		$params = array($this->getId());
+		if(count($excludePids) >0)
+		{
+			$where .= " AND pro.id not in (" . implode(',', array_fill(0, count($excludePids), '?')) . ')';
+			$params = array_merge($params, $excludePids);
+		}
+		return EntityDao::getInstance('Product')->findByCriteria($where, $params, $pageNo, $pageSize, $orderBy);
 	}
 	/**
 	 * (non-PHPdoc)
