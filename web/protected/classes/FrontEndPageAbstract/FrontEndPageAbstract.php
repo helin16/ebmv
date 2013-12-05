@@ -223,7 +223,7 @@ abstract class FrontEndPageAbstract extends TPage
 	 * 
 	 * @return string The html code of the page
 	 */
-	public function show404Page($title, $content)
+	public static function show404Page($title, $content)
 	{
 		header("HTTP/1.0 404 Not Found");
 		$html = "<h1>$title</h1>";
