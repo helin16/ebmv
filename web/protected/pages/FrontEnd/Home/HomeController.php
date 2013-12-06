@@ -31,7 +31,7 @@ class HomeController extends FrontEndPageAbstract
 	        }
 	        
             $result['products'] = array();
-            $products = BaseServiceAbastract::getInstance('Product')->$funcName($pageSize);
+            $products = BaseServiceAbastract::getInstance('Product')->$funcName(Core::getLibrary(), $pageSize);
             foreach($products as $product)
             {
                 $result['products'][] = $product->getJson();

@@ -63,6 +63,12 @@ class Product extends BaseEntityAbstract
 	 */
 	protected $supplier;
 	/**
+	 * The library of the products
+	 * 
+	 * @var LibraryOwns
+	 */
+	protected $libOwns;
+	/**
 	 * Getter for the title
 	 * 
 	 * @return string
@@ -342,6 +348,28 @@ class Product extends BaseEntityAbstract
 	    return $this->shelfItems;
 	}
 	/**
+	 * Getters for the libOwns
+	 * 
+	 * @return Multiple:LibraryOwns
+	 */
+	public function getLibOwns() 
+	{
+		$this->loadOneToMany('libOwns');
+	    return $this->libOwns;
+	}
+	/**
+	 * Setter for the libOwns
+	 * 
+	 * @param multiple:libOwns $value The libOwns
+	 * 
+	 * @return Product
+	 */
+	public function setLibOwns($value) 
+	{
+	    $this->libOwns = $value;
+	    return $this;
+	}
+	/**
 	 * Setter for the shelfItems
 	 * 
 	 * @param array $value The shelf items
@@ -396,6 +424,7 @@ class Product extends BaseEntityAbstract
 		DaoMap::setOneToMany("productStatics", "ProductStatics");
 		DaoMap::setOneToMany("shelfItems", "ProductShelfItem");
 		DaoMap::setManyToOne('supplier', 'Supplier');
+		DaoMap::setOneToMany("libOwns", "LibraryOwns");
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('title');

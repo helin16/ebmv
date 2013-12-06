@@ -63,22 +63,24 @@ class ProductService extends BaseServiceAbastract
     /**
      * Searching the products in category
      * 
-     * @param string $searchText       The searching text
-     * @param array  $categorIds       the ids of the category
-     * @param bool   $searchActiveOnly Whether we return the inactive products
-     * @param int    $pageNo           The page number
-     * @param int    $pageSize         The page size
-     * @param array  $orderBy          The order by clause
+     * @param Libraray $lib              The library  we are search in 
+     * @param string   $searchText       The searching text
+     * @param array    $categorIds       the ids of the category
+     * @param bool     $searchActiveOnly Whether we return the inactive products
+     * @param int      $pageNo           The page number
+     * @param int      $pageSize         The page size
+     * @param array    $orderBy          The order by clause
      * 
      * @return array
      */
-    public function findProductsInCategory($searchText = '', $categorIds = array(), $searchOption = '', Language $language = null, ProductType $productType = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    public function findProductsInCategory(Library $lib, $searchText = '', $categorIds = array(), $searchOption = '', Language $language = null, ProductType $productType = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
         $searchMode = false;
         $where = $params = array();
         $searchOption = trim($searchOption);
         
-        $query = EntityDao::getInstance('Product')->getQuery();
+        $query = EntityDao::getInstance('Product')->getQuery()->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1');
+        $params[] = $lib->getId();
         if(($searchText = trim($searchText)) !== '')
         {
         	$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
@@ -286,29 +288,31 @@ class ProductService extends BaseServiceAbastract
     /**
      * Getting the Most popular products
      * 
-     * @param int $limit How many we are getting
+     * @param Library $lib   The library we are view now
+     * @param int     $limit How many we are getting
      * 
      * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
      */
-    public function getMostPopularProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
+    public function getMostPopularProducts(Library $lib, $limit = DaoQuery::DEFAUTL_PAGE_SIZE)
     {
         $query = EntityDao::getInstance('Product')->getQuery();
-        $query->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
-        $results = $this->findByCriteria('pstatstype.code = ? or pstatstype.code is null', array('no_of_clicks'), true, 1, $limit, array('pstats.value'=>'desc'));
+        $query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1')->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
+        $results = $this->findByCriteria('pstatstype.code = ? or pstatstype.code is null', array($lib->getId(), 'no_of_clicks'), true, 1, $limit, array('pstats.value'=>'desc'));
         return $results;
     }
     /**
      * Getting the lastest products
      * 
-     * @param int $limit How many we are getting
+     * @param Library $lib   The library we are view now
+     * @param int     $limit How many we are getting
      * 
      * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
      */
-    public function getNewReleasedProducts($limit = DaoQuery::DEFAUTL_PAGE_SIZE)
+    public function getNewReleasedProducts(Library $lib, $limit = DaoQuery::DEFAUTL_PAGE_SIZE)
     {
         $query = EntityDao::getInstance('Product')->getQuery();
-        $query->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
-        $results = $this->findByCriteria('pstats.value is null or (pstatstype.code = ? and pstats.value = ?)', array(0, 'no_of_clicks'), true, 1, $limit, array('pro.id'=>'desc'));
+        $query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1')->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
+        $results = $this->findByCriteria('pstats.value is null or (pstatstype.code = ? and pstats.value = ?)', array($lib->getId(), 'no_of_clicks', 0), true, 1, $limit, array('pro.id'=>'desc'));
         return $results;
     }
     /**
