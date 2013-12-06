@@ -8,19 +8,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,readOnline: function(btn) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.readUrl = (readUrl || '');
-		if(tmp.readUrl.blank())
-		{
-			alert('System Error: no where to read it!');
-			return;
-		}
 		$(btn).writeAttribute('originvalue', $F(btn));
 		tmp.me.getUser(btn, function(){
-				tmp.params = {'isbn': tmp.me.product.attributes.isbn[0].attribute, 'no': tmp.me.product.attributes.cno[0].attribute, 'siteID': siteId, 'uid': uid, 'pwd': pwd};
-				window.open(tmp.readUrl + '?' + $H(tmp.params).toQueryString());
-				$(btn).setValue($(btn).readAttribute('originvalue')).disabled = false;
-			}
-			,function () {
+				tmp.me._getLink(btn, 'read');
+			}, function () {
 				$(btn).disabled = true;
 				$(btn).value = "Processing ...";
 			}
@@ -32,17 +23,17 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		$(btn).writeAttribute('originvalue', $F(btn));
 		tmp.me.getUser(btn, function(){
-				tmp.me._getUrl(btn);
+				tmp.me._getLink(btn, 'download');
 			}, function () {
 				$(btn).disabled = true;
 				$(btn).value = "Processing ...";
 			}
 		);
 	}
-	,_getUrl: function(btn) {
+	,_getLink: function(btn, type) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.me.postAjax(tmp.me.getCallbackId('download'), {}, {
+		tmp.me.postAjax(tmp.me.getCallbackId('geturl'), {'type': type}, {
 			'onLoading': function () {}
 			,'onComplete': function(sender, param) {
 				try {
