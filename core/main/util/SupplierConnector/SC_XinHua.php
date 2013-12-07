@@ -47,7 +47,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 			$params['type'] = strtolower(trim($type->getName()));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", $params);
 		if(!$xml instanceof SimpleXMLElement)
-			throw new CoreException('Can NOT get the pagination information from ' . $wsdl . '!');
+			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $wsdl . '!');
 		$array = array();
 		foreach($xml->attributes() as $key => $value)
 			$array[$key] = trim($value);
@@ -99,7 +99,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		}
 		catch (Exception $ex)
 		{
-			throw new Exception("Error for getting \$result->$resultTagName->any: " . $result);
+			throw new SupplierConnectorException("Error for getting \$result->$resultTagName->any: " . $result);
 		}
 	}
 	/**
@@ -119,7 +119,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 					'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookShelfList", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new Exception($xml['Value']);
+			throw new SupplierConnectorException($xml['Value']);
 		return $xml;
 	}
 	/**
@@ -184,7 +184,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "AddToBookShelf", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new Exception("Connector Error: " .$xml->Value);
+			throw new SupplierConnectorException("Connector Error: " .$xml->Value);
 		return $xml;
 	}
 	/**
@@ -208,7 +208,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_wsdlUrl, "RemoveFromBookShelf", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new Exception("Connector Error: " . $xml->Value);
+			throw new SupplierConnectorException("Connector Error: " . $xml->Value);
 		return $xml;
 	}
 	/**
@@ -240,7 +240,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		}
 		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem($user, $product, $this->_lib, $this->_supplier);
 		if(trim($xml->Code) !== trim(self::CODE_SUCC))
-			throw new Exception("Connector Error: " . trim($xml->Value));
+			throw new SupplierConnectorException("Connector Error: " . trim($xml->Value));
 		return trim($xml->Value);
 	}
 	/**
@@ -251,7 +251,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	{
 		$url = explode(',', $this->_supplier->getInfo('view_url'));
 		if($url === false || count($url) === 0)
-			throw new CoreException('Invalid view url for supplier: ' . $this->_supplier->getName());
+			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
 		$url = $url[0];
 		
 		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'siteID' => $this->_lib->getInfo('aus_code'), 'uid' => $user->getUserName(), 'pwd' => $user->getPassword());

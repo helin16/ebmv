@@ -1,7 +1,7 @@
 <?php
 class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 {
-	const CODE_SUCC = 200;
+	const CODE_SUCC = 100;
 	/**
 	 * Where to get the product list
 	 * @var string
@@ -49,7 +49,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	{
 		$xml = $this->_getXmlFromUrl($this->_importUrl, 1, 1, $type);
 		if(!$xml instanceof SimpleXMLElement)
-			throw new CoreException('Can NOT get the pagination information from ' . $this->_importUrl . '!');
+			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $this->_importUrl . '!');
 		$array = array();
 		foreach($xml->attributes() as $key => $value)
 			$array[$key] = trim($value);
@@ -90,7 +90,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$params = array('format' => $format, 'size' => $pageSize, 'index' => $pageNo);
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
-		$result = $this->readUrl($url . '?' . http_build_query($params), 120000);
+		$result = $this->readUrl($url . '?' . http_build_query($params), SupplierConnectorAbstract::CURL_TIMEOUT);
 		return new SimpleXMLElement($result);
 	}
 	/**
@@ -107,9 +107,13 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		
 		$urls = explode(',', $this->_supplier->getInfo('signin_url'));
 		$url = str_replace('{SiteID}', $this->_libCode, ($urls === false ? null : $urls[0]));
-		throw new Exception(__FUNCTION__ . " in " . __CLASS__ . ' is still under construction!');
-		$token = '';
-		$_SESSION['supplier_token'][$this->_supplier->getId()] = $token;
+		if(trim($url) === '')
+			throw new SupplierConnectorException("System Setting Error: supplier(" . $this->_supplier->getName() .") has NOT got sigin url, contact admin for further support!");
+		
+		$data = array('uid' => trim(Core::getUser()->getUsername()), 'pwd' => trim(Core::getUser()->getPassword()), trim($this->_supplier->getInfo('partner_id')));
+		$result = json_decode($this->readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $data), true);
+		if(!isset($result['token']) || ($token = trim($result['token'])) === '')
+			throw new SupplierConnectorException("System Setting Error: can not sign for supplier(" . $this->_supplier->getName() .") has NOT got sigin url, contact admin for further support!");
 	}
 	/**
 	 * Getting the book shelf

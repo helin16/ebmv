@@ -8,6 +8,7 @@
  */
 class SupplierConnectorAbstract
 {
+	const CURL_TIMEOUT = 120000;
 	/**
 	 * @var Supplier
 	 */
@@ -45,7 +46,7 @@ class SupplierConnectorAbstract
 		if(!isset(self::$_connectors[$supplier->getId()]))
 		{
 			if(!($sc = new $className($supplier, $lib)) instanceof SupplierConn)
-				throw new CoreException("$className is NOT a SupplierConn!");
+				throw new SupplierConnectorException("$className is NOT a SupplierConn!");
 			self::$_connectors[$key] = $sc;
 		}
 		return self::$_connectors[$key];
@@ -160,7 +161,8 @@ class SupplierConnectorAbstract
 	 *
 	 * @param SimpleXMLElement $xml         The xml of the product list
 	 * @param array            $categories  The array of the categories a product should be in
-	 * @throws Exception
+	 * 
+	 * @throws SupplierConnectorException
 	 * @return unknown
 	 */
 	protected function _importProduct(SimpleXMLElement $xml, array $categories = array())
@@ -168,16 +170,16 @@ class SupplierConnectorAbstract
 		//list($defaultLang, $defaultType) = $this->_getDefaulLangNType();
 		$langCodes = explode('+', $this->_getAttribute($xml, 'Language'));
 		if(count($langs = BaseServiceAbastract::getInstance('Language')->getLangsByCodes($langCodes)) === 0)
-			throw new Exception("Invalid lanuage codes: " . implode(', ', $langCodes));
+			throw new SupplierConnectorException("Invalid lanuage codes: " . implode(', ', $langCodes));
 		if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName(strtolower(trim($xml->getName())))) instanceof ProductType)
-			throw new Exception("Invalid ProductType: " . strtolower(trim($xml->getName())));
+			throw new SupplierConnectorException("Invalid ProductType: " . strtolower(trim($xml->getName())));
 	
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
 		try
 		{
 			if(($isbn = $this->_getAttribute($xml, 'Isbn')) === '')
-				throw new Exception('No ISBN provided!');
+				throw new SupplierConnectorException('No ISBN provided!');
 			if(($no = $this->_getAttribute($xml, 'NO')) === '')
 				$no = 0;
 	
@@ -206,7 +208,12 @@ class SupplierConnectorAbstract
 			}
 			
 			//added the library
-			$product->updateLibrary($this->_lib, trim($this->_getAttribute($xml, 'AvailableCopies', 15)), trim($this->_getAttribute($xml, 'TotalCopies', 15)));
+			$product->updateLibrary($this->_lib, 
+					trim($this->_getAttribute($xml, 'AvailableCopies', 15)), 
+					trim($this->_getAttribute($xml, 'TotalCopies', 15)), 
+					trim($this->_getAttribute($xml, 'DownloadAvail', 15)), 
+					trim($this->_getAttribute($xml, 'DownloadTotal', 15))
+			);
 			if($transStarted === false)
 				Dao::commitTransaction();
 			return $product;
@@ -314,7 +321,7 @@ class SupplierConnectorAbstract
 			try 
 			{ 
 				if (($size = getimagesize($tmpFile)) === false)
-					throw new Exception('Can NOT download the image');
+					throw new SupplierConnectorException('Can NOT download the image');
 			}
 			catch(Exception $e) {return null;}
 			
@@ -380,14 +387,28 @@ class SupplierConnectorAbstract
 	 * 
 	 * @return mixed
 	 */
-	public static function readUrl($url, $timeout = null)
+	/**
+	 * read from a url
+	 * 
+	 * @param string $url     The url
+	 * @param int    $timeout The timeout in seconds
+	 * @param array  $data    The data we are POSTING
+	 * 
+	 * @return mixed
+	 */
+	public static function readUrl($url, $timeout = null, array $data = array())
 	{
 		$timeout = trim($timeout);
 		$options = array(
-				CURLOPT_RETURNTRANSFER => 1, 
+				CURLOPT_RETURNTRANSFER => true, 
 				CURLOPT_TIMEOUT =>  (!is_numeric($timeout) ? 8*60*60 : $timeout), // set this to 8 hours so we dont timeout on big files
 				CURLOPT_URL     => $url
 		);
+		if(count($data) > 0)
+		{
+			$options[CURLOPT_POST] = true;
+			$options[CURLOPT_POSTFIELDS] = http_build_query($data);
+		}
 		$ch = curl_init();
 		curl_setopt_array($ch, $options);
 		$data =curl_exec($ch);
