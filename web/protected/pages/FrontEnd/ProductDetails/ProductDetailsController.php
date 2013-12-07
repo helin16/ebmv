@@ -72,25 +72,31 @@ class ProductDetailsController extends FrontEndPageAbstract
             	    	$langs = array_map(create_function('$a', 'return $a->getName();'), $this->_product->getLanguages());
             	        $html .= $this->_getAtts($product, 'languages', 'Languages', 'product_languages', implode(', ', $langs));
             	    $html .= "</div>";
-            	    $html .= "<div class='row'>";
-            	    	$availForView = $totalForView = $availForDownload = $totalForDownload = 0;
-            	    	if (($libOwn = $this->_product->getLibraryOwn(Core::getLibrary())) instanceof LibraryOwns)
-            	    	{
-            	    		$availForView = $libOwn->getAvailForView();
-            	    		$totalForView = $libOwn->getTotalForView();
-            	    		$availForDownload = $libOwn->getAvailForDownload();
-            	    		$totalForDownload = $libOwn->getTotalForDownload();
-            	    	}
-            	        $html .= $this->_getAtts($product, 'avail_for_view', 'Available Copies For Read Online', 'product_avail_for_view', $availForView);
-                	    $html .= $this->_getAtts($product, 'total_for_view', 'Total Copies For Read Online', 'product_total_for_view', $totalForView);
-            	    $html .= "</div>";
-            	    $html .= "<div class='row'>";
-            	        $html .= $this->_getAtts($product, 'avail_for_download', 'Available Copies For Read Online', 'product_avail_for_download', $availForDownload);
-                	    $html .= $this->_getAtts($product, 'total_for_download', 'Total Copies For Read Online', 'product_total_for_download', $totalForDownload);
-            	    $html .= "</div>";
+            	    $viewUrl = trim($this->_product->getSupplier()->getInfo('view_url'));
+            	    $downloadUrl = trim($this->_product->getSupplier()->getInfo('download_url'));
+            	    if($viewUrl !== '')
+            	    {
+	            	    $html .= "<div class='row'>";
+	            	    	$availForView = $totalForView = $availForDownload = $totalForDownload = 0;
+	            	    	if (($libOwn = $this->_product->getLibraryOwn(Core::getLibrary())) instanceof LibraryOwns)
+	            	    	{
+	            	    		$availForView = $libOwn->getAvailForView();
+	            	    		$totalForView = $libOwn->getTotalForView();
+	            	    		$availForDownload = $libOwn->getAvailForDownload();
+	            	    		$totalForDownload = $libOwn->getTotalForDownload();
+	            	    	}
+	            	        $html .= $this->_getAtts($product, 'avail_for_view', 'Available Copies For Read Online', 'product_avail_for_view', $availForView);
+	                	    $html .= $this->_getAtts($product, 'total_for_view', 'Total Copies For Read Online', 'product_total_for_view', $totalForView);
+	            	    $html .= "</div>";
+            	    }
+            	    if($downloadUrl !== '')
+            	    {
+	            	    $html .= "<div class='row'>";
+	            	        $html .= $this->_getAtts($product, 'avail_for_download', 'Available Copies For Read Online', 'product_avail_for_download', $availForDownload);
+	                	    $html .= $this->_getAtts($product, 'total_for_download', 'Total Copies For Read Online', 'product_total_for_download', $totalForDownload);
+	            	    $html .= "</div>";
+            	    }
             	    $html .= "<div class='row btns'>";
-	            	    $viewUrl = trim($this->_product->getSupplier()->getInfo('view_url'));
-	            	    $downloadUrl = trim($this->_product->getSupplier()->getInfo('download_url'));
 	            	    if($viewUrl !== '')
 	            	    {
 	            	    	if($availForView > 0)
