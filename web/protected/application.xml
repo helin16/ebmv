@@ -29,6 +29,9 @@
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="FrontEnd.User.UserController" pattern="user.html" />
 			
+			<!-- FrontEnd:: mybookshelf page -->
+			<url ServiceParameter="FrontEnd.User.UserController" pattern="mybookshelf.html" />
+			
 			<!-- FrontEnd:: product listing page -->
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/{languageId}/{productTypeId}" parameters.languageId="\d+" parameters.productTypeId="\d+" />
 			<url ServiceParameter="FrontEnd.Products.ProductsController" pattern="products/{languageId}/{productTypeId}/{cateId}" parameters.languageId="\d+" parameters.productTypeId="\d+" parameters.cateId="\d+"/>
