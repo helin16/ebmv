@@ -8,9 +8,9 @@
  */
 class SupplierConnectorException extends Exception
 {
-	public function __construct($message)
+	public function __construct($message, $code = 100, $previous = null)
 	{
-		parent::__construct($message, 10);
+		parent::__construct($message, $code, $previous);
 	}
 }
 
