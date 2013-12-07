@@ -221,15 +221,17 @@ class Product extends BaseEntityAbstract
 	 * 
 	 * @return Product
 	 */
-	public function updateLibrary(Library $lib, $availCopies = 0, $totalCopies = 0)
+	public function updateLibrary(Library $lib, $availForView = 0, $totalForView = 0, $availForDownload = 0, $totalForDownload = 0)
 	{
 		$owns = $this->getLibraryOwn($lib);
 		if(!$owns instanceof LibraryOwns)
 			$owns = new LibraryOwns();
 		$owns->setLibrary($lib);
 		$owns->setProduct($this);
-		$owns->setAvailCopies($availCopies);
-		$owns->setTotalCopies($totalCopies);
+		$owns->setAvailForView($availForView);
+		$owns->setTotalForView($totalForView);
+		$owns->setAvailForDownload($availForDownload);
+		$owns->setTotalForDownload($totalForDownload);
 		EntityDao::getInstance('LibraryOwns')->save($owns);
 		return $this;
 	}

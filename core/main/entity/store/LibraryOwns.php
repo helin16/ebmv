@@ -21,17 +21,29 @@ class LibraryOwns extends BaseEntityAbstract
      */
     protected $library;
     /**
-     * The available copies of the product that the library owns
+     * The available copies for view online of the product that the library owns
      * 
      * @var int
      */
-    private $availCopies;
+    private $availForView;
     /**
-     * The total copies of the product that the library owns
+     * The total copies of the product for view online that the library owns
      * 
      * @var int
      */
-    private $totalCopies;
+    private $totalForView;
+    /**
+     * The available copies for download of the product that the library owns
+     * 
+     * @var int
+     */
+    private $availForDownload;
+    /**
+     * The total copies for download of the product that the library owns
+     * 
+     * @var int
+     */
+    private $totalForDownload;
     /**
      * Getter for the product
      * 
@@ -77,47 +89,90 @@ class LibraryOwns extends BaseEntityAbstract
         return $this;
     }
     /**
-     * Getter for the availCopies
+     * Getter for the availForView
      * 
      * @return number
      */
-    public function getAvailCopies() 
+    public function getAvailForView() 
     {
-        return $this->availCopies;
+        return $this->availForView;
     }
     /**
-     * Setter for availCopies
+     * Setter for availForView
      * 
-     * @param int $value The availCopies
+     * @param int $value The availForView
      * 
      * @return LibraryOwns
      */
-    public function setAvailCopies($value) 
+    public function setAvailForView($value) 
     {
-        $this->availCopies = $value;
+        $this->availForView = $value;
         return $this;
     }
     /**
-     * Getter for the totalCopies
+     * Getter for the totalForView
      * 
      * @return number
      */
-    public function getTotalCopies() 
+    public function getTotalForView() 
     {
-        return $this->totalCopies;
+        return $this->totalForView;
     }
     /**
-     * Setter for the totalCopies
+     * Setter for the totalForView
      * 
-     * @param int $value The totalCopies
+     * @param int $value The totalForView
      * 
      * @return LibraryOwns
      */
-    public function setTotalCopies($value) 
+    public function setTotalForView($value) 
     {
-        $this->totalCopies = $value;
+        $this->totalForView = $value;
         return $this;
     }
+    /**
+     * Getter for the availForDownload
+     * 
+     * @return number
+     */
+    public function getAvailForDownload() 
+    {
+        return $this->availForDownload;
+    }
+    /**
+     * Setter for the availForDownload
+     * 
+     * @param int $value The availForDownload
+     * 
+     * @return LibraryOwns
+     */
+    public function setAvailForDownload($value) 
+    {
+        $this->availForDownload = $value;
+        return $this;
+    }
+    /**
+     * Getter for the totalForDownload
+     * 
+     * @return number
+     */
+    public function getTotalForDownload() 
+    {
+        return $this->totalForDownload;
+    }
+    /**
+     * Setter for the totalForDownload
+     * 
+     * @param int $value The totalForDownload
+     * 
+     * @return LibraryOwns
+     */
+    public function setTotalForDownload($value) 
+    {
+        $this->totalForDownload = $value;
+        return $this;
+    }
+    
     /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
@@ -127,12 +182,16 @@ class LibraryOwns extends BaseEntityAbstract
         DaoMap::begin($this, 'lib_own');
         DaoMap::setManyToOne('library', 'Library');
         DaoMap::setManyToOne('product', 'Product');
-        DaoMap::setIntType('totalCopies');
-        DaoMap::setIntType('availCopies');
+        DaoMap::setIntType('availForView');
+        DaoMap::setIntType('totalForView');
+        DaoMap::setIntType('availForDownload');
+        DaoMap::setIntType('totalForDownload');
         parent::__loadDaoMap();
     
-        DaoMap::createIndex('availCopies');
-        DaoMap::createIndex('totalCopies');
+        DaoMap::createIndex('availForView');
+        DaoMap::createIndex('totalForView');
+        DaoMap::createIndex('availForDownload');
+        DaoMap::createIndex('totalForDownload');
         DaoMap::commit();
     }
 }

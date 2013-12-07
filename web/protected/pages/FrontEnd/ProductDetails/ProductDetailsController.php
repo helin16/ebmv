@@ -73,34 +73,38 @@ class ProductDetailsController extends FrontEndPageAbstract
             	        $html .= $this->_getAtts($product, 'languages', 'Languages', 'product_languages', implode(', ', $langs));
             	    $html .= "</div>";
             	    $html .= "<div class='row'>";
-            	    	$availCopies = $totalCopies = 0;
+            	    	$availForView = $totalForView = $availForDownload = $totalForDownload = 0;
             	    	if (($libOwn = $this->_product->getLibraryOwn(Core::getLibrary())) instanceof LibraryOwns)
             	    	{
-            	    		$availCopies = $libOwn->getAvailCopies();
-            	    		$totalCopies = $libOwn->getTotalCopies();
+            	    		$availForView = $libOwn->getAvailForView();
+            	    		$totalForView = $libOwn->getTotalForView();
+            	    		$availForDownload = $libOwn->getAvailForDownload();
+            	    		$totalForDownload = $libOwn->getTotalForDownload();
             	    	}
-            	        $html .= $this->_getAtts($product, 'avail_copies', 'Available Copies', 'product_avail_copies', $availCopies);
-                	    $html .= $this->_getAtts($product, 'total_copies', 'Total Copies', 'product_total_copies', $totalCopies);
+            	        $html .= $this->_getAtts($product, 'avail_for_view', 'Available Copies For Read Online', 'product_avail_for_view', $availForView);
+                	    $html .= $this->_getAtts($product, 'total_for_view', 'Total Copies For Read Online', 'product_total_for_view', $totalForView);
+            	    $html .= "</div>";
+            	    $html .= "<div class='row'>";
+            	        $html .= $this->_getAtts($product, 'avail_for_download', 'Available Copies For Read Online', 'product_avail_for_download', $availForDownload);
+                	    $html .= $this->_getAtts($product, 'total_for_download', 'Total Copies For Read Online', 'product_total_for_download', $totalForDownload);
             	    $html .= "</div>";
             	    $html .= "<div class='row btns'>";
-            	    	if($availCopies <= 0)
-            	    	{
-                	    	$html .= '<input class="button rdcrnr" type="button" disabled value="No copy available");"/>';
-            	    	}
-            	    	else
-            	    	{
-		            	    $viewUrl = $downloadUrl = "";
-		            	    if($this->_product->getSupplier() instanceof Supplier)
-		            	    {
-		            	    	$viewUrl = trim($this->_product->getSupplier()->getInfo('view_url'));
-		            	    	$downloadUrl = trim($this->_product->getSupplier()->getInfo('download_url'));
-		            	    }
-		            	    $siteId = Core::getLibrary()->getInfo('aus_code');
-		            	    if(trim($viewUrl) !== '')
+	            	    $viewUrl = trim($this->_product->getSupplier()->getInfo('view_url'));
+	            	    $downloadUrl = trim($this->_product->getSupplier()->getInfo('download_url'));
+	            	    if($viewUrl !== '')
+	            	    {
+	            	    	if($availForView > 0)
 	                	    	$html .= '<input class="button rdcrnr" type="button" value="在线阅读/在線閱讀&#x00A;Read Online" onClick="pageJs.readOnline(this);"/>';
-		            	    if(trim($downloadUrl) !== '')
+	            	    	else
+	                	    	$html .= '<input class="button rdcrnr" type="button" disabled value="No copy available to view online");"/>';
+	            	    }
+	            	    if($downloadUrl !== '')
+	            	    {
+	            	    	if($availForDownload > 0 && $downloadUrl !== '')
 		                	    $html .= ' <input class="button rdcrnr" type="button" value="下载阅读/下載閱讀&#x00A;Download This Book" onClick="pageJs.download(this);"/>';
-            	    	}
+	            	    	else
+	                	    	$html .= '<input class="button rdcrnr" type="button" disabled value="No copy available to download");"/>';
+	            	    }
             	    $html .= "</div>";
             	    $html .= "<div class='row product_description'>";
                     	    $html .= $product->getAttribute('description');
