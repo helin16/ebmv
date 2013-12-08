@@ -64,13 +64,13 @@ class ImportProduct
 						}
 						
 						//removing the un-imported products
-						$ids = $supplier->getProducts($script->getImportedProductIds());
-						if($fullUpdate === true && count($ids) > 0)
-						{
-							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids) . "\r\n");
-							$script->rmUnImportedProducts();
-							self::log( "  :: done removing un-imported products. \r\n");
-						}
+// 						$ids = $supplier->getProducts($script->getImportedProductIds());
+// 						if($fullUpdate === true && count($ids) > 0)
+// 						{
+// 							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids) . "\r\n");
+// 							$script->rmUnImportedProducts();
+// 							self::log( "  :: done removing un-imported products. \r\n");
+// 						}
 					}
 				}
 			}
