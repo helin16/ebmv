@@ -120,7 +120,7 @@ class AdminSupplierController extends CrudPageAbstract
     			$supplierInfo->setType(BaseServiceAbastract::getInstance('SupplierInfoType')->get(trim($info->typeId)));
     			$supplierInfo->setValue(trim($info->value));
     			$supplierInfo->setSupplier($supplier);
-    			$supplierInfo->setActive(isset());
+    			$supplierInfo->setActive($info->active);
     			BaseServiceAbastract::getInstance('SupplierInfo')->save($supplierInfo);
     		}
     		
