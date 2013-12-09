@@ -101,6 +101,34 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$result = $this->readUrl($url . '?' . http_build_query($params), SupplierConnectorAbstract::CURL_TIMEOUT);
 		return new SimpleXMLElement($result);
 	}
+	/**
+	 * validating the token
+	 *
+	 * @throws SupplierConnectorException
+	 *
+	 * @return string
+	 */
+	private function _validToken(UserAccount $user)
+	{
+		try
+		{
+			return $this->_getToken($user);
+		}
+		catch(Exception $e)
+		{
+			if($e instanceof SupplierConnectorException && in_array(trim($e->getCode()), array(self::CODE_TOKEN_EXPIRED, self::CODE_TOKEN_INVALID)))
+				return $this->_getToken($user, true);
+			throw $e;
+		}
+	}
+	/**
+	 * Getting the result block from JSON string
+	 * 
+	 * @param string $json The json string
+	 * 
+	 * @throws SupplierConnectorException
+	 * @return mixed
+	 */
 	private function _getJsonResult($json)
 	{
 		$result = json_decode($json, true);
@@ -117,19 +145,35 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * 
 	 * @return string
 	 */
-	private function _getToken($forceNew = false)
+	private function _getToken(UserAccount $user, $forceNew = false)
 	{
 		if($forceNew === false && isset($_SESSION['supplier_token']) && isset($_SESSION['supplier_token'][$this->_supplier->getId()]) && ($token = trim($_SESSION['supplier_token'][$this->_supplier->getId()])) !== '')
 			return $token;
 		
 		$url = $this->_formatURL($this->_importUrl, 'SignIn');
-		$data = array('uid' => trim(Core::getUser()->getUsername()), 'pwd' => trim(Core::getUser()->getPassword()), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
-		$results = $this->_getJsonResult($this->readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $data), true);
+		$data = array('uid' => trim($user->getUsername()), 'pwd' => trim($user->getPassword()), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
+		var_dump($url);
+		$results = $this->readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $data);
+		var_dump($results);
+		$results = $this->_getJsonResult($results);
 		if(!isset($results['token']) || ($token = trim($results['token'])) === '')
 			throw new SupplierConnectorException("System Setting Error: can not sign for supplier(" . $this->_supplier->getName() .") has NOT got sigin url, contact admin for further support!");
 			
 		$_SESSION['supplier_token'][$this->_supplier->getId()] = $token;
 		return $token;
+	}
+	/**
+	 * Borrowing the book
+	 * 
+	 * @param Product     $product The product the user is trying to borrow
+	 * @param UserAccount $user    Who is borrowing it
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function borrowBook(Product $product, UserAccount $user)
+	{
+		//todo!!!
+		return $this;
 	}
 	/**
 	 * Getting the book shelf
@@ -140,6 +184,13 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getBookShelfList(UserAccount $user)
 	{
+		$token = $this->_validToken($user);
+		$url = $this->_formatURL($this->_importUrl, 'getBookList');
+		$params = array('uid' => $user->getUserName(), 'token' => $token, 'partnerid' => $this->_supplier->getInfo('partner_id'));
+		var_dump($url);
+		$result = $this->readUrl($url, self::CURL_TIMEOUT, $params);
+		var_dump($result);
+		return $this->_getJsonResult($result);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -203,17 +254,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getOnlineReadUrl(Product $product, UserAccount $user)
 	{
-		try
-		{
-			$token = $this->_getToken();
-		} 
-		catch(Exception $e)
-		{
-			echo $e->getTraceAsString();
-			if($e instanceof SupplierConnectorException && in_array(trim($e->getCode()), array(self::CODE_TOKEN_EXPIRED, self::CODE_TOKEN_INVALID)))
-				$token = $this->_getToken(true);
-			throw $e;
-		}
+		$token = $this->_validToken($user);
 		$url = explode(',', $this->_supplier->getInfo('view_url'));
 		if($url === false || count($url) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());

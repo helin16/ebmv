@@ -81,19 +81,6 @@ class SupplierConnectorAbstract
 		return BaseServiceAbastract::getInstance('ProductType')->findByCriteria('id in (' . implode(', ', $importTypeIds) . ')', array());
 	}
 	/**
-	 * Getting the value of the attribute
-	 *
-	 * @param SimpleXMLElement $xml           The xml element
-	 * @param string           $attributeName The attr name
-	 * @param string           $defaultValue  The default value
-	 *
-	 * @return string
-	 */
-	protected function _getAttribute(SimpleXMLElement $xml, $attributeName, $defaultValue = '')
-	{
-		return (isset($xml->$attributeName) && ($attribute = trim($xml->$attributeName)) !== '') ? $attribute : $defaultValue;
-	}
-	/**
 	 * resetting the imported product ids
 	 * 
 	 * @return SupplierConnectorAbstract
@@ -140,7 +127,7 @@ class SupplierConnectorAbstract
 		$products = array ();
 		if (trim ( $index ) !== '')
 		{
-			$product = $this->_importProduct($productList[$index]);
+			$product = $this->_importProduct(SupplierConnectorProduct::getProduct($productList[$index]));
 			$products[] = $product;
 			$this->_importedProductIds[] = $product->getId();
 		}
@@ -148,7 +135,7 @@ class SupplierConnectorAbstract
 		{
 			foreach($productList as $child)
 			{
-				$product = $this->_importProduct($child);
+				$product = $this->_importProduct(SupplierConnectorProduct::getProduct($child));
 				$products[] = $product;
 				$this->_importedProductIds[] = $product->getId();
 			}
@@ -159,36 +146,34 @@ class SupplierConnectorAbstract
 	 * 
 	 * Importing the product
 	 *
-	 * @param SimpleXMLElement $xml         The xml of the product list
-	 * @param array            $categories  The array of the categories a product should be in
+	 * @param SupplierConnectorProduct $productInfo The SupplierConnectorProduct object
 	 * 
 	 * @throws SupplierConnectorException
 	 * @return unknown
 	 */
-	protected function _importProduct(SimpleXMLElement $xml, array $categories = array())
+	protected function _importProduct(SupplierConnectorProduct $productInfo)
 	{
-		//list($defaultLang, $defaultType) = $this->_getDefaulLangNType();
-		$langCodes = explode('+', $this->_getAttribute($xml, 'Language'));
-		if(count($langs = BaseServiceAbastract::getInstance('Language')->getLangsByCodes($langCodes)) === 0)
-			throw new SupplierConnectorException("Invalid lanuage codes: " . implode(', ', $langCodes));
-		if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName(strtolower(trim($xml->getName())))) instanceof ProductType)
-			throw new SupplierConnectorException("Invalid ProductType: " . strtolower(trim($xml->getName())));
-	
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
 		try
 		{
-			if(($isbn = $this->_getAttribute($xml, 'Isbn')) === '')
-				throw new SupplierConnectorException('No ISBN provided!');
-			if(($no = $this->_getAttribute($xml, 'NO')) === '')
-				$no = 0;
-	
+			$infoArray = $productInfo->getArray();
+			if(count($langs = BaseServiceAbastract::getInstance('Language')->getLangsByCodes($infoArray['languageCodes'])) === 0)
+				throw new SupplierConnectorException("Invalid lanuage codes: " . implode(', ', $infoArray['languageCodes']));
+			if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName($infoArray['productTypeName'])) instanceof ProductType)
+				throw new SupplierConnectorException("Invalid ProductType: " . $infoArray['productTypeName']);
+			
 			//getting the categories
-			$categories = array_filter($categories, create_function('$a', 'return $a instanceof Category;'));
-			$categories = (count($categories) > 0 ? $categories : $this->_importCategories(explode('/', $this->_getAttribute($xml, 'BookType'))));
+			$categories = $this->_importCategories($infoArray['categories']);
+			
+			//downloading images
+			$imgs = array();
+			foreach(array_unique($infoArray['attributes']['image_thumb']) as $imgUrl)
+				$imgs[] = $this->_importImage($imgUrl);
+			$infoArray['attributes']['image_thumb'] = $imgs;
 			
 			//updating the product
-			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier)) instanceof Product)
+			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0], $this->_supplier)) instanceof Product)
 			{
 				//delete the thumb
 				if(!($thumbs = explode(',', $product->getAttribute('image_thumb'))) !== false)
@@ -198,22 +183,15 @@ class SupplierConnectorAbstract
 					BaseServiceAbastract::getInstance('Asset')->removeAssets($imgs);
 				//deleting the thumb and image for the product
 				BaseServiceAbastract::getInstance('ProductAttribute')->removeAttrsForProduct($product, array('image_thumb', 'image'));
-				
-				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product, $this->_getAttribute($xml, 'BookName'), $type, $this->_supplier, $categories, $langs, $this->_getProductAttributes($xml)); 
+				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']); 
 			}
 			//creating new product
 			else
-			{
-				$product = BaseServiceAbastract::getInstance('Product')->createProduct($this->_getAttribute($xml, 'BookName'), $type, $this->_supplier, $categories, $langs, $this->_getProductAttributes($xml));
-			}
+				$product = BaseServiceAbastract::getInstance('Product')->createProduct($infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
 			
 			//added the library
-			$product->updateLibrary($this->_lib, 
-					trim($this->_getAttribute($xml, 'AvailableCopies', 15)), 
-					trim($this->_getAttribute($xml, 'TotalCopies', 15)), 
-					trim($this->_getAttribute($xml, 'DownloadAvail', 15)), 
-					trim($this->_getAttribute($xml, 'DownloadTotal', 15))
-			);
+			$product->updateLibrary($this->_lib, $infoArray['copies']['onlineRead']['avail'], $infoArray['copies']['onlineRead']['total'], $infoArray['copies']['download']['avail'], $infoArray['copies']['download']['total']);
+			
 			if($transStarted === false)
 				Dao::commitTransaction();
 			return $product;
@@ -224,45 +202,6 @@ class SupplierConnectorAbstract
 				Dao::rollbackTransaction();
 			throw $ex;
 		}
-	}
-	/**
-	 * Translating the xml block into attributes array for importing
-	 * 
-	 * @param mixed $xml The xml attribute block
-	 * 
-	 * @return Ambigous <multitype:multitype: , string>
-	 */
-	protected function _getProductAttributes($xml)
-	{
-		$tagMap = array(
-			'Author' => 'author',
-			'Isbn' => 'isbn',
-			'NO' => 'cno',
-			'Press' => 'publisher',
-			'PublicationDate' => 'publish_date',
-			'Words' => 'no_of_words',
-			'FrontCover' => 'image_thumb',
-			'Cip' => 'cip',
-			'Introduction' => 'description',
-		);
-		$array = array();
-		foreach($tagMap as $tag => $typecode)
-		{
-			if(($value = trim($this->_getAttribute($xml, $tag))) === '')
-				continue;
-			if(!isset($array[$typecode]))
-				$array[$typecode] = array();
-			$array[$typecode][] = $this->_getAttribute($xml, $tag);
-		}
-		//download image
-		if(isset($array['image_thumb']) && count($array['image_thumb']) > 0)
-		{
-			$images = array();
-			foreach($array['image_thumb'] as $url)
-				$images[] = $this->_importImage($url);
-			$array['image_thumb'] = $images;
-		}
-		return $array;
 	}
 	/**
 	 * Importing the categories
