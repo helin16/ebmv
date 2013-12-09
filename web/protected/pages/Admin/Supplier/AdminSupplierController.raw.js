@@ -149,7 +149,7 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 				$(field).up('.fielddiv').addClassName('hasError').down('.value').insert({'after': new Element('span', {'class': 'errmsg smalltxt'}).update('required!') });
 				tmp.hasError = true;
 			}
-			tmp.attrs.push({'id': tmp.attrId, 'typeId': tmp.attrTypeId, 'value': tmp.fieldValue});
+			tmp.attrs.push({'id': tmp.attrId, 'typeId': tmp.attrTypeId, 'value': tmp.fieldValue, 'active': ($(field).readAttribute('deactivated') ? false : true)});
 		});
 		tmp.data['info'] = tmp.attrs;
 		return tmp.hasError === true ? null : tmp.data;
