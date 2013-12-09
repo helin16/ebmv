@@ -107,7 +107,7 @@ class AdminSupplierController extends CrudPageAbstract
     		$supplier->setName(trim($param->CallbackParameter->name));
     		$connector = trim($param->CallbackParameter->connector);
     		try {
-    			$script = new $connector($supplier);
+    			$script = new $connector($supplier, Core::getLibrary());
     		} catch (Exception $e) {
     			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage());
     		}
