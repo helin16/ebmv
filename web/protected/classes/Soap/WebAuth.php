@@ -54,7 +54,7 @@ class WebAuth
 			//get the supplier
 			$supplier = $this->_getSupplier($CDKey, $Uid, $SiteID);
 			//get the User
-			$user = $this->_getUser($SiteID, $Uid, $Pwd);
+			$userAccount = $this->_getUser($SiteID, $Uid, $Pwd);
 			
 			$response->addAttribute('CDkey', $CDKey);
 			$user = $response->addChild('User');
@@ -63,7 +63,7 @@ class WebAuth
 			
 			$user_mobile = $user_email = '';
 			$user->addAttribute('Password', $Pwd);
-			$user->addAttribute('Name', trim($user->getPerson()));
+			$user->addAttribute('Name', trim($userAccount->getPerson()));
 			$user->addAttribute('Mobile', $user_mobile);
 			$user->addAttribute('Email', $user_email);
 			$response->addAttribute('ResultCode', self::RESULT_CODE_SUCC);
