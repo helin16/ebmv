@@ -1,12 +1,5 @@
 <?php
-require 'bootstrap.php';
-
-$username = 'test_user';
-$libCode = '37';
-$supplier = BaseServiceAbastract::getInstance('Supplier')->get(1);
-
-$user = BaseServiceAbastract::getInstance('UserAccount')->get(1);
-$lib = BaseServiceAbastract::getInstance('Library')->get(1);
-$script = SupplierConnector::getInstance($supplier);
-$result = $script->getBookShelfList($user, $lib);
+$wsdl ='https://ebmv.com.au/?soap=webauth.wsdl';
+$client = new SoapClient($wsdl, array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP));
+$result = $client->authenticate('A3ADC78482897208E84B759E41DD73E9', '37', 'testuser_yl', '2A2877E4DF17AEED392AA42AD36EE5190E1E1DCC');
 var_dump($result);
