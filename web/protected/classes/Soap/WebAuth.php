@@ -74,7 +74,7 @@ class WebAuth
 			$response->addAttribute('ResultCode', $ex->getCode());
 			$response->addAttribute('Info', trim($ex->getMessage()));
 		}
-		return $response->asXML();
+		return trim($response->asXML());
 	}
 	/**
 	 * validating the CDKey
