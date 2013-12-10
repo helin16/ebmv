@@ -87,17 +87,19 @@ class WebAuth
 	private function _getSupplier($CDKey, $Uid, $SiteID)
 	{
 		//getting the supplier
-		$supplier = BaseServiceAbastract::getInstance('Supplier')->get(1);;
-		if(!$supplier instanceof Supplier)
-			throw new Exception('Unauthorized connection!',self::RESULT_CODE_OTHER_ERROR);
-		//getting the supplier's key
-		$keys = explode(',', $supplier->getInfo('skey'));
-		if(count($keys) === 0 || ($key = trim($keys[0])) === '')
-			throw new Exception('Unauthorized connection with supplier settings!',self::RESULT_CODE_OTHER_ERROR);
-		$wantedCDKey = strtolower(StringUtilsAbstract::getCDKey($CDKey, $Uid, $SiteID));
-		if($wantedCDKey !== strtolower(trim($CDKey)))
-			throw new Exception('Invalid Connection!', self::RESULT_CODE_FAIL);
-		return $supplier;
+		$suppliers = BaseServiceAbastract::getInstance('Supplier')->findAll();
+		foreach($suppliers as $supplier)
+		{
+			//getting the supplier's key
+			$keys = explode(',', $supplier->getInfo('skey'));
+			if(count($keys) === 0 || ($key = trim($keys[0])) === '')
+				continue;
+			
+			$wantedCDKey = strtolower(StringUtilsAbstract::getCDKey($key, $Uid, $SiteID));
+			if($wantedCDKey === strtolower(trim($CDKey)))
+				return $supplier;
+		}
+		throw new Exception('Invalid Connection!', self::RESULT_CODE_FAIL);
 	}
 	/**
 	 * Getting the user
