@@ -24,8 +24,8 @@
                 </span>
                 <span class="inlineblock productlistviewbtns">
                     <ul class="btn-group">
-                        <li class="rdcrnrfirst grid button active" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">Grid</span></li>
-                        <li class="rdcrnrlast list button" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">List</span></li>
+                        <li class="rdcrnrfirst grid button active" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(true); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">Grid</span></li>
+                        <li class="rdcrnrlast list button" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(true); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">List</span></li>
                     </ul>
                 </span>
             </div>
