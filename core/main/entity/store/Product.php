@@ -163,6 +163,7 @@ class Product extends BaseEntityAbstract
 	{
 		foreach($this->getCategorys() as $category)
 			$this->removeCategory($category);
+		return $this;
 	}
 	/**
 	 * getter attributes
