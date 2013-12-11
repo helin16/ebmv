@@ -104,7 +104,7 @@ insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`,
     (2, 6, '/var/www/html/protected/asset/supplier2/', 1, NOW(), 100, NOW(), 100),
     (2, 8, '1,3', 1, NOW(), 100, NOW(), 100),
     (2, 2, 'http://m2.ebook4rent.tw/pont/1.00/{SiteID}/launchViewer/', 1, NOW(), 100, NOW(), 100),
-    ('1', 7, 'B985A41E813AE00A78EE4AACF606F643', 1, NOW(), 100, NOW(), 100),
+    (2, 7, 'B985A41E813AE00A78EE4AACF606F643', 1, NOW(), 100, NOW(), 100),
     (2, 10, '0', 1, NOW(), 100, NOW(), 100);
 
 ############################ add library table
