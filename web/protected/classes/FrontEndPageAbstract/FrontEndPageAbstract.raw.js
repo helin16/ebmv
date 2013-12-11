@@ -89,7 +89,7 @@ FrontPageJs.prototype = {
 	,_getProductThumbnail: function(product) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.productDiv = new Element('span', {'class': 'product griditem inlineblock cursorpntr'})
+		tmp.productDiv = new Element('span', {'class': 'product griditem inlineblock cursorpntr', 'title': product.title})
 			.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null) })
 			.insert({'bottom': new Element('div', {'class': 'product_details'})
 				.insert({'bottom': new Element('div', {'class': 'product_title'}).update(product.title) })
