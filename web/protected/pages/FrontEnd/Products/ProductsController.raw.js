@@ -22,7 +22,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.clear = (clear === true ? true : false);
 		if(tmp.clear === true)
+		{
+			this.pagination.pageNo = 1;
 			$(tmp.me.resultDivId).update(tmp.me._getLoadingDiv());
+		}
 		pageJs.postAjax(this.getProductsBtn, {'pagination': tmp.me.pagination, 'searchCriteria':  tmp.me.searchCriteria}, {
 			'onLoading': function () {
 			}
