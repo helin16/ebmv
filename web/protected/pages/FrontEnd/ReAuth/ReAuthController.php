@@ -21,7 +21,7 @@ class ReAuthController extends TService
     	$Pwd = $this->_getRequestVar('Pwd');
     	$webAuth = new WebAuth();
     	$response = $webAuth->authenticate($CDKey, $SiteID, $Uid, $Pwd);
-        $this->getResponse()->write(trim($response));
+    	die(trim($response));
     }
     /**
      * 
