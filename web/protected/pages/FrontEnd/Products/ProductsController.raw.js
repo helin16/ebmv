@@ -42,7 +42,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					});
 					$(tmp.me.resultDivId).insert({'bottom':tmp.me._getPaginationDiv(tmp.result.pagination) });
 				} catch (e) {
-					alert(e);
+					if(tmp.clear === true)
+						$(tmp.me.resultDivId).update(e);
+					else
+						alert(e);
 				}
 				if(typeof(afterFunc) === 'function')
 					afterFunc();
