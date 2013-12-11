@@ -68,7 +68,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			return;
 		
 		tmp.me = this;
-		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('Get more', pagination.pageNumber + 1) });
+		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('查看更多 / 查看更多<br />Get more', pagination.pageNumber + 1) });
 	}
 	
 	,changePage: function (btn, pageNo, pageSize) {
