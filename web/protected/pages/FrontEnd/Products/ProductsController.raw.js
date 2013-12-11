@@ -4,11 +4,10 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	
-	productDetailsUrl: '/product/{id}', 
 	resultDivId: '', //the result div for the product list
 	getProductsBtn: '', //the callbackId for getting the products
 	pagination: {'pageNo': 1, 'pageSize': 10},
-	searchCriteria: {'searchString': '', 'categoryIds': []},
+	searchCriteria: {'searchString': '', 'categoryIds': [], 'searchOpt': '', 'searchCat' : '', 'language' : '', 'productType' : ''},
 	getProductItemFunc: '_getProductGridItem',
 	
 	//constructor
@@ -18,29 +17,32 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	}
 
 	//show the products
-	,showProducts: function() {
+	,showProducts: function(clear, afterFunc) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.clear = (clear === true ? true : false);
+		if(tmp.clear === true)
+			$(tmp.me.resultDivId).update(tmp.me._getLoadingDiv());
 		pageJs.postAjax(this.getProductsBtn, {'pagination': tmp.me.pagination, 'searchCriteria':  tmp.me.searchCriteria}, {
 			'onLoading': function () {
-				$(tmp.me.resultDivId).update(tmp.me._getLoadingDiv());
 			}
 			,'onComplete': function(sender, param) {
-				tmp.resultDiv = new Element('div');
+				if(tmp.clear === true)
+					$(tmp.me.resultDivId).update('');
 				try {
 					tmp.result = pageJs.getResp(param, false, true);
 					if(!tmp.result.pagination || tmp.result.pagination.totalRows === 0)
 						throw 'Nothing found!';
 					
-					tmp.resultDiv.insert({'bottom': tmp.me._getPaginationDiv(tmp.result.pagination) });
 					tmp.result.products.each(function(item){
-						tmp.resultDiv.insert({'bottom': tmp.me[tmp.me.getProductItemFunc](item) });
+						$(tmp.me.resultDivId).insert({'bottom': tmp.me[tmp.me.getProductItemFunc](item) });
 					});
-					tmp.resultDiv.insert({'bottom':tmp.me._getPaginationDiv(tmp.result.pagination) });
+					$(tmp.me.resultDivId).insert({'bottom':tmp.me._getPaginationDiv(tmp.result.pagination) });
 				} catch (e) {
-					tmp.resultDiv.update(new Element('div', {'class': 'errMsg'}).update(e));
+					alert(e);
 				}
-				$(tmp.me.resultDivId).update(tmp.resultDiv);
+				if(typeof(afterFunc) === 'function')
+					afterFunc();
 			}
 		});
 		return this;
@@ -56,59 +58,30 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	//get pagination div
 	,_getPaginationDiv: function(pagination) {
 		var tmp = {};
-		if(pagination.totalPages === 1)
+		if(pagination.pageNumber >= pagination.totalPages)
 			return;
 		
 		tmp.me = this;
-		tmp.paginationDiv = new Element('div', {'class': 'pagination_wrapper'});
-		tmp.windowSize = 5;
-		tmp.morePages = true; 
-		if(pagination.totalPages < tmp.windowSize) {
-			tmp.morePages = false;
-			tmp.windowSize = pagination.totalPages
-		}
-		//if the page we are at is at 
-		if(Math.ceil( tmp.windowSize / 2) > pagination.pageNumber) {
-			tmp.pageStart = 1;
-		} else {
-			tmp.pageStart = pagination.pageNumber - (Math.ceil( tmp.windowSize / 2) - 1);
-			if(Math.ceil( tmp.windowSize / 2) > (pagination.totalPages - pagination.pageNumber)) {
-				tmp.pageStart = pagination.totalPages - tmp.windowSize + 1;
-			}
-			if(tmp.morePages) {
-				tmp.paginationDiv
-					.insert({'bottom': tmp.me._getPaginationBtn('<<', 1) })
-					.insert({'bottom': tmp.me._getPaginationBtn('<', (pagination.pageNumber - 1) < 0 ? 1 : (pagination.pageNumber - 1)) })
-				;
-			}
-		}
-		
-		$R(tmp.pageStart, tmp.pageStart + (tmp.windowSize - 1)).each(function(pageNo) {
-			tmp.paginationDiv.insert({'bottom': tmp.me._getPaginationBtn(pageNo, pageNo).addClassName(pageNo === (pagination.pageNumber * 1) ? ' selected' : '') });
-		});
-		
-		if(tmp.morePages && Math.ceil( tmp.windowSize / 2) <= (pagination.totalPages - pagination.pageNumber)) {
-			tmp.paginationDiv
-				.insert({'bottom': tmp.me._getPaginationBtn('>', pagination.pageNumber > pagination.totalPages ? pagination.totalPages : (pagination.pageNumber * 1 + 1)) })
-				.insert({'bottom': tmp.me._getPaginationBtn('>>', pagination.totalPages) })
-			;
-		}
-		return tmp.paginationDiv;
+		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('Get more', pagination.pageNumber + 1) });
 	}
 	
-	,changePage: function (pageNo, pageSize) {
+	,changePage: function (btn, pageNo, pageSize) {
+		var tmp = {};
 		this.pagination.pageNo = pageNo;
 		this.pagination.pageSize = pageSize;
-		this.showProducts();
+		$(btn).update('Getting more ....').writeAttribute('disabled', true);
+		this.showProducts(false, function() {
+			$(btn).up('.pagination_wrapper').remove();
+		});
 	}
 	
 	,_getPaginationBtn: function (txt, pageNo) {
 		var tmp = {};
 		tmp.me = this;
-		return new Element('span', {'class': 'pagin_btn cursorpntr'})
+		return new Element('span', {'class': 'fullwith button rdcrnr'})
 			.update(txt)
 			.observe('click', function() {
-				tmp.me.changePage(pageNo, tmp.me.pagination.pageSize);
+				tmp.me.changePage(this, pageNo, tmp.me.pagination.pageSize);
 			})
 		;
 	}
@@ -155,32 +128,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return tmp.productDiv;
 	}
 	
-	,showDetailsPage: function(productId) {
-		window.location = this.productDetailsUrl.replace('{id}', productId);
-	}
-	
 	//get product grid item
 	,_getProductGridItem: function(product) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.productDiv = new Element('span', {'class': 'product griditem inlineblock cursorpntr'})
-			.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null) })
-			.insert({'bottom': new Element('div', {'class': 'product_details'})
-				.insert({'bottom': new Element('div', {'class': 'product_title'}).update(product.title) })
-			})
-			.observe('click', function(){ tmp.me.showDetailsPage(product.id); })
-		;
-		return tmp.productDiv;
+		return this._getProductThumbnail(product);
 	}
 	
 	,_getAttrString: function(attArray){
 		return attArray.map(function(attr) { return attr.attribute || '';});
-	}
-	
-	,_getProductImgDiv: function (images) {
-		var tmp = {};
-		if(images === undefined || images === null || images.size() === 0)
-			return new Element('div', {'class': 'product_image noimage'});
-		return new Element('div', {'class': 'product_image', 'src': images[0].attribute});
 	}
 });

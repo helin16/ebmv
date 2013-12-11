@@ -8,7 +8,7 @@
  */
 class ProductsController extends FrontEndPageAbstract  
 {
-    public $pageSize = 12;
+    public $pageSize = 1;
     
     public function onLoad($param)
     {
@@ -63,7 +63,7 @@ class ProductsController extends FrontEndPageAbstract
 			}
 			$js .= 'pageJs.searchCriteria.searchString = "' . $searchtext . '";';
 		}
-		$js .= 'pageJs.showProducts();';
+		$js .= 'pageJs.showProducts(true);';
 	   return $js;
 	}
 	
