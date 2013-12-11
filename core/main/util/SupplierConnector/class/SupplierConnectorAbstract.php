@@ -77,7 +77,9 @@ class SupplierConnectorAbstract
 	 */
 	public function getImportProductTypes()
 	{
-		$importTypeIds = explode(',', $this->_supplier->getInfo('stype_ids'));
+		$importTypeIds = array_filter(explode(',', $this->_supplier->getInfo('stype_ids')));
+		if(count($importTypeIds) === 0)
+			return array();
 		return BaseServiceAbastract::getInstance('ProductType')->findByCriteria('id in (' . implode(', ', $importTypeIds) . ')', array());
 	}
 	/**
