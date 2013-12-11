@@ -133,6 +133,38 @@ class Product extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Adding a product to a category
+	 *
+	 * @param Category $category The category
+	 *
+	 * @return ProductService
+	 */
+	public function addCategory(Category $category)
+	{
+		EntityDao::getInstance('Product')->saveManyToManyJoin($category, $this);
+		return $this;
+	}
+	/**
+	 * Removing a product from a category
+	 *
+	 * @param Category $category The category
+	 *
+	 * @return ProductService
+	 */
+	public function removeCategory(Category $category)
+	{
+		EntityDao::getInstance('Product')->deleteManyToManyJoin($category, $this);
+		return $this;
+	}
+	/**
+	 * Removing all the categories
+	 */
+	public function removeAllCategories()
+	{
+		foreach($this->getCategorys() as $category)
+			$this->removeCategory($category);
+	}
+	/**
 	 * getter attributes
 	 *
 	 * @return multiple:ProductAttribute

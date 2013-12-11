@@ -269,7 +269,7 @@ class ProductService extends BaseServiceAbastract
      */
     public function addCategory(Product $product, Category $category)
     {
-        EntityDao::getInstance('Product')->saveManyToManyJoin($category, $product);
+        $product->addCategory($category);
         return $this;
     } 
     /**
@@ -282,7 +282,7 @@ class ProductService extends BaseServiceAbastract
      */
     public function removeCategory(Product $product, Category $category)
     {
-        EntityDao::getInstance('Product')->deleteManyToManyJoin($category, $product);
+        $product->removeCategory($category);
         return $this;
     }
     /**
