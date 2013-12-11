@@ -137,7 +137,7 @@ class Supplier extends BaseEntityAbstract
 	public function getJson()
 	{
 		$infoArray = array();
-		$sql = "select distinct supIn.id `infoId`, supIn.value `infoValue`, supInType.id `typeId`, supInType.name `typeName` from supplierinfo supIn inner join supplierinfotype supInType on (supIn.typeId = supInType.id) where supIn.supplierId = ?";
+		$sql = "select distinct supIn.id `infoId`, supIn.value `infoValue`, supInType.id `typeId`, supInType.name `typeName` from supplierinfo supIn inner join supplierinfotype supInType on (supIn.typeId = supInType.id) where supIn.supplierId = ? and supIn.active = 1";
 		$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
 		foreach($result as $row)
 		{
