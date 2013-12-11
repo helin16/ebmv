@@ -8,7 +8,7 @@
  */
 class ProductsController extends FrontEndPageAbstract  
 {
-    public $pageSize = 1;
+    public $pageSize = 20;
     
     public function onLoad($param)
     {
