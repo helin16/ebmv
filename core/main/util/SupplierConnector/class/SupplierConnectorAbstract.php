@@ -164,7 +164,9 @@ class SupplierConnectorAbstract
 				throw new SupplierConnectorException("Invalid ProductType: " . $infoArray['productTypeName']);
 			
 			//getting the categories
-			$categories = $this->_importCategories($infoArray['categories']);
+			if(count($infoArray['categories']) >0)
+				$categories = $this->_importCategories($infoArray['categories']);
+			
 			
 			//downloading images
 			$imgs = array();
@@ -175,6 +177,9 @@ class SupplierConnectorAbstract
 			//updating the product
 			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0], $this->_supplier)) instanceof Product)
 			{
+				//remove all categoies
+				$product->removeAllCategories();
+				
 				//delete the thumb
 				if(!($thumbs = explode(',', $product->getAttribute('image_thumb'))) !== false)
 					BaseServiceAbastract::getInstance('Asset')->removeAssets($thumbs);
