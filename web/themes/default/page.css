@@ -93,15 +93,8 @@
 .pagination_wrapper .pagin_btn {
     display: inline-block;
     padding: 4px;
-}
-
-.pagination_wrapper .pagin_btn.selected {
-    font-weight:bold;
-}
-
-.pagination_wrapper .pagin_btn:hover {
-    background: #1C5A80;
-    color: white;
+    margin-top: 10px;
+    text-align: center;
 }
 
 .product.griditem {

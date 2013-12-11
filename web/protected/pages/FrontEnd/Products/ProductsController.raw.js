@@ -84,7 +84,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,_getPaginationBtn: function (txt, pageNo) {
 		var tmp = {};
 		tmp.me = this;
-		return new Element('span', {'class': 'fullwith button rdcrnr'})
+		return new Element('span', {'class': 'fullwith button rdcrnr pagin_btn'})
 			.update(txt)
 			.observe('click', function() {
 				tmp.me.changePage(this, pageNo, tmp.me.pagination.pageSize);
