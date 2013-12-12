@@ -7,6 +7,12 @@
  */
 abstract class BaseEntityAbstract
 {
+	/**
+	 * The registry of json array
+	 * 
+	 * @var array
+	 */
+	protected $_jsonArray = array();
     /**
      * Internal id used by all application entities
      *
@@ -313,23 +319,40 @@ abstract class BaseEntityAbstract
     }
     /**
      * getting the Json array from all the private memebers of the entity
+     * 
+     * @param bool $reset Forcing the function to fetch data from the database again
      *
      * @return array The associative arary for json
      */
-    public function getJson()
+    public function getJson($extra = array(), $reset = false)
     {
-        $array = array('id' => trim($this->getId()));
-        DaoMap::loadMap(get_class($this));
-        foreach(DaoMap::$map[strtolower(get_class($this))] as $field => $fieldMap)
-        {
-            if($field === '_' || isset($fieldMap['rel']))
-                continue;
-            $getterMethod = 'get' . ucfirst($field);
-            $array[$field] = trim($this->$getterMethod());
-            if(trim($fieldMap['type']) === 'bool')
-                $array[$field] = (trim($array[$field]) === '1' ? true : false);
-        }
-        return $array;
+    	if(!$this->isJsonLoaded($reset))
+    	{
+    		$array = array('id' => trim($this->getId()));
+	        DaoMap::loadMap(get_class($this));
+	        foreach(DaoMap::$map[strtolower(get_class($this))] as $field => $fieldMap)
+	        {
+	            if($field === '_' || isset($fieldMap['rel']))
+	                continue;
+	            $getterMethod = 'get' . ucfirst($field);
+	            $array[$field] = trim($this->$getterMethod());
+	            if(trim($fieldMap['type']) === 'bool')
+	                $array[$field] = (trim($array[$field]) === '1' ? true : false);
+	        }
+	        $this->_jsonArray = array_merge($array, $extra);
+    	}
+        return $this->_jsonArray;
+    }
+    /**
+     * Whether the $this->_jsonArray is loaded
+     * 
+     * @return bool
+     */
+    protected function isJsonLoaded($reset = false)
+    {
+    	if($reset === true)
+    		$this->_jsonArray = array();
+    	return (is_array($this->_jsonArray) && count($this->_jsonArray) > 0 );
     }
     /**
      * Default toString implementation
