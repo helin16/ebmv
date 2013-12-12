@@ -309,7 +309,7 @@ class EntityDao
      *
      * @return int
      */
-    public static function deleteManyToManyJoin(BaseEntityAbstract $leftEntity, BaseEntityAbstract $rightEntity)
+    public function deleteManyToManyJoin(BaseEntityAbstract $leftEntity, BaseEntityAbstract $rightEntity)
     {
         Dao::deleteManyToManyJoin(new DaoQuery(get_class($leftEntity)), get_class($rightEntity), $leftEntity->getId(), $rightEntity->getId());
         return 1;
