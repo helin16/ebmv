@@ -46,6 +46,12 @@ class ProductShelfItem extends BaseEntityAbstract
      */
     private $borrowTime;
     /**
+	 * The expiry time of the product
+     *
+     * @var UDate
+     */
+    private $expiryTime;
+    /**
      * Getter for the staus
      * @return number
      */
@@ -73,7 +79,7 @@ class ProductShelfItem extends BaseEntityAbstract
     public function getBorrowTime() 
     {
     	if(is_string($this->borrowTime))
-    		$this->borrowTime = new UDate($this->borrowTime);
+    		$this->borrowTime = new UDate($this->borrowTime, 'UTC');
     	return $this->borrowTime;
     }
     /**
@@ -87,6 +93,29 @@ class ProductShelfItem extends BaseEntityAbstract
     {
     	$this->borrowTime = $value;
     	return $this;
+    }
+    /**
+     * Getter for the expiry time
+     * 
+     * @return UDate
+     */
+    public function getExpiryTime() 
+    {
+    	if(is_string($this->expiryTime))
+    		$this->expiryTime = new UDate($this->expiryTime, 'UTC');
+        return $this->expiryTime;
+    }
+    /**
+     * Setter for the expiry time
+     * 
+     * @param string $value The time value in unix format: 1901-01-01 00:00:00
+     * 
+     * @return ProductShelfItem
+     */
+    public function setExpiryTime($value) 
+    {
+        $this->expiryTime = $value;
+        return $this;
     }
     /**
      * Getter for the owner
@@ -153,9 +182,11 @@ class ProductShelfItem extends BaseEntityAbstract
         DaoMap::setManyToOne('owner', 'UserAccount');
         DaoMap::setIntType('status', 'int', 1);
         DaoMap::setDateType('borrowTime');
+        DaoMap::setDateType('expiryTime');
         parent::__loadDaoMap();
         DaoMap::createIndex('status');
         DaoMap::createIndex('borrowTime');
+        DaoMap::createIndex('expiryTime');
         DaoMap::commit();
     }
 }
