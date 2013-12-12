@@ -18,6 +18,11 @@ class ProductShelfItem extends BaseEntityAbstract
 	 * @var int
 	 */
 	const ITEM_STATUS_NOT_BORROWED = 0;
+	/**
+	 * The status code for expired item
+	 * @var int
+	 */
+	const ITEM_STATUS_EXPIRED = 2;
     /**
      * The owner of the shelf
      * 
