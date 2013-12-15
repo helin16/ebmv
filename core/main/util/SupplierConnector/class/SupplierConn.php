@@ -84,4 +84,12 @@ interface SupplierConn
 	 * @return string
 	 */
 	public function getOnlineReadUrl(Product $product, UserAccount $user);
+	/**
+	 * Updating a product from supplier
+	 * 
+	 * @param Product $product The product that we are trying to update
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function updateProduct(Product &$product);
 }
