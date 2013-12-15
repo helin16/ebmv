@@ -1,4 +1,11 @@
 <?php
+/**
+ * Supplier connector product is a fake product for containing the data from supplier about a product
+ *
+ * @package    Core
+ * @subpackage Utils
+ * @author     lhe<helin16@gmail.com>
+ */
 class SupplierConnectorProduct
 {
 	private static $_products = array();
