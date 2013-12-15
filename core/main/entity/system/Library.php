@@ -26,6 +26,12 @@ class Library extends BaseEntityAbstract
 	 */
 	protected $infos;
 	/**
+	 * registry of infos
+	 * 
+	 * @var array
+	 */
+	private $_info = array();
+	/**
 	 * getter Name
 	 *
 	 * @return string
@@ -93,34 +99,41 @@ class Library extends BaseEntityAbstract
 	 *
 	 * @param string $typeCode  The code of the LibraryInfoType
 	 * @param string $separator The separator of the returned attributes, in case there are multiple
+	 * @param bool   $reset     Forcing the function to fetch values from the database
 	 *
 	 * @return Ambigous <>
 	 */
-	public function getInfo($typeCode, $separator = ',')
+	public function getInfo($typeCode, $separator = ',', $reset = false)
 	{
-		$sql = 'select group_concat(lib.value separator ?) `value` from libraryinfo lib inner join libraryinfotype libt on (libt.id = lib.typeId and libt.code = ?) where lib.active = 1 and lib.libraryId = ?';
-		$result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
-		return $result['value'];
+		if(!isset($this->_info[$typeCode]) || $reset !== false)
+		{
+			$sql = 'select group_concat(lib.value separator ?) `value` from libraryinfo lib inner join libraryinfotype libt on (libt.id = lib.typeId and libt.code = ?) where lib.active = 1 and lib.libraryId = ?';
+			$result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
+			$this->_info[$typeCode] = $result['value'];
+		}
+		return $this->_info[$typeCode];
 	}
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
-	public function getJson()
+	public function getJson($reset = false)
 	{
-		$infoArray = array();
-		$sql = "select distinct libInfo.id `infoId`, libInfo.value `infoValue`, libInfoType.id `typeId`, libInfoType.name `typeName` from libraryinfo libInfo inner join libraryinfotype libInfoType on (libInfo.typeId = libInfoType.id) where libInfo.libraryId = ?";
-		$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
-		foreach($result as $row)
+		$array = array();
+		if(!$this->isJsonLoaded($reset))
 		{
-			if(!isset($infoArray[$row['typeId']]))
-				$infoArray[$row['typeId']] = array();
-			$infoArray[$row['typeId']][] = array("id" => $row['infoId'], "value" => $row["infoValue"], "type" => array("id" => $row["typeId"], "name" => $row["typeName"]));
+			$infoArray = array();
+			$sql = "select distinct libInfo.id `infoId`, libInfo.value `infoValue`, libInfoType.id `typeId`, libInfoType.name `typeName` from libraryinfo libInfo inner join libraryinfotype libInfoType on (libInfo.typeId = libInfoType.id) where libInfo.libraryId = ?";
+			$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
+			foreach($result as $row)
+			{
+				if(!isset($infoArray[$row['typeId']]))
+					$infoArray[$row['typeId']] = array();
+				$infoArray[$row['typeId']][] = array("id" => $row['infoId'], "value" => $row["infoValue"], "type" => array("id" => $row["typeId"], "name" => $row["typeName"]));
+			}
+			$array['info'] = $infoArray;
 		}
-	
-		$array = parent::getJson();
-		$array['info'] = $infoArray;
-		return $array;
+		return parent::getJson($array, $reset);
 	}
 	/**
 	 * (non-PHPdoc)

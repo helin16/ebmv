@@ -420,19 +420,22 @@ class Product extends BaseEntityAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
-	public function getJson()
+	public function getJson($reset = false)
 	{
-	    $array = parent::getJson();
-	    $array['attributes'] = array();
-	    foreach($this->getAttributes() as $attr)
+	    $array = array();
+	    if(!$this->isJsonLoaded($reset))
 	    {
-	        $typeId = $attr->getType()->getCode();
-	        if(!isset($array['attributes'][$typeId]))
-	            $array['attributes'][$typeId] = array();
-            $array['attributes'][$typeId][] = $attr->getJson();
+	    	$array['attributes'] = array();
+		    foreach($this->getAttributes() as $attr)
+		    {
+		        $typeId = $attr->getType()->getCode();
+		        if(!isset($array['attributes'][$typeId]))
+		            $array['attributes'][$typeId] = array();
+	            $array['attributes'][$typeId][] = $attr->getJson();
+		    }
+		    $array['supplier'] = $this->getSupplier()->getJson();
 	    }
-	    $array['supplier'] = $this->getSupplier()->getJson();
-	    return $array;
+	    return parent::getJson($array, $reset);
 	}
 	/**
 	 * (non-PHPdoc)
