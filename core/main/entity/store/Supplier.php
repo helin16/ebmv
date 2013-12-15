@@ -9,6 +9,12 @@
 class Supplier extends BaseEntityAbstract
 {
 	/**
+	 * The informaction cacher
+	 * 
+	 * @var array
+	 */
+	private $_info;
+	/**
      * The name of the supplier
      * 
      * @var string
@@ -100,14 +106,19 @@ class Supplier extends BaseEntityAbstract
 	 *
 	 * @param string $typeCode  The code of the SupplierInfoType
 	 * @param string $separator The separator of the returned attributes, in case there are multiple
+	 * @param bool   $reset     Forcing to get the information from DB
 	 *
 	 * @return Ambigous <>
 	 */
-	public function getInfo($typeCode, $separator = ',')
+	public function getInfo($typeCode, $separator = ',', $reset = false)
 	{
-		$sql = 'select group_concat(si.value separator ?) `info` from supplierinfo si inner join supplierinfotype sit on (sit.id = si.typeId and sit.code = ?) where si.active = 1 and si.supplierId = ?';
-		$result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
-		return $result['info'];
+		if(!isset($this->_info[$typeCode]))
+		{
+			$sql = 'select group_concat(si.value separator ?) `info` from supplierinfo si inner join supplierinfotype sit on (sit.id = si.typeId and sit.code = ?) where si.active = 1 and si.supplierId = ?';
+			$result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
+			$this->_info[$typeCode] = $result['info'];
+		}
+		return $this->_info[$typeCode];
 	}
 	/**
 	 * Getting the supplier's products

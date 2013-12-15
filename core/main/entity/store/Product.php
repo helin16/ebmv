@@ -8,6 +8,12 @@
  */
 class Product extends BaseEntityAbstract
 {
+	/**
+	 * attributes - cached
+	 * 
+	 * @var array
+	 */
+	private $_attris;
     /**
      * The title of the book
      * 
@@ -192,14 +198,19 @@ class Product extends BaseEntityAbstract
 	 * 
 	 * @param string $typeCode  The code of the ProductAttributeType
 	 * @param string $separator The separator of the returned attributes, in case there are multiple
+	 * @param bool   $reset     Forcing to get the information from DB
 	 * 
 	 * @return Ambigous <>
 	 */
-	public function getAttribute($typeCode, $separator = ',')
+	public function getAttribute($typeCode, $separator = ',', $reset = false)
 	{
-	    $sql = 'select group_concat(pa.attribute separator ?) `attr` from productattribute pa inner join productattributetype pat on (pat.id = pa.typeId and pat.active = 1 and pat.code = ?) where pa.active = 1 and pa.productId = ?';
-	    $result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
-	    return $result['attr'];
+		if(!isset($this->_attris[$typeCode]))
+		{
+			$sql = 'select group_concat(pa.attribute separator ?) `attr` from productattribute pa inner join productattributetype pat on (pat.id = pa.typeId and pat.active = 1 and pat.code = ?) where pa.active = 1 and pa.productId = ?';
+		    $result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
+		    $this->_attris[$typeCode] = $result['attr'];
+		}
+	    return $this->_attris[$typeCode];
 	}
 	/**
 	 * Getter for the language
