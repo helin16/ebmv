@@ -197,8 +197,7 @@ class ProductService extends BaseServiceAbastract
             $product->setSupplier($supplier);
             if(trim($sku) !== '')
             	$product->setSuk($sku);
-            if(trim($product->getId()) === '')
-                $this->save($product);
+            $this->save($product);
             
             //setup the languages
             $langs = array_filter($langs, create_function('$a', 'return ($a instanceof Language);'));
