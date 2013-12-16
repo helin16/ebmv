@@ -151,13 +151,13 @@ class Supplier extends BaseEntityAbstract
 		if(!$this->isJsonLoaded($reset))
 		{
 			$infoArray = array();
-			$sql = "select distinct supIn.id `infoId`, supIn.value `infoValue`, supInType.id `typeId`, supInType.name `typeName` from supplierinfo supIn inner join supplierinfotype supInType on (supIn.typeId = supInType.id) where supIn.supplierId = ? and supIn.active = 1";
+			$sql = "select distinct supIn.id `infoId`, supIn.value `infoValue`, supInType.id `typeId`, supInType.code `typeCode`, supInType.name `typeName` from supplierinfo supIn inner join supplierinfotype supInType on (supIn.typeId = supInType.id) where supIn.supplierId = ? and supIn.active = 1";
 			$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
 			foreach($result as $row)
 			{
-				if(!isset($infoArray[$row['typeId']]))
-					$infoArray[$row['typeId']] = array();
-				$infoArray[$row['typeId']][] = array("id" => $row['infoId'], "value" => $row["infoValue"], "type" => array("id" => $row["typeId"], "name" => $row["typeName"]));
+				if(!isset($infoArray[$row['typeCode']]))
+					$infoArray[$row['typeCode']] = array();
+				$infoArray[$row['typeCode']][] = array("id" => $row['infoId'], "value" => $row["infoValue"], "type" => array("id" => $row["typeId"], "name" => $row["typeName"], 'code' => $row['typeCode']));
 			}
 			$array['info'] = $infoArray;
 			
