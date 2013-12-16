@@ -263,5 +263,13 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function updateProduct(Product &$product)
 	{
+		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
+				'Isbn' => trim($product->getAttribute('isbn')),
+				'NO' => trim($product->getAttribute('cno'))
+		);
+		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookInfo", $params);
+		$pro = SupplierConnectorProduct::getProduct($xml);
+		$product = $this->_importProduct($pro);
+		return $product;
 	}
 }

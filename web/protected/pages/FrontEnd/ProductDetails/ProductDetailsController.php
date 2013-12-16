@@ -28,6 +28,14 @@ class ProductDetailsController extends FrontEndPageAbstract
      */
 	public function onLoad($param)
 	{
+		if(!$this->IsPostBack)
+		{
+		    if(!$this->_product->getLibraryOwn(Core::getLibrary()) instanceof LibraryOwns)
+		    {
+		    	FrontEndPageAbstract::show404Page('Product NOT Exsits!', 'Requested book/magazine/newspaper is not viewable for this library!');
+		    	die;
+		    }
+		}
 	    parent::onLoad($param);
 	}
 	/**
@@ -39,100 +47,15 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.product = ' . json_encode($this->_product->getJson()) . ';';
+		$js .= 'pageJs.resultDivId = "product_details";';
 		$js .= 'pageJs.setCallbackId("geturl", "' . $this->getUrlBtn->getUniqueID(). '");';
+		$js .= 'pageJs.setCallbackId("getCopies", "' . $this->getCopiesBtn->getUniqueID(). '");';
+		$js .= 'pageJs.displayProduct();';
 		return $js;
-	}
-	
-	public function getProductDetails()
-	{
-	    if(!$this->_product instanceof Product)
-	        return 'No Product Found!';
-	    list($uid, $pwd) = $this->_getUserInfo();
-	    $product = $this->_product;
-	    $html = "<div class='wrapper'>";
-    	    $html .= "<div class='product listitem'>";
-        	    $html .= "<span class='inlineblock listcol left'>";
-        	        if(($thumb = trim($product->getAttribute('image_thumb'))) === '')
-            	        $html .= "<div class='product_image noimage'></div>";
-        	        else
-            	        $html .= "<div class='product_image'><img  src='/asset/get?id=" . $thumb . "' /></div>";
-        	    $html .= "</span>";
-        	    $html .= "<span class='inlineblock listcol right'>";
-            	    $html .= "<div class='product_title'>" . $product->getTitle() . "</div>";
-            	    $html .= "<div class='row'>";
-            	        $html .= $this->_getAtts($product, 'author', 'Author', 'author');
-                	    $html .= $this->_getAtts($product, 'isbn', 'ISBN', 'product_isbn');
-            	    $html .= "</div>";
-            	    $html .= "<div class='row'>";
-            	        $html .= $this->_getAtts($product, 'publisher', 'Publisher', 'product_publisher');
-                	    $html .= $this->_getAtts($product, 'publish_date', 'Publisher Date', 'product_publish_date');
-            	    $html .= "</div>";
-            	    $html .= "<div class='row'>";
-            	        $html .= $this->_getAtts($product, 'no_of_words', 'Length', 'product_no_of_words');
-            	    	$langs = array_map(create_function('$a', 'return $a->getName();'), $this->_product->getLanguages());
-            	        $html .= $this->_getAtts($product, 'languages', 'Languages', 'product_languages', implode(', ', $langs));
-            	    $html .= "</div>";
-            	    $viewUrl = trim($this->_product->getSupplier()->getInfo('view_url'));
-            	    $downloadUrl = trim($this->_product->getSupplier()->getInfo('download_url'));
-            	    if($viewUrl !== '')
-            	    {
-	            	    $html .= "<div class='row'>";
-	            	    	$availForView = $totalForView = $availForDownload = $totalForDownload = 0;
-	            	    	if (($libOwn = $this->_product->getLibraryOwn(Core::getLibrary())) instanceof LibraryOwns)
-	            	    	{
-	            	    		$availForView = $libOwn->getAvailForView();
-	            	    		$totalForView = $libOwn->getTotalForView();
-	            	    		$availForDownload = $libOwn->getAvailForDownload();
-	            	    		$totalForDownload = $libOwn->getTotalForDownload();
-	            	    	}
-	            	        $html .= $this->_getAtts($product, 'avail_for_view', 'Available Copies For Read Online', 'product_avail_for_view', $availForView);
-	                	    $html .= $this->_getAtts($product, 'total_for_view', 'Total Copies For Read Online', 'product_total_for_view', $totalForView);
-	            	    $html .= "</div>";
-            	    }
-            	    if($downloadUrl !== '')
-            	    {
-	            	    $html .= "<div class='row'>";
-	            	        $html .= $this->_getAtts($product, 'avail_for_download', 'Available Copies For Read Online', 'product_avail_for_download', $availForDownload);
-	                	    $html .= $this->_getAtts($product, 'total_for_download', 'Total Copies For Read Online', 'product_total_for_download', $totalForDownload);
-	            	    $html .= "</div>";
-            	    }
-            	    $html .= "<div class='row btns'>";
-	            	    if($viewUrl !== '')
-	            	    {
-	            	    	if($availForView > 0)
-	                	    	$html .= '<input class="button rdcrnr" type="button" value="在线阅读/在線閱讀&#x00A;Read Online" onClick="pageJs.readOnline(this);"/>';
-	            	    	else
-	                	    	$html .= '<input class="button rdcrnr" type="button" disabled value="No copy available to view online");"/>';
-	            	    }
-	            	    if($downloadUrl !== '')
-	            	    {
-	            	    	if($availForDownload > 0 && $downloadUrl !== '')
-		                	    $html .= ' <input class="button rdcrnr" type="button" value="下载阅读/下載閱讀&#x00A;Download This Book" onClick="pageJs.download(this);"/>';
-	            	    	else
-	                	    	$html .= '<input class="button rdcrnr" type="button" disabled value="No copy available to download");"/>';
-	            	    }
-            	    $html .= "</div>";
-            	    $html .= "<div class='row product_description'>";
-                    	    $html .= $product->getAttribute('description');
-            	    $html .= "</div>";
-        	    $html .= "</span>";
-    	    $html .= "</div>";
-	    $html .= "</div>";
-	    return $html;
-	}
-	
-	private function _getAtts(Product $product, $attrcode, $title, $className = '', $overRideContent = '')
-	{
-	    $html = "<span class='inlineblock $className'>";
-    	    $html .="<label>$title: </label>";
-    	    $html .="<span>" . (trim($overRideContent) === '' ? $product->getAttribute($attrcode) : $overRideContent) . "</span>";
-	    $html .= "</span>";
-	    return $html;
 	}
 	
 	public function getUrl($sender, $params)
 	{
-		list($uid, $pwd) = $this->_getUserInfo();
 		$errors = $results = array();
         try 
         {
@@ -166,21 +89,25 @@ class ProductDetailsController extends FrontEndPageAbstract
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
 	
-	/**
-	 * Getting the userinformation of the current user
-	 * 
-	 * @return multitype:number Ambigous <number, string>
-	 */
-	private function _getUserInfo()
+	public function updateProduct($sender, $params)
 	{
-		$uid = 0;
-		$pwd = 0;
-		if (($user = Core::getUser()) instanceof UserAccount)
-		{
-			$uid = $user->getUserName();
-			$pwd = $user->getPassword();
-		}
-		return array($uid, $pwd);
+		$errors = $results = array();
+        try 
+        {
+        	if(!($supplier = $this->_product->getSupplier()) instanceof Supplier)
+        		throw new Exception('System Error: no supplier found for this book!');
+        	
+        	if(!($user = Core::getUser()) instanceof UserAccount)
+        		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_GUEST_ACCOUNT));
+        	SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->updateProduct($this->_product);
+        	$results['urls'] = array('viewUrl' => (trim($supplier->getInfo('view_url')) !== ''), 'downloadUrl' => (trim($supplier->getInfo('download_url')) !== ''));
+        	$results['copies'] = ($libOwn = $this->_product->getLibraryOwn(Core::getLibrary())) instanceof LibraryOwns ? $libOwn->getJson() : array();
+        }
+        catch(Exception $ex)
+        {
+        	$errors[] = $ex->getMessage();
+        }
+        $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
 }
 ?>

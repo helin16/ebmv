@@ -30,6 +30,15 @@ body {
     border: 1px #cccccc solid;
 }
 
+.loadingImg {
+	background: url("images/loading.gif");
+	background-size:32px 32px;
+	background-repeat:no-repeat;
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+}
+
 .rdcrnrfirst {
     border-radius:5px 0 0 5px;
 }

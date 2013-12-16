@@ -84,6 +84,13 @@
 .product .listcol .row.btns {
 	padding: 10px 0;
 }
+.product .listcol .row.btns .button {
+	display: inline-block;
+	width: auto;
+	text-align: center;
+	font-size: 12px;
+	margin: 5px;
+}
 
 
 .pagination_wrapper {
@@ -248,4 +255,8 @@
 	border-radius: 5px;
 	min-height: 300px;
 }
+
+
+/** product details page **
+.pageWrapper.product_details_page .btns .
 
