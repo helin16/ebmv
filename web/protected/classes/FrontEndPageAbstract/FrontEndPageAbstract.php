@@ -87,7 +87,7 @@ abstract class FrontEndPageAbstract extends TPage
 	 */
 	protected function _getEndJs() 
 	{
-	    return 'if(typeof(PageJs) !== "undefined"){var pageJs = new PageJs(); pageJs.setCallbackId("getUser", "' . $this->_getUserBtn->getUniqueID() . '"); pageJs.setCallbackId("loginUser", "' . $this->_loginUserBtn->getUniqueID() . '"); }';
+	    return 'if(typeof(PageJs) !== "undefined"){var pageJs = new PageJs(); pageJs._currentLib = ' . trim(Core::getLibrary()->getId()) . ';pageJs.setCallbackId("getUser", "' . $this->_getUserBtn->getUniqueID() . '"); pageJs.setCallbackId("loginUser", "' . $this->_loginUserBtn->getUniqueID() . '"); }';
 	}
 	/**
 	 * (non-PHPdoc)

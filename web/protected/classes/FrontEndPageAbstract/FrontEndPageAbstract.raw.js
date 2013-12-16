@@ -4,6 +4,8 @@
 var FrontPageJs = new Class.create();
 FrontPageJs.prototype = {
 	productDetailsUrl: '/product/{id}' 
+		
+	,_currentLib: null //the id of current library
 	
 	//the callback ids
 	,callbackIds: {}
@@ -109,7 +111,7 @@ FrontPageJs.prototype = {
 		return new Element('img', {'class': 'product_image', 'src': '/asset/get?id=' + images[0].attribute});
 	}
 	//getting the current user
-	,getUser: function(btn, afterFunc, loadingFunc) {
+	,getUser: function(btn, afterFunc, loadingFunc, cancelLoginFunc) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me.postAjax(tmp.me.getCallbackId('getUser'), {}, {
@@ -123,13 +125,13 @@ FrontPageJs.prototype = {
 					if(typeof(afterFunc) === 'function')
 						afterFunc();
 				} catch(e) {
-					tmp.me.showLoginPanel(btn);
+					tmp.me.showLoginPanel(btn, cancelLoginFunc);
 				}
 			}
 		});
 	}
 	//showing login panel
-	,showLoginPanel: function(btn) {
+	,showLoginPanel: function(btn, cancelLoginFunc) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.newDiv = new Element('div', {'class': 'floatingpanel'})
@@ -169,8 +171,8 @@ FrontPageJs.prototype = {
 				.insert({'bottom': new Element('input', {'class': 'cancelbtn button rdcrnr', 'value': 'Cancel', 'type': 'button'})
 					.observe('click', function() {
 						$(this).up('.floatpanelwrapper').remove();
-						$(btn).disabled = false;
-						$(btn).value = $(btn).readAttribute('originvalue');
+						if(typeof(cancelLoginFunc) === 'function')
+							cancelLoginFunc();
 					})
 				})
 			});
