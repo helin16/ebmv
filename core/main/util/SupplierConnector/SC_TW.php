@@ -185,7 +185,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	public function getBookShelfList(UserAccount $user)
 	{
 		$token = $this->_validToken($user);
-		$url = $this->_formatURL($this->_importUrl, 'getBookList');
+		$url = $this->_formatURL($this->_importUrl, 'bookShelf');
 		$params = array('uid' => $user->getUserName(), 'token' => $token, 'partnerid' => $this->_supplier->getInfo('partner_id'));
 		$result = $this->readUrl($url, self::CURL_TIMEOUT, $params);
 		return $this->_getJsonResult($result);
@@ -265,5 +265,12 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if(!isset($results['url']) || ($readurl = trim($results['url'])) === '')
 			throw new SupplierConnectorException("System Error: can not get the online reading url for supplier(" . $this->_supplier->getName() ."), contact admin for further support!");
 		return $readurl;
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::updateProduct()
+	 */
+	public function updateProduct(Product &$product)
+	{
 	}
 }

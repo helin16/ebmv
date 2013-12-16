@@ -257,4 +257,11 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'siteID' => $this->_lib->getInfo('aus_code'), 'uid' => $user->getUserName(), 'pwd' => $user->getPassword());
 		return $url . '?' . http_build_query($params);
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::updateProduct()
+	 */
+	public function updateProduct(Product &$product)
+	{
+	}
 }
