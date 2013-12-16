@@ -72,6 +72,7 @@
 }
 .product .listcol div .inlineblock{
     width: 49%;
+    vertical-align: top;
 }
 .product .listcol .product_title {
     font-size: 20px;
