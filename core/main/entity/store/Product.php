@@ -445,6 +445,9 @@ class Product extends BaseEntityAbstract
 	            $array['attributes'][$typeId][] = $attr->getJson();
 		    }
 		    $array['supplier'] = $this->getSupplier()->getJson();
+		    $array['languages'] = array();
+		    foreach($this->getLanguages() as $lang)
+		    	$array['languages'][] = $lang->getJson();
 	    }
 	    return parent::getJson($array, $reset);
 	}
