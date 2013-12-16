@@ -444,12 +444,9 @@ class Product extends BaseEntityAbstract
 		            $array['attributes'][$typeId] = array();
 	            $array['attributes'][$typeId][] = $attr->getJson();
 		    }
-		    $array['supplier'] = $this->getSupplier()->getJson();
 		    $array['languages'] = $array['libraryOwns'] = array();
 		    foreach($this->getLanguages() as $lang)
 		    	$array['languages'][] = $lang->getJson();
-		    foreach($this->getLibOwns() as $libOwn)
-		    	$array['libraryOwns'][$libOwn->getLibrary()->getId()] = $libOwn->getJson();
 	    }
 	    return parent::getJson($array, $reset);
 	}
