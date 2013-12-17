@@ -112,7 +112,7 @@ class Supplier extends BaseEntityAbstract
 	 */
 	public function getInfo($typeCode, $separator = ',', $reset = false)
 	{
-		if(!isset($this->_info[$typeCode]))
+		if(!isset($this->_info[$typeCode]) || $reset === true)
 		{
 			$sql = 'select group_concat(si.value separator ?) `info` from supplierinfo si inner join supplierinfotype sit on (sit.id = si.typeId and sit.code = ?) where si.active = 1 and si.supplierId = ?';
 			$result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);

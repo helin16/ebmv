@@ -105,7 +105,7 @@ class Library extends BaseEntityAbstract
 	 */
 	public function getInfo($typeCode, $separator = ',', $reset = false)
 	{
-		if(!isset($this->_info[$typeCode]) || $reset !== false)
+		if(!isset($this->_info[$typeCode]) || $reset === true)
 		{
 			$sql = 'select group_concat(lib.value separator ?) `value` from libraryinfo lib inner join libraryinfotype libt on (libt.id = lib.typeId and libt.code = ?) where lib.active = 1 and lib.libraryId = ?';
 			$result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
