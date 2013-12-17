@@ -92,4 +92,22 @@ interface SupplierConn
 	 * @return SupplierConnectorAbstract
 	 */
 	public function updateProduct(Product &$product);
+	/**
+	 * Borrowing a product by a user
+	 * 
+	 * @param Product     $product The product that we are trying to update
+	 * @param UserAccount $user    Who is borrowing the product
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function borrowProduct(Product &$product, UserAccount $user);
+	/**
+	 * Returning a product by a user
+	 * 
+	 * @param Product     $product The product that we are trying to update
+	 * @param UserAccount $user    Who is borrowing the product
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function returnProduct(Product &$product, UserAccount $user);
 }

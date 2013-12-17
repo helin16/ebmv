@@ -41,6 +41,14 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$this->_importUrl = trim($urls === false ? null : $urls[0]);
 		return $this->_importUrl;
 	}
+	/**
+	 * Getting the formatted url
+	 * 
+	 * @param string $url
+	 * @param string $methodName
+	 * 
+	 * @return string
+	 */
 	private function _formatURL($url, $methodName)
 	{
 		return trim(str_replace('{method}', $methodName, str_replace('{SiteID}', $this->_libCode, $url)));
@@ -98,7 +106,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$params = array('format' => $format, 'size' => $pageSize, 'index' => $pageNo);
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
-		$result = $this->readUrl($url . '?' . http_build_query($params), SupplierConnectorAbstract::CURL_TIMEOUT);
+		$result = SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), SupplierConnectorAbstract::CURL_TIMEOUT);
 		return new SimpleXMLElement($result);
 	}
 	/**
@@ -152,8 +160,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		
 		$url = $this->_formatURL($this->_importUrl, 'SignIn');
 		$data = array('uid' => trim($user->getUsername()), 'pwd' => trim($user->getPassword()), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
-		var_dump($url);
-		$results = $this->readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $data);
+		$results = SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $data);
 		var_dump($results);
 		$results = $this->_getJsonResult($results);
 		if(!isset($results['token']) || ($token = trim($results['token'])) === '')
@@ -170,7 +177,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * 
 	 * @return SupplierConnectorAbstract
 	 */
-	public function borrowBook(Product $product, UserAccount $user)
+	public function borrowProduct(Product $product, UserAccount $user)
 	{
 		//todo!!!
 		return $this;
@@ -187,8 +194,8 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$token = $this->_validToken($user);
 		$url = $this->_formatURL($this->_importUrl, 'bookShelf');
 		$params = array('uid' => $user->getUserName(), 'token' => $token, 'partnerid' => $this->_supplier->getInfo('partner_id'));
-		$result = $this->readUrl($url, self::CURL_TIMEOUT, $params);
-		return $this->_getJsonResult($result);
+		return SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), self::CURL_TIMEOUT);
+// 		return $this->_getJsonResult($result);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -261,7 +268,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$returnUrls = explode(',', $this->_lib->getInfo('lib_url'));
 		$currentUrl = (trim($_SERVER['SERVER_NAME']) === '' ? $returnUrls[0]: trim($_SERVER['SERVER_NAME'])) . '/mybookshelf.html';
 		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'token' => $token, 'returnUrl' => $currentUrl, 'partnerid' => $this->_supplier->getInfo('partner_id'));
-		$results = $this->_getJsonResult($this->readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $params), true);
+		$results = $this->_getJsonResult(SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $params), true);
 		if(!isset($results['url']) || ($readurl = trim($results['url'])) === '')
 			throw new SupplierConnectorException("System Error: can not get the online reading url for supplier(" . $this->_supplier->getName() ."), contact admin for further support!");
 		return $readurl;

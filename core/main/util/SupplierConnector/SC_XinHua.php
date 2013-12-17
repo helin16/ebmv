@@ -272,4 +272,14 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		$product = $this->_importProduct($pro);
 		return $product;
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::borrowProduct()
+	 */
+	public function borrowProduct(Product &$product, UserAccount $user){}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::returnProduct()
+	 */
+	public function returnProduct(Product &$product, UserAccount $user){}
 }
