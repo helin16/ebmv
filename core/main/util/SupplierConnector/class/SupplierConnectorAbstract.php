@@ -336,13 +336,14 @@ class SupplierConnectorAbstract
 	/**
 	 * read from a url
 	 * 
-	 * @param string $url     The url
-	 * @param int    $timeout The timeout in seconds
-	 * @param array  $data    The data we are POSTING
+	 * @param string  $url             The url
+	 * @param int     $timeout         The timeout in seconds
+	 * @param array   $data            The data we are POSTING
+	 * @param string  $customerRequest The type of the post: DELETE or POST etc...
 	 * 
 	 * @return mixed
 	 */
-	public static function readUrl($url, $timeout = null, array $data = array())
+	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '')
 	{
 		$timeout = trim($timeout);
 		$options = array(
@@ -352,7 +353,10 @@ class SupplierConnectorAbstract
 		);
 		if(count($data) > 0)
 		{
-			$options[CURLOPT_POST] = true;
+			if(trim($customerRequest) === '')
+				$options[CURLOPT_POST] = true;
+			else
+				$options[CURLOPT_CUSTOMREQUEST] = $customerRequest;
 			$options[CURLOPT_POSTFIELDS] = http_build_query($data);
 		}
 		$ch = curl_init();
