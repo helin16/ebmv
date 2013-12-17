@@ -431,7 +431,7 @@ class Product extends BaseEntityAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
-	public function getJson($reset = false)
+	public function getJson($extra = array(), $reset = false)
 	{
 	    $array = array();
 	    if(!$this->isJsonLoaded($reset))
