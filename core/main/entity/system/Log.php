@@ -7,6 +7,7 @@
  */
 class Log extends BaseEntityAbstract
 {
+	private static $_groupId = '';
 	/**
 	 * The id of the entity
 	 * 
@@ -37,6 +38,12 @@ class Log extends BaseEntityAbstract
 	 * @var string
 	 */
 	private $type;
+	/**
+	 * The identifier of that transation
+	 * 
+	 * @var string
+	 */
+	private $transId;
 	/**
 	 * Getter for entityId
 	 */
@@ -141,6 +148,27 @@ class Log extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Getter for the transId
+	 * 
+	 * @return string
+	 */
+	public function getTransId() 
+	{
+	    return $this->transId;
+	}
+	/**
+	 * Setter for the transId
+	 * 
+	 * @param string $value The transId
+	 * 
+	 * @return Log
+	 */
+	public function settransId($value) 
+	{
+	    $this->transId = $value;
+	    return $this;
+	}
+	/**
 	 * Logging
 	 * 
 	 * @param int    $entityId
@@ -149,7 +177,7 @@ class Log extends BaseEntityAbstract
 	 * @param string $type
 	 * @param string $comments
 	 */
-	public static function log($entityId, $entityName, $msg, $type, $comments = '')
+	public static function logging($entityId, $entityName, $msg, $type, $comments = '')
 	{
 		$className = __CLASS__;
 		$log = new $className();
@@ -180,6 +208,7 @@ class Log extends BaseEntityAbstract
 	{
 		DaoMap::begin($this, 'log');
 		
+		DaoMap::setStringType('transId','varchar', 100);
 		DaoMap::setIntType('entityId');
 		DaoMap::setStringType('entityName','varchar', 100);
 		DaoMap::setStringType('msg','LONGTEXT');
@@ -188,6 +217,7 @@ class Log extends BaseEntityAbstract
 		
 		parent::__loadDaoMap();
 		
+		DaoMap::createIndex('transId');
 		DaoMap::createIndex('entityId');
 		DaoMap::createIndex('entityName');
 		DaoMap::createIndex('type');
