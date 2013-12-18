@@ -141,7 +141,10 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting the token for user:' . $user->getId() , __FUNCTION__);
 		if($forceNew === false && isset($_SESSION['supplier_token']) && isset($_SESSION['supplier_token'][$this->_supplier->getId()]) && ($token = trim($_SESSION['supplier_token'][$this->_supplier->getId()])) !== '')
+		{
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Return token from Session.' , __FUNCTION__);
 			return $token;
+		}
 		
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'SignIn');
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::get url:' . $url , __FUNCTION__);
@@ -171,13 +174,12 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Borrowing Product: uid:' . $user->getId() . ', pid: ' . $product->getId() , __FUNCTION__);
 		if(!($supplier = $product->getSupplier()) instanceof Supplier)
 			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT have a supplier linked!');
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got supplier:' . $supplier->getId() , __FUNCTION__);
-		
 		if($supplier->getId() !== $this->_supplier->getId())
 			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
 		
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Validating token' , __FUNCTION__);
 		$token = $this->_validToken($user);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got token: ' . $token , __FUNCTION__);
+		
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
 		
@@ -191,8 +193,6 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		{
 			$results = $this->_getJsonResult($result, 'results');
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Decoded json:' . print_r($results, true) , __FUNCTION__);
-			
-			$this->addToBookShelfList($user, $product);
 			//TODO:: need to update the expiry date of the shelfitem
 		}
 		catch (SupplierConnectorException $ex){}
@@ -204,18 +204,24 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function returnProduct(Product &$product, UserAccount $user)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Returning Product: uid:' . $user->getId() . ', pid: ' . $product->getId() , __FUNCTION__);
 		if(!($supplier = $product->getSupplier()) instanceof Supplier)
 			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT have a supplier linked!');
 		if($supplier->getId() !== $this->_supplier->getId())
 			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
 		
 		$token = $this->_validToken($user);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got token: ' . $token , __FUNCTION__);
+		
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
+		
 		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'));
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "DELETE") with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
 		
-		SupplierConnectorAbstract::readUrl($url, self::CURL_TIMEOUT, $params, 'DELETE');
-		$this->removeBookShelfList($user, $product);
+		$result = SupplierConnectorAbstract::readUrl($url, self::CURL_TIMEOUT, $params, 'DELETE');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got result: ' . print_r($result, true) , __FUNCTION__);
+		
 		return $this;
 	}
 	/**

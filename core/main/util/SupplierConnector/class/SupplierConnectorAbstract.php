@@ -30,7 +30,7 @@ class SupplierConnectorAbstract
 	 * 
 	 * @var bool
 	 */
-	protected $_debugMode = true;
+	protected $_debugMode = false;
 	/**
 	 * The id of the imported products
 	 * 
@@ -80,6 +80,7 @@ class SupplierConnectorAbstract
 		$this->_supplier = $supplier;
 		$this->_lib = $lib;
 		$this->_debugMode = (trim($this->_lib->getInfo('running_mode')) !== '' ? (trim($this->_lib->getInfo('running_mode')) === '1') : $this->_debugMode);
+		if($this->_debugMode === true) self::log($this, 'Got a Supplier Connector for (SID = ' . $supplier->getId() . ', LID = ' . $lib->getId() . ')', __FUNCTION__);
 	}
 	/**
 	 * Getter for the supplier
