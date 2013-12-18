@@ -105,7 +105,7 @@ insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`,
     (2, 8, '1,3', 1, NOW(), 100, NOW(), 100),
     (2, 2, 'http://m2.ebook4rent.tw/pont/1.00/{SiteID}/launchViewer/', 1, NOW(), 100, NOW(), 100),
     (2, 7, 'B985A41E813AE00A78EE4AACF606F643', 1, NOW(), 100, NOW(), 100),
-    (2, 10, '0', 1, NOW(), 100, NOW(), 100);
+    (2, 9, '0', 1, NOW(), 100, NOW(), 100);
 
 ############################ add library table
 insert into `library` (`id`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
@@ -116,7 +116,8 @@ insert into `libraryinfotype` (`id`, `name`, `code`, `active`, `created`, `creat
 	(1, 'The Australian Library Code', 'aus_code',  1, NOW(), 100, NOW(), 100),
 	(2, 'The url of the library', 'lib_url',  1, NOW(), 100, NOW(), 100),
 	(3, 'The timezone of the library', 'lib_timezone',  1, NOW(), 100, NOW(), 100),
-	(4, 'The theme of the library', 'lib_theme',  1, NOW(), 100, NOW(), 100);
+	(4, 'The theme of the library', 'lib_theme',  1, NOW(), 100, NOW(), 100),
+	(5, 'The running mode of the library system', 'running_mode',  1, NOW(), 100, NOW(), 100);
 	
 ############################ add libraryinfo table
 insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
@@ -125,6 +126,7 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     ('1', '2', 'ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('1', '2', 'www.ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('1', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
-    ('1', '4', 'default', 1, NOW(), 100, NOW(), 100);
+    ('1', '4', 'default', 1, NOW(), 100, NOW(), 100),
+    ('1', '5', '1', 1, NOW(), 100, NOW(), 100);
 
 

@@ -5,43 +5,6 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	const CODE_TOKEN_INVALID = 310;
 	const CODE_TOKEN_EXPIRED = 900;
 	/**
-	 * Where to get the product list
-	 * @var string
-	 */
-	private $_importUrl;
-	/**
-	 * The library's code
-	 * 
-	 * @var string
-	 */
-	private $_libCode = '';
-	/**
-	 * construtor
-	 * 
-	 * @param Supplier $supplier The supplier
-	 * @param Library  $lib      The library
-	 */
-	public function __construct(Supplier $supplier, Library $lib)
-	{
-		parent::__construct($supplier, $lib);
-		$this->_libCode = $this->_lib->getInfo('aus_code');
-		$this->_getImportUrl();
-	}
-	/**
-	 * Getting the import url
-	 *
-	 * @return string
-	 */
-	public function _getImportUrl()
-	{
-		if(trim($this->_importUrl) !== '')
-			return $this->_importUrl;
-		
-		$urls = explode(',', $this->_supplier->getInfo('import_url'));
-		$this->_importUrl = trim($urls === false ? null : $urls[0]);
-		return $this->_importUrl;
-	}
-	/**
 	 * Getting the formatted url
 	 * 
 	 * @param string $url
@@ -51,7 +14,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _formatURL($url, $methodName)
 	{
-		return trim(str_replace('{method}', $methodName, str_replace('{SiteID}', $this->_libCode, $url)));
+		return trim(str_replace('{method}', $methodName, str_replace('{SiteID}', $this->_lib->getInfo('aus_code'), $url)));
 	}
 	/**
 	 * Gettht product List
@@ -61,13 +24,19 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductListInfo(ProductType $type = null)
 	{
-		$importUrl = $this->_formatURL($this->_importUrl, 'SyncBooks');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list info:', __FUNCTION__);
+		$importUrl = $this->_formatURL($this->_supplier->getInfo('import_url'), 'SyncBooks');
+		
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
 		$xml = $this->_getXmlFromUrl($importUrl, 1, 1, $type);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . (!$xml instanceof SimpleXMLElement ? trim($xml) : $xml->asXML()) , __FUNCTION__);
+		
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $importUrl . '!');
 		$array = array();
 		foreach($xml->attributes() as $key => $value)
 			$array[$key] = trim($value);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got array from results:' . print_r($array, true) , __FUNCTION__);
 		return $array;
 	}
 	/**
@@ -76,18 +45,25 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
 		if(trim($pageSize) === '')
 		{
 			$pageInfo = $this->getProductListInfo($type);
 			$pageSize = $pageInfo['totalRecords'];
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::pageInfo:' . $pageInfo . ', pageSize:' . $pageSize, __FUNCTION__);
 		}
+		
 		$array = array();
-		$importUrl = $this->_formatURL($this->_importUrl, 'SyncBooks');
+		$importUrl = $this->_formatURL($this->_supplier->getInfo('import_url'), 'SyncBooks');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
+		
 		$xml = $this->_getXmlFromUrl($importUrl, $pageNo, $pageSize, $type);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . (!$xml instanceof SimpleXMLElement ? trim($xml) : $xml->asXML()) , __FUNCTION__);
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
 		}
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got array from results:' . print_r($array, true) , __FUNCTION__);
 		return $array;
 	}
 	/**
@@ -118,12 +94,14 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _validToken(UserAccount $user)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Validating the token:' , __FUNCTION__);
 		try
 		{
 			return $this->_getToken($user);
 		}
 		catch(Exception $e)
 		{
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting a new token as old expired:' . $e->getMessage() . ': ' . $e->getTraceAsString() , __FUNCTION__);
 			if($e instanceof SupplierConnectorException && in_array(trim($e->getCode()), array(self::CODE_TOKEN_EXPIRED, self::CODE_TOKEN_INVALID)))
 				return $this->_getToken($user, true);
 			throw $e;
@@ -132,19 +110,25 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	/**
 	 * Getting the result block from JSON string
 	 * 
-	 * @param string $json The json string
+	 * @param string $json       The json string
+	 * @param string $resultName The result tag name
 	 * 
 	 * @throws SupplierConnectorException
 	 * @return mixed
 	 */
-	private function _getJsonResult($json)
+	private function _getJsonResult($json, $resultName)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Translating the json string:' . print_r($json, true) , __FUNCTION__);
+		if($json === false || trim($json) === '')
+			throw new SupplierConnectorException("Error: supplier connection timed out, pls try again!");
+		
 		$result = json_decode($json, true);
-		if(!isset($result['results']) || !isset($result['status']))
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'decoded the json string:' . print_r($result, true) , __FUNCTION__);
+		if(!isset($result[$resultName])  || !isset($result['status']))
 			throw new SupplierConnectorException("System Error: supplier message invalid, contact admin for further support!");
 		if(trim($result['status']) !== trim(self::CODE_SUCC))
-			throw new SupplierConnectorException("System Error: can not sign for supplier(" . $this->_supplier->getName() .") has NOT got sigin url, contact admin for further support!", trim($result['status']));
-		return $result['results'];
+			throw new SupplierConnectorException("System Error: error occurred from supplier(" . $this->_supplier->getName() ."), contact admin for further support " . (isset($result['Message']) ? ': ' . trim($result['Message']) : '.'), trim($result['status']));
+		return $result[$resultName];
 	}
 	/**
 	 * Getting the token for session
@@ -155,31 +139,83 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _getToken(UserAccount $user, $forceNew = false)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting the token for user:' . $user->getId() , __FUNCTION__);
 		if($forceNew === false && isset($_SESSION['supplier_token']) && isset($_SESSION['supplier_token'][$this->_supplier->getId()]) && ($token = trim($_SESSION['supplier_token'][$this->_supplier->getId()])) !== '')
 			return $token;
 		
-		$url = $this->_formatURL($this->_importUrl, 'SignIn');
+		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'SignIn');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::get url:' . $url , __FUNCTION__);
+		
 		$data = array('uid' => trim($user->getUsername()), 'pwd' => trim($user->getPassword()), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($data, true) . ', type = ) with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
 		$results = SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $data);
-		var_dump($results);
-		$results = $this->_getJsonResult($results);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::get result from supplier:' . $results , __FUNCTION__);
+		
+		$results = $this->_getJsonResult($results, 'results');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::get json decoded results:' . print_r($results, true) , __FUNCTION__);
+		
 		if(!isset($results['token']) || ($token = trim($results['token'])) === '')
 			throw new SupplierConnectorException("System Setting Error: can not sign for supplier(" . $this->_supplier->getName() .") has NOT got sigin url, contact admin for further support!");
 			
 		$_SESSION['supplier_token'][$this->_supplier->getId()] = $token;
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::stored token into session:' . print_r($token, true) , __FUNCTION__);
+		
 		return $token;
 	}
 	/**
-	 * Borrowing the book
-	 * 
-	 * @param Product     $product The product the user is trying to borrow
-	 * @param UserAccount $user    Who is borrowing it
-	 * 
-	 * @return SupplierConnectorAbstract
+	 * (non-PHPdoc)
+	 * @see SupplierConn::borrowProduct()
 	 */
-	public function borrowProduct(Product $product, UserAccount $user)
+	public function borrowProduct(Product &$product, UserAccount $user)
 	{
-		//todo!!!
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Borrowing Product: uid:' . $user->getId() . ', pid: ' . $product->getId() , __FUNCTION__);
+		if(!($supplier = $product->getSupplier()) instanceof Supplier)
+			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT have a supplier linked!');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got supplier:' . $supplier->getId() , __FUNCTION__);
+		
+		if($supplier->getId() !== $this->_supplier->getId())
+			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
+		
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Validating token' , __FUNCTION__);
+		$token = $this->_validToken($user);
+		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
+		
+		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'));
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::submiting to url with params' . print_r($params, true) , __FUNCTION__);
+		
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = ) with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
+		$result = SupplierConnectorAbstract::readUrl($url, self::CURL_TIMEOUT, $params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got results:' . print_r($result, true) , __FUNCTION__);
+		try
+		{
+			$results = $this->_getJsonResult($result, 'results');
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Decoded json:' . print_r($results, true) , __FUNCTION__);
+			
+			$this->addToBookShelfList($user, $product);
+			//TODO:: need to update the expiry date of the shelfitem
+		}
+		catch (SupplierConnectorException $ex){}
+		return $this;
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::returnProduct()
+	 */
+	public function returnProduct(Product &$product, UserAccount $user)
+	{
+		if(!($supplier = $product->getSupplier()) instanceof Supplier)
+			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT have a supplier linked!');
+		if($supplier->getId() !== $this->_supplier->getId())
+			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
+		
+		$token = $this->_validToken($user);
+		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
+		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'));
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "DELETE") with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
+		
+		SupplierConnectorAbstract::readUrl($url, self::CURL_TIMEOUT, $params, 'DELETE');
+		$this->removeBookShelfList($user, $product);
 		return $this;
 	}
 	/**
@@ -192,10 +228,12 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	public function getBookShelfList(UserAccount $user)
 	{
 		$token = $this->_validToken($user);
-		$url = $this->_formatURL($this->_importUrl, 'bookShelf');
-		$params = array('uid' => $user->getUserName(), 'token' => $token, 'partnerid' => $this->_supplier->getInfo('partner_id'));
-		return SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), self::CURL_TIMEOUT);
-// 		return $this->_getJsonResult($result);
+		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
+		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "GET") with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
+		
+		$result = SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), self::CURL_TIMEOUT);
+		return $this->_getJsonResult($result, 'bookList');
 	}
 	/**
 	 * (non-PHPdoc)
@@ -268,7 +306,9 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$returnUrls = explode(',', $this->_lib->getInfo('lib_url'));
 		$currentUrl = (trim($_SERVER['SERVER_NAME']) === '' ? $returnUrls[0]: trim($_SERVER['SERVER_NAME'])) . '/mybookshelf.html';
 		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'token' => $token, 'returnUrl' => $currentUrl, 'partnerid' => $this->_supplier->getInfo('partner_id'));
-		$results = $this->_getJsonResult(SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $params), true);
+		
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "POST") with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
+		$results = $this->_getJsonResult(SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $params), 'results');
 		if(!isset($results['url']) || ($readurl = trim($results['url'])) === '')
 			throw new SupplierConnectorException("System Error: can not get the online reading url for supplier(" . $this->_supplier->getName() ."), contact admin for further support!");
 		return $readurl;

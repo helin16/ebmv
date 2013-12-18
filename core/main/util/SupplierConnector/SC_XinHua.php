@@ -3,36 +3,6 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 {
 	const CODE_SUCC = 0;
 	/**
-	 * Where to get the product list
-	 * @var string
-	 */
-	private $_wsdlUrl;
-	/**
-	 * construtor
-	 * 
-	 * @param Supplier $supplier The supplier
-	 * @param Library  $lib      The library
-	 */
-	public function __construct(Supplier $supplier, Library $lib)
-	{
-		parent::__construct($supplier, $lib);
-		$this->_getImportUrl();
-	}
-	/**
-	 * Getting the import url
-	 *
-	 * @return string
-	 */
-	public function _getImportUrl()
-	{
-		if(trim($this->_wsdlUrl) !== '')
-			return $this->_wsdlUrl;
-		
-		$urls = explode(',', $this->_supplier->getInfo('import_url'));
-		$this->_wsdlUrl = ($urls === false ? null : $urls[0]);
-		return $this->_wsdlUrl;
-	}
-	/**
 	 * Gettht product List
 	 * 
 	 * @param ProductType $type The product type we are getting the xml for
@@ -45,7 +15,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		$params = array("SiteID" => $this->_lib->getInfo('aus_code'), "Index" => 1, "Size" => 1);
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", $params);
+		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookList", $params);
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $wsdl . '!');
 		$array = array();
@@ -68,7 +38,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
 		$array = array();
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookList", $params);
+		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookList", $params);
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
@@ -117,7 +87,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 					"Uid" => $username, 
 					"Pwd" => trim($user->getPassword()), 
 					'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookShelfList", $params);
+		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookShelfList", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
 			throw new SupplierConnectorException($xml['Value']);
 		return $xml;
@@ -182,7 +152,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				"Uid" => $username,
 				"Pwd" => trim($user->getPassword()),
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "AddToBookShelf", $params);
+		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "AddToBookShelf", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
 			throw new SupplierConnectorException("Connector Error: " .$xml->Value);
 		return $xml;
@@ -206,7 +176,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				"Uid" => $username,
 				"Pwd" => trim($user->getPassword()),
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "RemoveFromBookShelf", $params);
+		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "RemoveFromBookShelf", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
 			throw new SupplierConnectorException("Connector Error: " . $xml->Value);
 		return $xml;
@@ -267,7 +237,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				'Isbn' => trim($product->getAttribute('isbn')),
 				'NO' => trim($product->getAttribute('cno'))
 		);
-		$xml = $this->_getFromSoap($this->_wsdlUrl, "GetBookInfo", $params);
+		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookInfo", $params);
 		$pro = SupplierConnectorProduct::getProduct($xml);
 		$product = $this->_importProduct($pro);
 		return $product;

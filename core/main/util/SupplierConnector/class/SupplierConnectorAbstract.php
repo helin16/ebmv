@@ -26,6 +26,12 @@ class SupplierConnectorAbstract
 	 */
 	protected static $_connectors = array();
 	/**
+	 * Whether we are in debug mode for this script
+	 * 
+	 * @var bool
+	 */
+	protected $_debugMode = true;
+	/**
 	 * The id of the imported products
 	 * 
 	 * @var array
@@ -52,7 +58,20 @@ class SupplierConnectorAbstract
 		return self::$_connectors[$key];
 	}
 	/**
+	 * Logging for SupplierConnenctorAbastract
+	 * 
+	 * @param SupplierConnectorAbstract $script
+	 * @param string                    $msg
+	 * @param string                    $funcName
+	 * @param string                    $comments
+	 */
+	public static function log(SupplierConnectorAbstract $script, $msg, $funcName = '', $comments = '')
+	{
+		Log::logging($script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
+	}
+	/**
 	 * construtor
+	 * 
 	 * @param Supplier $supplier The supplier
 	 * @param Library  $lib      The library
 	 */
@@ -60,6 +79,16 @@ class SupplierConnectorAbstract
 	{
 		$this->_supplier = $supplier;
 		$this->_lib = $lib;
+		$this->_debugMode = (trim($this->_lib->getInfo('running_mode')) !== '' ? (trim($this->_lib->getInfo('running_mode')) === '1') : $this->_debugMode);
+	}
+	/**
+	 * Getter for the supplier
+	 * 
+	 * @return Supplier
+	 */
+	public function getSupplier()
+	{
+		return $this->_supplier;
 	}
 	/**
 	 * Getting the default language and product type for a supplier
@@ -126,6 +155,8 @@ class SupplierConnectorAbstract
 	 */
 	public function importProducts($productList, $index = null)
 	{
+		if($this->_debugMode === true)
+			SupplierConnectorAbstract::log($this, 'Importing products(index = ' . $index . '):' . print_r($productList, true) , __FUNCTION__);
 		$products = array ();
 		if (trim ( $index ) !== '')
 		{
@@ -155,58 +186,90 @@ class SupplierConnectorAbstract
 	 */
 	protected function _importProduct(SupplierConnectorProduct $productInfo)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Importing product:' , __FUNCTION__);
 		$transStarted = false;
-		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
+		try 
+		{ 
+			Dao::beginTransaction();
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::starting transaction for DB' , __FUNCTION__);
+		} catch (Exception $ex) {
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::transaction for DB started already' , __FUNCTION__);
+			$transStarted = true; 
+		}
 		try
 		{
 			$infoArray = $productInfo->getArray();
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got product info:' . print_r($infoArray, true) , __FUNCTION__);
 			if(count($langs = BaseServiceAbastract::getInstance('Language')->getLangsByCodes($infoArray['languageCodes'])) === 0)
 				throw new SupplierConnectorException("Invalid lanuage codes: " . implode(', ', $infoArray['languageCodes']));
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got languges' , __FUNCTION__);
+			
 			if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName($infoArray['productTypeName'])) instanceof ProductType)
 				throw new SupplierConnectorException("Invalid ProductType: " . $infoArray['productTypeName']);
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got product type (ID=' . $type->getId() . ')' , __FUNCTION__);
 			
 			//getting the categories
 			if(count($infoArray['categories']) >0)
 				$categories = $this->_importCategories($infoArray['categories']);
-			
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got (' . count($categories) . ') categories.' , __FUNCTION__);
 			
 			//downloading images
 			$imgs = array();
 			foreach(array_unique($infoArray['attributes']['image_thumb']) as $imgUrl)
 				$imgs[] = $this->_importImage($imgUrl);
 			$infoArray['attributes']['image_thumb'] = $imgs;
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got (' . count($imgs) . ') images.' , __FUNCTION__);
 			
 			//updating the product
 			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0], $this->_supplier)) instanceof Product)
 			{
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updating product:' , __FUNCTION__);
 				//remove all categoies
 				$product->removeAllCategories();
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed categories:' , __FUNCTION__);
 				
 				//delete the thumb
 				if(!($thumbs = explode(',', $product->getAttribute('image_thumb'))) !== false)
 					BaseServiceAbastract::getInstance('Asset')->removeAssets($thumbs);
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed asset file for thumb_images:' , __FUNCTION__);
+				
 				//delete the img
 				if(!($imgs = explode(',', $product->getAttribute('image'))) !== false)
 					BaseServiceAbastract::getInstance('Asset')->removeAssets($imgs);
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed asset file for images:' , __FUNCTION__);
+				
 				//deleting the thumb and image for the product
 				BaseServiceAbastract::getInstance('ProductAttribute')->removeAttrsForProduct($product, array('image_thumb', 'image'));
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed images and thumb images from DB' , __FUNCTION__);
+				
 				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']); 
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::Updated product(ID=' . $product->getId() . ')' , __FUNCTION__);
 			}
 			//creating new product
 			else
+			{
 				$product = BaseServiceAbastract::getInstance('Product')->createProduct($infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::Created product(ID=' . $product->getId() . ')' , __FUNCTION__);
+			}
 			
 			//added the library
 			$product->updateLibrary($this->_lib, $infoArray['copies']['onlineRead']['avail'], $infoArray['copies']['onlineRead']['total'], $infoArray['copies']['download']['avail'], $infoArray['copies']['download']['total']);
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updated library(PID=' . $product->getId() . ', LibID = ' . $this->_lib->getId() . ')' , __FUNCTION__);
 			
 			if($transStarted === false)
+			{
 				Dao::commitTransaction();
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Committed DB Transaction' , __FUNCTION__);
+			}
 			return $product;
 		}
 		catch(Exception $ex)
 		{
 			if($transStarted === false)
+			{
 				Dao::rollbackTransaction();
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Rolled back DB Transaction: ' . $ex->getMessage() , __FUNCTION__);
+			}
 			throw $ex;
 		}
 	}
@@ -219,6 +282,7 @@ class SupplierConnectorAbstract
 	 */
 	protected function _importCategories(array $categoryNames)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Importing Categories:' . print_r($categoryNames, true) , __FUNCTION__);
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true; }
 		try
@@ -248,6 +312,7 @@ class SupplierConnectorAbstract
 	 */
 	protected function _importImage($imageUrl)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Importing image:' . $imageUrl , __FUNCTION__);
 		$transStarted = false;
 		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
 		try
@@ -262,7 +327,10 @@ class SupplierConnectorAbstract
 			
 			$paths = parse_url($imageUrl);
 			$paths = explode('/', $paths['path']);
-			$tmpFile = self::downloadFile($imageUrl, $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl));
+			
+			$localFile = $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl);
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'downloading file(' . $imageUrl . ') to (' . $localFile . ') with timeout limit: ' . self::CURL_TIMEOUT , __FUNCTION__);
+			$tmpFile = self::downloadFile($imageUrl, $localFile);
 			//checking whether the file is an image
 			try 
 			{ 
@@ -292,6 +360,7 @@ class SupplierConnectorAbstract
 	 */
 	protected function _mkDir($dir)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'makeing dir:' . $dir , __FUNCTION__);
 		$tmpDirs = explode('/', $dir);
 		for($i = 1; $i <= count($tmpDirs); $i++)
 		{
@@ -312,10 +381,11 @@ class SupplierConnectorAbstract
 	public static function downloadFile($url, $localFile, $timeout = null)
 	{
 		$timeout = trim($timeout);
+		$timeout = (!is_numeric($timeout) ? self::CURL_TIMEOUT : $timeout);
 		$fp = fopen($localFile, 'w+');
 		$options = array(
 				CURLOPT_FILE    => $fp,
-				CURLOPT_TIMEOUT =>  (!is_numeric($timeout) ? 8*60*60 : $timeout), // set this to 8 hours so we dont timeout on big files
+				CURLOPT_TIMEOUT => $timeout, // set this to 8 hours so we dont timeout on big files
 				CURLOPT_URL     => $url
 		);
 		$ch = curl_init();
@@ -346,9 +416,10 @@ class SupplierConnectorAbstract
 	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '')
 	{
 		$timeout = trim($timeout);
+		$timeout = (!is_numeric($timeout) ? self::CURL_TIMEOUT : $timeout);
 		$options = array(
 				CURLOPT_RETURNTRANSFER => true, 
-				CURLOPT_TIMEOUT =>  (!is_numeric($timeout) ? 8*60*60 : $timeout), // set this to 8 hours so we dont timeout on big files
+				CURLOPT_TIMEOUT => $timeout, // set this to 8 hours so we dont timeout on big files
 				CURLOPT_URL     => $url
 		);
 		if(count($data) > 0)

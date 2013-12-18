@@ -8,6 +8,12 @@
 class Log extends BaseEntityAbstract
 {
 	/**
+	 * The type for SupplierConnectorAbstract
+	 * 
+	 * @var string
+	 */
+	const TYPE_SC = 'SupplierConnectorAbstract';
+	/**
 	 * caching the transid
 	 * 
 	 * @var string
@@ -54,7 +60,7 @@ class Log extends BaseEntityAbstract
 	 * 
 	 * @var string
 	 */
-	private $funcName;
+	private $funcName = '';
 	/**
 	 * Getter for entityId
 	 */
@@ -220,6 +226,7 @@ class Log extends BaseEntityAbstract
 		$log->setMsg($msg);
 		$log->settype($type);
 		$log->setComments($comments);
+		$log->setFuncName($funcName);
 		EntityDao::getInstance($className)->save($log);
 	}
 	/**
@@ -256,12 +263,12 @@ class Log extends BaseEntityAbstract
 		DaoMap::begin($this, 'log');
 		
 		DaoMap::setStringType('transId','varchar', 100);
+		DaoMap::setStringType('type','varchar', 100);
 		DaoMap::setIntType('entityId');
 		DaoMap::setStringType('entityName','varchar', 100);
+		DaoMap::setStringType('funcName','varchar', 100);
 		DaoMap::setStringType('msg','LONGTEXT');
 		DaoMap::setStringType('comments','varchar', 255);
-		DaoMap::setStringType('type','varchar', 100);
-		DaoMap::setStringType('funcName','varchar', 100);
 		
 		parent::__loadDaoMap();
 		
