@@ -340,6 +340,7 @@ CREATE TABLE `log` (
 	`msg` LONGTEXT NOT NULL ,
 	`comments` varchar(255) NOT NULL DEFAULT '',
 	`type` varchar(100) NOT NULL DEFAULT '',
+	`funcName` varchar(100) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -352,6 +353,7 @@ CREATE TABLE `log` (
 	,INDEX (`entityId`)
 	,INDEX (`entityName`)
 	,INDEX (`type`)
+	,INDEX (`funcName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `person`;
 CREATE TABLE `person` (

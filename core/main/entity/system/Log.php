@@ -50,6 +50,12 @@ class Log extends BaseEntityAbstract
 	 */
 	private $transId;
 	/**
+	 * The name of the function
+	 * 
+	 * @var string
+	 */
+	private $funcName;
+	/**
 	 * Getter for entityId
 	 */
 	public function getEntityId() 
@@ -168,9 +174,30 @@ class Log extends BaseEntityAbstract
 	 * 
 	 * @return Log
 	 */
-	public function settransId($value) 
+	public function setTransId($value) 
 	{
 	    $this->transId = $value;
+	    return $this;
+	}
+	/**
+	 * Getter for the funcName
+	 * 
+	 * @return string
+	 */
+	public function getFuncName() 
+	{
+	    return $this->funcName;
+	}
+	/**
+	 * Setter for the funcName
+	 * 
+	 * @param string $value The name of the function
+	 * 
+	 * @return Log
+	 */
+	public function setFuncName($value) 
+	{
+	    $this->funcName = $value;
 	    return $this;
 	}
 	/**
@@ -181,12 +208,13 @@ class Log extends BaseEntityAbstract
 	 * @param string $msg
 	 * @param string $type
 	 * @param string $comments
+	 * @param string $funcName
 	 */
-	public static function logging($entityId, $entityName, $msg, $type, $comments = '')
+	public static function logging($entityId, $entityName, $msg, $type, $comments = '', $funcName = '')
 	{
 		$className = __CLASS__;
 		$log = new $className();
-		$log->setEntityId(self::_getTransId());
+		$log->setTransId(self::_getTransId());
 		$log->setEntityId($entityId);
 		$log->setEntityName($entityName);
 		$log->setMsg($msg);
@@ -215,9 +243,9 @@ class Log extends BaseEntityAbstract
 	 * @param string             $type
 	 * @param string             $comments
 	 */
-	public static function LogEntity(BaseEntityAbstract $entity, $msg, $type, $comments = '')
+	public static function LogEntity(BaseEntityAbstract $entity, $msg, $type, $comments = '', $funcName = '')
 	{
-		self::logEntity($entity->getId(), get_class($entity), $msg, $type, $comments);
+		self::logEntity($entity->getId(), get_class($entity), $msg, $type, $comments, $funcName);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -233,6 +261,7 @@ class Log extends BaseEntityAbstract
 		DaoMap::setStringType('msg','LONGTEXT');
 		DaoMap::setStringType('comments','varchar', 255);
 		DaoMap::setStringType('type','varchar', 100);
+		DaoMap::setStringType('funcName','varchar', 100);
 		
 		parent::__loadDaoMap();
 		
@@ -240,6 +269,7 @@ class Log extends BaseEntityAbstract
 		DaoMap::createIndex('entityId');
 		DaoMap::createIndex('entityName');
 		DaoMap::createIndex('type');
+		DaoMap::createIndex('funcName');
 		
 		DaoMap::commit();
 	}
