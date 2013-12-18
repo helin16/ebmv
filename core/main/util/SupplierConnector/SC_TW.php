@@ -50,7 +50,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		{
 			$pageInfo = $this->getProductListInfo($type);
 			$pageSize = $pageInfo['totalRecords'];
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::pageInfo:' . $pageInfo . ', pageSize:' . $pageSize, __FUNCTION__);
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::pageInfo:' . print_r($pageInfo, true), __FUNCTION__);
 		}
 		
 		$array = array();
