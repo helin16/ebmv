@@ -7,7 +7,12 @@
  */
 class Log extends BaseEntityAbstract
 {
-	private static $_groupId = '';
+	/**
+	 * caching the transid
+	 * 
+	 * @var string
+	 */
+	private static $_transId = '';
 	/**
 	 * The id of the entity
 	 * 
@@ -181,12 +186,26 @@ class Log extends BaseEntityAbstract
 	{
 		$className = __CLASS__;
 		$log = new $className();
+		$log->setEntityId(self::_getTransId());
 		$log->setEntityId($entityId);
 		$log->setEntityName($entityName);
 		$log->setMsg($msg);
 		$log->settype($type);
 		$log->setComments($comments);
 		EntityDao::getInstance($className)->save($log);
+	}
+	/**
+	 * Getting the transid
+	 * 
+	 * @param string $salt The salt of making the trans id
+	 * 
+	 * @return string
+	 */
+	private static function _getTransId($salt = '')
+	{
+		if(trim(self::$_transId) === '')
+			self::$_transId = StringUtilsAbstract::getRandKey($salt);
+		return self::$_transId;
 	}
 	/**
 	 * Logging the entity

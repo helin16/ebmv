@@ -35,4 +35,15 @@ abstract class StringUtilsAbstract
 	{
 		return trim(md5($key . $username . $libCode));
 	}
+	/**
+	 * Getting a random key
+	 * 
+	 * @param string $salt The salt of making one string
+	 * 
+	 * @return strng
+	 */
+	public static function getRandKey($salt = '')
+	{
+		return trim(md5($salt . Core::getUser() . trim(new UDate())));
+	}
 }
