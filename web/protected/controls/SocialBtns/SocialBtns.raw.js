@@ -31,10 +31,11 @@ SocialBtnsJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		return new Element('span', {'class': 'socialBtns_wrapper'})
 			.insert({'bottom': new Element('span', {'class': 'addthis_toolbox addthis_default_style addthis_32x32_style'})
-				.insert({'bottom': tmp.me._getLink(url, title, description).addClassName('addthis_button_preferred_1')  })
-				.insert({'bottom': tmp.me._getLink(url, title, description).addClassName('addthis_button_preferred_2')  })
-				.insert({'bottom': new Element('a', {'class': 'addthis_button_preferred_3'})  })
-				.insert({'bottom': new Element('a', {'class': 'addthis_button_preferred_4'})  })
+				.insert({'bottom': tmp.me._getLink(url, title, description).addClassName('addthis_button_facebook')  })
+				.insert({'bottom': tmp.me._getLink(url, title, description).addClassName('addthis_button_twitter')  })
+				.insert({'bottom': tmp.me._getLink(url, title, description).addClassName('addthis_button_google_plusone_share')  })
+				.insert({'bottom': new Element('a', {'class': 'addthis_button_email'})  })
+				.insert({'bottom': new Element('a', {'class': 'addthis_button_print'})  })
 				.insert({'bottom': new Element('a', {'class': 'addthis_button_compact'})  })
 				.insert({'bottom': new Element('a', {'class': 'addthis_counter addthis_bubble_style'})  })
 			});
