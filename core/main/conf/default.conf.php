@@ -7,6 +7,9 @@ return array(
 			'Username' => 'developers',
 			'Password' => 'hydraworks'
 		)
+	,'social' => array (
+		'addThisAccount' => 'helin16' 
+	)
 );
 
 ?>
