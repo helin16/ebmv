@@ -258,6 +258,8 @@
 }
 
 
-/** product details page **
-.pageWrapper.product_details_page .btns .
+/** product details page **/
+.pageWrapper.product_details_page .socialBtns {
+	float: right;
+}
 

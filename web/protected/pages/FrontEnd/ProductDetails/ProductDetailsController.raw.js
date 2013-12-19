@@ -47,8 +47,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		
 		tmp.newDiv = new Element('div', {'class': 'wrapper'})
 			.insert({'bottom': new Element('div', {'class': 'product listitem'})
-				.insert({'bottom': new Element('span', {'class': 'inlineblock listcol left'}).update(tmp.thumbImg)	})
+				.insert({'bottom': new Element('span', {'class': 'inlineblock listcol left'}).update(tmp.thumbImg) })
 				.insert({'bottom': new Element('span', {'class': 'inlineblock listcol right'})
+					.insert({'bottom': new Element('div', {'id': 'socialBtns', 'class': 'socialBtns'}) })
 					.insert({'bottom': new Element('div', {'class': 'product_title'}).update(tmp.me.product.title) })
 					.insert({'bottom': new Element('div', {'class': 'row'})
 						.insert({'bottom': tmp.me._getAtts('author', 'Author', 'inlineblock author') })
@@ -74,6 +75,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				})
 			});
 		$(tmp.me.resultDivId).update(tmp.newDiv);
+		socialBtnJs.load('socialBtns');
 		tmp.me._getCopies('copies_for_view', 'copies_for_download', 'view_btn', 'downloadBtn');
 		return this;
 	}

@@ -4,5 +4,6 @@
 	<div class="pageWrapper product_details_page">
 	    <div id='product_details'>
 	    </div>
+	    <com:Application.controls.SocialBtns.SocialBtns id='social_btns' />
 	</div>
 </com:TContent>
