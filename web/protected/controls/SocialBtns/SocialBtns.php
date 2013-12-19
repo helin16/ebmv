@@ -31,7 +31,7 @@ class SocialBtns extends TClientScript
 		$page = $this->getPage();
 		if(!$page->IsPostBack || !$page->IsCallback)
 		{
-			$page->getClientScript()->registerHeadScriptFile('socialbtns_addthis', "http://s7.addthis.com/js/300/addthis_widget.js#pubid=helin16");
+			$page->getClientScript()->registerHeadScriptFile('socialbtns_addthis', "https://s7.addthis.com/js/300/addthis_widget.js#pubid=helin16");
 			$page->getClientScript()->registerScriptFile('socialbtns_js', $this->publishAsset(get_class($this) . '.js'));
 			$page->getClientScript()->registerBeginScript('socialbtns_js_ini', 'var socialBtnJs = new SocialBtnsJs();');
 			if(trim($this->_btnsHolderId) !== '')
