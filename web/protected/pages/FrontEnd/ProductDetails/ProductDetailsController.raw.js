@@ -75,7 +75,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				})
 			});
 		$(tmp.me.resultDivId).update(tmp.newDiv);
-		socialBtnJs.load('socialBtns');
+		socialBtnJs.load('socialBtns', document.URL, 'Check this out:' + tmp.me.product.title, tmp.newDiv.down('.product_description').innerHTML);
 		tmp.me._getCopies('copies_for_view', 'copies_for_download', 'view_btn', 'downloadBtn');
 		return this;
 	}
