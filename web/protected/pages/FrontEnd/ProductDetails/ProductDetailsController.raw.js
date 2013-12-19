@@ -152,7 +152,6 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				$(btn).update( "Processing ...").writeAttribute('disabled', true);
 			}
 			, function () {
-				console.debug('test');
 				$(btn).update($(btn).readAttribute('originvalue')).writeAttribute('disabled', false);
 			}
 		);
