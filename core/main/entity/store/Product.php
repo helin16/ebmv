@@ -259,54 +259,64 @@ class Product extends BaseEntityAbstract
 	/**
 	 * Adding a library for owning this product
 	 * 
-	 * @param Library $lib         The owner
-	 * @param number  $availCopies How many copies
-	 * @param number  $totalCopies How many copies in total
+	 * @param Library         $lib         The owner
+	 * @param LibraryOwnsType $type        Which type does the library owns this product
+	 * @param number          $availCopies How many copies
+	 * @param number          $totalCopies How many copies in total
 	 * 
 	 * @return Product
 	 */
-	public function updateLibrary(Library $lib, $availForView = 0, $totalForView = 0, $availForDownload = 0, $totalForDownload = 0)
+	public function updateLibrary(Library $lib, LibraryOwnsType $type, $avail = 0, $total = 0)
 	{
-		$owns = $this->getLibraryOwn($lib);
-		if(!$owns instanceof LibraryOwns)
+		$owns = $this->getLibraryOwn($lib, $type);
+		if(count($owns) === 0)
 			$owns = new LibraryOwns();
+		else
+		{
+			$owns = $owns[0];
+			$this->removeLibrary($lib, $type);
+		}
 		$owns->setLibrary($lib);
 		$owns->setProduct($this);
-		$owns->setAvailForView($availForView);
-		$owns->setTotalForView($totalForView);
-		$owns->setAvailForDownload($availForDownload);
-		$owns->setTotalForDownload($totalForDownload);
+		$owns->setType($type);
+		$owns->setAvail($avail);
+		$owns->setTotal($total);
+		$owns->setActive(true);
 		EntityDao::getInstance('LibraryOwns')->save($owns);
 		return $this;
 	}
 	/**
 	 * Removing a product form a library
 	 * 
-	 * @param Library $lib The library
+	 * @param Library         $lib  The library
+	 * @param LibraryOwnsType $type The ownership type
 	 * 
 	 * @return Product
 	 */
-	public function removeLibrary(Library $lib)
+	public function removeLibrary(Library $lib, LibraryOwnsType $type)
 	{
-		$owns = $this->getLibraryOwn($lib);
-		if($owns instanceof LibraryOwns)
-		{
-			$owns->setActive(false);
-			EntityDao::getInstance('LibraryOwns')->save($owns);
-		}
+		EntityDao::getInstance('LibraryOwns')->updateByCriteria('active = 0' , 'libraryId = ? and typeId = ?', array($lib->getId(), $type->getId()));
 		return $this;
 	}
 	/**
 	 * Getting the library own for this product
 	 * 
-	 * @param Library $lib The owner
+	 * @param Library         $lib  The owner
+	 * @param LibraryOwnsType $type The ownership type
 	 * 
 	 * @return NULL|LibraryOwns
 	 */
-	public function getLibraryOwn(Library $lib)
+	public function getLibraryOwn(Library $lib, LibraryOwnsType $type = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
 	{
-		$owns = EntityDao::getInstance('LibraryOwns')->findByCriteria('libraryId = ? and productId = ?', array($lib->getId(), $this->getId()), 1, 1);
-		return (count($owns) === 0 ? null : $owns[0]);
+		$where = 'libraryId = ? and productId = ?';
+		$params =  array($lib->getId(), $this->getId());
+		if($type instanceof LibraryOwnsType)
+		{
+			$where .= ' and typeId = ?';
+			$params[] = $type->getId();
+		}
+		$owns = EntityDao::getInstance('LibraryOwns')->findByCriteria($where, $params, $pageNo, $pageSize, $orderBy);
+		return $owns;
 	}
 	/**
 	 * Getter for the ProductType
@@ -444,7 +454,7 @@ class Product extends BaseEntityAbstract
 		            $array['attributes'][$typeId] = array();
 	            $array['attributes'][$typeId][] = $attr->getJson();
 		    }
-		    $array['languages'] = $array['libraryOwns'] = array();
+		    $array['languages'] = array();
 		    foreach($this->getLanguages() as $lang)
 		    	$array['languages'][] = $lang->getJson();
 	    }

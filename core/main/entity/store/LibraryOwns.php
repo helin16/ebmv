@@ -21,29 +21,23 @@ class LibraryOwns extends BaseEntityAbstract
      */
     protected $library;
     /**
-     * The available copies for view online of the product that the library owns
+     * The LibraryOwnsType
      * 
-     * @var int
+     * @var LibraryOwnsType
      */
-    private $availForView;
+    protected $type;
     /**
-     * The total copies of the product for view online that the library owns
+     * The available copies for library owns
      * 
      * @var int
      */
-    private $totalForView;
+    private $avail;
     /**
-     * The available copies for download of the product that the library owns
+     * The total copies for library owns
      * 
      * @var int
      */
-    private $availForDownload;
-    /**
-     * The total copies for download of the product that the library owns
-     * 
-     * @var int
-     */
-    private $totalForDownload;
+    private $total;
     /**
      * Getter for the product
      * 
@@ -89,90 +83,81 @@ class LibraryOwns extends BaseEntityAbstract
         return $this;
     }
     /**
-     * Getter for the availForView
+     * Getter for the avail
      * 
      * @return number
      */
-    public function getAvailForView() 
+    public function getAvail() 
     {
-        return $this->availForView;
+        return $this->avail;
     }
     /**
-     * Setter for availForView
+     * Setter for avail
      * 
-     * @param int $value The availForView
+     * @param int $value The avail
      * 
      * @return LibraryOwns
      */
-    public function setAvailForView($value) 
+    public function setAvail($value) 
     {
-        $this->availForView = $value;
+        $this->avail = $value;
         return $this;
     }
     /**
-     * Getter for the totalForView
+     * Getter for the total
      * 
      * @return number
      */
-    public function getTotalForView() 
+    public function getTotal() 
     {
-        return $this->totalForView;
+        return $this->total;
     }
     /**
-     * Setter for the totalForView
+     * Setter for the total
      * 
-     * @param int $value The totalForView
+     * @param int $value The total
      * 
      * @return LibraryOwns
      */
-    public function setTotalForView($value) 
+    public function setTotal($value) 
     {
-        $this->totalForView = $value;
+        $this->total = $value;
         return $this;
     }
     /**
-     * Getter for the availForDownload
+     * Getter for the library owns type
      * 
-     * @return number
+     * @return LibraryOwnsType
      */
-    public function getAvailForDownload() 
+    public function getType() 
     {
-        return $this->availForDownload;
+        return $this->type;
     }
     /**
-     * Setter for the availForDownload
+     * Setter for the library owns type
      * 
-     * @param int $value The availForDownload
+     * @param LibraryOwnsType $value The LibraryOwnsType
      * 
      * @return LibraryOwns
      */
-    public function setAvailForDownload($value) 
+    public function setType(LibraryOwnsType $value) 
     {
-        $this->availForDownload = $value;
+        $this->type = $value;
         return $this;
     }
     /**
-     * Getter for the totalForDownload
-     * 
-     * @return number
-     */
-    public function getTotalForDownload() 
-    {
-        return $this->totalForDownload;
-    }
-    /**
-     * Setter for the totalForDownload
-     * 
-     * @param int $value The totalForDownload
-     * 
-     * @return LibraryOwns
-     */
-    public function setTotalForDownload($value) 
-    {
-        $this->totalForDownload = $value;
-        return $this;
-    }
-    
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+	    $array = array();
+	    if(!$this->isJsonLoaded($reset))
+	    {
+	    	$array['type'] = $this->getType()->getJson();
+	    }
+	    return parent::getJson($array, $reset);
+	}
     /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
@@ -182,16 +167,13 @@ class LibraryOwns extends BaseEntityAbstract
         DaoMap::begin($this, 'lib_own');
         DaoMap::setManyToOne('library', 'Library');
         DaoMap::setManyToOne('product', 'Product');
-        DaoMap::setIntType('availForView');
-        DaoMap::setIntType('totalForView');
-        DaoMap::setIntType('availForDownload');
-        DaoMap::setIntType('totalForDownload');
+        DaoMap::setManyToOne('type', 'LibraryOwnsType');
+        DaoMap::setIntType('avail');
+        DaoMap::setIntType('total');
         parent::__loadDaoMap();
     
-        DaoMap::createIndex('availForView');
-        DaoMap::createIndex('totalForView');
-        DaoMap::createIndex('availForDownload');
-        DaoMap::createIndex('totalForDownload');
+        DaoMap::createIndex('avail');
+        DaoMap::createIndex('total');
         DaoMap::commit();
     }
 }

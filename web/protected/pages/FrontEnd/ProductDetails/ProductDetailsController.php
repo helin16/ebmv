@@ -30,7 +30,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 		if(!$this->IsPostBack)
 		{
-		    if(!$this->_product->getLibraryOwn(Core::getLibrary()) instanceof LibraryOwns)
+		    if(count($this->_product->getLibraryOwn(Core::getLibrary())) === 0)
 		    {
 		    	FrontEndPageAbstract::show404Page('Product NOT Exsits!', 'Requested book/magazine/newspaper is not viewable for this library!');
 		    	die;
@@ -101,7 +101,9 @@ class ProductDetailsController extends FrontEndPageAbstract
         		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_GUEST_ACCOUNT));
         	SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->updateProduct($this->_product);
         	$results['urls'] = array('viewUrl' => (trim($supplier->getInfo('view_url')) !== ''), 'downloadUrl' => (trim($supplier->getInfo('download_url')) !== ''));
-        	$results['copies'] = ($libOwn = $this->_product->getLibraryOwn(Core::getLibrary())) instanceof LibraryOwns ? $libOwn->getJson() : array();
+        	$results['copies'] = array();
+        	foreach($this->_product->getLibOwns() as $owns)
+        		$results['copies'][] = $owns->getJson();
         }
         catch(Exception $ex)
         {

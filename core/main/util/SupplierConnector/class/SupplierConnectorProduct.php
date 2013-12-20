@@ -51,8 +51,10 @@ class SupplierConnectorProduct
 				explode('/', self::_getAttribute($productinfo, 'BookType')), 
 				strtolower(trim($productinfo->getName())), 
 				array (
-					'onlineRead' => array ('avail' => trim(self::_getAttribute($productinfo, 'AvailableCopies', 15)), 'total' => trim(self::_getAttribute($productinfo, 'TotalCopies', 15)))
-					, 'download' => array ('avail' => trim(self::_getAttribute($productinfo, 'DownloadAvail', 15)), 'total' => trim(self::_getAttribute($productinfo, 'DownloadTotal', 15)))
+					'copies_online' => array ('avail' => trim(self::_getAttribute($productinfo, 'AvailableCopies', 15)), 'total' => trim(self::_getAttribute($productinfo, 'TotalCopies', 15)))
+					, 'times_online' => array ('avail' => trim(self::_getAttribute($productinfo, 'AvailableTimes', 15)), 'total' => trim(self::_getAttribute($productinfo, 'TotalTimes', 15)))
+					, 'copies_download' => array ('avail' => trim(self::_getAttribute($productinfo, 'DownloadAvailCopies', 15)), 'total' => trim(self::_getAttribute($productinfo, 'DownloadTotalCopies', 15)))
+					, 'times_download' => array ('avail' => trim(self::_getAttribute($productinfo, 'DownloadAvailTimes', 15)), 'total' => trim(self::_getAttribute($productinfo, 'DownloadTotalTimes', 15)))
 				)
 			);
 		return self::$_products[$key];

@@ -104,10 +104,9 @@ CREATE TABLE `libraryowns` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`libraryId` int(10) unsigned NOT NULL DEFAULT 0,
 	`productId` int(10) unsigned NOT NULL DEFAULT 0,
-	`availForView` int(10) unsigned NOT NULL DEFAULT 0,
-	`totalForView` int(10) unsigned NOT NULL DEFAULT 0,
-	`availForDownload` int(10) unsigned NOT NULL DEFAULT 0,
-	`totalForDownload` int(10) unsigned NOT NULL DEFAULT 0,
+	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
+	`avail` int(10) unsigned NOT NULL DEFAULT 0,
+	`total` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -116,12 +115,27 @@ CREATE TABLE `libraryowns` (
 	PRIMARY KEY (`id`)
 	,INDEX (`libraryId`)
 	,INDEX (`productId`)
+	,INDEX (`typeId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
-	,INDEX (`availForView`)
-	,INDEX (`totalForView`)
-	,INDEX (`availForDownload`)
-	,INDEX (`totalForDownload`)
+	,INDEX (`avail`)
+	,INDEX (`total`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `libraryownstype`;
+CREATE TABLE `libraryownstype` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(50) NOT NULL DEFAULT '',
+	`code` varchar(50) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+	,UNIQUE INDEX (`code`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (

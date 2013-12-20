@@ -263,8 +263,11 @@ class SupplierConnectorAbstract
 			}
 			
 			//added the library
-			$product->updateLibrary($this->_lib, $infoArray['copies']['onlineRead']['avail'], $infoArray['copies']['onlineRead']['total'], $infoArray['copies']['download']['avail'], $infoArray['copies']['download']['total']);
-				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updated library(PID=' . $product->getId() . ', LibID = ' . $this->_lib->getId() . ')' , __FUNCTION__);
+			foreach($infoArray['copies'] as $typeCode => $info)
+			{
+				$product->updateLibrary($this->_lib, LibraryOwnsType::getTypeByCode($typeCode), $info['avail'], $info['total']);
+			}
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updated library(PID=' . $product->getId() . ', LibID = ' . $this->_lib->getId() . '): ' . print_r($infoArray['copies'], true) , __FUNCTION__);
 			
 			if($transStarted === false)
 			{
