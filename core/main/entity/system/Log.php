@@ -62,6 +62,12 @@ class Log extends BaseEntityAbstract
 	 */
 	private $funcName = '';
 	/**
+	 * The library this log is for
+	 * 
+	 * @var Library
+	 */
+	protected $library;
+	/**
 	 * Getter for entityId
 	 */
 	public function getEntityId() 
@@ -207,19 +213,43 @@ class Log extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Getter for Library
+	 * 
+	 * @return Library
+	 */
+	public function getLibrary() 
+	{
+		$this->loadManyToOne('library');
+	    return $this->library;
+	}
+	/**
+	 * Setter for library
+	 * 
+	 * @param Library $value The library
+	 * 
+	 * @return Log
+	 */
+	public function setLibrary(Library $value) 
+	{
+	    $this->library = $value;
+	    return $this;
+	}
+	/**
 	 * Logging
 	 * 
-	 * @param int    $entityId
-	 * @param string $entityName
-	 * @param string $msg
-	 * @param string $type
-	 * @param string $comments
-	 * @param string $funcName
+	 * @param Library $lib        Which library the log is for
+	 * @param int     $entityId
+	 * @param string  $entityName
+	 * @param string  $msg
+	 * @param string  $type
+	 * @param string  $comments
+	 * @param string  $funcName
 	 */
-	public static function logging($entityId, $entityName, $msg, $type, $comments = '', $funcName = '')
+	public static function logging(Library $lib, $entityId, $entityName, $msg, $type, $comments = '', $funcName = '')
 	{
 		$className = __CLASS__;
 		$log = new $className();
+		$log->setLibrary($lib);
 		$log->setTransId(self::_getTransId());
 		$log->setEntityId($entityId);
 		$log->setEntityName($entityName);
@@ -245,14 +275,15 @@ class Log extends BaseEntityAbstract
 	/**
 	 * Logging the entity
 	 * 
+	 * @param Library            $lib       Which library the log is for
 	 * @param BaseEntityAbstract $entity
 	 * @param string             $msg
 	 * @param string             $type
 	 * @param string             $comments
 	 */
-	public static function LogEntity(BaseEntityAbstract $entity, $msg, $type, $comments = '', $funcName = '')
+	public static function LogEntity(Library $lib, BaseEntityAbstract $entity, $msg, $type, $comments = '', $funcName = '')
 	{
-		self::logEntity($entity->getId(), get_class($entity), $msg, $type, $comments, $funcName);
+		self::logEntity($lib, $entity->getId(), get_class($entity), $msg, $type, $comments, $funcName);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -262,6 +293,7 @@ class Log extends BaseEntityAbstract
 	{
 		DaoMap::begin($this, 'log');
 		
+		DaoMap::setManyToOne('library', 'Library');
 		DaoMap::setStringType('transId','varchar', 100);
 		DaoMap::setStringType('type','varchar', 100);
 		DaoMap::setIntType('entityId');

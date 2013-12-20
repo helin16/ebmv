@@ -67,7 +67,7 @@ class SupplierConnectorAbstract
 	 */
 	public static function log(SupplierConnectorAbstract $script, $msg, $funcName = '', $comments = '')
 	{
-		Log::logging($script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
+		Log::logging($script->getLibrary(), $script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
 	}
 	/**
 	 * construtor
@@ -90,6 +90,15 @@ class SupplierConnectorAbstract
 	public function getSupplier()
 	{
 		return $this->_supplier;
+	}
+	/**
+	 * Getter for the Library
+	 * 
+	 * @return Library
+	 */
+	public function getLibrary()
+	{
+		return $this->_lib;
 	}
 	/**
 	 * Getting the default language and product type for a supplier
@@ -436,5 +445,24 @@ class SupplierConnectorAbstract
 		$data =curl_exec($ch);
 		curl_close($ch);
 		return $data;
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::updateProduct()
+	 */
+	public function updateProduct(Product &$product)
+	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'updating product for ID:' . $product->getId() , __FUNCTION__);
+		$pro = $this->getProduct(trim($product->getAttribute('isbn')), trim($product->getAttribute('cno')));
+		if(!$pro instanceof SupplierConnectorProduct)
+		{
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Invalid product info from supplier, quiting now!' , __FUNCTION__);
+			return null;
+		}
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got product info from supplier:' . print_r($pro->getArray(), true) , __FUNCTION__);
+		
+		$product = $this->_importProduct($pro);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Updated product with id:' . $product->getId() , __FUNCTION__);
+		return $product;
 	}
 }

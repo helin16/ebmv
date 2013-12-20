@@ -73,11 +73,8 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		}
 	}
 	/**
-	 * Getting the book shelf
-	 * 
-	 * @param UserAccount $user
-	 * 
-	 * @return Ambigous <NULL, SimpleXMLElement>
+	 * (non-PHPdoc)
+	 * @see SupplierConn::getBookShelfList()
 	 */
 	public function getBookShelfList(UserAccount $user)
 	{
@@ -90,7 +87,14 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookShelfList", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
 			throw new SupplierConnectorException($xml['Value']);
-		return $xml;
+		$list = array();
+		echo $xml->BookShelfList->asXml();
+		foreach($xml->BookShelfList->children() as $book)
+		{
+			echo $book->asXml();
+// 			$list[] = SupplierConnectorProduct::getProduct($book);
+		}
+		return $list;
 	}
 	/**
 	 * (non-PHPdoc)
@@ -229,18 +233,20 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see SupplierConn::updateProduct()
+	 * @see SupplierConn::getProduct()
 	 */
-	public function updateProduct(Product &$product)
+	public function getProduct($isbn, $no)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
+		
 		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
-				'Isbn' => trim($product->getAttribute('isbn')),
-				'NO' => trim($product->getAttribute('cno'))
+				'Isbn' => trim($isbn),
+				'NO' => trim($no)
 		);
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookInfo", $params);
-		$pro = SupplierConnectorProduct::getProduct($xml);
-		$product = $this->_importProduct($pro);
-		return $product;
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got result from supplier:' . $xml->asXML(), __FUNCTION__);
+		
+		return SupplierConnectorProduct::getProduct($xml);	
 	}
 	/**
 	 * (non-PHPdoc)

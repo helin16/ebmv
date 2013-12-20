@@ -334,6 +334,7 @@ CREATE TABLE `libraryinfotype` (
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE `log` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`libraryId` int(10) unsigned NOT NULL DEFAULT 0,
 	`transId` varchar(100) NOT NULL DEFAULT '',
 	`type` varchar(100) NOT NULL DEFAULT '',
 	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
@@ -347,6 +348,7 @@ CREATE TABLE `log` (
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
+	,INDEX (`libraryId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`transId`)

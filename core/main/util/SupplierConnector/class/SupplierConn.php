@@ -32,7 +32,7 @@ interface SupplierConn
 	 *
 	 * @param UserAccount $user The current user
 	 *
-	 * @return Mixed The ProductShelfItem array
+	 * @return Multiple:SupplierConnectorProduct
 	 */
 	public function getBookShelfList(UserAccount $user);
 	/**
@@ -110,4 +110,13 @@ interface SupplierConn
 	 * @return SupplierConnectorAbstract
 	 */
 	public function returnProduct(Product &$product, UserAccount $user);
+	/**
+	 * Getting a single product information from the supplier
+	 * 
+	 * @param string $isbn The isbn number
+	 * @param string $no   The supplier unique number
+	 * 
+	 * @return SupplierConnectorProduct
+	 */
+	public function getProduct($isbn, $no);
 }
