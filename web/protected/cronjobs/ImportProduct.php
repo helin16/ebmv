@@ -1,34 +1,56 @@
 <?php
-require_once dirname(__FILE__) . '/../../bootstrap.php';
 class ImportProduct
 {
+	const FLAG_START = 'Import Start';
+	const FLAG_END = 'Import END';
+	/**
+	 * Getting the trans id from the log
+	 * 
+	 * @param string $salt
+	 * 
+	 * @return string
+	 */
+	public static function getLogTransId($salt = '')
+	{
+		return Log::getTransKey($salt);
+	}
+	/**
+	 * The runner
+	 * 
+	 * @param array  $libCodes
+	 * @param array  $supplierIds
+	 * @param string $totalRecords
+	 * 
+	 * @return string
+	 */
 	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null)
 	{
 		$totalRecords = trim($totalRecords);
 		$fullUpdate = ($totalRecords === '');
-		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
+		
+		if(!Core::getUser() instanceof UserAccount)
+			Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
 		{
 			$startScript = new UDate();
-			self::log( "== Start import script @ " . $startScript . "=============================\r\n");
+			self::log( "== Start import script @ " . $startScript . "=============================", self::FLAG_START);
 			
 			//loop through each library
 			$libraries = self::_getLibs($libCodes);
-			self::log( "  == Found " . count($libraries) . " libraries to go through: \r\n");
+			self::log( "  == Found " . count($libraries) . " libraries to go through:");
 			foreach($libraries as $lib)
 			{
 				Core::setLibrary($lib);
 				//loop through each supplier
 				foreach(self::_getSuppliers($supplierIds) as $supplier)
 				{
-					self::log( "\r\n  == import from " . $supplier->getName() . "\r\n");
+					self::log( "== import from " . $supplier->getName());
 					
 					//if there is an error for supplier connector
 					try {$script = SupplierConnectorAbstract::getInstance($supplier, Core::getLibrary()); }
 					catch(Exception $ex) 
 					{
-						self::log( "  :: " . $ex->getMessage() . "\r\n");
-						self::log( "  :: " . $ex->getTraceAsString() . "\r\n");
+						self::log( "  :: " . $ex->getMessage() . ". Trace: " . $ex->getTraceAsString());
 						continue;
 					}
 					
@@ -39,37 +61,34 @@ class ImportProduct
 						//getting how many record we need to run
 						self::log( "  :: start download the xml for "  .$type->getName() ."...");
 						$productList = $script->getProductList(1, trim($totalRecords), $type);
-						self::log( " downloaded.\r\n");
+						self::log( " downloaded.");
 						
 						//process each record
 						$childrenCount = count($productList);
-						self::log("  :: Start to import (" . $childrenCount . ") products: \r\n");
+						self::log("  :: Start to import (" . $childrenCount . ") products:");
 						for($i = 0; $i< $childrenCount; $i++)
 						{
-							self::log("\r\n");
-							self::log('    -- Importing Product No: ' . $i . " ... \r\n");
+							self::log('    -- Importing Product No: ' . $i . " ... ");
 							try
 							{
-								self::log("    -- xml: \r\n");
-								self::log("    -- " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]) . "\r\n" );
+								self::log("    -- xml: " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]) );
 								$script->importProducts($productList, $i);
-								self::log("    -- Done\r\n");
+								self::log("    -- Done");
 							}
 							catch(Exception $ex)
 							{
-								self::log("ERROR: " . $ex->getMessage());
+								self::log("ERROR: " . $ex->getMessage() . ', Trace: ' . $ex->getTraceAsString());
 								continue;
 							}
-							self::log("\r\n");
 						}
 						
 						//removing the un-imported products
 // 						$ids = $supplier->getProducts($script->getImportedProductIds());
 // 						if($fullUpdate === true && count($ids) > 0)
 // 						{
-// 							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids) . "\r\n");
+// 							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids), $script);
 // 							$script->rmUnImportedProducts();
-// 							self::log( "  :: done removing un-imported products. \r\n");
+// 							self::log( "  :: done removing un-imported products.", $script);
 // 						}
 					}
 				}
@@ -77,13 +96,21 @@ class ImportProduct
 		}
 		catch(Exception $ex)
 		{
-			self::log($ex->getMessage() . "\r\n");
-			self::log($ex->getTraceAsString() . "\r\n");
+			self::log('Import Script Error: ' . $ex->getMessage() . '. Trace: ' . $ex->getTraceAsString());
 		}
 		$finishScript = new UDate();
 		$scriptRunningtime = $finishScript->diff($startScript);
-		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================\r\n");
+		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================", self::FLAG_END);
+		return self::getLogTransId();
 	}
+	/**
+	 * Getting the suppliers
+	 * 
+	 * @param string $supplierIds
+	 * 
+	 * @throws Exception
+	 * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+	 */
 	private static function _getSuppliers($supplierIds = null)
 	{
 		if(!is_array($supplierIds))
@@ -92,6 +119,13 @@ class ImportProduct
 			return BaseServiceAbastract::getInstance('Supplier')->findAll();
 		return BaseServiceAbastract::getInstance('Supplier')->findByCriteria('id in (' . implode(', ', array_fill(0, count($supplierIds), '?')) . ')', $supplierIds);
 	}
+	/**
+	 * getting the libraries
+	 * 
+	 * @param string $libCodes
+	 * @throws Exception
+	 * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+	 */
 	private static function _getLibs($libCodes = null)
 	{
 		if(!is_array($libCodes))
@@ -100,25 +134,22 @@ class ImportProduct
 			return BaseServiceAbastract::getInstance('Library')->findAll();
 		return BaseServiceAbastract::getInstance('Library')->getLibsFromCodes($libCodes);
 	}
-	public static function log($msg)
+	/**
+	 * Loging the messages
+	 * 
+	 * @param unknown $msg
+	 * @param unknown $script
+	 * 
+	 */
+	public static function log($msg, $comments = '')
 	{
-// 		fwrite(STDOUT, $msg);
-		echo $msg;
+		Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  'ImportProduct');
+	}
+	
+	public static function showLogs()
+	{
+		$where = 'transId = ?';
+		$logs = BaseServiceAbastract::getInstance('Log')->countByCriteria('transId = ?', array(self::getLogTransId()));
+		
 	}
 }
-
-// //checking usage
-if ($argc != 4)
-	die("Usage: ImportProduct siteCode(37,werew,121fd|all) supplierids(1,2,3|all) totalrecords(30|all)\r\n");
-
-$libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $libCodes)));
-$supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
-$totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
-
-ImportProduct::log("== Params ===================================================\r\n");
-ImportProduct::log("== Site Codes: '" . implode("', '", $libCodes). "'\r\n");
-ImportProduct::log("== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
-ImportProduct::log("== Total Records: '" . $totalrecords. "'\r\n");
-ImportProduct::log("=============================================================\r\n");
-
-ImportProduct::run($libCodes, $supplierIds, $totalrecords);

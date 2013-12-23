@@ -14,6 +14,12 @@ class Log extends BaseEntityAbstract
 	 */
 	const TYPE_SC = 'SupplierConnectorAbstract';
 	/**
+	 * The type for Product Import Script
+	 * 
+	 * @var string
+	 */
+	const TYPE_PIMPORT = 'ProductImportScript';
+	/**
 	 * caching the transid
 	 * 
 	 * @var string
@@ -250,7 +256,7 @@ class Log extends BaseEntityAbstract
 		$className = __CLASS__;
 		$log = new $className();
 		$log->setLibrary($lib);
-		$log->setTransId(self::_getTransId());
+		$log->setTransId(self::getTransKey());
 		$log->setEntityId($entityId);
 		$log->setEntityName($entityName);
 		$log->setMsg($msg);
@@ -266,7 +272,7 @@ class Log extends BaseEntityAbstract
 	 * 
 	 * @return string
 	 */
-	private static function _getTransId($salt = '')
+	public static function getTransKey($salt = '')
 	{
 		if(trim(self::$_transId) === '')
 			self::$_transId = StringUtilsAbstract::getRandKey($salt);

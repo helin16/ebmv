@@ -27,6 +27,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 			})
 			.insert({'bottom': new Element('span', {'class': 'btn delbtn', 'title': 'DELETE'})
 				.observe('click', function() {tmp.me.delItems([item.id]); })
+			})
+			.insert({'bottom': new Element('span', {'class': 'btn importbtn', 'title': 'IMPORT'})
+				.observe('click', function() {pImportView.load(null, {'id': item.id, 'name': item.name}); })
 			});
 	}
 	

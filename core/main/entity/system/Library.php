@@ -8,6 +8,10 @@
 class Library extends BaseEntityAbstract
 {
 	/**
+	 * The ID of the admin library site
+	 */
+	const ID_ADMIN_LIB = 1;
+	/**
 	 * The name of the Library
 	 *
 	 * @var string

@@ -1,0 +1,14 @@
+.productImportWrapper .fieldDiv{
+	padding: 5px;
+}
+.productImportWrapper .title{
+	display: block;
+	font-size: 10px;
+	color: #aaa;
+}
+.productImportWrapper .field{
+	display: block;
+}
+.productImportWrapper .field [importinfo] {
+	width: 150px;
+}
