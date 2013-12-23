@@ -15,3 +15,4 @@ require_once dirname(__FILE__) . '/../../bootstrap.php';
 	// ImportProduct::log("=============================================================\r\n");
 
 ImportProduct::run(array(37), array(1, 2), 2);
+ImportProduct::showLogs("<br />");

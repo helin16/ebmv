@@ -146,10 +146,13 @@ class ImportProduct
 		Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  'ImportProduct');
 	}
 	
-	public static function showLogs()
+	public static function showLogs($lineBreaker = "\r\n")
 	{
-		$where = 'transId = ?';
-		$logs = BaseServiceAbastract::getInstance('Log')->countByCriteria('transId = ?', array(self::getLogTransId()));
-		
+		$where = 'transId = ? and funcName = ?';
+		$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria($where, array(self::getLogTransId(), 'ImportProduct'));
+		foreach($logs as $log)
+		{
+			echo $log->getMsg() . $lineBreaker;
+		}
 	}
 }
