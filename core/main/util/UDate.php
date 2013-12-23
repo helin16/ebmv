@@ -18,11 +18,8 @@ class UDate
 	 * @param string $string   The date time string: 2010-01-01 00:00:00 | now
 	 * @param string $timeZone The timezone string: "Australia/Melbourne"
 	 */
-	public function __construct($string = "now", $timeZone = "Australia/Melbourne")
+	public function __construct($string = "now", $timeZone = "UTC")
 	{
-		if(($timeZone = trim($timeZone)) === '')
-			$timeZone = Core::getLibrary()->getInfo('lib_timezone');
-		
 		if ($string == "0000-00-00 00:00:00")
 			$string = trim(UDate::zeroDate());
 		// Is there a difference between UTC and GMT?
@@ -65,7 +62,7 @@ class UDate
 	/**
 	 * setting TimeZone of DateTime Object
 	 * 
-	 * @param string $timeZone The timezone string: "Australia/Melbourne"
+	 * @param string $timeZone The timezone string: "UTC"
 	 * 
 	 * @return UDate
 	 */
