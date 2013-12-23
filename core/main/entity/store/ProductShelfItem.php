@@ -79,7 +79,7 @@ class ProductShelfItem extends BaseEntityAbstract
     public function getBorrowTime() 
     {
     	if(is_string($this->borrowTime))
-    		$this->borrowTime = new UDate($this->borrowTime, 'UTC');
+    		$this->borrowTime = new UDate($this->borrowTime);
     	return $this->borrowTime;
     }
     /**
@@ -102,7 +102,7 @@ class ProductShelfItem extends BaseEntityAbstract
     public function getExpiryTime() 
     {
     	if(is_string($this->expiryTime))
-    		$this->expiryTime = new UDate($this->expiryTime, 'UTC');
+    		$this->expiryTime = new UDate($this->expiryTime);
         return $this->expiryTime;
     }
     /**
