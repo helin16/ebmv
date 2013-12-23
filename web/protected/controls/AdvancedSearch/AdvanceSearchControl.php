@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * The AdvanceSearchControl
+ *
+ * @package    web
+ * @subpackage controls
+ * @author     lhe<helin16@gmail.com>
+ */
 class AdvanceSearchControl extends TTemplateControl
 {
 	public function __construct()

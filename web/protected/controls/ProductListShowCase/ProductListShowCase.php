@@ -1,4 +1,11 @@
 <?php
+/**
+ * The ProductListShowCase Loader
+ *
+ * @package    web
+ * @subpackage controls
+ * @author     lhe<helin16@gmail.com>
+ */
 class ProductListShowCase extends TTemplateControl
 {
     private $_title;

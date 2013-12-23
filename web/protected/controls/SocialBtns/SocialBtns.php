@@ -1,4 +1,11 @@
 <?php
+/**
+ * The SocialBtns Loader
+ *
+ * @package    web
+ * @subpackage controls
+ * @author     lhe<helin16@gmail.com>
+ */
 class SocialBtns extends TClientScript
 {
 	private $_btnsHolderId;

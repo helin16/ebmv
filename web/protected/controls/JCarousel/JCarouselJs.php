@@ -1,8 +1,10 @@
 <?php
 /**
  * The JCarouselJs Loader
- * @author lhe
  *
+ * @package    web
+ * @subpackage controls
+ * @author     lhe<helin16@gmail.com>
  */
 class JCarouselJs extends TClientScript
 {
