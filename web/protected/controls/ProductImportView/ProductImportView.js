@@ -7,9 +7,11 @@ ProductImportViewJs.prototype = {
 	_callbackIds: {}, //the callback ids
 	
 	//constructor
-	initialize: function(pageJs, getSupLibInfoBtn) {
+	initialize: function(pageJs, getSupLibInfoBtn, isImportingBtn, importBtn) {
 		this._pageJs = pageJs;
 		this._callbackIds.suplibinfobtn = getSupLibInfoBtn;
+		this._callbackIds.isImportingBtn = isImportingBtn;
+		this._callbackIds.importBtn = importBtn;
 	}
 
 	,_getFieldDiv: function(title, field) {
@@ -49,16 +51,18 @@ ProductImportViewJs.prototype = {
 	,_showModalbox: function(supplierSelBox, libSelBox) {
 		var tmp = {};
 		tmp.me = this;
-		Modalbox.show(tmp.me._getImportDiv(supplierSelBox, libSelBox), {
+		tmp.div = tmp.me._getImportDiv(supplierSelBox, libSelBox);
+		Modalbox.show(tmp.div, {
 			'title': 'Do you want to import from:', 
 			'width': 800,
 			'afterLoad': function() {
 				Modalbox.MBcontent.down('.submitbtn.cancel').observe('click', function() { Modalbox.hide(); });
 			}
 		});
+		return this;
 	}
 	
-	,load: function(supplier, lib) {
+	,_getImportPanel: function(supplier, lib) {
 		var tmp = {};
 		tmp.me = this;
 		
@@ -87,9 +91,15 @@ ProductImportViewJs.prototype = {
 						alert(e);
 					}
 				}
-			})
+			});
 		} else {
 			tmp.me._showModalbox(tmp.supplierSelBox, tmp.libSelBox);
 		}
+	}
+	
+	,load: function(supplier, lib) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me._getImportPanel(supplier, lib);
 	}
 };
