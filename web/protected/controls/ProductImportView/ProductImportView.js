@@ -100,6 +100,19 @@ ProductImportViewJs.prototype = {
 	,load: function(supplier, lib) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.me._getImportPanel(supplier, lib);
+		tmp.me._pageJs.postAjax(tmp.me._callbackIds.isImportingBtn, {}, {
+			'onLoading': function (sender, param) {},
+			'onComplete': function (sender, param) {
+				try {
+					tmp.result = tmp.me._pageJs.getResp(param, false, true);
+					if(!tmp.result.isImporting)
+						tmp.me._getImportPanel(supplier, lib);
+					else
+						tmp.me._getImportPanel(supplier, lib);
+				} catch(e) {
+					alert(e);
+				}
+			}
+		});
 	}
 };

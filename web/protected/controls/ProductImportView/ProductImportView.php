@@ -25,7 +25,7 @@ class ProductImportView extends TTemplateControl
 	}
 	private function _getJs()
 	{
-		$js = 'var pImportView = new ProductImportViewJs(pageJs, "' . $this->getSupplierLibInfo->getUniqueID() . '");';
+		$js = 'var pImportView = new ProductImportViewJs(pageJs, "' . $this->getSupplierLibInfo->getUniqueID() . '", "' . $this->isImportInProgressBtn->getUniqueID() . '", "' . $this->importBtn->getUniqueID() . '");';
 		return $js;
 	}
 	
@@ -49,6 +49,26 @@ class ProductImportView extends TTemplateControl
 				foreach(BaseServiceAbastract::getInstance('Library')->findAll() as $lib)
 					$result['libraries'][] = $lib->getJson();
 			}
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	/**
+	 * is importing progress
+	 * 
+	 * @param unknown $sender
+	 * @param unknown $param
+	 */
+	public function isImportInProgress($sender, $param)
+	{
+		$result = $errors = array();
+		try
+		{
+			//todo:: checking whether we are having the script running already
+			$result['isImporting'] = true;
 		}
 		catch(Exception $ex)
 		{
