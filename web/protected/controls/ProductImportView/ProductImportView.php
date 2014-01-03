@@ -25,7 +25,7 @@ class ProductImportView extends TTemplateControl
 	}
 	private function _getJs()
 	{
-		$js = 'var pImportView = new ProductImportViewJs(pageJs, "' . $this->getSupplierLibInfo->getUniqueID() . '", "' . $this->isImportInProgressBtn->getUniqueID() . '", "' . $this->importBtn->getUniqueID() . '");';
+		$js = 'var pImportView = new ProductImportViewJs(pageJs, "' . $this->getSupplierLibInfo->getUniqueID() . '", "' . $this->isImportInProgressBtn->getUniqueID() . '", "' . $this->importBtn->getUniqueID() . '", "' . $this->getLogBtn->getUniqueID() . '");';
 		return $js;
 	}
 	
@@ -68,7 +68,59 @@ class ProductImportView extends TTemplateControl
 		try
 		{
 			//todo:: checking whether we are having the script running already
-			$result['isImporting'] = true;
+			$result['isImporting'] = false;
+			$result['nowUTC'] = trim(new UDate());
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	/**
+	 * start importing
+	 *
+	 * @param unknown $sender
+	 * @param unknown $param
+	 */
+	public function import($sender, $param)
+	{
+		$result = $errors = array();
+		try
+		{
+			$result['nowUTC'] = trim(new UDate());
+// 			exec('php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . );
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	/**
+	 * getting the logs for the importing progress
+	 *
+	 * @param unknown $sender
+	 * @param unknown $param
+	 */
+	public function getLogs($sender, $param)
+	{
+		$result = $errors = array();
+		try
+		{
+			$now = trim(new UDate());
+			if ((isset($param->CallbackParameter->nowUTC)) && ($nowUTC = trim($param->CallbackParameter->nowUTC === true)) !== '')
+				$now = $nowUTC;
+			
+			$result['hasMore'] = true;
+			$result['logs'] = array();
+			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('created >= ? and type = ?', array($now, 'ProductImportScript'));
+			foreach ($logs as $log)
+			{
+				if(trim($log->getComments()) === ImportProduct::FLAG_END)
+					$result['hasMore'] = false;
+				$result['logs'][] = $log->getJson();
+			}
 		}
 		catch(Exception $ex)
 		{

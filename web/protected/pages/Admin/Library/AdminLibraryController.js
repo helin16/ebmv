@@ -29,7 +29,18 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 				.observe('click', function() {tmp.me.delItems([item.id]); })
 			})
 			.insert({'bottom': new Element('span', {'class': 'btn importbtn', 'title': 'IMPORT'})
-				.observe('click', function() {pImportView.load(null, {'id': item.id, 'name': item.name}); })
+				.observe('click', function() {
+					tmp.btn = this;
+					$(tmp.btn).hide().insert({'after': new Element('span', {'class': 'loadingImg'}) });
+					try {
+						pImportView.load(null, {'id': item.id, 'name': item.name}, function() {
+							$(tmp.btn).show().next('.loadingImg').remove();
+						});
+					} catch (e) {
+						$(tmp.btn).show().next('.loadingImg').remove();
+						alert(e);
+					}
+				})
 			});
 	}
 	
