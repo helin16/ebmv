@@ -56,10 +56,10 @@ ProductImportViewJs.prototype = {
 		return tmp.selBox;
 	}
 	
-	,_nextLog: function (nowUTC, resultDivId) {
+	,_nextLog: function (transId, nowUTC, resultDivId) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.me._pageJs.postAjax(tmp.me._callbackIds.getLogBtn, {'nowUTC': nowUTC}, {
+		tmp.me._pageJs.postAjax(tmp.me._callbackIds.getLogBtn, {'transId': transId, 'nowUTC': nowUTC}, {
 			'onLoading': function (sender, param) {},
 			'onComplete': function (sender, param) {
 				try {
@@ -73,7 +73,7 @@ ProductImportViewJs.prototype = {
 						});
 					}
 					if(tmp.result.hasMore) {
-						setTimeout(function () { tmp.me._nextLog(nowUTC, resultDivId); }, 3000);
+						setTimeout(function () { tmp.me._nextLog(transId, nowUTC, resultDivId); }, 3000);
 					}
 				} catch(e) {
 					alert(e);
@@ -82,7 +82,7 @@ ProductImportViewJs.prototype = {
 		});
 	}
 	
-	,_showImportLogs: function (nowUTC) {
+	,_showImportLogs: function (transId, nowUTC) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.div = new Element('div', {'class': 'inProgressWrapper'})
@@ -91,7 +91,7 @@ ProductImportViewJs.prototype = {
 			'title': 'Importing in progress...', 
 			'width': 800,
 			'afterLoad': function() {
-				tmp.me._nextLog(nowUTC, 'inProgressResultDiv'); 
+				tmp.me._nextLog(transId, nowUTC, 'inProgressResultDiv'); 
 			}
 		});
 		return this;
@@ -111,7 +111,7 @@ ProductImportViewJs.prototype = {
 				'onComplete': function (sender, param) {
 					try {
 						tmp.result = tmp.me._pageJs.getResp(param, false, true);
-						tmp.me._showImportLogs(tmp.result.nowUTC);
+						tmp.me._showImportLogs(tmp.result.transId, tmp.result.nowUTC);
 					} catch(e) {
 						alert(e);
 					}
@@ -196,7 +196,7 @@ ProductImportViewJs.prototype = {
 					if(!tmp.result.isImporting)
 						tmp.me._getImportPanel(supplier, lib);
 					else
-						tmp.me._showImportLogs(tmp.result.nowUTC);
+						tmp.me._showImportLogs(tmp.result.tranId, tmp.result.nowUTC);
 					if(typeof(afterLoadFunc) === 'function')
 						afterLoadFunc();
 				} catch(e) {
