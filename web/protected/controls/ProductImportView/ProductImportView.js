@@ -73,7 +73,7 @@ ProductImportViewJs.prototype = {
 						});
 					}
 					if(tmp.result.hasMore) {
-						setTimeout(function () { tmp.me._nextLog(transId, nowUTC, resultDivId); }, 3000);
+						setTimeout(function () { tmp.me._nextLog(transId, tmp.result.nowUTC, resultDivId); }, 3000);
 					}
 				} catch(e) {
 					alert(e);
