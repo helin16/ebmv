@@ -108,8 +108,7 @@ class ProductImportView extends TTemplateControl
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
 			$script .= ' &';
-			echo $script;
-			$output = system($script);
+			$output = shell_exec($script);
 			if($output === false)
 				throw new Exception('System Error Occurred when trying to run the script.');
 			$result['nowUTC'] = trim(new UDate());
