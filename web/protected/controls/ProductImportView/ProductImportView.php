@@ -88,8 +88,28 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
+			
+			if (!isset($param->CallbackParameter->libraryIds) || count($libraryIds = $param->CallbackParameter->libraryIds) === 0)
+				throw new Exception('System Error: no libraryIds provided!');
+			if (!isset($param->CallbackParameter->supplierIds) || count($supplierIds = $param->CallbackParameter->supplierIds) === 0)
+				throw new Exception('System Error: no supplierIds provided!');
+			if (!isset($param->CallbackParameter->maxQty) || (($maxQty = trim($param->CallbackParameter->maxQty)) === '') || ($maxQty !== 'all' && !is_numeric($maxQty)) || intval($maxQty) <= 0 )
+				throw new Exception('System Error: invalid maxQty provided: ' . $maxQty . '!');
+			
+			$libCodes = array();
+			foreach(BaseServiceAbastract::getInstance('Library')->findByCriteria('id in (' . implode(', ', $libraryIds) . ')', array()) as $lib)
+			{
+				$libCodes = array_merge($libCodes, explode(',', $lib->getInfo('aus_code')));
+			}
+			$libCodes = array_unique($libCodes);
+			
+			$script = 'nohup php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . 'ImportProduct_Run.php ';
+			$script .= implode(',', $libCodes);
+			$script .= ' ' . implode(',', $supplierIds);
+			$script .= ' ' . $maxQty;
+			$script .= ' &';
+			$output = system($script, $output);
 			$result['nowUTC'] = trim(new UDate());
-// 			exec('php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . );
 		}
 		catch(Exception $ex)
 		{

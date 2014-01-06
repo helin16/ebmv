@@ -105,15 +105,13 @@ ProductImportViewJs.prototype = {
 			$(btn).up('.productImportWrapper').getElementsBySelector('[importinfo]').each(function (item) {
 				tmp.requestData[item.readAttribute('importinfo')] = $F(item);
 			});
-			console.debug(tmp.requestData);
-			return this;
 			
 			tmp.me._pageJs.postAjax(tmp.me._callbackIds.importBtn, tmp.requestData, {
 				'onLoading': function (sender, param) {},
 				'onComplete': function (sender, param) {
 					try {
 						tmp.result = tmp.me._pageJs.getResp(param, false, true);
-						tmp.me._showImportLogs(tmp.result.nowUTC);
+//						tmp.me._showImportLogs(tmp.result.nowUTC);
 					} catch(e) {
 						alert(e);
 					}
@@ -131,11 +129,20 @@ ProductImportViewJs.prototype = {
 			'title': 'Do you want to import from:', 
 			'width': 800,
 			'afterLoad': function() {
-				Modalbox.MBcontent.down('input.allbtn').observe('click', function() { 
-					if(this.checked) {
+				Modalbox.MBcontent.getElementsBySelector('input.allbtn').each(function(item) {
+					item.observe('click', function() { 
+						tmp.checked = this.checked;
 						tmp.valueBox = $(this).up('.fieldDiv').down('[importinfo]');
-console.debug(tmp.valueBox.nodeName);
-					} 
+						if(tmp.valueBox.nodeName.toLowerCase() === 'select') {
+							for (tmp.i = 0; tmp.i < tmp.valueBox.options.length; tmp.i++) {
+								tmp.valueBox.options[tmp.i].selected = tmp.checked;
+							}
+						} else {
+							tmp.valueBox.setValue(tmp.checked === true ? 'all' : 0);
+						}
+						tmp.valueBox.disabled = tmp.checked;
+					});
+					item.click();
 				});
 				Modalbox.MBcontent.down('.submitbtn.cancel').observe('click', function() { Modalbox.hide(); });
 				Modalbox.MBcontent.down('.submitbtn.import').observe('click', function() { tmp.me._startImport(this); });
