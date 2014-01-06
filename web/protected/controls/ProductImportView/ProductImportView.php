@@ -8,7 +8,7 @@
  */
 class ProductImportView extends TTemplateControl
 {
-	private $_script;
+	const RUNNING_SCRIPT = 'ImportProduct';
 	/**
 	 * (non-PHPdoc)
 	 * @see TPage::render()
@@ -16,7 +16,6 @@ class ProductImportView extends TTemplateControl
 	public function onLoad($param)
 	{
 		parent::onLoad($param);
-		$this->_script = 'php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . 'ImportProduct_Run.php ';
 		$cScripts = FrontEndPageAbstract::getLastestJS(get_class($this));
 		$clientScript = $this->getPage()->getClientScript();
 		if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
@@ -69,7 +68,8 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
-			$result['isImporting'] = false;
+			$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
+			$result['isImporting'] = (trim($output) !== '' && strtolower(trim($output)) !== 'null');
 			$result['nowUTC'] = trim(new UDate());
 		}
 		catch(Exception $ex)
@@ -105,7 +105,9 @@ class ProductImportView extends TTemplateControl
 			$libCodes = array_unique($libCodes);
 			
 			$now = new UDate();
-			$script = 'nohup ' . $this->_script;
+			$script = self::RUNNING_SCRIPT;
+			$class = new ReflectionClass(new $script());
+			$script = 'nohup php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $script . '_Run.php';
 			$script .= implode(',', $libCodes);
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
