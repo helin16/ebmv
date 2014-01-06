@@ -103,11 +103,11 @@ class ProductImportView extends TTemplateControl
 			}
 			$libCodes = array_unique($libCodes);
 			
-			$script = 'nohup php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . 'ImportProduct_Run.php ';
+			$script = 'php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . 'ImportProduct_Run.php ';
 			$script .= implode(',', $libCodes);
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
-			$script .= ' &';
+			$script .= ' 2>&1 &';
 			$output = shell_exec($script);
 			if($output === false)
 				throw new Exception('System Error Occurred when trying to run the script.');
