@@ -119,7 +119,7 @@ class ProductImportView extends TTemplateControl
 			if(count($logs) === 0)
 				throw new Exception('System Error Occurred: no logs found!');
 			$result['transId'] = trim($logs[0]->getTransId());
-			$result['nowUTC'] = trim(new UDate());
+			$result['nowUTC'] = trim($now);
 		}
 		catch(Exception $ex)
 		{
