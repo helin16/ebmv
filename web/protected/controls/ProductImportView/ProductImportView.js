@@ -74,6 +74,8 @@ ProductImportViewJs.prototype = {
 					}
 					if(tmp.result.hasMore) {
 						setTimeout(function () { tmp.me._nextLog(transId, tmp.result.nowUTC, resultDivId); }, 3000);
+					} else {
+						Modalbox.MBcaption.update('Importing finished!');
 					}
 				} catch(e) {
 					alert(e);
