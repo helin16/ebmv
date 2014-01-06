@@ -70,6 +70,7 @@ class ProductImportView extends TTemplateControl
 		{
 			$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
 			$result['isImporting'] = (trim($output) !== '' && strtolower(trim($output)) !== 'null');
+			$now = new UDate();
 			if($result['isImporting'] === true)
 			{
 				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('created >= ? and type = ?', array(trim($now), 'ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
@@ -77,7 +78,7 @@ class ProductImportView extends TTemplateControl
 					throw new Exception('System Error Occurred: no logs found!');
 				$result['transId'] = trim($logs[0]->getTransId());
 			}
-			$result['nowUTC'] = trim(new UDate());
+			$result['nowUTC'] = trim($now);
 		}
 		catch(Exception $ex)
 		{
