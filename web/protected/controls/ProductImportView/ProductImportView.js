@@ -196,7 +196,7 @@ ProductImportViewJs.prototype = {
 					if(!tmp.result.isImporting)
 						tmp.me._getImportPanel(supplier, lib);
 					else
-						tmp.me._showImportLogs(tmp.result.tranId, tmp.result.nowUTC);
+						tmp.me._showImportLogs(tmp.result.transId, tmp.result.nowUTC);
 					if(typeof(afterLoadFunc) === 'function')
 						afterLoadFunc();
 				} catch(e) {
