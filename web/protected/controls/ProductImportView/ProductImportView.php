@@ -138,15 +138,14 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
-			$now = trim(new UDate());
 			if ((isset($param->CallbackParameter->nowUTC)) && ($nowUTC = trim($param->CallbackParameter->nowUTC === true)) !== '')
-				$now = $nowUTC;
+				throw new Exception('System Error: now time not passed in!');
 			if (!isset($param->CallbackParameter->transId) || ($transId = trim($param->CallbackParameter->transId)) === '')
 				throw new Exception('System Error: no transId passed!');
 			
 			$result['hasMore'] = true;
 			$result['logs'] = array();
-			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $now));
+			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $nowUTC));
 			foreach ($logs as $log)
 			{
 				if(trim($log->getComments()) === ImportProduct::FLAG_END)
