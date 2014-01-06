@@ -108,11 +108,10 @@ class ProductImportView extends TTemplateControl
 			$script = self::RUNNING_SCRIPT;
 			$class = new ReflectionClass(new $script());
 			$script = 'nohup php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $script . '_Run.php';
-			$script .= implode(',', $libCodes);
+			$script .= ' ' .implode(',', $libCodes);
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
 			$script .= ' > /dev/null 2>/dev/null &';
-			var_dump($script);
 			$output = shell_exec($script);
 			if($output === false)
 				throw new Exception('System Error Occurred when trying to run the script.');
