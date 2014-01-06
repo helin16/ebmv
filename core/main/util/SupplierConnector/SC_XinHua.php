@@ -12,10 +12,13 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductListInfo(ProductType $type = null)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list info:', __FUNCTION__);
 		$params = array("SiteID" => $this->_lib->getInfo('aus_code'), "Index" => 1, "Size" => 1);
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::send to URL(' . $this->_supplier->getInfo('import_url') . ') with params:' . print_r($params, true), __FUNCTION__);
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookList", $params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got result:' . print_r($xml, true), __FUNCTION__);
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $wsdl . '!');
 		$array = array();
@@ -29,6 +32,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
 		if(trim($pageSize) === '')
 		{
 			$pageInfo = $this->getProductListInfo($type);
@@ -38,7 +42,9 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
 		$array = array();
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::send to URL(' . $this->_supplier->getInfo('import_url') . ') with params:' . print_r($params, true), __FUNCTION__);
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookList", $params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got result:' . print_r($xml, true), __FUNCTION__);
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
@@ -57,8 +63,11 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _getFromSoap($wsdl, $funcName, $params = array(), $resultTagName = null)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting from soap: ' . $wsdl, __FUNCTION__);
 		$client = new SoapClient($wsdl, array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP));
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::sending to (' . $funcName . ') with params: ' . print_r($params, true), __FUNCTION__);
 		$result = $client->$funcName($params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results: ' . print_r($result, true), __FUNCTION__);
 		$resultTagName = (trim($resultTagName) === '' ? $funcName . 'Result' : $resultTagName);
 		if(!isset($result->$resultTagName) || !isset($result->$resultTagName->any) || trim($result->$resultTagName->any) === '')
 			return null;
