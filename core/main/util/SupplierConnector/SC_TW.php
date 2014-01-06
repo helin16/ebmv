@@ -82,7 +82,10 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$params = array('format' => $format, 'size' => $pageSize, 'index' => $pageNo);
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
-		$result = SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), SupplierConnectorAbstract::CURL_TIMEOUT);
+		$url = $url . '?' . http_build_query($params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url: ' . $url , __FUNCTION__);
+		$result = SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . $result , __FUNCTION__);
 		return new SimpleXMLElement($result);
 	}
 	/**
