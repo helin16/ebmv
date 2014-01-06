@@ -38,17 +38,22 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 			$pageInfo = $this->getProductListInfo($type);
 			$pageSize = $pageInfo['totalRecords'];
 		}
-		$params = array("SiteID" => $this->_lib->getInfo('aus_code'), "Index" => 1, "Size" => $pageSize);
+		$params = array("SiteID" => $this->_lib->getInfo('aus_code'), "Index" => $pageNo, "Size" => $pageSize);
 		if($type instanceof ProductType)
 			$params['type'] = strtolower(trim($type->getName()));
 		$array = array();
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::send to URL(' . $this->_supplier->getInfo('import_url') . ') with params:' . print_r($params, true), __FUNCTION__);
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookList", $params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got result:' . print_r($xml, true), __FUNCTION__);
+		
 		foreach($xml->children() as $childXml)
 		{
 			$array[] = $childXml;
 		}
+		//next page
+		$attributes = $xml->attributes();
+		if(isset($attributes['totalPages']) && $pageNo < $attributes['totalPages'])
+			$array = array_merge($array, $this->getProductList($pageNo + 1, $pageSize, $type));
 		return $array;
 	}
 	/**

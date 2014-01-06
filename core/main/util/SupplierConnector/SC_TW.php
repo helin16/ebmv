@@ -29,7 +29,6 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
 		$xml = $this->_getXmlFromUrl($importUrl, 1, 1, $type);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . (!$xml instanceof SimpleXMLElement ? trim($xml) : $xml->asXML()) , __FUNCTION__);
 		
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $importUrl . '!');
@@ -63,7 +62,11 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		{
 			$array[] = $childXml;
 		}
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got array from results:' . print_r($array, true) , __FUNCTION__);
+		
+		//next page
+		$attributes = $xml->attributes();
+		if(isset($attributes['totalPages']) && $pageNo < $attributes['totalPages'])
+			$array = array_merge($array, $this->getProductList($pageNo + 1, $pageSize, $type));
 		return $array;
 	}
 	/**
