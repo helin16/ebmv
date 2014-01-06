@@ -25,6 +25,7 @@ class ImportProduct
 	 */
 	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null)
 	{
+		ini_set('max_execution_time', 0);
 		$totalRecords = trim($totalRecords);
 		$fullUpdate = ($totalRecords === '');
 		
