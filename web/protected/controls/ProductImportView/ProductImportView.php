@@ -114,6 +114,7 @@ class ProductImportView extends TTemplateControl
 			if($output === false)
 				throw new Exception('System Error Occurred when trying to run the script.');
 			
+			sleep(5);
 			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('created >= ? and type = ?', array(trim($now), 'ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 			if(count($logs) === 0)
 				throw new Exception('System Error Occurred: no logs found!');
