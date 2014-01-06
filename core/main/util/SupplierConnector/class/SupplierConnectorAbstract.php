@@ -166,7 +166,7 @@ class SupplierConnectorAbstract
 	public function importProducts($productList, $index = null)
 	{
 		if($this->_debugMode === true)
-			SupplierConnectorAbstract::log($this, 'Importing products(index = ' . $index . '):' . print_r($productList, true) , __FUNCTION__);
+			SupplierConnectorAbstract::log($this, 'Importing products(index = ' . $index . '):' , __FUNCTION__);
 		$products = array ();
 		if (trim ( $index ) !== '')
 		{
