@@ -75,7 +75,7 @@ class ProductImportView extends TTemplateControl
 			{
 				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 				if(count($logs) === 0)
-					throw new Exception('System Error Occurred: no logs found!');
+					throw new Exception('System Error Occurred: no logs found when checking!');
 				$result['transId'] = trim($logs[0]->getTransId());
 			}
 			$result['nowUTC'] = trim($now);
@@ -113,10 +113,10 @@ class ProductImportView extends TTemplateControl
 			$libCodes = array_unique($libCodes);
 			
 			$now = new UDate();
-			$script = self::RUNNING_SCRIPT;
-			$class = new ReflectionClass(new $script());
-			$script = 'nohup php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $script . '_Run.php';
-			$script .= ' ' .implode(',', $libCodes);
+			$scriptName = self::RUNNING_SCRIPT;
+			$class = new ReflectionClass(new $scriptName());
+			$script = 'nohup php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $scriptName . '_Run.php';
+			$script .= ' ' . implode(',', $libCodes);
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
 			$script .= ' > /dev/null 2>/dev/null &';
@@ -125,7 +125,7 @@ class ProductImportView extends TTemplateControl
 				throw new Exception('System Error Occurred when trying to run the script.');
 			
 			sleep(1);
-			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('created >= ? and type = ?', array(trim($now), 'ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
+			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 			if(count($logs) === 0)
 				throw new Exception('System Error Occurred: no logs found!');
 			$result['transId'] = trim($logs[0]->getTransId());
