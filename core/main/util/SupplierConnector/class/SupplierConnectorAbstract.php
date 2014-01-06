@@ -8,7 +8,7 @@
  */
 class SupplierConnectorAbstract
 {
-	const CURL_TIMEOUT = 120000;
+	const CURL_TIMEOUT = 360000;
 	/**
 	 * @var Supplier
 	 */
