@@ -37,7 +37,7 @@ class ImportProduct
 			
 			//loop through each library
 			$libraries = self::_getLibs($libCodes);
-			self::log( "  == Found " . count($libraries) . " libraries to go through:");
+			self::log( "  == Found " . count($libraries) . " libraries to go through:", __FUNCTION__);
 			foreach($libraries as $lib)
 			{
 				Core::setLibrary($lib);
@@ -73,7 +73,7 @@ class ImportProduct
 							{
 								self::log("    -- xml: " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]), __FUNCTION__);
 								$script->importProducts($productList, $i);
-								self::log("    -- Done");
+								self::log("    -- Done",  __FUNCTION__);
 							}
 							catch(Exception $ex)
 							{
