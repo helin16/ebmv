@@ -33,7 +33,7 @@ class ImportProduct
 		try
 		{
 			$startScript = new UDate();
-			self::log( "== Start import script @ " . $startScript . "=============================", __FUNCTOIN__, self::FLAG_START);
+			self::log( "== Start import script @ " . $startScript . "=============================", __FUNCTION__, self::FLAG_START);
 			
 			//loop through each library
 			$libraries = self::_getLibs($libCodes);
@@ -44,40 +44,40 @@ class ImportProduct
 				//loop through each supplier
 				foreach(self::_getSuppliers($supplierIds) as $supplier)
 				{
-					self::log( "== import from " . __FUNCTOIN__, $supplier->getName());
+					self::log( "== import from " . __FUNCTION__, $supplier->getName());
 					
 					//if there is an error for supplier connector
 					try {$script = SupplierConnectorAbstract::getInstance($supplier, Core::getLibrary()); }
 					catch(Exception $ex) 
 					{
-						self::log( "  :: " . $ex->getMessage() . ". Trace: " . $ex->getTraceAsString(), __FUNCTOIN__);
+						self::log( "  :: " . $ex->getMessage() . ". Trace: " . $ex->getTraceAsString(), __FUNCTION__);
 						continue;
 					}
 					
 					$types = $script->getImportProductTypes();
-					self::log( "  :: Got (" . count($types) . ") types to import:", __FUNCTOIN__);
+					self::log( "  :: Got (" . count($types) . ") types to import:", __FUNCTION__);
 					foreach($types as $type)
 					{
 						//getting how many record we need to run
-						self::log( "  :: start download the xml for "  .$type->getName() ."...", __FUNCTOIN__);
+						self::log( "  :: start download the xml for "  .$type->getName() ."...", __FUNCTION__);
 						$productList = $script->getProductList(1, trim($totalRecords), $type);
-						self::log( " downloaded.", __FUNCTOIN__);
+						self::log( " downloaded.", __FUNCTION__);
 						
 						//process each record
 						$childrenCount = count($productList);
-						self::log("  :: Start to import (" . $childrenCount . ") products:", __FUNCTOIN__);
+						self::log("  :: Start to import (" . $childrenCount . ") products:", __FUNCTION__);
 						for($i = 0; $i< $childrenCount; $i++)
 						{
-							self::log('    -- Importing Product No: ' . $i . " ... ", __FUNCTOIN__);
+							self::log('    -- Importing Product No: ' . $i . " ... ", __FUNCTION__);
 							try
 							{
-								self::log("    -- xml: " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]), __FUNCTOIN__);
+								self::log("    -- xml: " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]), __FUNCTION__);
 								$script->importProducts($productList, $i);
 								self::log("    -- Done");
 							}
 							catch(Exception $ex)
 							{
-								self::log("ERROR: " . $ex->getMessage() . ', Trace: ' . $ex->getTraceAsString(), __FUNCTOIN__);
+								self::log("ERROR: " . $ex->getMessage() . ', Trace: ' . $ex->getTraceAsString(), __FUNCTION__);
 								continue;
 							}
 						}
@@ -86,9 +86,9 @@ class ImportProduct
 // 						$ids = $supplier->getProducts($script->getImportedProductIds());
 // 						if($fullUpdate === true && count($ids) > 0)
 // 						{
-// 							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids),  __FUNCTOIN__);
+// 							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids),  __FUNCTION__);
 // 							$script->rmUnImportedProducts();
-// 							self::log( "  :: done removing un-imported products.", __FUNCTOIN__);
+// 							self::log( "  :: done removing un-imported products.", __FUNCTION__);
 // 						}
 					}
 				}
@@ -96,11 +96,11 @@ class ImportProduct
 		}
 		catch(Exception $ex)
 		{
-			self::log('Import Script Error: ' . $ex->getMessage() . '. Trace: ' . $ex->getTraceAsString(), __FUNCTOIN__);
+			self::log('Import Script Error: ' . $ex->getMessage() . '. Trace: ' . $ex->getTraceAsString(), __FUNCTION__);
 		}
 		$finishScript = new UDate();
 		$scriptRunningtime = $finishScript->diff($startScript);
-		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================", __FUNCTOIN__, self::FLAG_END);
+		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================", __FUNCTION__, self::FLAG_END);
 		return self::getLogTransId();
 	}
 	/**
