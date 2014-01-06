@@ -8,8 +8,8 @@ $libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str
 $supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
 $totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
 
-ImportProduct::log("== Params ===================================================\r\n");
-ImportProduct::log("== Site Codes: '" . implode("', '", $libCodes). "'\r\n");
-ImportProduct::log("== Supplier IDS: " . implode(', ', $supplierIds). "\r\n");
-ImportProduct::log("== Total Records: '" . $totalrecords. "'\r\n");
-ImportProduct::log("=============================================================\r\n");
+ImportProduct::log("== Params ===================================================", 'load');
+ImportProduct::log("== Site Codes: '" . implode("', '", $libCodes), 'load');
+ImportProduct::log("== Supplier IDS: " . implode(', ', $supplierIds), 'load');
+ImportProduct::log("== Total Records: '" . $totalrecords, 'load');
+ImportProduct::log("=============================================================", 'load');
