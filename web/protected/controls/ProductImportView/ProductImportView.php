@@ -8,6 +8,7 @@
  */
 class ProductImportView extends TTemplateControl
 {
+	private $_script;
 	/**
 	 * (non-PHPdoc)
 	 * @see TPage::render()
@@ -15,6 +16,7 @@ class ProductImportView extends TTemplateControl
 	public function onLoad($param)
 	{
 		parent::onLoad($param);
+		$this->_script = 'php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . 'ImportProduct_Run.php ';
 		$cScripts = FrontEndPageAbstract::getLastestJS(get_class($this));
 		$clientScript = $this->getPage()->getClientScript();
 		if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
@@ -67,7 +69,6 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
-			//todo:: checking whether we are having the script running already
 			$result['isImporting'] = false;
 			$result['nowUTC'] = trim(new UDate());
 		}
@@ -103,7 +104,8 @@ class ProductImportView extends TTemplateControl
 			}
 			$libCodes = array_unique($libCodes);
 			
-			$script = 'nohup php ' . $this->getApplication()->getBasePath()  . DIRECTORY_SEPARATOR . 'cronjobs' . DIRECTORY_SEPARATOR . 'ImportProduct_Run.php ';
+			$now = new UDate();
+			$script = 'nohup ' . $this->_script;
 			$script .= implode(',', $libCodes);
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
@@ -111,6 +113,11 @@ class ProductImportView extends TTemplateControl
 			$output = shell_exec($script);
 			if($output === false)
 				throw new Exception('System Error Occurred when trying to run the script.');
+			
+			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('created >= ? and type = ?', array(trim($now), 'ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
+			if(count($logs) === 0)
+				throw new Exception('System Error Occurred: no logs found!');
+			$result['transId'] = trim($logs[0]->getTransId());
 			$result['nowUTC'] = trim(new UDate());
 		}
 		catch(Exception $ex)
@@ -133,10 +140,12 @@ class ProductImportView extends TTemplateControl
 			$now = trim(new UDate());
 			if ((isset($param->CallbackParameter->nowUTC)) && ($nowUTC = trim($param->CallbackParameter->nowUTC === true)) !== '')
 				$now = $nowUTC;
+			if (!isset($param->CallbackParameter->transId) || ($transId = trim($param->CallbackParameter->transId)) === '')
+				throw new Exception('System Error: no transId passed!');
 			
 			$result['hasMore'] = true;
 			$result['logs'] = array();
-			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('created >= ? and type = ?', array($now, 'ProductImportScript'));
+			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $now));
 			foreach ($logs as $log)
 			{
 				if(trim($log->getComments()) === ImportProduct::FLAG_END)
