@@ -5,6 +5,7 @@ var ProductImportViewJs = new Class.create();
 ProductImportViewJs.prototype = {
 	_pageJs: null, //the pageJs object
 	_callbackIds: {}, //the callback ids
+	_getNextLog: true, //whether we are displaying the next lot of logs
 	
 	//constructor
 	initialize: function(pageJs, getSupLibInfoBtn, isImportingBtn, importBtn, getLogBtn) {
@@ -59,6 +60,8 @@ ProductImportViewJs.prototype = {
 	,_nextLog: function (transId, nowUTC, resultDivId) {
 		var tmp = {};
 		tmp.me = this;
+		if(tmp.me._getNextLog === false)
+			return this;
 		tmp.me._pageJs.postAjax(tmp.me._callbackIds.getLogBtn, {'transId': transId, 'nowUTC': nowUTC}, {
 			'onLoading': function (sender, param) {},
 			'onComplete': function (sender, param) {
@@ -82,6 +85,7 @@ ProductImportViewJs.prototype = {
 				}
 			}
 		});
+		return this;
 	}
 	
 	,_showImportLogs: function (transId, nowUTC) {
@@ -94,6 +98,12 @@ ProductImportViewJs.prototype = {
 			'width': 800,
 			'afterLoad': function() {
 				tmp.me._nextLog(transId, nowUTC, 'inProgressResultDiv'); 
+			},
+			'onHide': function() {
+				tmp.me._getNextLog = false;
+			},
+			'onLoad': function() {
+				tmp.me._getNextLog = true;
 			}
 		});
 		return this;
