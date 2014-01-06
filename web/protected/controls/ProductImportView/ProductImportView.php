@@ -57,6 +57,11 @@ class ProductImportView extends TTemplateControl
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
+	private function _isImporting()
+	{
+		$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
+		return (trim($output) !== '' && strtolower(trim($output)) !== 'null');
+	}
 	/**
 	 * is importing progress
 	 * 
@@ -68,8 +73,7 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
-			$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
-			$result['isImporting'] = (trim($output) !== '' && strtolower(trim($output)) !== 'null');
+			$result['isImporting'] = $this->_isImporting();
 			$now = new UDate();
 			if($result['isImporting'] === true)
 			{
@@ -154,15 +158,13 @@ class ProductImportView extends TTemplateControl
 			if (!isset($param->CallbackParameter->transId) || ($transId = trim($param->CallbackParameter->transId)) === '')
 				throw new Exception('System Error: no transId passed!');
 			
-			$result['hasMore'] = true;
 			$result['logs'] = array();
 			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $nowUTC));
 			foreach ($logs as $log)
 			{
-				if(trim($log->getComments()) === ImportProduct::FLAG_END)
-					$result['hasMore'] = false;
 				$result['logs'][] = $log->getJson();
 			}
+			$result['hasMore'] = $this->_isImporting();
 			$result['nowUTC'] = trim(new UDate());
 		}
 		catch(Exception $ex)
