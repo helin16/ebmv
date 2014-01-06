@@ -93,7 +93,7 @@ class ProductImportView extends TTemplateControl
 				throw new Exception('System Error: no libraryIds provided!');
 			if (!isset($param->CallbackParameter->supplierIds) || count($supplierIds = $param->CallbackParameter->supplierIds) === 0)
 				throw new Exception('System Error: no supplierIds provided!');
-			if (!isset($param->CallbackParameter->maxQty) || (($maxQty = trim($param->CallbackParameter->maxQty)) === '') || ($maxQty !== 'all' && !is_numeric($maxQty)) || intval($maxQty) <= 0 )
+			if (!isset($param->CallbackParameter->maxQty) || (($maxQty = trim($param->CallbackParameter->maxQty)) === '') || ($maxQty !== 'all' && (!is_numeric($maxQty) || intval($maxQty) <= 0)) )
 				throw new Exception('System Error: invalid maxQty provided: ' . $maxQty . '!');
 			
 			$libCodes = array();
