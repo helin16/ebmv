@@ -138,7 +138,7 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
-			if ((isset($param->CallbackParameter->nowUTC)) && ($nowUTC = trim($param->CallbackParameter->nowUTC)) !== '')
+			if ((!isset($param->CallbackParameter->nowUTC)) || ($nowUTC = trim($param->CallbackParameter->nowUTC)) === '')
 				throw new Exception('System Error: now time not passed in!');
 			if (!isset($param->CallbackParameter->transId) || ($transId = trim($param->CallbackParameter->transId)) === '')
 				throw new Exception('System Error: no transId passed!');
