@@ -112,6 +112,7 @@ class ProductImportView extends TTemplateControl
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
 			$script .= ' > /dev/null 2>/dev/null &';
+			var_dump($script);
 			$output = shell_exec($script);
 			if($output === false)
 				throw new Exception('System Error Occurred when trying to run the script.');
