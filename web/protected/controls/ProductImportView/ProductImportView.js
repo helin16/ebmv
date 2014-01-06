@@ -111,7 +111,7 @@ ProductImportViewJs.prototype = {
 				'onComplete': function (sender, param) {
 					try {
 						tmp.result = tmp.me._pageJs.getResp(param, false, true);
-//						tmp.me._showImportLogs(tmp.result.nowUTC);
+						tmp.me._showImportLogs(tmp.result.nowUTC);
 					} catch(e) {
 						alert(e);
 					}
