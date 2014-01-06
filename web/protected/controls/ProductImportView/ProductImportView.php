@@ -73,7 +73,7 @@ class ProductImportView extends TTemplateControl
 			$now = new UDate();
 			if($result['isImporting'] === true)
 			{
-				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('created >= ? and type = ?', array(trim($now), 'ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
+				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 				if(count($logs) === 0)
 					throw new Exception('System Error Occurred: no logs found!');
 				$result['transId'] = trim($logs[0]->getTransId());
