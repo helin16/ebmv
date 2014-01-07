@@ -295,7 +295,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public function removeLibrary(Library $lib, LibraryOwnsType $type)
 	{
-		EntityDao::getInstance('LibraryOwns')->updateByCriteria('active = 0' , 'libraryId = ? and typeId = ?', array($lib->getId(), $type->getId()));
+		EntityDao::getInstance('LibraryOwns')->updateByCriteria('active = 0' , 'libraryId = ? and typeId = ? and productId = ?', array($lib->getId(), $type->getId(), $this->getId()));
 		return $this;
 	}
 	/**
