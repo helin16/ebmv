@@ -57,11 +57,6 @@ class ProductImportView extends TTemplateControl
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
-	private function _isImporting()
-	{
-		$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
-		return (trim($output) !== '' && strtolower(trim($output)) !== 'null');
-	}
 	/**
 	 * is importing progress
 	 * 
@@ -73,13 +68,14 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
-			$result['isImporting'] = $this->_isImporting();
+			$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
+			$result['isImporting'] = (trim($output) !== '' && strtolower(trim($output)) !== 'null');
 			$now = new UDate();
 			if($result['isImporting'] === true)
 			{
 				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 				if(count($logs) === 0)
-					throw new Exception('System Error Occurred: no logs found when checking!');
+					throw new Exception('System Error Occurred: no logs found!');
 				$result['transId'] = trim($logs[0]->getTransId());
 			}
 			$result['nowUTC'] = trim($now);
@@ -116,25 +112,20 @@ class ProductImportView extends TTemplateControl
 			}
 			$libCodes = array_unique($libCodes);
 			
-			$now = new UDate();
 			$scriptName = self::RUNNING_SCRIPT;
 			$class = new ReflectionClass(new $scriptName());
-			$script = 'nohup php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $scriptName . '_Run.php';
-			$script .= ' ' . implode(',', $libCodes);
+			$script = 'php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $scriptName . '_Run.php';
+			$script .= ' ' .implode(',', $libCodes);
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
-			$script .= ' > /dev/null 2>/dev/null &';
-			var_dump($script);
-			$output = shell_exec($script);
-			if($output === false)
-				throw new Exception('System Error Occurred when trying to run the script.');
+			$this->_execInBackground($script);
 			
 			sleep(1);
 			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 			if(count($logs) === 0)
 				throw new Exception('System Error Occurred: no logs found!');
 			$result['transId'] = trim($logs[0]->getTransId());
-			$result['nowUTC'] = trim($now);
+			$result['nowUTC'] = trim(new UDate());
 		}
 		catch(Exception $ex)
 		{
@@ -142,6 +133,28 @@ class ProductImportView extends TTemplateControl
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
+	/**
+	 * running the commandline in background
+	 * 
+	 * @param string $cmd The command
+	 * 
+	 * @return ProductImportView
+	 */
+	private function _execInBackground($cmd)
+	{
+	    if(strtolower(substr(trim(php_uname()), 0 , 7)) === 'windows')
+	    {
+	    	$STDIN = fopen('/dev/null', 'r');
+	    	fclose ($STDIN);
+	    	var_dump("start /B ". $cmd);
+// 	    	exec("start /B ". $cmd);  
+	    }
+	    else
+	    { 
+	        exec('nohup ' . $cmd . " > /dev/null 2>/dev/null &");   
+	    }
+	    return $this;
+	} 
 	/**
 	 * getting the logs for the importing progress
 	 *
@@ -158,13 +171,15 @@ class ProductImportView extends TTemplateControl
 			if (!isset($param->CallbackParameter->transId) || ($transId = trim($param->CallbackParameter->transId)) === '')
 				throw new Exception('System Error: no transId passed!');
 			
+			$result['hasMore'] = true;
 			$result['logs'] = array();
 			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $nowUTC));
 			foreach ($logs as $log)
 			{
+				if(trim($log->getComments()) === ImportProduct::FLAG_END)
+					$result['hasMore'] = false;
 				$result['logs'][] = $log->getJson();
 			}
-			$result['hasMore'] = $this->_isImporting();
 			$result['nowUTC'] = trim(new UDate());
 		}
 		catch(Exception $ex)

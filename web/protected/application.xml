@@ -61,6 +61,9 @@
 			<!-- AdminPage:: test comm -->
 			<url ServiceParameter="Admin.ComTester.ComTesterController" pattern="admin/testcoms.html" />
 			
+			<!-- AdminPage:: logs -->
+			<url ServiceParameter="Admin.System.Logs.LogsController" pattern="admin/logs.html" />
+			
 			<!-- AdminPage:: test sip -->
 			<url ServiceParameter="Admin.SIPTester.SIPTesterController" pattern="admin/testsip.html" />
 			
