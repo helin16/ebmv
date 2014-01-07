@@ -19,7 +19,7 @@ class LogService extends BaseServiceAbastract
     
     public function findGroupedLogs($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
     {
-    	$sql = "select transId, created"
+//     	$sql = "select transId, created"
     }
 }
 ?>
