@@ -146,18 +146,8 @@ class ProductImportView extends TTemplateControl
 	 */
 	private function _execInBackground($cmd)
 	{
-// 	    if(strtolower(substr(trim(php_uname()), 0 , 7)) === 'windows')
-// 	    {
-// 	    	$STDIN = fopen('/dev/null', 'r');
-// 	    	fclose ($STDIN);
-// 	    	var_dump("start /B ". $cmd);
-// // 	    	exec("start /B ". $cmd);  
-// 	    }
-// 	    else
-// 	    { 
-	        exec('nohup ' . $cmd . " > /dev/null 2>/dev/null &");   
-// 	    }
-// 	    return $this;
+        exec('nohup ' . $cmd . " > /dev/null 2>/dev/null &");   
+	    return $this;
 	} 
 	/**
 	 * getting the logs for the importing progress
