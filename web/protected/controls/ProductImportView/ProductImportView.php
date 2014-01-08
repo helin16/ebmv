@@ -57,6 +57,11 @@ class ProductImportView extends TTemplateControl
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
+	private function _isImporting()
+	{
+		$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
+		return (trim($output) !== '' && strtolower(trim($output)) !== 'null');
+	}
 	/**
 	 * is importing progress
 	 * 
@@ -68,8 +73,7 @@ class ProductImportView extends TTemplateControl
 		$result = $errors = array();
 		try
 		{
-			$output = shell_exec('ps aux | grep ' . self::RUNNING_SCRIPT . '_Run.php | grep -v grep');
-			$result['isImporting'] = (trim($output) !== '' && strtolower(trim($output)) !== 'null');
+			$result['isImporting'] = $this->_isImporting();
 			$now = new UDate();
 			if($result['isImporting'] === true)
 			{
@@ -142,18 +146,18 @@ class ProductImportView extends TTemplateControl
 	 */
 	private function _execInBackground($cmd)
 	{
-	    if(strtolower(substr(trim(php_uname()), 0 , 7)) === 'windows')
-	    {
-	    	$STDIN = fopen('/dev/null', 'r');
-	    	fclose ($STDIN);
-	    	var_dump("start /B ". $cmd);
-// 	    	exec("start /B ". $cmd);  
-	    }
-	    else
-	    { 
+// 	    if(strtolower(substr(trim(php_uname()), 0 , 7)) === 'windows')
+// 	    {
+// 	    	$STDIN = fopen('/dev/null', 'r');
+// 	    	fclose ($STDIN);
+// 	    	var_dump("start /B ". $cmd);
+// // 	    	exec("start /B ". $cmd);  
+// 	    }
+// 	    else
+// 	    { 
 	        exec('nohup ' . $cmd . " > /dev/null 2>/dev/null &");   
-	    }
-	    return $this;
+// 	    }
+// 	    return $this;
 	} 
 	/**
 	 * getting the logs for the importing progress
@@ -171,7 +175,7 @@ class ProductImportView extends TTemplateControl
 			if (!isset($param->CallbackParameter->transId) || ($transId = trim($param->CallbackParameter->transId)) === '')
 				throw new Exception('System Error: no transId passed!');
 			
-			$result['hasMore'] = true;
+			$result['hasMore'] = $this->_isImporting();
 			$result['logs'] = array();
 			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $nowUTC));
 			foreach ($logs as $log)
