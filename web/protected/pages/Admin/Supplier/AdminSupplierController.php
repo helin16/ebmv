@@ -105,12 +105,16 @@ class AdminSupplierController extends CrudPageAbstract
     		
     		$supplier = ($supplier = BaseServiceAbastract::getInstance('Supplier')->get(trim($param->CallbackParameter->id))) instanceof Supplier ? $supplier : new Supplier();
     		$supplier->setName(trim($param->CallbackParameter->name));
-    		$connector = trim($param->CallbackParameter->connector);
-    		try {
-    			$script = new $connector($supplier, Core::getLibrary());
-    		} catch (Exception $e) {
+    		try
+    		{
+    			if(!class_exists($connector = trim($param->CallbackParameter->connector)))
+    				throw new Exception($connector . " does NOT exsit!");
+    		} 
+    		catch (Exception $e)
+    		{
     			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage());
-    		}
+    		} 
+    		
     		$supplier->setConnector($connector);
     		$supplier->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on');
     		BaseServiceAbastract::getInstance('Supplier')->save($supplier);
