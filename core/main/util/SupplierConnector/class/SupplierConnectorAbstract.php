@@ -43,7 +43,7 @@ class SupplierConnectorAbstract
 	 * @param Supplier $supplier The supplier
 	 * @param Library  $lib      The library
 	 * 
-	 * @return SupplierConnectorAbstract
+	 * @return SupplierConn
 	 */
 	public static function getInstance(Supplier $supplier, Library $lib)
 	{
