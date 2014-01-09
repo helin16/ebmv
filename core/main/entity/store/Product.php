@@ -268,7 +268,10 @@ class Product extends BaseEntityAbstract
 	 */
 	public function updateLibrary(Library $lib, LibraryOwnsType $type, $avail = 0, $total = 0)
 	{
+		$original = DaoQuery::$selectActiveOnly;
+		DaoQuery::$selectActiveOnly = false;
 		$owns = $this->getLibraryOwn($lib, $type);
+		DaoQuery::$selectActiveOnly = $original;
 		if(count($owns) === 0)
 			$owns = new LibraryOwns();
 		else

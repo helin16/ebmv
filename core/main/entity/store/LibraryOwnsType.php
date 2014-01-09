@@ -10,8 +10,7 @@ class LibraryOwnsType extends BaseEntityAbstract
 {
 	const ID_ONLINE_VIEW_COPIES = 1;
 	const ID_DOWNLOAD_COPIES = 2;
-	const ID_ONLINE_VIEW_TIMES = 3;
-	const ID_DOWNLOAD_TIMES = 3;
+	const ID_BORROW_TIMES = 3;
 	/**
 	 * The cached types
 	 * 

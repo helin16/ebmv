@@ -11,12 +11,14 @@ interface SupplierConn
 	/**
 	 * Getting xml product list
 	 *
-	 * @param number $pageNo   The page no
-	 * @param number $pageSize the page size
+	 * @param number      $pageNo   The page no
+	 * @param number      $pageSize the page size
+	 * @param ProductType $type     The product type we are fetching
+	 * @param bool        $onceOnly How many times we have to run the fetching script
 	 *
 	 * @return array The list which can be used in ImportProduct()
 	 */
-	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null);
+	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $onceOnly = false);
 	/**
 	 * importing the products from the supplier
 	 *

@@ -131,9 +131,8 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     
 ############################ add libraryownstype table
 insert into `libraryownstype` (`id`, `code`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
-    ('1', 'copies_online', 'The copies the libary owns for online view', 1, NOW(), 100, NOW(), 100),
-    ('2', 'copies_download', 'The copies the libary owns for download', 1, NOW(), 100, NOW(), 100),
-    ('3', 'times_online', 'The times the libary owns for online view', 1, NOW(), 100, NOW(), 100),
-    ('4', 'times_download', 'The times the libary owns for download', 1, NOW(), 100, NOW(), 100);
+    ('1', 'ReadOnline', 'The copies the libary owns for online view', 1, NOW(), 100, NOW(), 100),
+    ('2', 'Download', 'The copies the libary owns for download', 1, NOW(), 100, NOW(), 100),
+    ('3', 'BorrowTimes', 'The times the libary user can borrow', 1, NOW(), 100, NOW(), 100);
 
 

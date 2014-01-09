@@ -35,6 +35,7 @@ class SupplierConnectorProduct
 	{
 		$key = md5($productinfo->asXML());
 		if(!isset(self::$_products[$key]))
+			
 			self::$_products[$key] = new SupplierConnectorProduct(
 				trim(self::_getAttribute($productinfo, 'BookName')), 
 				trim(self::_getAttribute($productinfo, 'Isbn')), 
@@ -50,14 +51,33 @@ class SupplierConnectorProduct
 				explode('+', trim(self::_getAttribute($productinfo, 'Language'))), 
 				explode('/', self::_getAttribute($productinfo, 'BookType')), 
 				strtolower(trim($productinfo->getName())), 
-				array (
-					'copies_online' => array ('avail' => trim(self::_getAttribute($productinfo, 'AvailableCopies', 15)), 'total' => trim(self::_getAttribute($productinfo, 'TotalCopies', 15)))
-					, 'times_online' => array ('avail' => trim(self::_getAttribute($productinfo, 'AvailableTimes', 15)), 'total' => trim(self::_getAttribute($productinfo, 'TotalTimes', 15)))
-					, 'copies_download' => array ('avail' => trim(self::_getAttribute($productinfo, 'DownloadAvailCopies', 15)), 'total' => trim(self::_getAttribute($productinfo, 'DownloadTotalCopies', 15)))
-					, 'times_download' => array ('avail' => trim(self::_getAttribute($productinfo, 'DownloadAvailTimes', 15)), 'total' => trim(self::_getAttribute($productinfo, 'DownloadTotalTimes', 15)))
-				)
+				self::_getCopies($productinfo)
 			);
 		return self::$_products[$key];
+	}
+	/**
+	 * Getting the copies information
+	 * 
+	 * @param SimpleXMLElement $productinfo
+	 * 
+	 * @return multitype:|multitype:multitype:string
+	 */
+	private function _getCopies(SimpleXMLElement $productinfo)
+	{
+		$copies = array();
+		foreach(BaseServiceAbastract::getInstance('LibraryOwnsType')->findAll() as $type)
+		{
+			$copyStats = array('avail' => 0,  'total' => 0);
+			$code = trim($type->getCode());
+			if(isset($productinfo->Copies) && isset($productinfo->Copies->$code))
+			{
+				$copyElementXml = $productinfo->Copies->$code;
+				$copyStats['avail'] = trim(self::_getAttribute($copyElementXml, 'Available', 0));
+				$copyStats['total'] = trim(self::_getAttribute($copyElementXml, 'Total', 0));
+			}
+			$copies[trim($type->getId())] = $copyStats;
+		}
+		return $copies;
 	}
 	/**
 	 * constructor

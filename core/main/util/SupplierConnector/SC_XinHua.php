@@ -30,7 +30,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getProductList()
 	 */
-	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
+	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $onceOnly = false)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
 		if(trim($pageSize) === '')
@@ -50,10 +50,14 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		{
 			$array[] = $childXml;
 		}
-		//next page
-		$attributes = $xml->attributes();
-		if(isset($attributes['totalPages']) && $pageNo < $attributes['totalPages'])
-			$array = array_merge($array, $this->getProductList($pageNo + 1, $pageSize, $type));
+		
+		if($onceOnly === false)
+		{
+			//next page
+			$attributes = $xml->attributes();
+			if(isset($attributes['totalPages']) && $pageNo < $attributes['totalPages'])
+				$array = array_merge($array, $this->getProductList($pageNo + 1, $pageSize, $type));
+		}
 		return $array;
 	}
 	/**
