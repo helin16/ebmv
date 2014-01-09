@@ -59,12 +59,14 @@ body {
     color: #000080;
     box-shadow: none;
 }
+.button.disabled,
 .button[disabled],
+.button.disabled:hover,
 .button[disabled]:hover {
 	background: #cccccc;
 	box-shadow: none;
 	color: white;
-	cursor: auto;
+	cursor: default;
 }
 
 .upperTxt {

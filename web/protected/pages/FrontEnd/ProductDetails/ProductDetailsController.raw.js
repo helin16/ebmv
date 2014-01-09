@@ -5,6 +5,7 @@ var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	product: null //the product object
 	,resultDivId: '' //where we are displaying product details
+	,ownTypeIds: {} //the libraryowntypes
 		
 	,_joinAtts: function(attributes, name) {
 		var tmp = {};
@@ -33,7 +34,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,_getLoadingImg: function (id) {
 		return new Element('span', {'class': 'loadingImg', 'id': id});
 	}
-
+	
 	,displayProduct: function() {
 		var tmp = {};
 		tmp.me = this;
@@ -63,10 +64,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						.insert({'bottom': tmp.me._getAtts('no_of_words', 'Length', 'inlineblock product_no_of_words') })
 						.insert({'bottom': tmp.me._getAtts('languages', 'Languages', 'inlineblock product_languages', tmp.me._joinAtts(tmp.me.product.languages, 'name').join(', ')) })
 					})
-					.insert({'bottom': new Element('div', {'class': 'row'})
-						.insert({'bottom': tmp.me._getAtts('copies_for_view', 'Available Copies For Read Online', 'inlineblock copies_for_view', tmp.me._getLoadingImg('copies_for_view')) })
-						.insert({'bottom': tmp.me._getAtts('copies_for_download', 'Available Copies For Download', 'inlineblock copies_for_download', tmp.me._getLoadingImg('copies_for_download')) })
-					})
+					.insert({'bottom': new Element('div', {'class': 'row'}).update(tmp.me._getLoadingImg('copies_display')) })
 					.insert({'bottom': new Element('div', {'class': 'row product_description'}).update(tmp.me._getAtts('description', '', ''))	})
 					.insert({'bottom': new Element('div', {'class': 'row btns'})
 						.insert({'bottom':  tmp.me._getLoadingImg('view_btn') })
@@ -76,11 +74,11 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			});
 		$(tmp.me.resultDivId).update(tmp.newDiv);
 		socialBtnJs.load('socialBtns', document.URL, 'Check this out:' + tmp.me.product.title, tmp.newDiv.down('.product_description').innerHTML);
-		tmp.me._getCopies('copies_for_view', 'copies_for_download', 'view_btn', 'downloadBtn');
+		tmp.me._getCopies('copies_display', 'view_btn', 'downloadBtn');
 		return this;
 	}
 	
-	,_getCopies: function (readCopiesHolderId, downloadCopiesHolderId, readOnlineBtnId, downloadBtnId) {
+	,_getCopies: function (readCopiesDisplayHolderId, readOnlineBtnId, downloadBtnId) {
 		var tmp = {};
 		tmp.me = this;
 		
@@ -89,37 +87,32 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onComplete': function(sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					tmp.availForView = tmp.result.copies.availForView;
-					tmp.availForDownload = tmp.result.copies.availForDownload;
+					tmp.readCopies = tmp.downloadCopies = 'N/A';
+					tmp.readBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('在线阅读/在線閱讀<br />Read Online');
+					tmp.downloadBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('下载阅读/下載閱讀<br />Download This Book');
 					
 					//getting the readonline url
-					if(tmp.result.urls.viewUrl && tmp.availForView * 1 > 0) {
-						$(readCopiesHolderId).replace(new Element('span').update(tmp.availForView + ' out of ' + tmp.result.copies.totalForView));
-						$(readOnlineBtnId).replace(new Element('span', {'class': 'button rdcrnr'})
-							.update('在线阅读/在線閱讀<br />Read Online')
+					if(tmp.result.urls.viewUrl && tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail * 1 > 0) {
+						tmp.readCopies = tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].total;
+						tmp.readBtn.removeClassName('disabled')
 							.observe('click', function(){
 								tmp.me._getLink(this, 'read');
-							})
-						);
-					} else {
-						$(readCopiesHolderId).replace('N/A');
-						$(readOnlineBtnId).replace('');
+							});
 					}
 					
 					//getting the download url
-					if(tmp.result.urls.downloadUrl && tmp.availForDownload * 1 > 0) {
-						$(downloadCopiesHolderId).replace(new Element('span').update(tmp.availForDownload + ' out of ' + tmp.result.copies.totalForDownload));
-						$(downloadBtnId).replace(new Element('span', {'class': 'button rdcrnr'})
-							.update('下载阅读/下載閱讀<br />Download This Book')
+					if(tmp.result.urls.downloadUrl && tmp.result.copies[tmp.me.ownTypeIds.Download].avail * 1 > 0) {
+						tmp.downloadCopies = tmp.result.copies[tmp.me.ownTypeIds.Download].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.Download].total;
+						tmp.downloadBtn.removeClassName('disabled')
 							.observe('click', function(){
 								tmp.me._getLink(this, 'download');
-							})
-						);
-					} else {
-						$(downloadCopiesHolderId).replace('N/A');
-						$(downloadBtnId).replace('');
-					}
-							
+							});
+					} 
+					$(readCopiesDisplayHolderId).up('.row').update('')
+						.insert({'bottom': tmp.me._getAtts('', 'Online Read Copies', 'inlineblock online_read_copies', tmp.readCopies) })
+						.insert({'bottom': tmp.me._getAtts('', 'Download Copies', 'inlineblock download_copies', tmp.downloadCopies) });
+					$(readOnlineBtnId).replace(tmp.readBtn);
+					$(downloadBtnId).replace(tmp.downloadBtn);
 				} catch(e) {
 					alert(e);
 				}

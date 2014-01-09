@@ -47,11 +47,21 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.product = ' . json_encode($this->_product->getJson()) . ';';
+		$js .= 'pageJs.ownTypeIds = ' . json_encode($this->_libowns()) . ';';
 		$js .= 'pageJs.resultDivId = "product_details";';
 		$js .= 'pageJs.setCallbackId("geturl", "' . $this->getUrlBtn->getUniqueID(). '");';
 		$js .= 'pageJs.setCallbackId("getCopies", "' . $this->getCopiesBtn->getUniqueID(). '");';
 		$js .= 'pageJs.displayProduct();';
 		return $js;
+	}
+	private function _libowns()
+	{
+		$array = array(
+			'OnlineRead' => LibraryOwnsType::ID_ONLINE_VIEW_COPIES
+			,'Download' => LibraryOwnsType::ID_DOWNLOAD_COPIES
+			,'BorrowTimes' => LibraryOwnsType::ID_BORROW_TIMES
+		);
+		return $array;
 	}
 	
 	public function getUrl($sender, $params)
@@ -103,7 +113,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	$results['urls'] = array('viewUrl' => (trim($supplier->getInfo('view_url')) !== ''), 'downloadUrl' => (trim($supplier->getInfo('download_url')) !== ''));
         	$results['copies'] = array();
         	foreach($this->_product->getLibOwns() as $owns)
-        		$results['copies'][] = $owns->getJson();
+        		$results['copies'][$owns->getType()->getId()] = $owns->getJson();
         }
         catch(Exception $ex)
         {
