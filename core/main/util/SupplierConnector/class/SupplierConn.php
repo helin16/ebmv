@@ -1,4 +1,11 @@
 <?php
+/**
+ * Supplier connector interface
+ *
+ * @package    Core
+ * @subpackage Utils
+ * @author     lhe<helin16@gmail.com>
+ */
 interface SupplierConn
 {
 	/**

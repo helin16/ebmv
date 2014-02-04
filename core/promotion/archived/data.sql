@@ -117,7 +117,8 @@ insert into `libraryinfotype` (`id`, `name`, `code`, `active`, `created`, `creat
 	(2, 'The url of the library', 'lib_url',  1, NOW(), 100, NOW(), 100),
 	(3, 'The timezone of the library', 'lib_timezone',  1, NOW(), 100, NOW(), 100),
 	(4, 'The theme of the library', 'lib_theme',  1, NOW(), 100, NOW(), 100),
-	(5, 'The running mode of the library system', 'running_mode',  1, NOW(), 100, NOW(), 100);
+	(5, 'The running mode of the library system', 'running_mode',  1, NOW(), 100, NOW(), 100),
+	(6, 'The SOAP WSDL URL', 'soap_wsdl',  1, NOW(), 100, NOW(), 100);
 	
 ############################ add libraryinfo table
 insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `createdById`, `updated`, `updatedById`) values

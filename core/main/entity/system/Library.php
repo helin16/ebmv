@@ -18,7 +18,12 @@ class Library extends BaseEntityAbstract
 	 */
 	private $name;
 	/**
-	 * The userAccounts that the userAccounts are belongin to
+	 * 
+	 * @var unknown
+	 */
+	private $connector;
+	/**
+	 * The userAccounts that the userAccounts belongs to
 	 *
 	 * @var multiple:UserAccount
 	 */
@@ -54,6 +59,30 @@ class Library extends BaseEntityAbstract
 	public function setName($Name)
 	{
 		$this->name = $Name;
+		return $this;
+	}
+	/**
+	 * Getter for the LibraryConnector
+	 *
+	 * @return string
+	 */
+	public function getConnector()
+	{
+		if(!class_exists($this->connector))
+			throw new CoreException("System Error: " . $this->connector . " does NOT exsits!");
+		return $this->connector;
+	}
+	
+	/**
+	 * Setter for connector
+	 *
+	 * @param string $connector The connector script for this library
+	 *
+	 * @return Supplier
+	 */
+	public function setConnector($connector)
+	{
+		$this->connector = $connector;
 		return $this;
 	}
 	/**
@@ -147,6 +176,7 @@ class Library extends BaseEntityAbstract
 	{
 		DaoMap::begin($this, 'lib');
 		DaoMap::setStringType('name', 'varchar', 255);
+		DaoMap::setStringType('connector', 'varchar', 100);
 		DaoMap::setOneToMany("userAccounts", "UserAccount","ua");
 		DaoMap::setOneToMany("infos", "LibraryInfo","lib_info");
 		parent::__loadDaoMap();

@@ -28,8 +28,11 @@ abstract class SystemCoreAbstract
 			$base . '/exception/',
 			$base . '/service/',
 			$base . '/util/',
-			$base . '/util/SupplierConnector/',
-			$base . '/util/SupplierConnector/class/',
+			$base . '/util/Connectors',
+			$base . '/util/Connectors/SupplierConnector/',
+			$base . '/util/Connectors/SupplierConnector/class/',
+			$base . '/util/Connectors/LibraryConnector/',
+			$base . '/util/Connectors/LibraryConnector/class/',
 		);
 		foreach ($autoloadPaths as $path)
 		{
