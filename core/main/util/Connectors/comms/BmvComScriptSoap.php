@@ -5,6 +5,10 @@ class BmvComScriptSoap
 	 * @SoapClient
 	 */
 	private $_client;
+	/**
+	 * The cache of script objects
+	 * @var unknown
+	 */
 	private static $_cache;
 	/**
 	 * Getting the BmvComScriptSoap
@@ -30,11 +34,12 @@ class BmvComScriptSoap
 	 * @param unknown $wsdl
 	 * @param string $params
 	 */
-	public function __construct($wsdl, $params = null)
+	public function __construct($wsdl, $options = null)
 	{
-		if($params === null)
-			$params = array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP);
-		$this->_client = new SoapClient($wsdl, $params);
+		if($options === null)
+			$options = array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP);
+		$options = array_merge($options, array('proxy_host' => "proxy.bytecraft.internal", 'proxy_port' => 3128, 'proxy_login' => "lhe", 'proxy_password' => "fru7umap"));
+		$this->_client = new SoapClient($wsdl, $options);
 	}
 	/**
 	 * Calling the function of a soup

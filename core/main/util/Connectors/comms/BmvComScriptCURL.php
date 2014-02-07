@@ -1,6 +1,7 @@
 <?php
 class BmvComScriptCURL
 {
+	const CURL_TIMEOUT = 360000;
 	/**
 	 * download the url to a local file
 	 *

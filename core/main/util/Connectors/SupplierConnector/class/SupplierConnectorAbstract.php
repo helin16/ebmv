@@ -8,7 +8,6 @@
  */
 class SupplierConnectorAbstract
 {
-	const CURL_TIMEOUT = 360000;
 	/**
 	 * @var Supplier
 	 */
@@ -342,7 +341,7 @@ class SupplierConnectorAbstract
 			$paths = explode('/', $paths['path']);
 			
 			$localFile = $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl);
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'downloading file(' . $imageUrl . ') to (' . $localFile . ') with timeout limit: ' . self::CURL_TIMEOUT , __FUNCTION__);
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'downloading file(' . $imageUrl . ') to (' . $localFile . ')' , __FUNCTION__);
 			$tmpFile = self::downloadFile($imageUrl, $localFile);
 			//checking whether the file is an image
 			try 

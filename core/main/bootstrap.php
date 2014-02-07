@@ -29,6 +29,7 @@ abstract class SystemCoreAbstract
 			$base . '/service/',
 			$base . '/util/',
 			$base . '/util/Connectors',
+			$base . '/util/Connectors/comms/',
 			$base . '/util/Connectors/SupplierConnector/',
 			$base . '/util/Connectors/SupplierConnector/class/',
 			$base . '/util/Connectors/LibraryConnector/',

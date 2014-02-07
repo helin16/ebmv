@@ -302,6 +302,7 @@ DROP TABLE IF EXISTS `library`;
 CREATE TABLE `library` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(255) NOT NULL DEFAULT '',
+	`connector` varchar(100) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
