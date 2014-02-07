@@ -61,7 +61,7 @@ class ImportProduct
 					{
 						//getting how many record we need to run
 						self::log( "  :: start download the xml for "  .$type->getName() ."...", __FUNCTION__);
-						$productList = $script->getProductList(1, $fullUpdate ? 100 : trim($totalRecords), $type);
+						$productList = $script->getProductList(1, $fullUpdate ? 100 : trim($totalRecords), $type, !$fullUpdate);
 						self::log( " downloaded.", __FUNCTION__);
 						
 						//process each record
