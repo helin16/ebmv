@@ -73,9 +73,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	private function _getFromSoap($wsdl, $funcName, $params = array(), $resultTagName = null)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting from soap: ' . $wsdl, __FUNCTION__);
-		$client = new SoapClient($wsdl, array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP));
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::sending to (' . $funcName . ') with params: ' . print_r($params, true), __FUNCTION__);
-		$result = $client->$funcName($params);
+		$result = BmvComScriptSoap::getScript($wsdl)->$funcName($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results: ' . print_r($result, true), __FUNCTION__);
 		$resultTagName = (trim($resultTagName) === '' ? $funcName . 'Result' : $resultTagName);
 		if(!isset($result->$resultTagName) || !isset($result->$resultTagName->any) || trim($result->$resultTagName->any) === '')
