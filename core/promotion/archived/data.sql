@@ -137,7 +137,7 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     ('2', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
     ('2', '4', 'default', 1, NOW(), 100, NOW(), 100),
     ('2', '5', '1', 1, NOW(), 100, NOW(), 100),
-    ('2', '6', 'http://library.bankstown.nsw.gov.au/Libero/LiberoWebServices.WebOpac.cls?soap_method={method}&dbName={dbName}&MemberCode={username}&password={password}', 1, NOW(), 100, NOW(), 100);
+    ('2', '6', 'http://library.bankstown.nsw.gov.au/Libero/LiberoWebServices.WebOpac.cls', 1, NOW(), 100, NOW(), 100);
     
 ############################ add libraryownstype table
 insert into `libraryownstype` (`id`, `code`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
