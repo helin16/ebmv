@@ -156,5 +156,31 @@ abstract class BaseServiceAbastract
 	{
 	    return $this->_pageStats;
 	}
+	/**
+	 * saveManyToMany
+	 * 
+	 * @param BaseEntityAbstract $leftEntity
+	 * @param BaseEntityAbstract $rightEntity
+	 * 
+	 * @return unknown
+	 */
+	public function saveManyToMany(BaseEntityAbstract &$leftEntity, BaseEntityAbstract $rightEntity)
+	{
+		EntityDao::getInstance($this->_entityName)->saveManyToManyJoin($leftEntity, $rightEntity);
+		return $leftEntity;
+	}
+	/**
+	 * delete ManyToMany
+	 * 
+	 * @param BaseEntityAbstract $leftEntity
+	 * @param BaseEntityAbstract $rightEntity
+	 * 
+	 * @return unknown
+	 */
+	public function delManyToMany(BaseEntityAbstract &$leftEntity, BaseEntityAbstract $rightEntity)
+	{
+		EntityDao::getInstance($this->_entityName)->deleteManyToManyJoin($leftEntity, $rightEntity);
+		return $leftEntity;
+	}
 }
 ?>

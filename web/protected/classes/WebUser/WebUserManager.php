@@ -28,7 +28,7 @@ class WebUserManager extends TModule implements IUserManager
 		if($username === null)
 			return new WebUser($this);
 		
-		if(!($userAccount = (Core::getUser() instanceof UserAccount ? Core::getUser(): BaseServiceAbastract::getInstance('UserAccount')->getUserByUsername($username))) instanceof UserAccount)
+		if(!($userAccount = (Core::getUser() instanceof UserAccount ? Core::getUser(): BaseServiceAbastract::getInstance('UserAccount')->getUserByUsername($username, Core::getLibrary()))) instanceof UserAccount)
 			return null;
 		
 		$user = new WebUser($this);
@@ -50,16 +50,8 @@ class WebUserManager extends TModule implements IUserManager
 	{
 		if(!Core::getUser() instanceof UserAccount)
 		{
-			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password);
-			if(!$userAccount instanceof UserAccount)
+			if(!($userAccount = BaseServiceAbastract::getInstance('UserAccount')->login(Core::getLibrary(), $username, $password)) instanceof UserAccount)
 				return false;
-			$role = null;
-			if(!Core::getRole() instanceof Role)
-			{
-				if(count($roles = $userAccount->getRoles()) > 0)
-					$role = $roles[0];
-			}
-			Core::setUser($userAccount, $role);
 		}
 		return true;
 	}

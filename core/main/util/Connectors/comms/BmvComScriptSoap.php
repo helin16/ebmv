@@ -20,17 +20,17 @@ class BmvComScriptSoap
 	 * Getting the BmvComScriptSoap
 	 *  
 	 * @param string $wsdl
-	 * @param string $params
+	 * @param string $options
 	 * 
 	 * @return BmvComScriptSoap
 	 */
-	public static function getScript($wsdl, $params = null)
+	public static function getScript($wsdl, $options = null)
 	{
-		$key = md5($wsdl . json_encode($params));
+		$key = md5($wsdl . json_encode($options));
 		if(!isset(self::$_cache[$key]))
 		{
 			$className = trim(get_called_class());
-			self::$_cache[$key] = new $className($wsdl, $params);
+			self::$_cache[$key] = new $className($wsdl, $options);
 		}
 		return self::$_cache[$key];
 	}

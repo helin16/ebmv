@@ -11,7 +11,8 @@ class LC_Local extends LibraryConnectorAbstract
 	 */
 	public function getUserInfo($username, $password)
 	{
-		
+		$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $this->getLibrary());
+		return LibraryConnectorUser::getUser($this->getLibrary(), $userAccount->getUserName(), $userAccount->getPassword(), $userAccount->getPerson()->getFirstName(), $userAccount->getPerson()->getLastName());
 	}
 	/**
 	 * Checking whether the user exists
@@ -21,6 +22,6 @@ class LC_Local extends LibraryConnectorAbstract
 	 */
 	public function chkUser($username, $password)
 	{
-		
+		return BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $this->getLibrary()) instanceof UserAccount;
 	}
 }
