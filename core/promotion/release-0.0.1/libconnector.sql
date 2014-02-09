@@ -1,5 +1,3 @@
-ALTER TABLE  `library` ADD  `connector` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER  `name`;
-
 ############################ add libraryinfotype table
 insert into `libraryinfotype` (`id`, `name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
     (6, 'The SOAP WSDL URL', 'soap_wsdl',  1, NOW(), 100, NOW(), 100);
