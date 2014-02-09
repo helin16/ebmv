@@ -11,6 +11,12 @@ class BmvComScriptSoap
 	 */
 	private static $_cache;
 	/**
+	 * The exception object from last soapcall
+	 * 
+	 * @var Exception|null
+	 */
+	private $_callError = false;
+	/**
 	 * Getting the BmvComScriptSoap
 	 *  
 	 * @param string $wsdl
@@ -38,30 +44,38 @@ class BmvComScriptSoap
 	{
 		if($options === null)
 			$options = array('exceptions' => true, 'encoding'=>'utf-8', 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP);
-		$options = array_merge($options, array('proxy_host' => "proxy.bytecraft.internal", 'proxy_port' => 3128, 'proxy_login' => "lhe", 'proxy_password' => "fru7umap"));
+// 		$options = array_merge($options, array('proxy_host' => "proxy.bytecraft.internal", 'proxy_port' => 3128, 'proxy_login' => "lhe", 'proxy_password' => "fru7umap"));
 		$this->_client = new SoapClient($wsdl, $options);
+	}
+	/**
+	 * Returns the last exception object from last soap call
+	 * 
+	 * @return Exception|null
+	 */
+	public function getLastCallError()
+	{
+		return $this->_callError;
 	}
 	/**
 	 * Calling the function of a soup
 	 * 
 	 * @param string $funcName
 	 * @param string $params
-	 * @param string $succ
 	 * 
 	 * @return SimpleXMLElement|null
 	 */
-	public function call($funcName, $params, &$succ = false)
+	public function __call($funcName, $params)
 	{
 		$result = null;
+		$this->_callError = null;
 		try 
 		{
-			$result = $this->_client->$funcName($params);
+			$result = $this->_client->__soapCall($funcName, $params);
 			$result = new SimpleXMLElement($result);
-			$succ = true;
 		}
 		catch (Exception $ex)
 		{
-			$succ = false;
+			$this->_callError = $ex;
 		}
 		return $result;
 	}
