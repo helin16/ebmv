@@ -118,18 +118,19 @@ class ProductImportView extends TTemplateControl
 			
 			$scriptName = self::RUNNING_SCRIPT;
 			$class = new ReflectionClass(new $scriptName());
-			$script = 'php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $scriptName . '_Run.php';
+			$script = PHP_BINDIR . DIRECTORY_SEPARATOR . 'php ' . dirname($class->getFileName()) . DIRECTORY_SEPARATOR . $scriptName . '_Run.php';
 			$script .= ' ' .implode(',', $libCodes);
 			$script .= ' ' . implode(',', $supplierIds);
 			$script .= ' ' . $maxQty;
-			$this->_execInBackground($script);
 			
+			$now = new UDate();
+			$output = $this->_execInBackground($script);
 			sleep(1);
 			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 			if(count($logs) === 0)
 				throw new Exception('System Error Occurred: no logs found!');
 			$result['transId'] = trim($logs[0]->getTransId());
-			$result['nowUTC'] = trim(new UDate());
+			$result['nowUTC'] = trim($now);
 		}
 		catch(Exception $ex)
 		{
@@ -146,8 +147,8 @@ class ProductImportView extends TTemplateControl
 	 */
 	private function _execInBackground($cmd)
 	{
-        exec('nohup ' . $cmd . " > /dev/null 2>/dev/null &");   
-	    return $this;
+		$cmd = 'nohup ' . $cmd . ' > /dev/null 2>/dev/null &';
+        return shell_exec($cmd);   
 	} 
 	/**
 	 * getting the logs for the importing progress
@@ -165,7 +166,7 @@ class ProductImportView extends TTemplateControl
 			if (!isset($param->CallbackParameter->transId) || ($transId = trim($param->CallbackParameter->transId)) === '')
 				throw new Exception('System Error: no transId passed!');
 			
-			$result['hasMore'] = $this->_isImporting();
+			$result['hasMore'] = true;
 			$result['logs'] = array();
 			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $nowUTC));
 			foreach ($logs as $log)
@@ -174,7 +175,16 @@ class ProductImportView extends TTemplateControl
 					$result['hasMore'] = false;
 				$result['logs'][] = $log->getJson();
 			}
+			
 			$result['nowUTC'] = trim(new UDate());
+			$now = new UDate();
+			if(count($logs) === 0)
+			{
+				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ?', array($transId), true, 1, 1, array("log.id" => 'desc'));
+				if(count($logs) === 0 || $now->modify('-10 minute')->after($logs[0]->getCreated()))
+					$result['hasMore'] = false;
+			}
+				
 		}
 		catch(Exception $ex)
 		{

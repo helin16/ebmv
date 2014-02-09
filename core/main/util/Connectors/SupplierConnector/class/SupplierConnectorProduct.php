@@ -62,7 +62,7 @@ class SupplierConnectorProduct
 	 * 
 	 * @return multitype:|multitype:multitype:string
 	 */
-	private function _getCopies(SimpleXMLElement $productinfo)
+	private static function _getCopies(SimpleXMLElement $productinfo)
 	{
 		$copies = array();
 		foreach(BaseServiceAbastract::getInstance('LibraryOwnsType')->findAll() as $type)

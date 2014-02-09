@@ -90,7 +90,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 			$params['type'] = strtolower(trim($type->getName()));
 		$url = $url . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url: ' . $url , __FUNCTION__);
-		$result = SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT);
+		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . $result , __FUNCTION__);
 		return new SimpleXMLElement($result);
 	}
@@ -159,8 +159,8 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::get url:' . $url , __FUNCTION__);
 		
 		$data = array('uid' => trim($user->getUsername()), 'pwd' => trim($user->getPassword()), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($data, true) . ', type = ) with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
-		$results = SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $data);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($data, true) . ', type = ) with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
+		$results = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $data);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::get result from supplier:' . $results , __FUNCTION__);
 		
 		$results = $this->_getJsonResult($results, 'results');
@@ -195,8 +195,8 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'));
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::submiting to url with params' . print_r($params, true) , __FUNCTION__);
 		
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = ) with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
-		$result = SupplierConnectorAbstract::readUrl($url, self::CURL_TIMEOUT, $params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = ) with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
+		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got results:' . print_r($result, true) , __FUNCTION__);
 		try
 		{
@@ -226,9 +226,9 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
 		
 		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'));
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "DELETE") with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "DELETE") with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
 		
-		$result = SupplierConnectorAbstract::readUrl($url, self::CURL_TIMEOUT, $params, 'DELETE');
+		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params, 'DELETE');
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got result: ' . print_r($result, true) , __FUNCTION__);
 		
 		return $this;
@@ -245,9 +245,9 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$token = $this->_validToken($user);
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
 		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "GET") with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "GET") with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
 		
-		$result = SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), self::CURL_TIMEOUT);
+		$result = SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), BmvComScriptCURL::CURL_TIMEOUT);
 		return $this->_getJsonResult($result, 'bookList');
 	}
 	/**
@@ -322,8 +322,8 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$currentUrl = (trim($_SERVER['SERVER_NAME']) === '' ? $returnUrls[0]: trim($_SERVER['SERVER_NAME'])) . '/mybookshelf.html';
 		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'token' => $token, 'returnUrl' => $currentUrl, 'partnerid' => $this->_supplier->getInfo('partner_id'));
 		
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "POST") with timeout limit: ' . SupplierConnectorAbstract::CURL_TIMEOUT , __FUNCTION__);
-		$results = $this->_getJsonResult(SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT, $params), 'results');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "POST") with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
+		$results = $this->_getJsonResult(SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params), 'results');
 		if(!isset($results['url']) || ($readurl = trim($results['url'])) === '')
 			throw new SupplierConnectorException("System Error: can not get the online reading url for supplier(" . $this->_supplier->getName() ."), contact admin for further support!");
 		return $readurl;
@@ -344,7 +344,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), "getBookInfo") . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
 		
-		$results = SupplierConnectorAbstract::readUrl($url, SupplierConnectorAbstract::CURL_TIMEOUT);
+		$results = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got results:' . print_r($results, true), __FUNCTION__);
 		
 		return SupplierConnectorProduct::getProduct(new SimpleXMLElement($results));
