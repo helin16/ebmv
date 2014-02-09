@@ -1,4 +1,4 @@
-<div class="systemtitle">My Logo</div>
+<div class="systemtitle"><%= Core::getLibrary()->getName() %></div>
 <div class="topmenu">
     <span class="item home inlineblock">
         <a href="/" >Home</a>
