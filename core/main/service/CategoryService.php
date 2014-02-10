@@ -31,15 +31,16 @@ class CategoryService extends BaseServiceAbastract
     public function getCategories(Language $lang, ProductType $type, Library $lib = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
     	 $query = EntityDao::getInstance($this->_entityName)->getQuery();
-    	 $query->eagerLoad('Category.products')->eagerLoad('Product.languages', 'inner join', 'lang', 'lang.id = :languageId');
-    	 $params = array('languageId' => $lang->getId());
+    	 $query->eagerLoad('Category.products')->eagerLoad('Product.languages');
+    	 $params = array();
     	 if($lib instanceof Library)
     	 {
     	 	$query->eagerLoad('Product.libOwns', 'inner join', 'x_libowns', '`x_libowns`.`productId` = `pro`.id and x_libowns.active = 1 and x_libowns.libraryId = :libId'); 
     	 	$params['libId'] =  $lib->getId();
     	 }
+    	 $params['languageId'] =  $lang->getId();
     	 $params['productTypeId'] =  $type->getId();
-    	 return $this->findByCriteria('`pro`.productTypeId = :productTypeId', $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+    	 return $this->findByCriteria('lang.id = :languageId and `pro`.productTypeId = :productTypeId', $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
     }
     /**
      * Find or create a category with the same name
