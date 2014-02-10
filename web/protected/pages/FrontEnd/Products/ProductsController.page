@@ -16,7 +16,7 @@
             <div class="controlbtns">
                 <span class="inlineblock" style="width: 66%;">
                     <input id="searchtxt" type="textbox" class="padding5 fullwith rdcrnr lightBrdr" 
-                    	   placeholder="Search Your <%= $this->getProductType() instanceof ProductType ? $this->getProductType()->getName() : 'items' %> by title, author or ISBN" 
+                    	   placeholder="Search Your <%= $this->type instanceof ProductType ? $this->type->getName() : 'items' %> by title, author or ISBN" 
                     	   onkeydown="return pageJs.keydown(event, function(){ $('searchbtn').click();})"/>
                 </span>
                 <span class="inlineblock" style="width: 10%">

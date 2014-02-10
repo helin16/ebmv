@@ -59,7 +59,7 @@ class Category extends TreeEntityAbstract
 	{
 		DaoMap::begin($this, 'pcat');
 		DaoMap::setStringType('name', 'varchar', 255);
-		DaoMap::setManyToMany("products", "Product", DaoMap::RIGHT_SIDE, "p", false);
+		DaoMap::setManyToMany("products", "Product", DaoMap::RIGHT_SIDE, "pro", false);
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('name');

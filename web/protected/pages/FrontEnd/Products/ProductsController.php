@@ -9,6 +9,15 @@
 class ProductsController extends FrontEndPageAbstract  
 {
     public $pageSize = 40;
+    public $type;
+    public $language;
+    
+    public function __construct()
+    {
+    	parent::__construct();
+    	$this->type = $this->getProductType();
+    	$this->language = $this->getLanguage();
+    }
     
     public function onLoad($param)
     {
@@ -83,6 +92,7 @@ class ProductsController extends FrontEndPageAbstract
 	    {
 	        if(!isset($categories[$key]))
 	            continue;
+	        
 	        $url = '/products/category/' . $categories[$key]->getId();
 	        $html .= '<li><a href="' .$url  . '">' . $categories[$key]->getName() . '</a>';
 	            unset($categories[$key]);
@@ -100,7 +110,7 @@ class ProductsController extends FrontEndPageAbstract
 	{
 	    $array = array();
 	    $flatArray = array();
-	    foreach(BaseServiceAbastract::getInstance('Category')->findAll() as $cate)
+	    foreach(BaseServiceAbastract::getInstance('Category')->getCategories($this->language, $this->type, Core::getLibrary()) as $cate)
 	    {
 	        $flatArray[$cate->getId()] = $cate;
 	        if(!$cate->getParent() instanceof Category)
