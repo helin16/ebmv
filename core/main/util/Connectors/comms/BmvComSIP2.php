@@ -70,12 +70,11 @@ class BmvComSIP2
 	}
 	public function login($username, $password)
 	{
-		var_dump('connect: ');
-		var_dump($result);
 		//send selfcheck status message
 		$in = $this->_sip2->msgSCStatus();
 		var_dump('msgSCStatus: ');
 		var_dump($in);
+		
 		$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
 		var_dump('parseACSStatusResponse: ');
 		var_dump($result);
