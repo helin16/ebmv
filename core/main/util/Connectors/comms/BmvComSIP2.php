@@ -65,7 +65,11 @@ class BmvComSIP2
 	public function connect()
 	{
 		date_default_timezone_set($this->_lib->getInfo('lib_timezone'));
-		$result = $this->_sip2->connect();
+		$this->_sip2->connect();
+		return $this;
+	}
+	public function login($username, $password)
+	{
 		var_dump('connect: ');
 		var_dump($result);
 		//send selfcheck status message
@@ -88,7 +92,12 @@ class BmvComSIP2
 		var_dump($in);
 		
 		// parse the raw response into an array
-		return $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($in) );
+		$result =  $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($in) );
+		var_dump('parsePatronInfoResponse ');
+		var_dump($in);
+		
+		$result = $this->_sip2->msgLogin($username, $password);
+		var_dump('msgLogin ');
+		var_dump($result);
 	}
-	
 }
