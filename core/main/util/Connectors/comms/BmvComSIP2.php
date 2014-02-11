@@ -90,9 +90,7 @@ class BmvComSIP2
 		// parse the raw response into an array
 		$result =  $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($in) );
 		var_dump('parsePatronInfoResponse ');
-		var_dump($in);
-		
-		msgLogin
+		var_dump($result);
 	}
 	
 }
