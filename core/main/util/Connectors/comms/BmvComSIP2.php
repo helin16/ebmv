@@ -64,24 +64,14 @@ class BmvComSIP2
 	 */
 	public function connect()
 	{
-		$this->_sip2->connect();
-		return $this;
-	}
-	public function disconnect()
-	{
-		$this->_sip2->disconnect();
-		return $this;
-	}
-	public function login($username, $password)
-	{
 		date_default_timezone_set($this->_lib->getInfo('lib_timezone'));
-		$this->connect();
-		
+		$result = $this->_sip2->connect();
+		var_dump('connect: ');
+		var_dump($result);
 		//send selfcheck status message
 		$in = $this->_sip2->msgSCStatus();
 		var_dump('msgSCStatus: ');
 		var_dump($in);
-		
 		$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
 		var_dump('parseACSStatusResponse: ');
 		var_dump($result);
@@ -102,13 +92,7 @@ class BmvComSIP2
 		var_dump('parsePatronInfoResponse ');
 		var_dump($in);
 		
-		$result = $this->_sip2->msgLogin($username, $password);
-		var_dump('msgLogin ');
-		var_dump($result);
-		$result =  $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($result) );
-		var_dump('parsePatronInfoResponse ');
-		var_dump($result);
-		
-		$this->disconnect();
+		msgLogin
 	}
+	
 }
