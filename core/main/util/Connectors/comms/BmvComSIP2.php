@@ -61,7 +61,8 @@ class BmvComSIP2
 		//send selfcheck status message
 		$in = $this->_sip2->msgSCStatus();
 		$result = $this->_sip2->parseACSStatusResponse($mysip->get_message($in));
-		
+		var_dump('parseACSStatusResponse: ');
+		var_dump($result);
 		/*  Use result to populate SIP2 setings
 		 *   (In the real world, you should check for an actual value
 		 		*   before trying to use it... but this is a simple example)
@@ -71,6 +72,8 @@ class BmvComSIP2
 		
 		// Get Charged Items Raw response
 		$in = $this->_sip2->msgPatronInformation('charged');
+		var_dump('msgPatronInformation: ');
+		var_dump($in);
 		
 		// parse the raw response into an array
 		return $this->_sip2->parsePatronInfoResponse( $mysip->get_message($in) );
