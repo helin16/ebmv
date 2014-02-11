@@ -12,7 +12,7 @@ try
 // 	$patron = 'BMVCO';
 // 	$patronPwd = 'YPRLBMV';
 	$patron = '11380047';
-	$patronPwd = '1234';
+	$patronPwd = '12345';
 	echo '<pre>';
 // 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
 // 		->login('11380047', '1234');
