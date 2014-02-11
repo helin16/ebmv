@@ -98,5 +98,8 @@ class BmvComSIP2
 		$result = $this->_sip2->msgLogin($username, $password);
 		var_dump('msgLogin ');
 		var_dump($result);
+		$result =  $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($result) );
+		var_dump('parsePatronInfoResponse ');
+		var_dump($result);
 	}
 }
