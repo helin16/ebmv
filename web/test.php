@@ -13,7 +13,6 @@ try
 	$patronPwd = 'YPRLBMV';
 	echo '<pre>';
 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
-		->connect()
 		->login('11380047', '1234');
 	var_dump($result);
 	echo '</pre>';
