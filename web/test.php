@@ -11,7 +11,7 @@ try
 	$port = '8163';
 // 	$patron = 'BMVCO';
 // 	$patronPwd = 'YPRLBMV';
-	$patron = '11380047';
+	$patron = '11380047hj';
 	$patronPwd = '1234cxzcx';
 	echo '<pre>';
 // 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
