@@ -64,7 +64,7 @@ class BmvComSIP2
 		$in = $this->_sip2->msgSCStatus();
 		var_dump('msgSCStatus: ');
 		var_dump($in);
-		$result = $this->_sip2->parseACSStatusResponse($mysip->get_message($in));
+		$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
 		var_dump('parseACSStatusResponse: ');
 		var_dump($result);
 		/*  Use result to populate SIP2 setings
@@ -80,7 +80,7 @@ class BmvComSIP2
 		var_dump($in);
 		
 		// parse the raw response into an array
-		return $this->_sip2->parsePatronInfoResponse( $mysip->get_message($in) );
+		return $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($in) );
 	}
 	
 }
