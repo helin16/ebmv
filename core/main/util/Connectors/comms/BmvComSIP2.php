@@ -57,6 +57,23 @@ class BmvComSIP2
 	 */
 	public function connect()
 	{
-		return $this->_sip2->connect();
+		$this->_sip2->connect();
+		//send selfcheck status message
+		$in = $this->_sip2->msgSCStatus();
+		$result = $this->_sip2->parseACSStatusResponse($mysip->get_message($in));
+		
+		/*  Use result to populate SIP2 setings
+		 *   (In the real world, you should check for an actual value
+		 		*   before trying to use it... but this is a simple example)
+		*/
+		$this->_sip2->AO = $result['variable']['AO'][0]; /* set AO to value returned */
+		$this->_sip2->AN = $result['variable']['AN'][0]; /* set AN to value returned */
+		
+		// Get Charged Items Raw response
+		$in = $this->_sip2->msgPatronInformation('charged');
+		
+		// parse the raw response into an array
+		return $this->_sip2->parsePatronInfoResponse( $mysip->get_message($in) );
 	}
+	
 }
