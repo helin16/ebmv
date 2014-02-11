@@ -11,7 +11,7 @@ try
 	$port = '8163';
 	$patron = 'BMVCO';
 	$patronPwd = 'YPRLBMV';
-	$result = BmvComSIP2::getSIP($host, $port, $patron, $patronPwd)->connect();
+	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)->connect();
 	var_dump($result);
 }
 catch(Exception $ex)
