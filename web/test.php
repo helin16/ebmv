@@ -9,10 +9,10 @@ try
 {
 	$host = '206.187.32.61';
 	$port = '8163';
-// 	$patron = 'BMVCO';
-// 	$patronPwd = 'YPRLBMV';
-	$patron = '11380047hj';
-	$patronPwd = '1234cxzcx';
+	$patron = 'BMVCO';
+	$patronPwd = 'YPRLBMV';
+// 	$patron = '11380047hj';
+// 	$patronPwd = '1234cxzcx';
 	echo '<pre>';
 // 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
 // 		->login('11380047', '1234');
