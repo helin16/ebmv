@@ -57,7 +57,9 @@ class BmvComSIP2
 	 */
 	public function connect()
 	{
-		$this->_sip2->connect();
+		$result = $this->_sip2->connect();
+		var_dump('connect: ');
+		var_dump($result);
 		//send selfcheck status message
 		$in = $this->_sip2->msgSCStatus();
 		$result = $this->_sip2->parseACSStatusResponse($mysip->get_message($in));
