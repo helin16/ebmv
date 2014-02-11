@@ -8,6 +8,12 @@ class BmvComSIP2
 	 */
 	private $_sip2;
 	/**
+	 * The library
+	 * 
+	 * @var Library
+	 */
+	private $_lib;
+	/**
 	 * The cache of the bmvcomsip2 objects
 	 * 
 	 * @var array
@@ -23,13 +29,13 @@ class BmvComSIP2
 	 * 
 	 * @return BmvComSIP2
 	 */
-	public static function getSIP($host, $port, $patron, $patronPwd)
+	public static function getSIP(Library $lib, $host, $port, $patron, $patronPwd)
 	{
-		$key = md5($host . $port . $patron . $patronPwd);
+		$key = md5($lib->getId(), $host . $port . $patron . $patronPwd);
 		if(!isset(self::$_cache[$key]))
 		{
 			$className = trim(get_called_class());
-			self::$_cache[$key] = new $className($host, $port, $patron, $patronPwd);
+			self::$_cache[$key] = new $className($lib, $host, $port, $patron, $patronPwd);
 		}
 		return self::$_cache[$key];
 	}
@@ -42,8 +48,9 @@ class BmvComSIP2
 	 * @param string $patronPwd
 	 * 
 	 */
-	public function __construct($host, $port, $patron, $patronPwd)
+	public function __construct(Library $lib, $host, $port, $patron, $patronPwd)
 	{
+		$this->_lib = $lib;
 		$this->_sip2 = new SIP2();
 		$this->_sip2->hostname = $host;
 		$this->_sip2->port = $port;
@@ -57,6 +64,7 @@ class BmvComSIP2
 	 */
 	public function connect()
 	{
+		date_default_timezone_set($this->_lib->getInfo('lib_timezone'));
 		$result = $this->_sip2->connect();
 		var_dump('connect: ');
 		var_dump($result);
