@@ -83,7 +83,7 @@ class BmvComSIP2
 		$this->_sip2->AN = $result['variable']['AN'][0]; /* set AN to value returned */
 		
 		// Get Charged Items Raw response
-		$in = $this->_sip2->msgPatronInformation('charged');
+		$in = $this->_sip2->msgPatronInformation('none');
 		var_dump('msgPatronInformation: ');
 		var_dump($in);
 		
