@@ -7,12 +7,7 @@ class BmvComSIP2
 	 * @var SIP2
 	 */
 	private $_sip2;
-	/**
-	 * The library
-	 * 
-	 * @var Library
-	 */
-	private $_lib;
+	private $_timeZone;
 	/**
 	 * The cache of the bmvcomsip2 objects
 	 * 
@@ -24,18 +19,16 @@ class BmvComSIP2
 	 * 
 	 * @param unknown $host
 	 * @param unknown $port
-	 * @param unknown $patron
-	 * @param unknown $patronPwd
 	 * 
 	 * @return BmvComSIP2
 	 */
-	public static function getSIP(Library $lib, $host, $port, $patron, $patronPwd)
+	public static function getSIP($host, $port, $timezone = 'UTC')
 	{
-		$key = md5($lib->getId(), $host . $port . $patron . $patronPwd);
+		$key = md5($timezone, $host . $port);
 		if(!isset(self::$_cache[$key]))
 		{
 			$className = trim(get_called_class());
-			self::$_cache[$key] = new $className($lib, $host, $port, $patron, $patronPwd);
+			self::$_cache[$key] = new $className($host, $port, $timezone);
 		}
 		return self::$_cache[$key];
 	}
@@ -44,53 +37,70 @@ class BmvComSIP2
 	 * 
 	 * @param string $host
 	 * @param string $port
-	 * @param string $patron
-	 * @param string $patronPwd
 	 * 
 	 */
-	public function __construct(Library $lib, $host, $port, $patron, $patronPwd)
+	public function __construct($host, $port, $timezone)
 	{
-		$this->_lib = $lib;
 		$this->_sip2 = new SIP2();
 		$this->_sip2->hostname = $host;
 		$this->_sip2->port = $port;
-		$this->_sip2->patron = $patron;
-		$this->_sip2->patronpwd = $patronPwd;
+		$this->_timeZone = $timezone;
 	}
 	/**
-	 * connects to a SIP2 server
+	 * Getting the person info
 	 * 
-	 * @return boolean
+	 * @param unknown $username
+	 * @param unknown $password
+	 * 
+	 * @throws CoreException
+	 * @throws Exception
 	 */
-	public function connect()
+	public function getPatronInfo($username, $password)
 	{
-		date_default_timezone_set($this->_lib->getInfo('lib_timezone'));
-		$result = $this->_sip2->connect();
-		var_dump('connect: ');
-		var_dump($result);
-		//send selfcheck status message
-		$in = $this->_sip2->msgSCStatus();
-		var_dump('msgSCStatus: ');
-		var_dump($in);
-		$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
-		var_dump('parseACSStatusResponse: ');
-		var_dump($result);
-		/*  Use result to populate SIP2 setings
-		 *   (In the real world, you should check for an actual value
-		 		*   before trying to use it... but this is a simple example)
-		*/
-		$this->_sip2->AO = $result['variable']['AO'][0]; /* set AO to value returned */
-		$this->_sip2->AN = $result['variable']['AN'][0]; /* set AN to value returned */
-		
-		// Get Charged Items Raw response
-		$in = $this->_sip2->msgPatronInformation('none');
-		var_dump('msgPatronInformation: ');
-		var_dump($in);
-		
-		// parse the raw response into an array
-		$result =  $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($in) );
-		var_dump('parsePatronInfoResponse ');
-		var_dump($result);
+		$orginTimeZone = date_default_timezone_get();
+		$connected = false;
+		try 
+		{
+			date_default_timezone_set($this->_timeZone);
+			$this->_sip2->patron = $username;
+			$this->_sip2->patronpwd = $password;
+			//connect to the ser
+			$result = $this->_sip2->connect();
+			if(!$result !== true)
+				throw new CoreException('SIP2 can NOT connect to HOST:' . $this->_sip2->hostname . ':' . $this->_sip2->port);
+			$connected = true;
+			
+			//send selfcheck status message
+			$in = $this->_sip2->msgSCStatus();
+			$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
+			
+			/*  Use result to populate SIP2 setings
+			 *   (In the real world, you should check for an actual value
+			 		*   before trying to use it... but this is a simple example)
+			*/
+			$this->_sip2->AO = $result['variable']['AO'][0]; /* set AO to value returned */
+			$this->_sip2->AN = $result['variable']['AN'][0]; /* set AN to value returned */
+			
+			// Get Charged Items Raw response
+			$in = $this->_sip2->msgPatronInformation('none');
+			
+			// parse the raw response into an array
+			$result =  $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($in) );
+			
+			//set the timezone to be the original
+			date_default_timezone_set($orginTimeZone);
+			
+			//disconnect the link
+			$this->_sip2->disconnect();
+			
+			return $result;
+		}
+		catch(Exception $ex)
+		{
+			date_default_timezone_set($orginTimeZone);
+			if($connected === true)
+				$this->_sip2->disconnect();
+			throw $ex;			
+		}
 	}
-	
 }
