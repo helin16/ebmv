@@ -13,18 +13,13 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 	public static function getPersonInfo(Library $library, $username, $password)
 	{
 		$key = md5($username . $password);
-		var_dump(__FUNCTION__ . '0');
 		if(!isset(self::$_cache[$key]))
 		{
-		var_dump(__FUNCTION__ . '1');
-		var_dump(__FUNCTION__ . '4');
 			$hostInfo = $library->getInfo('sip2_host');
-		var_dump(__FUNCTION__ . '5');
 			$hosts = explode(':', str_replace(' ', '', $hostInfo));
-			var_dump($hosts);
 			$result = BmvComSIP2::getSIP($hosts[0], isset($hosts[1]) ? $hosts[1] : null)->getPatronInfo($username, $password);
 			$pInfo = array();
-			if(strtoupper(trim($result['variable']['BL'])) === 'Y' && strtoupper(trim($result['variable']['CQ'])) === 'Y')
+			if(strtoupper(trim($result['variable']['BL'][0])) === 'Y' && strtoupper(trim($result['variable']['CQ'][0])) === 'Y')
 			{
 				$names = explode(' ', trim($result['variable']['AE']));
 				$lastName = array_pop($names);
@@ -32,7 +27,6 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 				$pInfo = LibraryConnectorUser::getUser($library, $username, $password, $firstName, $lastName);
 			}
 			self::$_cache[$key] = $pInfo;
-		var_dump(__FUNCTION__ . '3');
 		}
 		return self::$_cache[$key];
 	}
