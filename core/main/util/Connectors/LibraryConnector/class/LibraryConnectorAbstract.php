@@ -67,6 +67,7 @@ class LibraryConnectorAbstract
 	 */
 	public function getLibrary()
 	{
+		var_dump($this->_lib);
 		return $this->_lib;
 	}
 }
