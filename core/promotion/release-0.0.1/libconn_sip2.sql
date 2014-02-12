@@ -8,7 +8,7 @@ insert into `libraryinfotype` (`id`, `name`, `code`, `active`, `created`, `creat
     (7, 'The SIP2 host addr[203.23.231.1:8627]', 'sip2_host',  1, NOW(), 100, NOW(), 100);
     
 insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
-    ('3', '1', 'NBANK', 1, NOW(), 100, NOW(), 100),
+    ('3', '1', 'UNK', 1, NOW(), 100, NOW(), 100),
     ('3', '2', 'yarraplenty.ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('3', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
     ('3', '4', 'default', 1, NOW(), 100, NOW(), 100),
