@@ -18,6 +18,7 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 		{
 		var_dump(__FUNCTION__ . '2');
 		var_dump($this->_lib);
+		var_dump(__FUNCTION__ . '6');
 		var_dump($this->_lib->getId());
 			$library = $this->_lib;
 		var_dump(__FUNCTION__ . '4');
