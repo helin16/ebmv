@@ -22,7 +22,7 @@ class BmvComSIP2
 	 * 
 	 * @return BmvComSIP2
 	 */
-	public static function getSIP($host, $port, $timezone = 'UTC')
+	public static function getSIP($host, $port = null, $timezone = 'UTC')
 	{
 		$key = md5($timezone, $host . $port);
 		if(!isset(self::$_cache[$key]))
@@ -39,11 +39,12 @@ class BmvComSIP2
 	 * @param string $port
 	 * 
 	 */
-	public function __construct($host, $port, $timezone)
+	public function __construct($host, $port = null, $timezone = 'UTC')
 	{
 		$this->_sip2 = new SIP2();
 		$this->_sip2->hostname = $host;
-		$this->_sip2->port = $port;
+		if(is_numeric($port))
+			$this->_sip2->port = $port;
 		$this->_timeZone = $timezone;
 	}
 	/**
@@ -64,7 +65,6 @@ class BmvComSIP2
 			$this->_sip2->patronpwd = $password;
 			//connect to the ser
 			$result = $this->_sip2->connect();
-			var_dump($result);
 			if($result !== true)
 				throw new CoreException('SIP2 can NOT connect to HOST:' . $this->_sip2->hostname . ':' . $this->_sip2->port);
 			$connected = true;
