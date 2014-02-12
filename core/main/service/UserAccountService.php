@@ -83,7 +83,7 @@ class UserAccountService extends BaseServiceAbastract
     		throw new EntityException('System Error: trying to create a username with the same id:' . $username . '!');
     	$userAccount = new UserAccount();
     	$userAccount->setUserName($username);
-    	$userAccount->setPassword($password);
+    	$userAccount->setPassword(sha1($password));
     	$userAccount->setPerson($person);
     	$userAccount->setLibrary($lib);
     	$this->save($userAccount);
@@ -113,7 +113,7 @@ class UserAccountService extends BaseServiceAbastract
 	    	$person = $newPerson;
     	}
     	$userAccount->setUserName($username);
-    	$userAccount->setPassword($password);
+    	$userAccount->setPassword(sha1($password));
     	$userAccount->setPerson($person);
     	$userAccount->setLibrary($lib);
     	$this->save($userAccount);
