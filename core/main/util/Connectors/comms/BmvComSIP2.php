@@ -57,11 +57,9 @@ class BmvComSIP2
 	 */
 	public function getPatronInfo($username, $password)
 	{
-		$orginTimeZone = date_default_timezone_get();
 		$connected = false;
 		try 
 		{
-			date_default_timezone_set($this->_timeZone);
 			$this->_sip2->patron = $username;
 			$this->_sip2->patronpwd = $password;
 			//connect to the ser
@@ -87,9 +85,6 @@ class BmvComSIP2
 			// parse the raw response into an array
 			$result =  $this->_sip2->parsePatronInfoResponse( $this->_sip2->get_message($in) );
 			
-			//set the timezone to be the original
-			date_default_timezone_set($orginTimeZone);
-			
 			//disconnect the link
 			$this->_sip2->disconnect();
 			
@@ -97,7 +92,6 @@ class BmvComSIP2
 		}
 		catch(Exception $ex)
 		{
-			date_default_timezone_set($orginTimeZone);
 			if($connected === true)
 				$this->_sip2->disconnect();
 			throw $ex;			
