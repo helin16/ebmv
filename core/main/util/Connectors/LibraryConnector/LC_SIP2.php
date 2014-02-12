@@ -18,7 +18,10 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 		{
 		var_dump(__FUNCTION__ . '2');
 			$library = $this->getLibrary();
-			$hosts = explode(':', str_replace(' ', '', $library->getInfo('sip2_host')));
+		var_dump(__FUNCTION__ . '4');
+			$hostInfo = $library->getInfo('sip2_host');
+		var_dump(__FUNCTION__ . '5');
+			$hosts = explode(':', str_replace(' ', '', $hostInfo));
 			var_dump($hosts);
 			$result = BmvComSIP2::getSIP($hosts[0], isset($hosts[1]) ? $hosts[1] : null)->getPatronInfo($username, $password);
 			$pInfo = array();
