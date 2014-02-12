@@ -10,17 +10,13 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 	 * 
 	 * @return multitype:
 	 */
-	public static function getPersonInfo($username, $password)
+	public static function getPersonInfo(Library $library, $username, $password)
 	{
 		$key = md5($username . $password);
 		var_dump(__FUNCTION__ . '0');
 		if(!isset(self::$_cache[$key]))
 		{
 		var_dump(__FUNCTION__ . '1');
-		var_dump($this->_lib);
-		var_dump(__FUNCTION__ . '2');
-		var_dump($this->_lib->getId());
-			$library = $this->_lib;
 		var_dump(__FUNCTION__ . '4');
 			$hostInfo = $library->getInfo('sip2_host');
 		var_dump(__FUNCTION__ . '5');
@@ -50,7 +46,7 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 	 */
 	public function getUserInfo($username, $password)
 	{
-		return LC_SIP2::getPersonInfo($username, $password);
+		return LC_SIP2::getPersonInfo($this->getLibrary(), $username, $password);
 	}
 	/**
 	 * Checking whether the user exists
@@ -62,6 +58,6 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 	*/
 	public function chkUser($username, $password)
 	{
-		return ($pInfo = LC_SIP2::getPersonInfo($username, $password)) instanceof LibraryConnectorUser;
+		return ($pInfo = LC_SIP2::getPersonInfo($this->getLibrary(), $username, $password)) instanceof LibraryConnectorUser;
 	}
 }
