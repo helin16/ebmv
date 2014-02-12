@@ -53,7 +53,7 @@
 
 class SIP2
 {
-
+	public $timeZone = 'UTC';
     /* Public variables for configuration */
     public $hostname;
     public $port         = 6002; /* default sip2 port for Sirsi */
@@ -747,13 +747,12 @@ class SIP2
         * should be put in the last (right hand) position of the ZZZZ field to represent Atlantic Standard Time.
         * When possible local time is the preferred format.
         */
+    	$now = new UDate('now', $this->timeZone);
         if ($timestamp != '') {
             /* Generate a proper date time from the date provided */
-            return date('Ymd    His', $timestamp);
-        } else {
-            /* Current Date/Time */
-            return date('Ymd    His');
-        }
+            $now->setTimestamp($timestamp);
+        } 
+        return $now->format('Ymd    His');
     }
 
     function _parsevariabledata($response, $start)
