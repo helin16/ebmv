@@ -65,7 +65,7 @@ class BmvComSIP2
 			//connect to the ser
 			$result = $this->_sip2->connect();
 			var_dump($result);
-			if(!$result !== true)
+			if($result !== true)
 				throw new CoreException('SIP2 can NOT connect to HOST:' . $this->_sip2->hostname . ':' . $this->_sip2->port);
 			$connected = true;
 			
