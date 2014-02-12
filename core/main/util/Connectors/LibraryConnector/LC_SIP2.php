@@ -13,8 +13,10 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 	public static function getPersonInfo($username, $password)
 	{
 		$key = md5($username . $password);
+		var_dump(__FUNCTION__ . '1');
 		if(!isset(self::$_cache[$key]))
 		{
+		var_dump(__FUNCTION__ . '2');
 			$library = $this->getLibrary();
 			$hosts = explode(':', str_replace(' ', '', $library->getInfo('sip2_host')));
 			var_dump($hosts);
@@ -28,6 +30,7 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 				$pInfo = LibraryConnectorUser::getUser($library, $username, $password, $firstName, $lastName);
 			}
 			self::$_cache[$key] = $pInfo;
+		var_dump(__FUNCTION__ . '3');
 		}
 		return self::$_cache[$key];
 	}
