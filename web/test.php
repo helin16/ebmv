@@ -4,27 +4,27 @@
 </head>
 <body>
 <?php
-require_once dirname(__FILE__) . '/bootstrap.php';
-try
-{
-	$host = '206.187.32.61';
-	$port = '8163';
-	$patron = 'BMVCO';
-	$patronPwd = 'YPRLBMV';
-// 	$patron = '11380047hj';
-// 	$patronPwd = '1234cxzcx';
-	echo '<pre>';
-// 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
-// 		->login('11380047', '1234');
-	$result = BmvComSIP2::getSIP($host, $port, BaseServiceAbastract::getInstance('Library')->get(2)->getInfo('lib_timezone'))->getPatronInfo($patron, $patronPwd);
-	var_dump($result);
-	echo '</pre>';
-}
-catch(Exception $ex)
-{
-	echo '<h3>' . $ex->getMessage() . '</h3>';
-	echo $ex->getTraceAsString();
-}
+// require_once dirname(__FILE__) . '/bootstrap.php';
+// try
+// {
+// 	$host = '206.187.32.61';
+// 	$port = '8163';
+// 	$patron = 'BMVCO';
+// 	$patronPwd = 'YPRLBMV';
+// // 	$patron = '11380047hj';
+// // 	$patronPwd = '1234cxzcx';
+// 	echo '<pre>';
+// // 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
+// // 		->login('11380047', '1234');
+// 	$result = BmvComSIP2::getSIP($host, $port, BaseServiceAbastract::getInstance('Library')->get(2)->getInfo('lib_timezone'))->getPatronInfo($patron, $patronPwd);
+// 	var_dump($result);
+// 	echo '</pre>';
+// }
+// catch(Exception $ex)
+// {
+// 	echo '<h3>' . $ex->getMessage() . '</h3>';
+// 	echo $ex->getTraceAsString();
+// }
 ?>
 </body>
 </html>
