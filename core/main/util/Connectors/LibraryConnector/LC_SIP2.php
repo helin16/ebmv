@@ -13,12 +13,12 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 	public static function getPersonInfo($username, $password)
 	{
 		$key = md5($username . $password);
-		var_dump(__FUNCTION__ . '1');
+		var_dump(__FUNCTION__ . '0');
 		if(!isset(self::$_cache[$key]))
 		{
-		var_dump(__FUNCTION__ . '2');
+		var_dump(__FUNCTION__ . '1');
 		var_dump($this->_lib);
-		var_dump(__FUNCTION__ . '6');
+		var_dump(__FUNCTION__ . '2');
 		var_dump($this->_lib->getId());
 			$library = $this->_lib;
 		var_dump(__FUNCTION__ . '4');
