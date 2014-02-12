@@ -17,7 +17,7 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 		if(!isset(self::$_cache[$key]))
 		{
 		var_dump(__FUNCTION__ . '2');
-			$library = $this->getLibrary();
+			try {$library = $this->getLibrary();} catch(Exception $ex) {die($ex->getMessage());}
 		var_dump(__FUNCTION__ . '4');
 			$hostInfo = $library->getInfo('sip2_host');
 		var_dump(__FUNCTION__ . '5');
