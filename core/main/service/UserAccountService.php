@@ -212,7 +212,6 @@ class UserAccountService extends BaseServiceAbastract
     	{
     		if($transStarted === false)
     			Dao::rollbackTransaction();
-    		echo $ex->getTraceAsString();
     		throw $ex;
     	}
     }

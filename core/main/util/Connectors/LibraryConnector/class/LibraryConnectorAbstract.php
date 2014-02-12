@@ -32,7 +32,9 @@ class LibraryConnectorAbstract
 		if(!isset(self::$_cache[$lib->getId()]))
 		{
 			$scriptName = trim($lib->getConnector());
+			echo $scriptName;
 			self::$_cache[$lib->getId()] = new $scriptName($lib);
+			echo get_class(self::$_cache[$lib->getId()]);
 		}
 		return self::$_cache[$lib->getId()];
 	}
