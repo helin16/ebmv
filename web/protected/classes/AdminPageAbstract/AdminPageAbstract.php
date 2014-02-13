@@ -49,6 +49,10 @@ abstract class AdminPageAbstract extends FrontEndPageAbstract
 	    $this->getPage()->setMasterClass("Application.layout.Admin.PageLayout");
 	}
 	
-	
+	public function onInit($params)
+	{
+		parent::onInit($params);
+		$this->getPage()->setTheme($this->_getThemeByName('default'));
+	}
 }
 ?>

@@ -51,7 +51,7 @@ abstract class FrontEndPageAbstract extends TPage
 	 * @throws Exception
 	 * @return TTheme
 	 */
-	private function _getThemeByName($themeName)
+	protected function _getThemeByName($themeName)
 	{
 		try
 		{
