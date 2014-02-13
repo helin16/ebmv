@@ -30,7 +30,7 @@ class LC_Bankstown extends LibraryConnectorAbstract
 			{
 				$infos[trim($field['field'])] = trim($field->value);
 			}
-			return LibraryConnectorUser::getUser($this->getLibrary(), $username, $password, $infos['GivenName'], $infos['Surname'], $infos);
+			return LibraryConnectorUser::getUser($this->getLibrary(), $username, sha1($password), $infos['GivenName'], $infos['Surname'], $infos);
 		}
 		catch (Exception $ex)
 		{

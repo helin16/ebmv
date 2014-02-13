@@ -24,7 +24,7 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 				$names = explode(' ', trim($result['variable']['AE'][0]));
 				$lastName = array_pop($names);
 				$firstName = implode(' ', $names);
-				$pInfo = LibraryConnectorUser::getUser($library, $username, $password, $firstName, $lastName);
+				$pInfo = LibraryConnectorUser::getUser($library, $username, sha1($password), $firstName, $lastName);
 			}
 			self::$_cache[$key] = $pInfo;
 		}
