@@ -1,6 +1,6 @@
 <com:TContent ID="MainContent">
     <div class="homepageWrapper">
-        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newRelease" Title="NEW RELEASE" DataFunc="getNewRelease"/>
-        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="mostPopular" Title="MOST POPULAR" DataFunc="getMostPopular"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newRelease" Title="最新出版" DataFunc="getNewRelease"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="mostPopular" Title="最受欢迎/最受歡迎" DataFunc="getMostPopular"/>
     </div>
 </com:TContent>

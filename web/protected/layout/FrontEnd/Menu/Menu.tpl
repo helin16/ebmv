@@ -1,4 +1,6 @@
+
 <div class="systemtitle">
+<!--
     <ul class="mainMenu">
         <li class="mainMenuItem"><a href="/products/1/1">简体书籍</a></li>
         <li class="mainMenuItem"><a href="/products/1/2">简体报纸</a></li>
@@ -8,4 +10,5 @@
         <li class="mainMenuItem"><a href="/products/2/3">繁體雜誌</a></li>
     </ul>
     <span class="welcome_user inlineblock">Welcome, <%= Core::getUser() instanceof UserAccount ? "<a href='/user.html'>" . Core::getUser()->getPerson() . "</a>" : 'Guest' %></span>
+-->
 </div>

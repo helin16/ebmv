@@ -4,15 +4,19 @@
 	    <div class="row msgpanel">
 	    </div>
 	    <div class="row">
-	       <label for="username" class="inlineblock title">用户名/用戶名: <div class="subtitle">Username:</div></label>
-	       <span class="inlineblock content"><input class="username rdcrnr padding5 lightBrdr fullwith" placeholder="Username" onkeydown="pageJs.keydown(event, function(){$(Event.element(event)).up('.LoginPanel').down('.loginbtn').click();});"/></span>
+	       <label for="username" class="title top">图书馆卡号/圖書館卡號</label>
+	       <div>
+	       		<span class="inlineblock content"><input class="username rdcrnr padding5 lightBrdr fullwith" placeholder="Username" onkeydown="pageJs.keydown(event, function(){$(Event.element(event)).up('.LoginPanel').down('.loginbtn').click();});"/></span>
+	       </div>
 	    </div>
 	    <div class="row">
-	       <label for="password" class="inlineblock title">密码/密碼: <div class="subtitle">Password:</div></label>
-	       <span class="inlineblock content"><input type="password" class="password rdcrnr padding5 lightBrdr fullwith"  placeholder="Password" onkeydown="pageJs.keydown(event, function(){$(Event.element(event)).up('.LoginPanel').down('.loginbtn').click();});"/></span>
+	       <label for="password" class="title">PIN</label>
+	       <div>
+	       		<span class="inlineblock content"><input type="password" class="password rdcrnr padding5 lightBrdr fullwith"  placeholder="Password" onkeydown="pageJs.keydown(event, function(){$(Event.element(event)).up('.LoginPanel').down('.loginbtn').click();});"/></span>
+	       </div>
 	    </div>
 	    <div class="row">
-	       <input type="button" class="button fullwith rdcrnr upperTxt loginbtn" value="login" onclick="pageJs.login(this);"/>
+	       <input type="button" class="button fullwith rdcrnr " value="登录/登錄" onclick="pageJs.login(this);"/>
 	    </div>
 	</div>
 </com:TContent>
