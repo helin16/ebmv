@@ -169,6 +169,8 @@ class SupplierConnectorAbstract
 		$products = array ();
 		if (trim ( $index ) !== '')
 		{
+			if($this->_debugMode === true)
+				SupplierConnectorAbstract::log($this, print_r($productList[$index], true) , __FUNCTION__);
 			$product = $this->_importProduct(SupplierConnectorProduct::getProduct($productList[$index]));
 			$products[] = $product;
 			$this->_importedProductIds[] = $product->getId();
@@ -177,6 +179,8 @@ class SupplierConnectorAbstract
 		{
 			foreach($productList as $child)
 			{
+				if($this->_debugMode === true)
+					SupplierConnectorAbstract::log($this, print_r($child, true) , __FUNCTION__);
 				$product = $this->_importProduct(SupplierConnectorProduct::getProduct($child));
 				$products[] = $product;
 				$this->_importedProductIds[] = $product->getId();
