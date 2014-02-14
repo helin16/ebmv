@@ -131,14 +131,6 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     ('1', '4', 'default', 1, NOW(), 100, NOW(), 100),
     ('1', '5', '1', 1, NOW(), 100, NOW(), 100),
     
-    ('2', '1', 'NBANK', 1, NOW(), 100, NOW(), 100),
-    ('2', '2', 'localhost', 1, NOW(), 100, NOW(), 100),
-    ('2', '2', 'bankstownlib.ebmv.com.au', 1, NOW(), 100, NOW(), 100),
-    ('2', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
-    ('2', '4', 'default', 1, NOW(), 100, NOW(), 100),
-    ('2', '5', '1', 1, NOW(), 100, NOW(), 100),
-    ('2', '6', 'http://library.bankstown.nsw.gov.au/Libero/LiberoWebServices.WebOpac.cls', 1, NOW(), 100, NOW(), 100);
-    
 ############################ add libraryownstype table
 insert into `libraryownstype` (`id`, `code`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
     ('1', 'ReadOnline', 'The copies the libary owns for online view', 1, NOW(), 100, NOW(), 100),
