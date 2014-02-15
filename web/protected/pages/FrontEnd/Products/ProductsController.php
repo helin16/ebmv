@@ -11,12 +11,14 @@ class ProductsController extends FrontEndPageAbstract
     public $pageSize = 40;
     public $type;
     public $language;
+    public $category;
     
     public function __construct()
     {
     	parent::__construct();
     	$this->type = $this->getProductType();
     	$this->language = $this->getLanguage();
+    	$this->category = $this->getCategory();
     }
     
     public function onLoad($param)
@@ -39,6 +41,12 @@ class ProductsController extends FrontEndPageAbstract
         if(!isset($this->Request['languageId']) || !($language = BaseServiceAbastract::getInstance('Language')->get(trim($this->Request['languageId']))) instanceof Language)
             return;
         return $language;
+    }
+    public function getCategory()
+    {
+        if(!isset($this->Request['cateid']) || !($category = BaseServiceAbastract::getInstance('Category')->get(trim($this->Request['cateid']))) instanceof Category)
+            return;
+        return Category;
     }
 	/**
 	 * (non-PHPdoc)
@@ -110,7 +118,8 @@ class ProductsController extends FrontEndPageAbstract
 	{
 	    $array = array();
 	    $flatArray = array();
-	    foreach(BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language) as $cate)
+	    $categories = ($this->category instanceof Category ? array($this->category) : BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language));
+	    foreach($categories as $cate)
 	    {
 	        $flatArray[$cate->getId()] = $cate;
 	        if(!$cate->getParent() instanceof Category)
