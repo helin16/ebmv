@@ -6,7 +6,7 @@
 		</a>
 	</span>
 	<span class="inlineblock headright">
-		<a href="/login.html">登录/登錄</a>
+		<a href="/login.html"><%= Core::getUser() instanceof User ? Welcome, Core::getUser()->getPerson() : '登录/登錄' %></a>
 	</span>
 	<span class="inlineblock headright">
 		<a href="/help.html">Help</a>
