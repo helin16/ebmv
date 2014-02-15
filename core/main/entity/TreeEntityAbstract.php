@@ -135,6 +135,19 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
             EntityDao::getInstance($class)->save($this);
         }
     }
+    /**
+     * Getting all the children of this node
+     * 
+     * @param int   $pageNo
+     * @param int   $pageSize
+     * @param array $orderBy
+     * 
+     * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
+     */
+    public function getChildren($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    {
+    	return EntityDao::getInstance(get_class($this))->findByCriteria('position like ?', array($this->getPosition() . '%'), $pageNo, $pageSize, $orderBy);
+    }
 	/**
 	 * load the default elments of the base entity
 	 */
