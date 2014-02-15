@@ -204,7 +204,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public function getAttribute($typeCode, $separator = ',', $reset = false)
 	{
-		if(!isset($this->_attris[$typeCode]) || $reset === ture)
+		if(!isset($this->_attris[$typeCode]) || $reset === true)
 		{
 			$sql = 'select group_concat(pa.attribute separator ?) `attr` from productattribute pa inner join productattributetype pat on (pat.id = pa.typeId and pat.active = 1 and pat.code = ?) where pa.active = 1 and pa.productId = ?';
 		    $result = Dao::getSingleResultNative($sql, array($separator, $typeCode, $this->getId()), PDO::FETCH_ASSOC);
