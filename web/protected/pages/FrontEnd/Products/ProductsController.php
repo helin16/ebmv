@@ -46,7 +46,7 @@ class ProductsController extends FrontEndPageAbstract
     {
         if(!isset($this->Request['cateid']) || !($category = BaseServiceAbastract::getInstance('Category')->get(trim($this->Request['cateid']))) instanceof Category)
             return;
-        return Category;
+        return $category;
     }
 	/**
 	 * (non-PHPdoc)
