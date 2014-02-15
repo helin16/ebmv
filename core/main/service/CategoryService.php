@@ -28,7 +28,7 @@ class CategoryService extends BaseServiceAbastract
      * 
      * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
      */
-    public function getCategories(Language $lang, ProductType $type, Library $lib = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    public function getCategories(ProductType $type, Library $lib = null, Language $lang = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
     	 $query = EntityDao::getInstance($this->_entityName)->getQuery();
     	 $query->eagerLoad('Category.products')->eagerLoad('Product.languages');
