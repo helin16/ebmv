@@ -110,7 +110,7 @@ class ProductsController extends FrontEndPageAbstract
 	{
 	    $array = array();
 	    $flatArray = array();
-	    foreach(BaseServiceAbastract::getInstance('Category')->getCategories($this->language, $this->type, Core::getLibrary()) as $cate)
+	    foreach(BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language) as $cate)
 	    {
 	        $flatArray[$cate->getId()] = $cate;
 	        if(!$cate->getParent() instanceof Category)
