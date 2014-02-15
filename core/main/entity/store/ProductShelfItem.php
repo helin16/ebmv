@@ -50,7 +50,7 @@ class ProductShelfItem extends BaseEntityAbstract
      *
      * @var UDate
      */
-    private $expiryTime;
+    private $expiryTime = '9999-12-31 23:59:59';
     /**
      * Getter for the staus
      * @return number
