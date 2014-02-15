@@ -146,7 +146,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
      */
     public function getChildren($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
-    	return EntityDao::getInstance(get_class($this))->findByCriteria('position like ?', array($this->getPosition() . '%'), $pageNo, $pageSize, $orderBy);
+    	return EntityDao::getInstance(get_class($this))->findByCriteria('position like ? and rootId = ?', array($this->getPosition() . '%', $this->getRoot()->getId()), $pageNo, $pageSize, $orderBy);
     }
 	/**
 	 * load the default elments of the base entity
