@@ -13,11 +13,13 @@ try
 	$port = '8163';
 	$patron = 'SIP';
 	$patronPwd = 'SIP';
+	$location = "BOX";
 	
 	$sip = new SIP2();
 	$sip->hostname = $host;
 	$sip->port = $port;
 	$sip->patron = $username;
+	$sip->scLocation = $location;
 			$sip->patronpwd = $password;
 			//connect to the ser
 			$result = $sip->connect();
@@ -37,15 +39,14 @@ try
 			*/
 // 			$sip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
 // 			$sip->AN = $result['variable']['AN'][0]; /* set AN to value returned */
-			$sip->AN = 'BOX'; /* set AN to value returned */
 			
-			// Get Charged Items Raw response
-			$in = $sip->msgPatronInformation('none');
-			var_dump('msgPatronInformation:');
+			$in = $sip->msgLogin($patron, $patronPwd);
+			$result =  $sip->parsePatronInfoResponse( $sip->get_message($in) );
+			var_dump('msgLogin:');
 			var_dump($in);
 			
 			// parse the raw response into an array
-			$result =  $sip->parsePatronInfoResponse( $sip->get_message($in) );
+			$result =  $sip->parsePatronInfoResponse( $sip->get_message($sip->msgPatronInformation('none')) );
 			var_dump('parsePatronInfoResponse:');
 			var_dump($result);
 			
