@@ -7,6 +7,7 @@
 require_once dirname(__FILE__) . '/bootstrap.php';
 try
 {
+	error_reporting(E_ALL ^ E_NOTICE);
 	echo '<pre>';
 	$host = '206.187.32.61';
 	$port = '8163';
