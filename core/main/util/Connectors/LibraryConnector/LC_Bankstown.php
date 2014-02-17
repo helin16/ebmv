@@ -29,7 +29,7 @@ class LC_Bankstown extends LibraryConnectorAbstract
 			if($this->_isDebugMode === true)
 			{
 				$this->_log('Trying to connect to "' . $wsdl. '" via SOAP with params:', __FUNCTION__);
-				$this->_log(print_r($params), __FUNCTION__);
+				$this->_log(print_r($params, true), __FUNCTION__);
 			}
 			
 			$result = BmvComScriptCURL::readUrl($wsdl, null, $params);
@@ -91,13 +91,13 @@ class LC_Bankstown extends LibraryConnectorAbstract
 			if($this->_isDebugMode === true)
 			{
 				$this->_log('Trying to connect to "' . $wsdl. '" via SOAP with params:', __FUNCTION__);
-				$this->_log(print_r($params), __FUNCTION__);
+				$this->_log(print_r($params, true), __FUNCTION__);
 			}
 			$result = BmvComScriptCURL::readUrl($wsdl, null, $params);
 			if($this->_isDebugMode === true)
 			{
 				$this->_log('Got Result:', __FUNCTION__);
-				$this->_log(print_r($result), __FUNCTION__);
+				$this->_log(print_r($result, true), __FUNCTION__);
 			}
 			
 			$result = new SimpleXMLElement($result);
