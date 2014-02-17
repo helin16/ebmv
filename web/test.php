@@ -14,32 +14,32 @@ try
 	$patron = '20007005832986';
 	$patronPwd = '1234';
 	
-	$sip = new SIP2();
-	$sip->hostname = $host;
-	$sip->port = $port;
-	$sip->patron = $patron;
-	$sip->connect();
+// 	$sip = new SIP2();
+// 	$sip->hostname = $host;
+// 	$sip->port = $port;
+// 	$sip->patron = $patron;
+// 	$sip->connect();
 	
-	//send selfcheck status message
-	$in = $sip->msgSCStatus();
-	$result = $sip->parseACSStatusResponse($sip->get_message($in));
-	var_dump('SElf checked:');
-	var_dump($result);
+// 	//send selfcheck status message
+// 	$in = $sip->msgSCStatus();
+// 	$result = $sip->parseACSStatusResponse($sip->get_message($in));
+// 	var_dump('SElf checked:');
+// 	var_dump($result);
 	
-	$in = $sip2->msgPatronInformation('none');
-	var_dump('msgPatronInformation:');
-	var_dump($in);
+// 	$in = $sip2->msgPatronInformation('none');
+// 	var_dump('msgPatronInformation:');
+// 	var_dump($in);
 	
-	$msgIn = $sip2->get_message($in);
-	var_dump('get_message:');
-	var_dump($msgIn);
-	// parse the raw response into an array
-	$result =  $sip2->parsePatronInfoResponse( $msgIn );
-	var_dump('parsePatronInfoResponse:');
-	var_dump($result);
+// 	$msgIn = $sip2->get_message($in);
+// 	var_dump('get_message:');
+// 	var_dump($msgIn);
+// 	// parse the raw response into an array
+// 	$result =  $sip2->parsePatronInfoResponse( $msgIn );
+// 	var_dump('parsePatronInfoResponse:');
+// 	var_dump($result);
 		
-	//disconnect the link
-	$sip2->disconnect();
+// 	//disconnect the link
+// 	$sip2->disconnect();
 	
 // 	$patron = '11380047hj';
 // 	$patronPwd = '1234cxzcx';
