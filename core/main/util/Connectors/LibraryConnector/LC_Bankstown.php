@@ -54,6 +54,7 @@ class LC_Bankstown extends LibraryConnectorAbstract
 				$this->_log('Got LibraryConnectorUser:', __FUNCTION__);
 				$this->_log(print_r($user, true), __FUNCTION__);
 			}
+			return $user;
 		}
 		catch (Exception $ex)
 		{
