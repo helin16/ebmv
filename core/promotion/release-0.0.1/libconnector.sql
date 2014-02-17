@@ -11,6 +11,6 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     ('2', '1', 'NBANK', 1, NOW(), 100, NOW(), 100),
     ('2', '2', 'bankstownlib.ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('2', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
-    ('2', '4', 'default', 1, NOW(), 100, NOW(), 100),
+    ('2', '4', 'bankstown', 1, NOW(), 100, NOW(), 100),
     ('2', '5', '1', 1, NOW(), 100, NOW(), 100),
     ('2', '6', 'http://library.bankstown.nsw.gov.au/Libero/LiberoWebServices.WebOpac.cls', 1, NOW(), 100, NOW(), 100);

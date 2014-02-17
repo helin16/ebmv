@@ -11,6 +11,6 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     ('3', '1', 'UNK', 1, NOW(), 100, NOW(), 100),
     ('3', '2', 'yarraplenty.ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('3', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
-    ('3', '4', 'default', 1, NOW(), 100, NOW(), 100),
+    ('3', '4', 'bankstown', 1, NOW(), 100, NOW(), 100),
     ('3', '5', '1', 1, NOW(), 100, NOW(), 100),
     ('3', '7', '206.187.32.61:8163', 1, NOW(), 100, NOW(), 100);
