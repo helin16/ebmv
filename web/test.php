@@ -11,8 +11,10 @@ try
 	echo '<pre>';
 	$host = '206.187.32.61';
 	$port = '8163';
-	$patron = '20007005832986';
-	$patronPwd = '1234';
+	$patron = 'SIP';
+	$patronPwd = 'SIP';
+// 	$patron = '20007005832986';
+// 	$patronPwd = '1234';
 	
 // 	$sip = new SIP2();
 // 	$sip->hostname = $host;
