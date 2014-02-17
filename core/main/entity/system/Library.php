@@ -156,6 +156,15 @@ class Library extends BaseEntityAbstract
 		return $this->_info[$typeCode];
 	}
 	/**
+	 * Whether the library is running in debug mode
+	 * 
+	 * @return bool
+	 */
+	public function isDebugMode()
+	{
+		return trim($this->getInfo('running_mode')) === '1';
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */

@@ -21,6 +21,12 @@ class LibraryConnectorAbstract
 	 */
 	private static $_cache;
 	/**
+	 * Whether the connector is running in debug mode
+	 * 
+	 * @var bool
+	 */
+	private $_isDebugMode = false;
+	/**
 	 * Getting the library connector script
 	 * 
 	 * @param Library $lib The library we are getting the script for
@@ -44,6 +50,28 @@ class LibraryConnectorAbstract
 	public function __construct(Library $lib)
 	{
 		$this->_lib = $lib;
+		$this->setDebugMode($this->_lib->isDebugMode());
+	}
+	/**
+	 * Setter for the connector's running mode
+	 * 
+	 * @param boll $mode
+	 * 
+	 * @return LibraryConnectorAbstract
+	 */
+	public function setDebugMode($mode = false)
+	{
+		$this->_isDebugMode = $mode;
+		return $this;
+	}
+	/**
+	 * Getter for for the connector's running mode
+	 *  
+	 * @return boolean
+	 */
+	public function getDebugMode()
+	{
+		return $this->_isDebugMode;
 	}
 	/**
 	 * Getting the formatted url
