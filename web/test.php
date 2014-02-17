@@ -28,8 +28,14 @@ try
 	var_dump($result);
 	
 	$in = $sip2->msgPatronInformation('none');
+	var_dump('msgPatronInformation:');
+	var_dump($in);
+	
+	$msgIn = $sip2->get_message($in);
+	var_dump('get_message:');
+	var_dump($msgIn);
 	// parse the raw response into an array
-	$result =  $sip2->parsePatronInfoResponse( $sip2->get_message($in) );
+	$result =  $sip2->parsePatronInfoResponse( $msgIn );
 	var_dump('parsePatronInfoResponse:');
 	var_dump($result);
 		
