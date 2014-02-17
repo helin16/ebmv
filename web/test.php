@@ -9,8 +9,8 @@ try
 {
 	$host = '206.187.32.61';
 	$port = '8163';
-	$patron = 'SIP';
-	$patronPwd = 'SIP';
+	$patron = '20007005832986';
+	$patronPwd = '1234';
 // 	$patron = '11380047hj';
 // 	$patronPwd = '1234cxzcx';
 	echo '<pre>';
