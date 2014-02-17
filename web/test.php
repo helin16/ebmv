@@ -13,10 +13,8 @@ try
 	$port = '8163';
 	$patron = '20007005832986';
 	$patronPwd = '1234';
-	$location = 'BOX';
 	
 	$sip = new SIP2();
-	$sip->AN = $location;
 	$sip->hostname = $host;
 	$sip->port = $port;
 	$sip->patron = $patron;
