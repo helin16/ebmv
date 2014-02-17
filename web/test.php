@@ -46,8 +46,8 @@ try
 // 	$patronPwd = '1234cxzcx';
 // // 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
 // // 		->login('11380047', '1234');
-// 	$result = BmvComSIP2::getSIP($host, $port, BaseServiceAbastract::getInstance('Library')->get(4)->getInfo('lib_timezone'))->getPatronInfo($patron, $patronPwd);
-// 	var_dump($result);
+	$result = BmvComSIP2::getSIP($host, $port, BaseServiceAbastract::getInstance('Library')->get(4)->getInfo('lib_timezone'))->getPatronInfo($patron, $patronPwd);
+	var_dump($result);
 	echo '</pre>';
 }
 catch(Exception $ex)
