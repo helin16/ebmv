@@ -13,42 +13,42 @@ try
 	$port = '8163';
 	$patron = 'SIP';
 	$patronPwd = 'SIP';
-// 	$patron = '20007005832986';
-// 	$patronPwd = '1234';
 	
-// 	$sip = new SIP2();
-// 	$sip->hostname = $host;
-// 	$sip->port = $port;
-// 	$sip->patron = $patron;
-// 	$sip->connect();
-	
-// 	//send selfcheck status message
-// 	$in = $sip->msgSCStatus();
-// 	$result = $sip->parseACSStatusResponse($sip->get_message($in));
-// 	var_dump('SElf checked:');
-// 	var_dump($result);
-	
-// 	$in = $sip2->msgPatronInformation('none');
-// 	var_dump('msgPatronInformation:');
-// 	var_dump($in);
-	
-// 	$msgIn = $sip2->get_message($in);
-// 	var_dump('get_message:');
-// 	var_dump($msgIn);
-// 	// parse the raw response into an array
-// 	$result =  $sip2->parsePatronInfoResponse( $msgIn );
-// 	var_dump('parsePatronInfoResponse:');
-// 	var_dump($result);
-		
-// 	//disconnect the link
-// 	$sip2->disconnect();
-	
-// 	$patron = '11380047hj';
-// 	$patronPwd = '1234cxzcx';
+	$sip = new SIP2();
+	$sip->hostname = $host;
+	$sip->port = $port;
+	$sip->patron = $username;
+			$sip->patronpwd = $password;
+			//connect to the ser
+			$result = $sip->connect();
+			if($result !== true)
+				throw new CoreException('SIP2 can NOT connect to HOST:' . $sip->hostname . ':' . $sip->port);
+			$connected = true;
+			
+			//send selfcheck status message
+			$in = $sip->msgSCStatus();
+			$result = $sip->parseACSStatusResponse($sip->get_message($in));
+			
+			/*  Use result to populate SIP2 setings
+			 *   (In the real world, you should check for an actual value
+			 		*   before trying to use it... but this is a simple example)
+			*/
+// 			$sip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
+// 			$sip->AN = $result['variable']['AN'][0]; /* set AN to value returned */
+			$sip->AN = 'BOX'; /* set AN to value returned */
+			
+			// Get Charged Items Raw response
+			$in = $sip->msgPatronInformation('none');
+			
+			// parse the raw response into an array
+			$result =  $sip->parsePatronInfoResponse( $sip->get_message($in) );
+			
+			//disconnect the link
+			$sip->disconnect();
 // // 	$result = BmvComSIP2::getSIP(BaseServiceAbastract::getInstance('Library')->get(2), $host, $port, $patron, $patronPwd)
 // // 		->login('11380047', '1234');
-	$result = BmvComSIP2::getSIP($host, $port, BaseServiceAbastract::getInstance('Library')->get(4)->getInfo('lib_timezone'))->getPatronInfo($patron, $patronPwd);
-	var_dump($result);
+// 	$result = BmvComSIP2::getSIP($host, $port, BaseServiceAbastract::getInstance('Library')->get(4)->getInfo('lib_timezone'))->getPatronInfo($patron, $patronPwd);
+// 	var_dump($result);
 	echo '</pre>';
 }
 catch(Exception $ex)
