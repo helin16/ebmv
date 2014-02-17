@@ -25,7 +25,7 @@ try
 	//send selfcheck status message
 	$in = $sip->msgSCStatus();
 	$result = $sip->parseACSStatusResponse($sip->get_message($in));
-	var_dump('SElf check:');
+	var_dump('SElf checked:');
 	var_dump($result);
 	
 	$in = $sip2->msgPatronInformation('none');
