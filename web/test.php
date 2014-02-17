@@ -20,7 +20,13 @@ try
 	$sip->connect();
 	$in = $sip->msgSCStatus();
 	$result = $sip->parseACSStatusResponse($sip->get_message($in));
+	$in = $sip2->msgPatronInformation('none');
+	// parse the raw response into an array
+	$result =  $sip2->parsePatronInfoResponse( $sip2->get_message($in) );
 	var_dump($result);
+		
+	//disconnect the link
+	$sip2->disconnect();
 	
 // 	$patron = '11380047hj';
 // 	$patronPwd = '1234cxzcx';
