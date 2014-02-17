@@ -28,6 +28,8 @@ try
 			//send selfcheck status message
 			$in = $sip->msgSCStatus();
 			$result = $sip->parseACSStatusResponse($sip->get_message($in));
+			var_dump('parseACSStatusResponse:');
+			var_dump($result);
 			
 			/*  Use result to populate SIP2 setings
 			 *   (In the real world, you should check for an actual value
@@ -39,9 +41,13 @@ try
 			
 			// Get Charged Items Raw response
 			$in = $sip->msgPatronInformation('none');
+			var_dump('msgPatronInformation:');
+			var_dump($in);
 			
 			// parse the raw response into an array
 			$result =  $sip->parsePatronInfoResponse( $sip->get_message($in) );
+			var_dump('parsePatronInfoResponse:');
+			var_dump($result);
 			
 			//disconnect the link
 			$sip->disconnect();
