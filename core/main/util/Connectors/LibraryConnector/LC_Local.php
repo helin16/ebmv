@@ -26,6 +26,7 @@ class LC_Local extends LibraryConnectorAbstract
 				$this->_log('Result for ' . __FUNCTION__ . 'is now:' , __FUNCTION__);
 				$this->_log(print_r($result, true) , __FUNCTION__);
 			}
+			return $result;
 		}
 		catch(Exception $e)
 		{
