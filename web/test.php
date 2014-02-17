@@ -17,6 +17,7 @@ try
 	$sip->port = $port;
 	$sip->patron = $patron;
 	//send selfcheck status message
+	$sip->connect();
 	$in = $sip->msgSCStatus();
 	$result = $sip->parseACSStatusResponse($sip->get_message($in));
 	var_dump($result);
