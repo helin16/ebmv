@@ -20,6 +20,12 @@ class Log extends BaseEntityAbstract
 	 */
 	const TYPE_PIMPORT = 'ProductImportScript';
 	/**
+	 * The type for LibraryConnector script
+	 * 
+	 * @var string
+	 */
+	const TYPE_LC = 'LibraryConnector';
+	/**
 	 * caching the transid
 	 * 
 	 * @var string
@@ -171,7 +177,7 @@ class Log extends BaseEntityAbstract
 	 * 
 	 * @return Log
 	 */
-	public function settype($value) 
+	public function setType($value) 
 	{
 	    $this->type = $value;
 	    return $this;
@@ -260,7 +266,7 @@ class Log extends BaseEntityAbstract
 		$log->setEntityId($entityId);
 		$log->setEntityName($entityName);
 		$log->setMsg($msg);
-		$log->settype($type);
+		$log->setType($type);
 		$log->setComments($comments);
 		$log->setFuncName($funcName);
 		EntityDao::getInstance($className)->save($log);

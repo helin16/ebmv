@@ -77,8 +77,8 @@ class BmvComSIP2
 			 *   (In the real world, you should check for an actual value
 			 		*   before trying to use it... but this is a simple example)
 			*/
-			$this->_sip2->AO = $result['variable']['AO'][0]; /* set AO to value returned */
-			$this->_sip2->AN = $result['variable']['AN'][0]; /* set AN to value returned */
+// 			$this->_sip2->AO = $result['variable']['AO'][0]; /* set AO to value returned */
+// 			$this->_sip2->AN = $result['variable']['AN'][0]; /* set AN to value returned */
 			
 			// Get Charged Items Raw response
 			$in = $this->_sip2->msgPatronInformation('none');

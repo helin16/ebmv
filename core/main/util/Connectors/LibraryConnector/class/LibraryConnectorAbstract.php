@@ -25,7 +25,7 @@ class LibraryConnectorAbstract
 	 * 
 	 * @var bool
 	 */
-	private $_isDebugMode = false;
+	protected $_isDebugMode = false;
 	/**
 	 * Getting the library connector script
 	 * 
@@ -51,6 +51,8 @@ class LibraryConnectorAbstract
 	{
 		$this->_lib = $lib;
 		$this->setDebugMode($this->_lib->isDebugMode());
+		if($this->_isDebugMode === true)
+			$this->_log('Got a library connector for library: id=' . $lib->getId(), __FUNCTION__);
 	}
 	/**
 	 * Setter for the connector's running mode
@@ -84,9 +86,33 @@ class LibraryConnectorAbstract
 	private function _formatURL($url, $params = array())
 	{
 		$url = $this->getLibrary()->getInfo('soap_wsdl');
+		if($this->_isDebugMode === true)
+			$this->_log('Got url from libinfo(soap_wsdl): ' . $url , __FUNCTION__);
+		
 		foreach($params as $key => $value)
 			$url = str_replace('{' . $key . '}', trim($value), $url);
+		
+		if($this->_isDebugMode === true)
+		{
+			$this->_log('replace url with: ' , __FUNCTION__);
+			$this->_log(print_r($params, true) , __FUNCTION__);
+		}
 		return trim($url);
+	}
+	/**
+	 * Logging the library connector script
+	 * 
+	 * @param string $msg      The message of the log
+	 * @param string $funcName The function name of the log
+	 * @param string $comments The comments along with the log
+	 * 
+	 * @return LibraryConnectorAbstract
+	 */
+	protected function _log($msg, $funcName = '', $comments = '')
+	{
+		if($this->_isDebugMode === true)
+			Log::logging($this->_lib, $this->_lib->getId(), get_class($this), $msg, Log::TYPE_LC, $comments, $funcName);
+		return $this;
 	}
 	/**
 	 * Getting the library from the library connector
