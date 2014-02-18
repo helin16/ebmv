@@ -30,7 +30,7 @@ body {
 	height: 50px;	
 }
 .home{
-	background:url("../images/home.png") no-repeat bottom ;
+	background:url("../images/Home.png") no-repeat bottom ;
 	display:inline-block;
 	width: 20px;
 	height: 20px;	
@@ -44,7 +44,7 @@ body {
 	vertical-align: middle;
 }
 .help{
-	background:url("../images/help.png") no-repeat bottom ;
+	background:url("../images/Help.png") no-repeat bottom ;
 	display:inline-block;
 	width: 20px;
 	height: 20px;	
