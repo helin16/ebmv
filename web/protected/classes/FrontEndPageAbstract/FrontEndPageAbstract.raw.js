@@ -137,10 +137,9 @@ FrontPageJs.prototype = {
 		tmp.newDiv = new Element('div', {'class': 'floatingpanel'})
 			.insert({'bottom': new Element('div', {'class': 'row msgpanel'}) })
 			.insert({'bottom': new Element('div', {'class': 'row'})
-				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('用户名/用戶名:') 
-					.insert({'bottom': new Element('div', {'class': 'subtitle'}).update('Username:') })
+				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('图书馆卡号/圖書館卡號:') 
 				})
-				.insert({'bottom': new Element('span', {'class': 'inlineblock content'})
+				.insert({'bottom': new Element('div', {'class': 'row'})
 					.insert({'bottom': new Element('input', {'type': 'textbox', 'class': 'username rdcrnr padding5 lightBrdr ', 'placeholder': 'Username'}) 
 						.observe('keydown', function(event) {
 							pageJs.keydown(event, function(){$(Event.element(event)).up('.loginpanel').down('.loginbtn').click();});
@@ -149,10 +148,9 @@ FrontPageJs.prototype = {
 				})
 			})
 			.insert({'bottom': new Element('div', {'class': 'row'})
-				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('密码/密碼:')
-					.insert({'bottom': new Element('div', {'class': 'subtitle'}).update('Password:') })
+				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('PIN:')
 				})
-				.insert({'bottom': new Element('span', {'class': 'inlineblock content'})
+				.insert({'bottom': new Element('div', {'class': 'row'})
 					.insert({'bottom': new Element('input', {'type': 'password', 'class': 'password rdcrnr padding5 lightBrdr ', 'placeholder': 'Password'}) 
 						.observe('keydown', function(event) {
 							pageJs.keydown(event, function(){$(Event.element(event)).up('.loginpanel').down('.loginbtn').click();});
