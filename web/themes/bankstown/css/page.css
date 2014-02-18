@@ -103,8 +103,10 @@
 .pagination_wrapper .pagin_btn {
     display: inline-block;
     padding: 4px;
-    margin-top: 10px;
+    margin: 10px 20px;
     text-align: center;
+    float:right;
+    width:30%;
 }
 
 .product.griditem {

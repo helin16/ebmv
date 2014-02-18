@@ -7,7 +7,6 @@ body {
     padding: 0px;
     margin: 0px;
 }
-
 .inlineblock{
     display: inline-block;
 }
@@ -29,6 +28,27 @@ body {
 	display:inline-block;
 	width: 90px;
 	height: 50px;	
+}
+.home{
+	background:url("../images/home.png") no-repeat bottom ;
+	display:inline-block;
+	width: 20px;
+	height: 20px;	
+	vertical-align: middle;	
+}
+.shelf{
+	background:url("../images/shelf.png") no-repeat bottom ;
+	display:inline-block;
+	width: 20px;
+	height: 20px;	
+	vertical-align: middle;
+}
+.help{
+	background:url("../images/help.png") no-repeat bottom ;
+	display:inline-block;
+	width: 20px;
+	height: 20px;	
+	vertical-align: top;
 }
 .hidden {
     display: none;
@@ -52,26 +72,31 @@ body {
 	border:none;
 	width:20%;
 }
+.searchBtn{
+ 	vertical-align: middle;
+ 	width:10%;
+}
 .searchimg{
 	float:right;
-	margin-top:7px;
-	margin-right:-200px;
+	margin-right:90px;
 	color:#000;
 	background: url("../images/search.png");
 	width:24px;
 	height:24px;
 	border:none;
+	padding:0 0 -10px 0;
 }
 .questionsub{
     color: #002A5C;
 	font-size: 18px;
-	padding:0 0 0 25px;
+	font-weight:normal;
 }
 .cursorpntr {
     cursor: pointer;
 }
 .lightBrdr {
     border: 1px #cccccc solid;
+    height:25px;
 }
 
 .loadingImg {
@@ -169,16 +194,16 @@ a {
 	background: #cccccc;
 	border-radius: 5px;
 	padding: 5px;
-	width: 300px;
+	width: 160px;
 }
 
 .floatpanelwrapper .floatingpanel .row {
 	padding:3px 0;
 }
 .floatpanelwrapper .floatingpanel .row .title {
-	width: 100px;
+	width: 150px;
 	font-size: 12px;
-	text-align: right;
+	text-align: left;
 }
 .floatpanelwrapper .floatingpanel .row .content {
 	vertical-align: top;
@@ -564,3 +589,5 @@ ul.menuH ul
     background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE);
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#EEEEEE)); 
 }
+
+
