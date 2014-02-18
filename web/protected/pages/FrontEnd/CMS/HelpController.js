@@ -45,7 +45,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					}
 				})
 			})
-			.insert({'bottom': new Element('div', {'class': 'content answer', 'style': 'display: none;'}).update(answer) });
+			.insert({'bottom': new Element('div', {'class': 'content answer'}).update(answer) });
 		return tmp.div;
 	}
 });
