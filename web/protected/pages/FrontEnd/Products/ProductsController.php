@@ -48,6 +48,13 @@ class ProductsController extends FrontEndPageAbstract
             return;
         return $category;
     }
+    
+    public function getSearchText()
+    {
+    	if(!isset($this->Request['searchtext']))
+    		return null;
+    	return trim($this->Request['searchtext']);
+    }
 	/**
 	 * (non-PHPdoc)
 	 * @see FrontEndPageAbstract::_getEndJs()
@@ -70,7 +77,7 @@ class ProductsController extends FrontEndPageAbstract
 		if(isset($this->Request['productTypeId']) && (($productTypeId = $this->Request['productTypeId']) !== ''))
 			$js .= 'pageJs.searchCriteria.productType = '.$productTypeId.';';
 		
-		if(($searchtext = trim($this->Request['searchtext'])) !== '')
+		if(($searchtext = trim($this->getSearchText())) !== '')
 		{
 			if (($searchInfo = json_decode($searchtext, true)) !== null)
 			{

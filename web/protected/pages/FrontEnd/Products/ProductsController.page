@@ -16,11 +16,12 @@
             <div class="controlbtns">
                 <span class="inlineblock" style="width: 66%;">
                     <input id="searchtxt" type="textbox" class="padding5 fullwith rdcrnr lightBrdr" 
+                    		value="<%= $this->getSearchText() %>"
                     	   placeholder="Search Your <%= $this->type instanceof ProductType ? $this->type->getName() : 'items' %> by title, author or ISBN" 
                     	   onkeydown="return pageJs.keydown(event, function(){ $('searchbtn').click();})"/>
                 </span>
-                <span class="inlineblock searchBtn">
-                    <input id="searchbtn" type="button" class="searchimg" OnClick="window.location='/products/search/' + $F('searchtxt');"/>
+                <span class="inlineblock" style="width: 10%">
+                    <input id="searchbtn" type="button" class="button rdcrnr" value="Search" OnClick="window.location='/products/search/' + $F('searchtxt');"/>
                 </span>
                 <span class="inlineblock productlistviewbtns">
                     <ul class="btn-group">
