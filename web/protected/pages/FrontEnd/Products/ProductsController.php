@@ -118,7 +118,14 @@ class ProductsController extends FrontEndPageAbstract
 	{
 	    $array = array();
 	    $flatArray = array();
-	    $categories = ($this->category instanceof Category ? $this->category->getChildren() : BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language));
+	    if(isset($this->Request['searchtext']))
+	    {
+	    	if(($searchTxt = trim($this->Request['searchtext'])) === '')
+	    		return $flatArray();
+	    	$categories = BaseServiceAbastract::getInstance('Category')->searchCategoryByProduct($searchTxt, Core::getLibrary());
+	    }
+	    else
+	    	$categories = ($this->category instanceof Category ? $this->category->getChildren() : BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language));
 	    foreach($categories as $cate)
 	    {
 	        $flatArray[$cate->getId()] = $cate;

@@ -127,5 +127,29 @@ class CategoryService extends BaseServiceAbastract
         }
         
     }
+    /**
+     * Searching the categories based on the product searching
+     * @param unknown $productSearchString
+     * @param Library $lib
+     * @param string $searchActiveOnly
+     * @param string $pageNo
+     * @param unknown $pageSize
+     * @param unknown $orderBy
+     * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
+    public function searchCategoryByProduct($productSearchString, Library $lib = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    {
+    	$query = EntityDao::getInstance($this->_entityName)->getQuery();
+    	$query->eagerLoad('Category.products');
+    	$params = array();
+    	if($lib instanceof Library)
+    	{
+    		$query->eagerLoad('Product.libOwns', 'inner join', 'x_libowns', '`x_libowns`.`productId` = `pro`.id and x_libowns.active = 1 and x_libowns.libraryId = :libId');
+    		$params['libId'] =  $lib->getId();
+    	}
+    	$where = 'pro.title like :searchTxt';
+    	$params['searchTxt'] = '%' . $productSearchString . '%';
+    	return $this->findByCriteria($where, $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+    }
 }
 ?>
