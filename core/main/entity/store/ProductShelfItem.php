@@ -165,12 +165,12 @@ class ProductShelfItem extends BaseEntityAbstract
      * (non-PHPdoc)
      * @see BaseEntityAbstract::getJson()
      */
-    public function getJson($reset = false)
+    public function getJson($extra = array(), $reset = false)
     {
     	$array = array();
-        if(!$this->isJsonLoaded($reset))
-        	$array['type'] = $this->getType()->getJson();
-        return parent::getJson($array, $reset);
+    	if(!$this->isJsonLoaded($reset))
+    		$array['type'] = $this->getType()->getJson();
+    	return parent::getJson($array, $reset);
     }
     /**
      * (non-PHPdoc)

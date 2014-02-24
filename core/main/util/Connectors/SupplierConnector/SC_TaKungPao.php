@@ -90,25 +90,28 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	private function _fakeProduct(ProductType $type, UDate $date = null, Product $product = null)
 	{
 		$xml = new SimpleXMLElement('<' . $type->getName() . '/>');
-		$xml->BookName = $product instanceof Product ? $product->getTitle() : 'TaKungPao Issue: ' . $date->format('d/F/Y');
+		$xml->BookName = $product instanceof Product ? $product->getTitle() : $this->_supplier->getName() . ': ' . $date->format('d/F/Y');
 		$xml->Isbn = $product instanceof Product ? $product->getAttribute('isbn') : '9786133577794';
 		$xml->NO = $product instanceof Product ? $product->getAttribute('cno') : $date->format('Ymd');
-		$xml->Author = $product instanceof Product ? $product->getAttribute('author') : '大公報';
-		$xml->Press = $product instanceof Product ? $product->getAttribute('publisher') : '大公報';
+		$xml->Author = $product instanceof Product ? $product->getAttribute('author') : $this->_supplier->getName();
+		$xml->Press = $product instanceof Product ? $product->getAttribute('publisher') : $this->_supplier->getName();
 		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute('publish_date') : $date->format('Y-F-d');
 		$xml->Words = '';
 		$xml->FrontCover = $product instanceof Product ? $product->getAttribute('image_thumb') : $this->_getCoverImage();
-		$xml->Introduction = $product instanceof Product ? $product->getAttribute('description') : '大公報: ' . $date->format('Y年m月d日');
+		$xml->Introduction = $product instanceof Product ? $product->getAttribute('description') : $this->_supplier->getName() . ': ' . $date->format('d F Y');
 		$xml->Cip = '';
 		$xml->SiteID = trim($this->_lib->getInfo('aus_code'));
 		$xml->Language = 'zh-tw';
 		
 		$publishDate = new UDate($xml->PublicationDate);
-		$xml->BookType = '大公報/' . $publishDate->format('Y') . '/' .$publishDate->format('m');
+		$xml->BookType = $this->_supplier->getName() . '/' . $publishDate->format('Y') . '/' .$publishDate->format('m');
 		$copiesXml = $xml->addChild('Copies');
 		$readOnline = $copiesXml->addChild($this->_getLibOwnsType(LibraryOwnsType::ID_ONLINE_VIEW_COPIES)->getCode());
 		$readOnline->Available = 1;
 		$readOnline->Total = 1;
+		$download = $copiesXml->addChild($this->_getLibOwnsType(LibraryOwnsType::ID_DOWNLOAD_COPIES)->getCode());
+		$download->Available = 1;
+		$download->Total = 1;
 		return $xml;
 	}
 	/**
@@ -137,7 +140,7 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getBookShelfList()
 	 */
-	public function getBookShelfList(UserAccount $user){}
+	public function getBookShelfList(UserAccount $user) {}
 	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::syncUserBookShelf()
@@ -147,7 +150,10 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::addToBookShelfList()
 	 */
-	public function addToBookShelfList(UserAccount $user, Product $product){}
+	public function addToBookShelfList(UserAccount $user, Product $product)
+	{
+		
+	}
 	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::removeBookShelfList()
@@ -157,7 +163,14 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getDownloadUrl()
 	 */
-	public function getDownloadUrl(Product $product, UserAccount $user) {}
+	public function getDownloadUrl(Product $product, UserAccount $user) 
+	{
+		$url = explode(',', $this->_supplier->getInfo('download_url'));
+		if($url === false || count($url) === 0)
+			throw new SupplierConnectorException('Invalid download url for supplier: ' . $this->_supplier->getName());
+		$url = $this->_formatURL($url[0], $product->getAttribute('cno'));
+		return $url;
+	}
 	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getOnlineReadUrl()

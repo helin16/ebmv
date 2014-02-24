@@ -227,7 +227,6 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		catch(Exception $ex)
 		{
 		}
-		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem($user, $product, $this->_lib, $this->_supplier);
 		if(trim($xml->Code) !== trim(self::CODE_SUCC))
 			throw new SupplierConnectorException("Connector Error: " . trim($xml->Value));
 		return trim($xml->Value);
