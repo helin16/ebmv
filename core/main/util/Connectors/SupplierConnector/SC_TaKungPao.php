@@ -150,10 +150,7 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::addToBookShelfList()
 	 */
-	public function addToBookShelfList(UserAccount $user, Product $product)
-	{
-		
-	}
+	public function addToBookShelfList(UserAccount $user, Product $product){}
 	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::removeBookShelfList()

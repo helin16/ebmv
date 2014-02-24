@@ -103,7 +103,9 @@ class ImportProduct
 		$finishScript = new UDate();
 		$scriptRunningtime = $finishScript->diff($startScript);
 		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================", __FUNCTION__, self::FLAG_END);
-		return self::getLogTransId();
+		$transId = self::getLogTransId();
+		//echo self::showLogs($transId);
+		return $transId;
 	}
 	/**
 	 * Getting the suppliers
@@ -145,8 +147,7 @@ class ImportProduct
 	 */
 	public static function log($msg, $funcName, $comments = '')
 	{
-		//Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
-		echo $funcName . '::' . $msg .'<br />';
+		Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
 	}
 	/**
 	 * Getting the logs
@@ -161,7 +162,7 @@ class ImportProduct
 		$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria($where, array($logKey, 'ImportProduct'));
 		foreach($logs as $log)
 		{
-			echo $log->getMsg() . $lineBreaker;
+			echo $log . $lineBreaker;
 		}
 	}
 }
