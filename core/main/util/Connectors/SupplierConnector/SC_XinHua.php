@@ -21,9 +21,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got result:' . print_r($xml, true), __FUNCTION__);
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $wsdl . '!');
-		$array = array();
-		foreach($xml->attributes() as $key => $value)
-			$array[$key] = trim($value);
+		$array = SupplierConnectorProduct::getInitPagination($xml);
 		return $array;
 	}
 	/**

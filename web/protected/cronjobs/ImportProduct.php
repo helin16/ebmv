@@ -38,12 +38,13 @@ class ImportProduct
 			
 			//loop through each library
 			$libraries = self::_getLibs($libCodes);
-			self::log( "  == Found " . count($libraries) . " libraries to go through:", __FUNCTION__);
+			$suppliers = self::_getSuppliers($supplierIds) ;
+			self::log( "  == Found " . count($libraries) . " libraries and " .  count($suppliers) . " suppliers to go through:", __FUNCTION__);
 			foreach($libraries as $lib)
 			{
 				Core::setLibrary($lib);
 				//loop through each supplier
-				foreach(self::_getSuppliers($supplierIds) as $supplier)
+				foreach($suppliers as $supplier)
 				{
 					self::log( "== import from " . __FUNCTION__, $supplier->getName());
 					
@@ -144,7 +145,8 @@ class ImportProduct
 	 */
 	public static function log($msg, $funcName, $comments = '')
 	{
-		Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
+		//Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
+		echo $funcName . '::' . $msg .'<br />';
 	}
 	/**
 	 * Getting the logs

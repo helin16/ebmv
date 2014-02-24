@@ -32,9 +32,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $importUrl . '!');
-		$array = array();
-		foreach($xml->attributes() as $key => $value)
-			$array[$key] = trim($value);
+		$array = SupplierConnectorProduct::getInitPagination($xml);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got array from results:' . print_r($array, true) , __FUNCTION__);
 		return $array;
 	}

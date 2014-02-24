@@ -56,6 +56,23 @@ class SupplierConnectorProduct
 		return self::$_products[$key];
 	}
 	/**
+	 * Getting the initial pagination details for function SupplierConn::getProductListInfo()
+	 * 
+	 * @param SimpleXMLElement $listXml The listing xml objects
+	 * 
+	 * @return multitype:number string
+	 */
+	public static function getInitPagination(SimpleXMLElement $listXml = null, $totalRecords = 0 , $pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	{
+		$array = array('totalPages' => (intval($pageSize) === 0 ? 0 : ceil($totalRecords / $pageSize)), 'pageNo' => $pageNo, 'pageSize' => $pageSize, 'totalRecords' => $totalRecords);
+		if($listXml instanceof SimpleXMLElement)
+		{
+			foreach($listXml->attributes() as $key => $value)
+				$array[$key] = trim($value);
+		}
+		return $array;
+	}
+	/**
 	 * Getting the copies information
 	 * 
 	 * @param SimpleXMLElement $productinfo
