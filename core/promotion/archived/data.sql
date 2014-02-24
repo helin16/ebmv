@@ -129,7 +129,7 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     ('1', '2', 'www.ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('1', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
     ('1', '4', 'default', 1, NOW(), 100, NOW(), 100),
-    ('1', '5', '1', 1, NOW(), 100, NOW(), 100),
+    ('1', '5', '1', 1, NOW(), 100, NOW(), 100);
     
 ############################ add libraryownstype table
 insert into `libraryownstype` (`id`, `code`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) values

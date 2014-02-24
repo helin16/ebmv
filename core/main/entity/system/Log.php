@@ -256,6 +256,8 @@ class Log extends BaseEntityAbstract
 	 * @param string  $type
 	 * @param string  $comments
 	 * @param string  $funcName
+	 * 
+	 * @return string The transId
 	 */
 	public static function logging(Library $lib, $entityId, $entityName, $msg, $type, $comments = '', $funcName = '')
 	{
@@ -270,6 +272,20 @@ class Log extends BaseEntityAbstract
 		$log->setComments($comments);
 		$log->setFuncName($funcName);
 		EntityDao::getInstance($className)->save($log);
+		return $log->getTransId();
+	}
+	/**
+	 * Getting the lastest group of logs
+	 * 
+	 * @param int   $pageNo
+	 * @param int   $pageSize
+	 * @param array $orderBy
+	 * 
+	 * @return multitype:Log
+	 */
+	public static function getLatestLogs($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+	{
+		return EntityDao::getInstance(__CLASS__)->findByCriteria('transId = ?', array(self::$_transId), $pageNo, $pageSize, $orderBy);
 	}
 	/**
 	 * Getting the transid
@@ -292,10 +308,20 @@ class Log extends BaseEntityAbstract
 	 * @param string             $msg
 	 * @param string             $type
 	 * @param string             $comments
+	 * 
+	 * @return string The transId
 	 */
 	public static function LogEntity(Library $lib, BaseEntityAbstract $entity, $msg, $type, $comments = '', $funcName = '')
 	{
-		self::logEntity($lib, $entity->getId(), get_class($entity), $msg, $type, $comments, $funcName);
+		return self::logEntity($lib, $entity->getId(), get_class($entity), $msg, $type, $comments, $funcName);
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::__toString()
+	 */
+	public function __toString()
+	{
+		return $this->getFuncName() . ': ' . $this->getMsg();
 	}
 	/**
 	 * (non-PHPdoc)
