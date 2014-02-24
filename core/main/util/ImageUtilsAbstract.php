@@ -128,15 +128,13 @@ class ImageUtilsAbstract
 		{
 			case '.jpg':
 			case '.jpeg':
-				$img = @imagecreatefromjpeg($file);
-				var_dump($file);
-				var_dump($img);
+				$img = imagecreatefromjpeg($file);
 				break;
 			case '.gif':
-				$img = @imagecreatefromgif($file);
+				$img = imagecreatefromgif($file);
 				break;
 			case '.png':
-				$img = @imagecreatefrompng($file);
+				$img = imagecreatefrompng($file);
 				break;
 			default:
 				$img = false;

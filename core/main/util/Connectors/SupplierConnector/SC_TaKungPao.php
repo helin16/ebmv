@@ -75,9 +75,40 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got array from results:' . print_r($array, true) , __FUNCTION__);
 		return $array;
 	}
-	private function _getCoverImage()
+	private function _getCoverImage($productKey)
 	{
-		return '';
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting coverpage image:', __FUNCTION__);
+		$src = '';
+		try 
+		{
+			$url = explode(',', $this->_supplier->getInfo('view_url'));
+			if($url === false || count($url) === 0)
+				throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
+			$url = $this->_formatURL($url[0], $productKey);
+			
+			$html = BmvComScriptCURL::readUrl($url);
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ' == download html from: ' . $url, __FUNCTION__);
+			
+			$doc = new DOMDocument();
+			$doc->loadHTML($html);
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '   == Got: ' . '<textarea>' . $doc->saveHTML() . '</textarea>', __FUNCTION__);
+			$xpath = new DOMXPath($doc);
+			$books = $xpath->query("//div[@class='books']/div/a/img");
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ' == found from XPath->Query("//div[@class=books]/div/a/img"): ' . count($books), __FUNCTION__);
+			if(count($books) > 0)
+				$src = $books->item(0)->getAttribute('src');
+		}
+		catch(Exception $ex)
+		{
+			if($this->_debugMode === true)
+			{
+				SupplierConnectorAbstract::log($this, ' == Got Error: ' . $ex->getMessage(), __FUNCTION__);
+				SupplierConnectorAbstract::log($this, '   == trace: ' . $ex->getTraceAsString(), __FUNCTION__);
+			}
+			$src = '';
+		}
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ' == found image url: ' . $src, __FUNCTION__);
+		return $src;
 	}
 	/**
 	 * Getting a fake xml element for product
@@ -97,7 +128,7 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		$xml->Press = $product instanceof Product ? $product->getAttribute('publisher') : $this->_supplier->getName();
 		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute('publish_date') : $date->format('Y-F-d');
 		$xml->Words = '';
-		$xml->FrontCover = $product instanceof Product ? $product->getAttribute('image_thumb') : $this->_getCoverImage();
+		$xml->FrontCover = $product instanceof Product ? $product->getAttribute('image_thumb') : $this->_getCoverImage($xml->NO);
 		$xml->Introduction = $product instanceof Product ? $product->getAttribute('description') : $this->_supplier->getName() . ': ' . $date->format('d F Y');
 		$xml->Cip = '';
 		$xml->SiteID = trim($this->_lib->getInfo('aus_code'));
