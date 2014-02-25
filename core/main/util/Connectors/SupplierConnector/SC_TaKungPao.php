@@ -75,27 +75,58 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got array from results:' . print_r($array, true) , __FUNCTION__);
 		return $array;
 	}
+	/**
+	 * Getting the HTML from the url
+	 * 
+	 * @param string $url The url
+	 * 
+	 * @throws SupplierConnectorException
+	 * @return NULL|DOMDocument
+	 */
+	private function _getHTML($productKey)
+	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting HTML for productKey: ' . $productKey, __FUNCTION__);
+		$url = explode(',', $this->_supplier->getInfo('view_url'));
+		if($url === false || count($url) === 0)
+			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
+		$url = $this->_formatURL($url[0], $productKey);
+		$html = BmvComScriptCURL::readUrl($url);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got from(' . $url . '): <textarea>' . $html . '</textarea>', __FUNCTION__);
+		
+		//checking whether we've got some html
+		if(trim($html) === '')
+		{
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got empty html from url:' . $url, __FUNCTION__);
+			return null;
+		}
+		//load this into DOMDocument
+		$doc = new DOMDocument();
+		if(($loaded = @$doc->loadHTML($html)) !== true)
+		{
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Failed to load html into DOMDocument!', __FUNCTION__);
+			return null;
+		}
+		return $doc;
+	}
+	/**
+	 * Getting the cover image
+	 * 
+	 * @param string $productKey
+	 * 
+	 * @throws SupplierConnectorException
+	 * @return string
+	 */
 	private function _getCoverImage($productKey)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting coverpage image:', __FUNCTION__);
 		$src = '';
 		try 
 		{
-			$url = explode(',', $this->_supplier->getInfo('view_url'));
-			if($url === false || count($url) === 0)
-				throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
-			$url = $this->_formatURL($url[0], $productKey);
-			
-			$html = BmvComScriptCURL::readUrl($url);
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ' == download html from: ' . $url, __FUNCTION__);
-			
-			$doc = new DOMDocument();
-			$doc->loadHTML($html);
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '   == Got: ' . '<textarea>' . $doc->saveHTML() . '</textarea>', __FUNCTION__);
+			if(!($doc = $this->_getHTML($productKey)) instanceof DOMDocument)
+				throw new SupplierConnectorException('Can NOT load the HTML for productKey: ' . $productKey);
 			$xpath = new DOMXPath($doc);
-			$books = $xpath->query("//div[@class='books']/div/a/img");
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ' == found from XPath->Query("//div[@class=books]/div/a/img"): ' . count($books), __FUNCTION__);
-			if(count($books) > 0)
+			$books = $xpath->query("//dl[@class='imglist']/dd/div/img");
+			if($books->item(0) instanceof DOMElement)
 				$src = $books->item(0)->getAttribute('src');
 		}
 		catch(Exception $ex)
@@ -234,6 +265,9 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if(!($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier)) instanceof Product)
 			return null;
+		//check whether the magazine still there from supplier
+		if(!($doc = $this->_getHTML($product->getAttribute('cno'))) instanceof DOMDocument)
+			BaseServiceAbastract::getInstance('LibraryOwns')->updateLibOwns($product, $this->_lib, 0 , 0);
 		return SupplierConnectorProduct::getProduct($this->_fakeProduct($product->getProductType(), null, $product));
 	}
 }

@@ -10,7 +10,7 @@ class BmvComScriptCURL
 	 *
 	 * @return string The local file path
 	 */
-	public static function downloadFile($url, $localFile, $timeout = null)
+	public static function downloadFile($url, $localFile, $timeout = null, $extraOpts = array())
 	{
 		$timeout = trim($timeout);
 		$timeout = (!is_numeric($timeout) ? self::CURL_TIMEOUT : $timeout);
@@ -19,7 +19,10 @@ class BmvComScriptCURL
 				CURLOPT_FILE    => $fp,
 				CURLOPT_TIMEOUT => $timeout, // set this to 8 hours so we dont timeout on big files
 				CURLOPT_URL     => $url
+				//,CURLOPT_PROXY   => 'proxy.bytecraft.internal:3128'
 		);
+		foreach($extraOpts as $key => $value)
+			$options[$key] = $value;
 		$ch = curl_init();
 		curl_setopt_array($ch, $options);
 		curl_exec($ch);
@@ -37,7 +40,7 @@ class BmvComScriptCURL
 	 *
 	 * @return mixed
 	 */
-	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '')
+	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '', $extraOpts = array())
 	{
 		$timeout = trim($timeout);
 		$timeout = (!is_numeric($timeout) ? self::CURL_TIMEOUT : $timeout);
@@ -45,7 +48,10 @@ class BmvComScriptCURL
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_TIMEOUT => $timeout, // set this to 8 hours so we dont timeout on big files
 				CURLOPT_URL     => $url
+				//,CURLOPT_PROXY   => 'proxy.bytecraft.internal:3128'
 		);
+		foreach($extraOpts as $key => $value)
+			$options[$key] = $value;
 		if(count($data) > 0)
 		{
 			if(trim($customerRequest) === '')
