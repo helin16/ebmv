@@ -39,9 +39,9 @@ class LC_Bankstown extends LibraryConnectorAbstract
 				$this->_log(print_r($result, true), __FUNCTION__);
 			}
 			
-			$result = new SimpleXMLElement($result);
+			$result = simplexml_load_string(StringUtilsAbstract::stripInvalidXml($result));
 			$xml = $result->children('SOAP-ENV', TRUE)->Body->children('', TRUE)->GetMemberInformationResponse->GetMemberInformationResult;
-			$xml = new SimpleXMLElement($xml->asXml());
+			$xml = simplexml_load_string($xml->asXml());
 			$infos = array();
 			foreach($xml->xpath("//Fields") as $field)
 			{
@@ -101,7 +101,7 @@ class LC_Bankstown extends LibraryConnectorAbstract
 				$this->_log(print_r($result, true), __FUNCTION__);
 			}
 			
-			$result = new SimpleXMLElement($result);
+			$result = simplexml_load_string($result);
 			$xml = $result->children('SOAP-ENV', TRUE)->Body->children('', TRUE)->VerifyMemberResponse->VerifyMemberResult;
 			$userchecked = strtolower(trim($xml)) === 'true';
 			
