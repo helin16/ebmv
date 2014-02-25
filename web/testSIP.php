@@ -63,11 +63,11 @@ try
 	echo '</div>';
 	
 	// selfcheck status mesage goes here...
-	$in = $this->_sip2->msgSCStatus();
+	$in = $mysip->msgSCStatus();
 	echo '<div class="testDiv">';
 		echo '<h3 class="request">Self check <span class="smltxt">' . $in . '</span></h3>';
-		$rawResp = $this->_sip2->get_message($in);
-		$result = $this->_sip2->parseACSStatusResponse($rawResp);
+		$rawResp = $mysip->get_message($in);
+		$result = $mysip->parseACSStatusResponse($rawResp);
 		echo '<div class="response">Result <span class="smltxt">Raw response: ' . $rawResp . '</span>:<div class="blockView">' . print_r($result, true). '</div></div>';
 	echo '</div>';
 	
