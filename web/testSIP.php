@@ -19,6 +19,9 @@
 	font-size: 10px;
 	font-style: italic;
 }
+.testDiv .rawMsg{
+    border: 1px #ccc dotted;
+} 
 .testDiv .blockView {
 	overflow: auto;
 	height: 200px;
@@ -70,21 +73,21 @@ try
 	// selfcheck status mesage goes here...
 	$in = $mysip->msgSCStatus();
 	echo '<div class="testDiv">';
-		echo '<h3 class="request">Self check <span class="smltxt">' . $in . '</span></h3>';
+		echo '<h3 class="request">Self check <span class="smltxt rawMsg">' . $in . '</span></h3>';
 		$rawResp = $mysip->get_message($in);
 		$result = $mysip->parseACSStatusResponse($rawResp);
-		echo '<div class="response">Result <span class="smltxt">Raw response: ' . $rawResp . '</span>:<div class="blockView">' . print_r($result, true). '</div></div>';
+		echo '<div class="response">Result <span class="smltxt">Raw response: <span class="rawMsg">' . $rawResp . '</span></span>:<div class="blockView">' . print_r($result, true). '</div></div>';
 	echo '</div>';
 	
 	
 	// Get Charged Items Raw response
-	$in = $mysip->msgPatronInformation('charged');
+	$in = $mysip->msgPatronInformation('none');
 	echo '<div class="testDiv">';
-		echo '<h3 class="request">Get Response for charged:<span class="smltxt">' . print_r($in, true) . '</span></h3>';
+		echo '<h3 class="request">Get Response for PatronInformation:<span class="smltxt rawMsg">' . print_r($in, true) . '</span></h3>';
 		$rawResp = $mysip->get_message($in);
 		// parse the raw response into an array
 		$result = $mysip->parsePatronInfoResponse($rawResp);
-		echo '<div class="response">Result <span class="smltxt">Raw response: ' . $rawResp . '</span>:<div class="blockView">' . print_r($result, true). '</div></div>';
+		echo '<div class="response">Result <span class="smltxt">Raw response: <span class="rawMsg">' . $rawResp . '</span></span>:<div class="blockView">' . print_r($result, true). '</div></div>';
 	echo '</div>';
 }
 catch(Exception $ex)
