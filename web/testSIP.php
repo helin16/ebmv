@@ -80,7 +80,7 @@ try
 	// Get Charged Items Raw response
 	$in = $mysip->msgPatronInformation('charged');
 	echo '<div class="testDiv">';
-		echo '<h3 class="request">Get Raw Response for charged:<span class="smltxt">' . print_r($in, true) . '</span></h3>';
+		echo '<h3 class="request">Get Response for charged:<span class="smltxt">' . print_r($in, true) . '</span></h3>';
 		$rawResp = $mysip->get_message($in);
 		// parse the raw response into an array
 		$result = $mysip->parsePatronInfoResponse($rawResp);
