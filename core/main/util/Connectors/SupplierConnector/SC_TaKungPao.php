@@ -263,11 +263,18 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProduct($isbn, $no)
 	{
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product(ISBN=' . $isbn . ', NO=' . $no . '):', __FUNCTION__);
 		if(!($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier)) instanceof Product)
+		{
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Can NOT find any product (ISBN=' . $isbn . ', NO=' . $no . ')', __FUNCTION__);
 			return null;
+		}
 		//check whether the magazine still there from supplier
 		if(!($coverImg = $this->_getCoverImage($product->getAttribute('cno'))) === '')
+		{
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Can NOT find the cover image assuming the magazine is not available any more.', __FUNCTION__);
 			BaseServiceAbastract::getInstance('LibraryOwns')->updateLibOwns($product, $this->_lib, 0 , 0);
+		}
 		return SupplierConnectorProduct::getProduct($this->_fakeProduct($product->getProductType(), null, $product));
 	}
 }
