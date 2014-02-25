@@ -23,10 +23,20 @@ catch(Exception $e)
 
 //enforce https
 $application=new TApplication;
+$clientIPAddr = trim($_SERVER['REMOTE_ADDR']);
+var_dump($clientIPAddr);
+$whiteList = array(
+	"54.254.102.106",
+	"54.251.109.184",
+	"54.254.102.68"
+);
 if(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on")
 {
-    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
-    exit();
+	if(!in_array($clientIPAddr, $whiteList))
+	{
+		header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+	    exit();
+	}
 }
 $application->run();
 ?>
