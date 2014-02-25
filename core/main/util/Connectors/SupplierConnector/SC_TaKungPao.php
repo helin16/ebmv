@@ -151,11 +151,11 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _fakeProduct(ProductType $type, UDate $date = null, Product $product = null)
 	{
-		$readOnline = 0;
+		$readOnlineCopy = 0;
 		//check whether the magazine still there from supplier
 		$productKey = $product instanceof Product ? $product->getAttribute('cno') : $date->format('Ymd');
 		if(($coverImg = $this->_getCoverImage($productKey)) !== '')
-			$readOnline = 1;
+			$readOnlineCopy = 1;
 		
 		$xml = new SimpleXMLElement('<' . $type->getName() . '/>');
 		$xml->BookName = $product instanceof Product ? $product->getTitle() : $this->_supplier->getName() . ': ' . $date->format('d/F/Y');
@@ -175,10 +175,10 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		$xml->BookType = $this->_supplier->getName() . '/' . $publishDate->format('Y') . '/' .$publishDate->format('m');
 		$copiesXml = $xml->addChild('Copies');
 		$readOnline = $copiesXml->addChild($this->_getLibOwnsType(LibraryOwnsType::ID_ONLINE_VIEW_COPIES)->getCode());
-		$readOnline->Available = $readOnline;
+		$readOnline->Available = $readOnlineCopy;
 		$readOnline->Total = 1;
 		$download = $copiesXml->addChild($this->_getLibOwnsType(LibraryOwnsType::ID_DOWNLOAD_COPIES)->getCode());
-		$download->Available = $readOnline;
+		$download->Available = $readOnlineCopy;
 		$download->Total = 1;
 		return $xml;
 	}
@@ -250,14 +250,6 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see SupplierConnectorAbstract::updateProduct()
-	 */
-	public function updateProduct(Product &$product) 
-	{
-		
-	}
-	/**
-	 * (non-PHPdoc)
 	 * @see SupplierConn::borrowProduct()
 	 */
 	public function borrowProduct(Product &$product, UserAccount $user) {}
@@ -278,6 +270,7 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Can NOT find any product (ISBN=' . $isbn . ', NO=' . $no . ')', __FUNCTION__);
 			return null;
 		}
-		return SupplierConnectorProduct::getProduct($this->_fakeProduct($product->getProductType(), null, $product));
+		$pro = SupplierConnectorProduct::getProduct($this->_fakeProduct($product->getProductType(), null, $product));
+		return $pro;
 	}
 }
