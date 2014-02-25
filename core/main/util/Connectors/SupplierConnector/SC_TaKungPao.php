@@ -153,8 +153,9 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	{
 		$readOnline = 0;
 		//check whether the magazine still there from supplier
-		if(($coverImg = $this->_getCoverImage($product instanceof Product ? $product->getAttribute('cno') : $date->format('Ymd'))) !== '')
-			$readOnline 1;
+		$productKey = $product instanceof Product ? $product->getAttribute('cno') : $date->format('Ymd');
+		if(($coverImg = $this->_getCoverImage($productKey)) !== '')
+			$readOnline = 1;
 		
 		$xml = new SimpleXMLElement('<' . $type->getName() . '/>');
 		$xml->BookName = $product instanceof Product ? $product->getTitle() : $this->_supplier->getName() . ': ' . $date->format('d/F/Y');
