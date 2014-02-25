@@ -22,6 +22,10 @@
 .testDiv .blockView {
 	overflow: auto;
 	height: 100px;
+	display: block;
+    unicode-bidi: embed;
+    font-family: monospace;
+    white-space: pre;
 }
 </style>
 <?php
