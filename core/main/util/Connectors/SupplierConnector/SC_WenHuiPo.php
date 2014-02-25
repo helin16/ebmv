@@ -164,9 +164,9 @@ class SC_WenHuiPo extends SupplierConnectorAbstract implements SupplierConn
 		$xml->Language = 'zh-tw';
 		
 		$publishDate = new UDate ( $xml->PublicationDate );
-		$xml->BookType = $this->_supplier->getName () . '/' . $publishDate->format ( 'Y' ) . '/' . $publishDate->format ( 'm' );
-		$copiesXml = $xml->addChild ( 'Copies' );
-		$readOnline = $copiesXml->addChild ( $this->_getLibOwnsType ( LibraryOwnsType::ID_ONLINE_VIEW_COPIES )->getCode () );
+		$xml->BookType = $this->_supplier->getName() . '/' . $publishDate->format ('Y') . '/' . $publishDate->format('m');
+		$copiesXml = $xml->addChild( 'Copies' );
+		$readOnline = $copiesXml->addChild ($this->_getLibOwnsType ( LibraryOwnsType::ID_ONLINE_VIEW_COPIES )->getCode ());
 		$readOnline->Available = $readOnlineCopy;
 		$readOnline->Total = 1;
 		$download = $copiesXml->addChild ( $this->_getLibOwnsType ( LibraryOwnsType::ID_DOWNLOAD_COPIES )->getCode () );
