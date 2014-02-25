@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<com:THead ID="titleHeader" Title="<%$ AppTitle %>">
+<com:THead ID="titleHeader" Title="<%= Core::getLibrary()->getName() %> - BMV eResource Interface">
     <meta charset="UTF-8" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="description" content="">
