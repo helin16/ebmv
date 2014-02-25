@@ -25,7 +25,9 @@ catch(Exception $e)
 $application=new TApplication;
 $clientIPAddr = trim($_SERVER['REMOTE_ADDR']);
 $whiteList = array(
-	//"60.240.134.98",
+	"localhost",
+	"127.0.0.0",
+	"::1",
 	"54.254.102.106",
 	"54.251.109.184",
 	"54.254.102.68"
