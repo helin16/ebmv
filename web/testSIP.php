@@ -81,15 +81,10 @@ try
 		$result = $mysip->parsePatronInfoResponse($rawResp);
 		echo '<div class="response">Result <span class="smltxt">Raw response: ' . $rawResp . '</span>:<div class="blockView">' . print_r($result, true). '</div></div>';
 	echo '</div>';
-	
-	
-	echo '<h3>Result came back from '. $wsdl . ':</h3>';
-	echo '<textarea style="width: 100%; height: 200px;">' . $result . '</textarea>';
-	echo '</pre>';
 }
 catch(Exception $ex)
 {
-	echo '<h3>' . $ex->getMessage() . '</h3>';
+	echo '<h3>Error: ' . $ex->getMessage() . '</h3>';
 	echo $ex->getTraceAsString();
 }
 ?>
