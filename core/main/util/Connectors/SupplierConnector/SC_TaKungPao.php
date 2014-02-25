@@ -25,7 +25,7 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		{
 			$now = new UDate();
 			$start = new UDate();
-			$start->modify('-6 month');
+			$start->modify('-1 month');
 			self::$_cache['isseRange'] = array('start'=> $start, 'end' => $now);
 		}
 		return self::$_cache['isseRange'];
