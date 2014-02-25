@@ -266,7 +266,7 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		if(!($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier)) instanceof Product)
 			return null;
 		//check whether the magazine still there from supplier
-		if(!($doc = $this->_getHTML($product->getAttribute('cno'))) instanceof DOMDocument)
+		if(!($coverImg = $this->_getCoverImage($product->getAttribute('cno'))) === '')
 			BaseServiceAbastract::getInstance('LibraryOwns')->updateLibOwns($product, $this->_lib, 0 , 0);
 		return SupplierConnectorProduct::getProduct($this->_fakeProduct($product->getProductType(), null, $product));
 	}
