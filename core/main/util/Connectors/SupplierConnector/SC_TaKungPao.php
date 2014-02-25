@@ -151,6 +151,11 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _fakeProduct(ProductType $type, UDate $date = null, Product $product = null)
 	{
+		$readOnline = 0;
+		//check whether the magazine still there from supplier
+		if(($coverImg = $this->_getCoverImage($product instanceof Product ? $product->getAttribute('cno') : $date->format('Ymd'))) !== '')
+			$readOnline 1;
+		
 		$xml = new SimpleXMLElement('<' . $type->getName() . '/>');
 		$xml->BookName = $product instanceof Product ? $product->getTitle() : $this->_supplier->getName() . ': ' . $date->format('d/F/Y');
 		$xml->Isbn = $product instanceof Product ? $product->getAttribute('isbn') : '9786133577794';
@@ -159,7 +164,7 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		$xml->Press = $product instanceof Product ? $product->getAttribute('publisher') : $this->_supplier->getName();
 		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute('publish_date') : $date->format('Y-F-d');
 		$xml->Words = '';
-		$xml->FrontCover = $product instanceof Product ? $product->getAttribute('image_thumb') : $this->_getCoverImage($xml->NO);
+		$xml->FrontCover = $coverImg;
 		$xml->Introduction = $product instanceof Product ? $product->getAttribute('description') : $this->_supplier->getName() . ': ' . $date->format('d F Y');
 		$xml->Cip = '';
 		$xml->SiteID = trim($this->_lib->getInfo('aus_code'));
@@ -169,10 +174,10 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		$xml->BookType = $this->_supplier->getName() . '/' . $publishDate->format('Y') . '/' .$publishDate->format('m');
 		$copiesXml = $xml->addChild('Copies');
 		$readOnline = $copiesXml->addChild($this->_getLibOwnsType(LibraryOwnsType::ID_ONLINE_VIEW_COPIES)->getCode());
-		$readOnline->Available = 1;
+		$readOnline->Available = $readOnline;
 		$readOnline->Total = 1;
 		$download = $copiesXml->addChild($this->_getLibOwnsType(LibraryOwnsType::ID_DOWNLOAD_COPIES)->getCode());
-		$download->Available = 1;
+		$download->Available = $readOnline;
 		$download->Total = 1;
 		return $xml;
 	}
@@ -246,7 +251,10 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConnectorAbstract::updateProduct()
 	 */
-	public function updateProduct(Product &$product) {}
+	public function updateProduct(Product &$product) 
+	{
+		
+	}
 	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::borrowProduct()
@@ -268,12 +276,6 @@ class SC_TaKungPao extends SupplierConnectorAbstract implements SupplierConn
 		{
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Can NOT find any product (ISBN=' . $isbn . ', NO=' . $no . ')', __FUNCTION__);
 			return null;
-		}
-		//check whether the magazine still there from supplier
-		if(!($coverImg = $this->_getCoverImage($product->getAttribute('cno'))) === '')
-		{
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Can NOT find the cover image assuming the magazine is not available any more.', __FUNCTION__);
-			BaseServiceAbastract::getInstance('LibraryOwns')->updateLibOwns($product, $this->_lib, 0 , 0);
 		}
 		return SupplierConnectorProduct::getProduct($this->_fakeProduct($product->getProductType(), null, $product));
 	}
