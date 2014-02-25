@@ -26,6 +26,7 @@
     unicode-bidi: embed;
     font-family: monospace;
     white-space: pre;
+    border: 1px #ccc dotted;
 }
 </style>
 <?php
