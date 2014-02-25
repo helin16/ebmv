@@ -21,7 +21,7 @@
 }
 .testDiv .blockView {
 	overflow: auto;
-	height: 100px;
+	height: 200px;
 	display: block;
     unicode-bidi: embed;
     font-family: monospace;
