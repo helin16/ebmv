@@ -87,10 +87,7 @@ class SC_WenHuiPo extends SupplierConnectorAbstract implements SupplierConn
 			throw new SupplierConnectorException ( 'Invalid view url for supplier: ' . $this->_supplier->getName () );
 		$url = $this->_formatURL ( $url [0], $productKey );
 		$html = BmvComScriptCURL::readUrl ( $url );
-		if ($this->_debugMode === true)
-			SupplierConnectorAbstract::log ( $this, 'Got from(' . $url . '): <textarea>' . $html . '</textarea>', __FUNCTION__ );
-			
-			// checking whether we've got some html
+		// checking whether we've got some html
 		if (trim ( $html ) === '') {
 			if ($this->_debugMode === true)
 				SupplierConnectorAbstract::log ( $this, 'Got empty html from url:' . $url, __FUNCTION__ );
@@ -121,9 +118,9 @@ class SC_WenHuiPo extends SupplierConnectorAbstract implements SupplierConn
 			if (! ($doc = $this->_getHTML ( $productKey )) instanceof DOMDocument)
 				throw new SupplierConnectorException ( 'Can NOT load the HTML for productKey: ' . $productKey );
 			$xpath = new DOMXPath ( $doc );
-			$books = $xpath->query ( "//dl[@class='imglist']/dd/div/img" );
-			if ($books->item ( 0 ) instanceof DOMElement)
-				$src = $books->item ( 0 )->getAttribute ( 'src' );
+			$books = $xpath->query ( "//ul[@id='pdf_c_c1']/li/a/img" );
+			if ($books->item(0) instanceof DOMElement)
+				$src = $books->item (0)->getAttribute ( 'src' );
 		} catch ( Exception $ex ) {
 			if ($this->_debugMode === true) {
 				SupplierConnectorAbstract::log ( $this, ' == Got Error: ' . $ex->getMessage (), __FUNCTION__ );
@@ -148,14 +145,14 @@ class SC_WenHuiPo extends SupplierConnectorAbstract implements SupplierConn
 	private function _fakeProduct(ProductType $type, UDate $date = null, Product $product = null) {
 		$readOnlineCopy = 0;
 		// check whether the magazine still there from supplier
-		$productKey = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $date->format ( 'Ymd' );
+		$productKey = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $date->format ( 'Y/m/d' );
 		if (($coverImg = $this->_getCoverImage ( $productKey )) !== '')
 			$readOnlineCopy = 1;
 		
 		$xml = new SimpleXMLElement ( '<' . $type->getName () . '/>' );
 		$xml->BookName = $product instanceof Product ? $product->getTitle () : $this->_supplier->getName () . ': ' . $date->format ( 'd/F/Y' );
-		$xml->Isbn = $product instanceof Product ? $product->getAttribute ( 'isbn' ) : '9786133577794';
-		$xml->NO = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $date->format ( 'Ymd' );
+		$xml->Isbn = $product instanceof Product ? $product->getAttribute ( 'isbn' ) : '9789629964245';
+		$xml->NO = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $date->format ( 'Y/m/d' );
 		$xml->Author = $product instanceof Product ? $product->getAttribute ( 'author' ) : $this->_supplier->getName ();
 		$xml->Press = $product instanceof Product ? $product->getAttribute ( 'publisher' ) : $this->_supplier->getName ();
 		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute ( 'publish_date' ) : $date->format ( 'Y-F-d' );
