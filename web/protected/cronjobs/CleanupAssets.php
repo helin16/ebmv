@@ -42,7 +42,7 @@ class CleanupAssets
 	{
 		$sql = "select ass.assetId, ass.path from asset ass
 			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (" . ProductAttributeType::ID_IMAGE . ", " . ProductAttributeType::ID_IMAGE_THUMB ."))
-			where att.id is null and ass.active = 1";
+			where att.id is null";
 		$return = array();
 		foreach(Dao::getResultsNative($sql) as $row)
 			$return[] = $row['assetId'];
