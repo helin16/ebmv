@@ -100,7 +100,7 @@ class AssetService extends BaseServiceAbastract
 		    	unlink($file);
 		}
 		// Delete the item from the database
-		$this->updateByCriteria('set active = ?', $where, array_merge(array(0), $params));
+		$this->updateByCriteria('active = ?', $where, array_merge(array(0), $params));
 		return $this;
 	}
 	/**
