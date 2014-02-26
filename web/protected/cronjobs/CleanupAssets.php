@@ -31,7 +31,7 @@ class CleanupAssets
 	}
 	private function _log($functName, $msg)
 	{
-		echo $functName . ': ' . $msg;
+		echo $functName . ': ' . $msg . "\n\r";
 	}
 	/**
 	 * Getting all the unused asset record in DB
