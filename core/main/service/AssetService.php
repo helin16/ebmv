@@ -100,7 +100,7 @@ class AssetService extends BaseServiceAbastract
 		    	unlink($file);
 		}
 		// Delete the item from the database
-		$this->updateByCriteria('active = ?', $where, array_merge(array(0), $params));
+		Dao::deleteByCriteria(EntityDao::getInstance($this->_entityName), $where, $params);
 		return $this;
 	}
 	/**
