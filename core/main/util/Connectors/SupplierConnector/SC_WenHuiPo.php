@@ -5,7 +5,7 @@ class SC_WenHuiPo extends SupplierConnectorOpenSourceAbstract implements Supplie
 	{
 		$src = '';
 		$xpath = new DOMXPath($doc);
-		$books = $xpath->query("//ul[@id='pdf_c_c1']/li/a/img");
+		$books = $xpath->query("//div[@class='pdf_big pdf_bgre']/a/img");
 		if($books->item(0) instanceof DOMElement)
 			$src = $books->item(0)->getAttribute('src');
 		return $src;

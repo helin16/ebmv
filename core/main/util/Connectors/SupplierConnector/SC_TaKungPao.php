@@ -5,7 +5,7 @@ class SC_TaKungPao extends SupplierConnectorOpenSourceAbstract implements Suppli
 	{
 		$src = '';
 		$xpath = new DOMXPath($doc);
-		$books = $xpath->query("//dl[@class='imglist']/dd/div/img");
+		$books = $xpath->query("//div[@class='books']/div/a/img");
 		if($books->item(0) instanceof DOMElement)
 			$src = $books->item(0)->getAttribute('src');
 		return $src;

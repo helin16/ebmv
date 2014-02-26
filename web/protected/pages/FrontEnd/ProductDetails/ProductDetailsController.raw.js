@@ -44,7 +44,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		if(!tmp.me.product.attributes['image_thumb'] || tmp.me.product.attributes['image_thumb'].size() === 0)
 			tmp.thumbImg.addClassName('noimage');
 		else
-			tmp.thumbImg.insert({'bottom': new Element('img', {'src': '/asset/get?id=' + tmp.me.product.attributes['image_thumb'][0]['attribute']})});
+			tmp.thumbImg.insert({'bottom': new Element('img', {'class': 'product_image', 'src': '/asset/get?id=' + tmp.me.product.attributes['image_thumb'][0]['attribute']})});
 		
 		tmp.newDiv = new Element('div', {'class': 'wrapper'})
 			.insert({'bottom': new Element('div', {'class': 'product listitem'})
