@@ -8,6 +8,9 @@
  */
 class ProductType extends BaseEntityAbstract
 {
+	const ID_BOOK = 1;
+	const ID_NEWSPAPER = 2;
+	const ID_MAGAZINE = 3;
     /**
      * The name of the language
      * 

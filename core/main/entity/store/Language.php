@@ -8,6 +8,8 @@
  */
 class Language extends BaseEntityAbstract
 {
+	const ID_SIMPLIFIED_CHINESE = 1;
+	const ID_TRADITIONAL_CHINESE = 2;
 	private static $_cache;
     /**
      * The name of the language

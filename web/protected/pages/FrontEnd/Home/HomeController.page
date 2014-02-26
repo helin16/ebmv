@@ -2,5 +2,8 @@
     <div class="homepageWrapper">
         <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newRelease" Title="最新出版" DataFunc="getNewRelease"/>
         <com:Application.controls.ProductListShowCase.ProductListShowCase ID="mostPopular" Title="最受欢迎/最受歡迎" DataFunc="getMostPopular"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newNewsPaper" Title="最新报纸/最新報紙" DataFunc="getNewNewsPaper"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newMagazine" Title="最新杂志/最新雜誌" DataFunc="getNewMagazine"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newBooks" Title="最新书/最新書" DataFunc="getNewBooks"/>
     </div>
 </com:TContent>

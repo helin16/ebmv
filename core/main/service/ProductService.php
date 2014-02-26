@@ -292,11 +292,24 @@ class ProductService extends BaseServiceAbastract
      * 
      * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
      */
-    public function getMostPopularProducts(Library $lib, $limit = DaoQuery::DEFAUTL_PAGE_SIZE)
+    public function getMostPopularProducts(Library $lib, $limit = DaoQuery::DEFAUTL_PAGE_SIZE, Language $lang = null, ProductType $type = null)
     {
         $query = EntityDao::getInstance('Product')->getQuery();
         $query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1')->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
-        $results = $this->findByCriteria('pstatstype.code = ? or pstatstype.code is null', array($lib->getId(), 'no_of_clicks'), true, 1, $limit, array('pstats.value'=>'desc'));
+        $where = 'pstatstype.code = ? or pstatstype.code is null';
+        $params = array($lib->getId(), 'no_of_clicks');
+        if($lang instanceof Language)
+        {
+        	$query->eagerLoad('Product.languages');
+        	$where .= ' AND lang.id = ?';
+        	$params[] = trim($lang->getId());
+        }
+        if($type instanceof ProductType)
+        {
+        	$where .= ' AND pro.productTypeId = ?';
+        	$params[] = trim($type->getId());
+        }
+        $results = $this->findByCriteria($where ,$params, true, 1, $limit, array('pstats.value'=>'desc'));
         return $results;
     }
     /**
@@ -307,11 +320,24 @@ class ProductService extends BaseServiceAbastract
      * 
      * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
      */
-    public function getNewReleasedProducts(Library $lib, $limit = DaoQuery::DEFAUTL_PAGE_SIZE)
+    public function getNewReleasedProducts(Library $lib, $limit = DaoQuery::DEFAUTL_PAGE_SIZE, Language $lang = null, ProductType $type = null)
     {
         $query = EntityDao::getInstance('Product')->getQuery();
-        $query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1')->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
-        $results = $this->findByCriteria('pstats.value is null or (pstatstype.code = ? and pstats.value = ?)', array($lib->getId(), 'no_of_clicks', 0), true, 1, $limit, array('pro.id'=>'desc'));
+        $query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.productId = pro.id and lib_own.active = 1');
+        $where = 'lib_own.libraryId = ?';
+        $params = array($lib->getId());
+        if($lang instanceof Language)
+        {
+        	$query->eagerLoad('Product.languages');
+        	$where .= ' AND lang.id = ?';
+        	$params[] = trim($lang->getId());
+        }
+        if($type instanceof ProductType)
+        {
+        	$where .= ' AND pro.productTypeId = ?';
+        	$params[] = trim($type->getId());
+        }
+        $results = $this->findByCriteria($where, $params, true, 1, $limit, array('pro.id'=>'desc'));
         return $results;
     }
     /**

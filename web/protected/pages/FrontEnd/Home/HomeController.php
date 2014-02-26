@@ -12,12 +12,24 @@ class HomeController extends FrontEndPageAbstract
     {
 	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts');
     }
+    public function getNewNewsPaper($sender, $params)
+    {
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', null, BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_NEWSPAPER));
+    }
+    public function getNewMagazine($sender, $params)
+    {
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', null, BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_MAGAZINE));
+    }
+    public function getNewBooks($sender, $params)
+    {
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', null, BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_BOOK));
+    }
     public function getMostPopular($sender, $params)
     {
 	    $params->ResponseData = $this->_listProducts($params, 'getMostPopularProducts');
     }
     
-    private function _listProducts($params, $funcName)
+    private function _listProducts($params, $funcName, Language $lang = null, ProductType $type = null)
     {
         $errors = $result = array();
         try
@@ -31,7 +43,7 @@ class HomeController extends FrontEndPageAbstract
 	        }
 	        
             $result['products'] = array();
-            $products = BaseServiceAbastract::getInstance('Product')->$funcName(Core::getLibrary(), $pageSize);
+            $products = BaseServiceAbastract::getInstance('Product')->$funcName(Core::getLibrary(), $pageSize, $lang, $type);
             foreach($products as $product)
             {
                 $result['products'][] = $product->getJson();
