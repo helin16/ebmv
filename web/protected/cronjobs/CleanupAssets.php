@@ -5,21 +5,28 @@ class CleanupAssets
 	public static function run()
 	{
 		self::_log(__FUNCTION__, '== start @ ' . new UDate());
-		
-		//find out all the assets in the table that are not used by the system
-		self::_log(__FUNCTION__, '== find out all the assets in the table that are not used by the system');
-		$usedAssetIds = self::_getAllUnusedAssets();
-		self::_log(__FUNCTION__, '	:: Got');
-		self::_log(__FUNCTION__, '	' . print_r($usedAssetIds, true));
-		
-		self::_log(__FUNCTION__, '== remove those assets from DB and files');
-		//removing all the unused assets from files and DB
-		self::_removeAsset($usedAssetIds);
-		
-		//removing all zombie files
-		self::_log(__FUNCTION__, '== remove all zombie files');
-		self::_rmAllUnusedAssetsFiles();
-		
+		try
+		{
+			
+			//find out all the assets in the table that are not used by the system
+			self::_log(__FUNCTION__, '== find out all the assets in the table that are not used by the system');
+			$usedAssetIds = self::_getAllUnusedAssets();
+			self::_log(__FUNCTION__, '	:: Got');
+			self::_log(__FUNCTION__, '	' . print_r($usedAssetIds, true));
+			
+			self::_log(__FUNCTION__, '== remove those assets from DB and files');
+			//removing all the unused assets from files and DB
+			self::_removeAsset($usedAssetIds);
+			
+			//removing all zombie files
+			self::_log(__FUNCTION__, '== remove all zombie files');
+			self::_rmAllUnusedAssetsFiles();
+		}
+		catch(Exception $ex)
+		{
+			self::_log(__FUNCTION__, '** Error: ' . $ex->getMessage());
+			self::_log(__FUNCTION__, '   ' . $ex->getTraceAsString());
+		}
 		self::_log(__FUNCTION__, '== Finished @ ' . new UDate());
 	}
 	private function _log($functName, $msg)
