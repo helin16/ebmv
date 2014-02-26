@@ -8,6 +8,8 @@
  */
 class ProductAttributeType extends BaseEntityAbstract
 {
+	const ID_IMAGE = 6;
+	const ID_IMAGE_THUMB = 7;
     /**
      * The attribute of the product
      * 

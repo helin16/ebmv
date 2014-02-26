@@ -8,6 +8,7 @@
  */
 class SupplierInfoType extends BaseEntityAbstract
 {
+	const ID_IMAGE_LOCATION = 6;
     /**
      * The attribute of the product
      * 

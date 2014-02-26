@@ -85,7 +85,7 @@ class AssetService extends BaseServiceAbastract
 	 *
 	 * @return bool
 	 */
-	public function removeAssets($assetIds)
+	public function removeAssets(array $assetIds)
 	{
 		if(count($assetIds) === 0)
 			return $this;
@@ -95,7 +95,9 @@ class AssetService extends BaseServiceAbastract
 		foreach($this->findByCriteria($where, $assetIds) as $asset)
 		{
 		    // Remove the file from the NAS server
-		    unlink($asset->getPath());
+		    $file = trim($asset->getPath());
+		    if(file_exists($file))
+		    	unlink($file);
 		}
 		// Delete the item from the database
 		$this->updateByCriteria('set active = ?', $where, array_merge(array(0), $params));
