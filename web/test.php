@@ -10,7 +10,7 @@ try
 // 	Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(11));
 	error_reporting(E_ALL ^ E_NOTICE);
 	echo '<pre>';
-	ImportProduct::run(array('37'), array(3), 2);
+	ImportProduct::run(array('37'), all, 2);
 // 	SupplierConnectorAbstract::getInstance(BaseServiceAbastract::getInstance('Supplier')->get(3), 
 // 		BaseServiceAbastract::getInstance('Library')->get(1))
 // 		->getOnlineReadUrl(BaseServiceAbastract::getInstance('Product')->get(6), Core::getUser())
