@@ -66,30 +66,33 @@ class CleanupAssets
 	private static function _rmAllUnusedAssetsFiles()
 	{
 		$sql = "select value from supplierinfo where typeId = " . SupplierInfoType::ID_IMAGE_LOCATION;
+		$totalFiles = array();
 		foreach(Dao::getResultsNative($sql) as $row)
-			self::_rmZombieFiles($row['value']);
+			self::_rmZombieFiles($row['value'], $totalFiles);
 	}
 	/**
 	 * removing all zombie files under the root path
 	 * 
 	 * @param string $rootPath
 	 */
-	private static function _rmZombieFiles($rootPath)
+	private static function _rmZombieFiles($rootPath, array &$totalFiles)
 	{
 		self::_log(__FUNCTION__, '  :: == removing files under: ' . $rootPath);
 		foreach(glob($rootPath . DIRECTORY_SEPARATOR . '*', GLOB_BRACE) as $file)
 		{
 			if(is_file($file))
 			{
+				$totalFiles[] = $file;
 				$assetId = basename($file);
+				self::_log(__FUNCTION__, '  :: == Got file(' . $assetId .') : ' . $file);
 				if(!self::_checkAssetExsitsDb($assetId))
 				{
-					self::_log(__FUNCTION__, '  :: == removing files : ' . $file);
+					self::_log(__FUNCTION__, '  :: == removing file : ' . $file);
 					unlink($file);
 				}
 			}
 			else if(is_dir($file))
-				self::_rmZombieFiles($file);
+				self::_rmZombieFiles($file, $totalFiles);
 		}
 		self::_log(__FUNCTION__, '  :: == finished removing files under: ' . $rootPath);
 	}
