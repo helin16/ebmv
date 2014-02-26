@@ -13,7 +13,9 @@ require 'bootstrap.php';
 //check library availibility
 try
 {
-	Core::setLibrary($_SERVER['SERVER_NAME']);
+	if(!isset($_SERVER['SERVER_NAME']) || ($url = trim($_SERVER['SERVER_NAME'])) === '' || !($lib =BaseServiceAbastract::getInstance('Library')->getLibByURL($url)) instanceof Library)
+		throw new Exception("No library found for $url!");
+	Core::setLibrary($lib);
 }
 catch(Exception $e)
 {

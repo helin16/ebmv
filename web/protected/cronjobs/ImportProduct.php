@@ -26,9 +26,6 @@ class ImportProduct
 	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null)
 	{
 		ini_set('max_execution_time', 0);
-		$totalRecords = trim($totalRecords);
-		$fullUpdate = ($totalRecords === '');
-		
 		if(!Core::getUser() instanceof UserAccount)
 			Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
@@ -46,53 +43,7 @@ class ImportProduct
 				//loop through each supplier
 				foreach($suppliers as $supplier)
 				{
-					self::log( "== import from " . __FUNCTION__, $supplier->getName());
-					
-					//if there is an error for supplier connector
-					try {$script = SupplierConnectorAbstract::getInstance($supplier, Core::getLibrary()); }
-					catch(Exception $ex) 
-					{
-						self::log( "  :: " . $ex->getMessage() . ". Trace: " . $ex->getTraceAsString(), __FUNCTION__);
-						continue;
-					}
-					
-					$types = $script->getImportProductTypes();
-					self::log( "  :: Got (" . count($types) . ") types to import:", __FUNCTION__);
-					foreach($types as $type)
-					{
-						//getting how many record we need to run
-						self::log( "  :: start download the xml for "  .$type->getName() ."...", __FUNCTION__);
-						$productList = $script->getProductList(1, $fullUpdate ? 100 : trim($totalRecords), $type, !$fullUpdate);
-						self::log( " downloaded.", __FUNCTION__);
-						
-						//process each record
-						$childrenCount = count($productList);
-						self::log("  :: Start to import (" . $childrenCount . ") products:", __FUNCTION__);
-						for($i = 0; $i< $childrenCount; $i++)
-						{
-							self::log('    -- Importing Product No: ' . $i . " ... ", __FUNCTION__);
-							try
-							{
-								self::log("    -- xml: " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]), __FUNCTION__);
-								$script->importProducts($productList, $i);
-								self::log("    -- Done",  __FUNCTION__);
-							}
-							catch(Exception $ex)
-							{
-								self::log("ERROR: " . $ex->getMessage() . ', Trace: ' . $ex->getTraceAsString(), __FUNCTION__);
-								continue;
-							}
-						}
-						
-						//removing the un-imported products
-// 						$ids = $supplier->getProducts($script->getImportedProductIds());
-// 						if($fullUpdate === true && count($ids) > 0)
-// 						{
-// 							self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids),  __FUNCTION__);
-// 							$script->rmUnImportedProducts();
-// 							self::log( "  :: done removing un-imported products.", __FUNCTION__);
-// 						}
-					}
+					self::_importProduct($supplier, $lib, $totalRecords);
 				}
 			}
 		}
@@ -106,6 +57,60 @@ class ImportProduct
 		$transId = self::getLogTransId();
 		//echo self::showLogs($transId);
 		return $transId;
+	}
+	
+	private static function _importProduct(Supplier $supplier, Library $lib, $totalRecords)
+	{
+		$totalRecords = trim($totalRecords);
+		$fullUpdate = ($totalRecords === '');
+		
+		self::log( "== import from " . __FUNCTION__, $supplier->getName());
+			
+		//if there is an error for supplier connector
+		try {$script = SupplierConnectorAbstract::getInstance($supplier, $lib); }
+		catch(Exception $ex)
+		{
+			self::log( "  :: " . $ex->getMessage() . ". Trace: " . $ex->getTraceAsString(), __FUNCTION__);
+			continue;
+		}
+			
+		$types = $script->getImportProductTypes();
+		self::log( "  :: Got (" . count($types) . ") types to import:", __FUNCTION__);
+		foreach($types as $type)
+		{
+			//getting how many record we need to run
+			self::log( "  :: start download the xml for "  .$type->getName() ."...", __FUNCTION__);
+			$productList = $script->getProductList(1, $fullUpdate ? 100 : trim($totalRecords), $type, !$fullUpdate);
+			self::log( " downloaded.", __FUNCTION__);
+		
+			//process each record
+			$childrenCount = count($productList);
+			self::log("  :: Start to import (" . $childrenCount . ") products:", __FUNCTION__);
+			for($i = 0; $i< $childrenCount; $i++)
+			{
+			self::log('    -- Importing Product No: ' . $i . " ... ", __FUNCTION__);
+			try
+			{
+			self::log("    -- xml: " . ($productList[$i] instanceof SimpleXMLElement ? $productList[$i]->asXml() : $productList[$i]), __FUNCTION__);
+			$script->importProducts($productList, $i);
+			self::log("    -- Done",  __FUNCTION__);
+			}
+			catch(Exception $ex)
+			{
+					self::log("ERROR: " . $ex->getMessage() . ', Trace: ' . $ex->getTraceAsString(), __FUNCTION__);
+					continue;
+							}
+			}
+		
+//			removing the un-imported products
+// 			$ids = $supplier->getProducts($script->getImportedProductIds());
+// 			if($fullUpdate === true && count($ids) > 0)
+// 			{
+// 				self::log( "  :: removing un-imported (" . count($ids) . ") product ids: " . implode(', ', $ids),  __FUNCTION__);
+// 				$script->rmUnImportedProducts();
+// 				self::log( "  :: done removing un-imported products.", __FUNCTION__);
+// 			}
+		}
 	}
 	/**
 	 * Getting the suppliers

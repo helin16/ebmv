@@ -48,7 +48,7 @@ class SupplierConnectorAbstract
 	{
 		$className = $supplier->getConnector();
 		$key = trim($supplier->getId() . "+" . $lib->getId());
-		if(!isset(self::$_connectors[$supplier->getId()]))
+		if(!isset(self::$_connectors[$key]))
 		{
 			if(!($sc = new $className($supplier, $lib)) instanceof SupplierConn)
 				throw new SupplierConnectorException("$className is NOT a SupplierConn!");
