@@ -10,8 +10,8 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 	 *
 	 * @return string
 	 */
-	private function _formatURL($url, $productKey) {
-		return trim ( str_replace ( '{productKey}', $productKey, $url ) );
+	protected function _formatURL($url, $productKey) {
+		return trim ( str_replace('{productKey}', $productKey, $url ) );
 	}
 	/**
 	 * Getting the issue date range
@@ -110,7 +110,7 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 	 * @throws SupplierConnectorException
 	 * @return string
 	 */
-	private function _getCoverImage($productKey) {
+	protected function _getCoverImage($productKey) {
 		if ($this->_debugMode === true)
 			SupplierConnectorAbstract::log ( $this, 'Getting coverpage image:', __FUNCTION__ );
 		$src = '';

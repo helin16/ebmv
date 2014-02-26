@@ -66,4 +66,29 @@ class BmvComScriptCURL
 		curl_close($ch);
 		return $data;
 	}
+	public static function is404($url, $timeout = null, $extraOpts = array()) 
+	{
+		$timeout = trim($timeout);
+		$timeout = (!is_numeric($timeout) ? self::CURL_TIMEOUT : $timeout);
+		$options = array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_TIMEOUT        => $timeout, // set this to 8 hours so we dont timeout on big files
+				CURLOPT_URL            => $url,
+				CURLOPT_NOBODY         => true,
+				//,CURLOPT_PROXY   => 'proxy.bytecraft.internal:3128'
+		);
+		foreach($extraOpts as $key => $value)
+			$options[$key] = $value;
+		$ch = curl_init();
+		curl_setopt_array($ch, $options);
+		$response =curl_exec($ch);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		/* If the document has loaded successfully without any redirection or error */
+		if ($httpCode >= 200 && $httpCode < 300) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
