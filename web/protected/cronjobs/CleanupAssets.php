@@ -42,7 +42,7 @@ class CleanupAssets
 	{
 		$sql = "select ass.assetId, ass.path from asset ass
 			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (" . ProductAttributeType::ID_IMAGE . ", " . ProductAttributeType::ID_IMAGE_THUMB ."))
-			where att.id is null";
+			where att.id is null and ass.active = 1";
 		$return = array();
 		foreach(Dao::getResultsNative($sql) as $row)
 			$return[] = $row['assetId'];
@@ -56,7 +56,7 @@ class CleanupAssets
 	private static function _removeAsset(array $assetIds)
 	{
 		self::_log(__FUNCTION__, '  :: removing assetIds: ');
-		self::_log(__FUNCTION__, '  :: ' . implode('\n\r', $assetIds));
+		self::_log(__FUNCTION__, '  :: ' . implode("\n\r      ", $assetIds));
 		BaseServiceAbastract::getInstance('Asset')->removeAssets($assetIds);
 		self::_log(__FUNCTION__, '  :: finish removing assetIds: ');
 	}
