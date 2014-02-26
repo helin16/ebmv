@@ -8,6 +8,7 @@
  */
 class LanguageCode extends BaseEntityAbstract
 {
+	private static $_cache;
     /**
      * The code of the language
      * 
@@ -62,6 +63,19 @@ class LanguageCode extends BaseEntityAbstract
     {
         $this->language = $value;
         return $this;
+    }
+    /**
+     * getting the language code from language
+     * 
+     * @param Language $lang
+     * 
+     * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
+     */
+    public static function getLanguageCodes(Language $lang)
+    {
+    	if(!isset(self::$_cache[$lang->getId()]))
+    		self::$_cache[$lang->getId()] = EntityDao::getInstance(get_called_class())->findByCriteria('languageId = ?', array($lang->getId()));
+    	return self::$_cache[$lang->getId()];
     }
     /**
      * (non-PHPdoc)
