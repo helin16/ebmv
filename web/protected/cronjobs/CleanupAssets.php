@@ -69,6 +69,7 @@ class CleanupAssets
 		$totalFiles = array();
 		foreach(Dao::getResultsNative($sql) as $row)
 			self::_rmZombieFiles($row['value'], $totalFiles);
+		self::_log(__FUNCTION__, '  :: ' . count($totalFiles) . ' file(s) tested!');
 	}
 	/**
 	 * removing all zombie files under the root path
@@ -84,7 +85,7 @@ class CleanupAssets
 			{
 				$totalFiles[] = $file;
 				$assetId = basename($file);
-				self::_log(__FUNCTION__, '  :: == Got file(' . $assetId .') : ' . $file);
+				//self::_log(__FUNCTION__, '  :: == Got file(' . $assetId .') : ' . $file);
 				if(!self::_checkAssetExsitsDb($assetId))
 				{
 					self::_log(__FUNCTION__, '  :: == removing file : ' . $file);
