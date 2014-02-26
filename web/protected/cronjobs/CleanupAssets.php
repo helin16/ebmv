@@ -100,4 +100,6 @@ class CleanupAssets
 	}
 }
 
+if (!Core::getUser() instanceof UserAccount)
+	Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 CleanupAssets::run();
