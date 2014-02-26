@@ -12,9 +12,10 @@ $libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str
 $supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
 $totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
 
-echo "== Params ===================================================";
-echo "== Site Codes: '" . implode("', '", $libCodes);
-echo "== Supplier IDS: " . implode(', ', $supplierIds);
-echo "== Total Records: '" . $totalrecords;
-echo "=============================================================";
+echo "== Params ===================================================\n\r";
+echo "== Site Codes: '" . implode("', '", $libCodes) . "\n\r";
+echo "== Supplier IDS: " . implode(', ', $supplierIds) . "\n\r";
+echo "== Total Records: '" . $totalrecords . "\n\r";
+echo "== Starting Importing @ " . trim(new UDate()) . "========================================================\n\r";
 ImportProduct::run($libCodes, $supplierIds, $totalrecords);
+echo "== Finished Importing @ " . trim(new UDate()) . "========================================================\n\r";
