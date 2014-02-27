@@ -16,17 +16,23 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 	/**
 	 * Getting the issue date range
 	 *
-	 * @return multitype:UDate unknown
+	 * @return multitype:UDate
 	 */
-	private function _getValidDateRange() {
-		if (! isset ( self::$_cache ['isseRange'] )) {
+	protected function _getValidDateRange() {
+		if (!isset( self::$_cache ['isseRange'] )) 
+		{
 			$now = new UDate ();
 			$start = new UDate ();
-			$start->modify ( '-1 month' );
-			self::$_cache ['isseRange'] = array (
-					'start' => $start,
-					'end' => $now
-			);
+			$start->modify ('-1 month');
+			$diff = $now->diff($start);
+			$days = array ();
+			for($i = 0; $i <= $diff-days; $i++)
+			{
+				$isseDate = new UDate ( $start->format( 'Y-m-d H:i:s' ) );
+				$isseDate->modify ( '+' . $i . ' day' );
+				$days[] = new UDate($isseDate->format( 'Y-m-d H:i:s' ));
+			}
+			self::$_cache ['isseRange'] = $days;
 		}
 		return self::$_cache ['isseRange'];
 	}
@@ -47,17 +53,6 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 		return self::$_cache ['libType'] [$typeId];
 	}
 	/**
-	 * Getting the pagination array
-	 *
-	 * @return array
-	 */
-	private function _getPaginationArray() {
-		$dateRange = $this->_getValidDateRange ();
-		$diff = $dateRange ['end']->diff ( $dateRange ['start'] );
-		$array = SupplierConnectorProduct::getInitPagination ( null, $diff->days, 1, DaoQuery::DEFAUTL_PAGE_SIZE );
-		return $array;
-	}
-	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see SupplierConn::getProductListInfo()
@@ -65,7 +60,8 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 	public function getProductListInfo(ProductType $type = null) {
 		if ($this->_debugMode === true)
 			SupplierConnectorAbstract::log ( $this, 'Getting product list info:', __FUNCTION__ );
-		$array = $this->_getPaginationArray ();
+		$dates = $this->_getValidDateRange ();
+		$array = SupplierConnectorProduct::getInitPagination ( null, count($dates), 1, DaoQuery::DEFAUTL_PAGE_SIZE );
 		if ($this->_debugMode === true)
 			SupplierConnectorAbstract::log ( $this, '::got array from results:' . print_r ( $array, true ), __FUNCTION__ );
 		return $array;
@@ -191,17 +187,15 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $onceOnly = false) {
 		if ($this->_debugMode === true)
 			SupplierConnectorAbstract::log ( $this, 'Getting product list:', __FUNCTION__ );
-		$dateRange = $this->_getValidDateRange ();
+		$dates = $this->_getValidDateRange ();
+		$noOfDates = count($dates);
 		$products = array ();
-		$pagination = $this->_getPaginationArray ();
 		$start = (($pageNo - 1) * $pageSize);
-		for($i = $start; $i <= $pagination ['totalRecords']; $i ++) {
+		for($i = $start; $i < $noOfDates; $i ++) {
 			// if we are only try to grab one lot
 			if (($i >= ($start + $pageSize)) && $onceOnly === true)
 				break;
-			$isseDate = new UDate ( $dateRange ['start']->format ( 'Y-m-d H:i:s' ) );
-			$isseDate->modify ( '+' . $i . ' day' );
-			$products [] = $this->_fakeProduct ( $type, $isseDate );
+			$products[] = $this->_fakeProduct ($type, $dates[$i]);
 		}
 		return $products;
 	}

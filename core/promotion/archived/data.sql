@@ -86,7 +86,7 @@ insert into `supplierinfotype` (`id`, `name`, `code`, `active`, `created`, `crea
 insert into `supplier` (`id`, `name`, `connector`,`active`, `created`, `createdById`, `updated`, `updatedById`) values
 	(1, 'Xin Hua', 'SC_XinHua', 1, NOW(), 100, NOW(), 100),
 	(2, 'Tai Wan', 'SC_TW', 1, NOW(), 100, NOW(), 100),
-	(3, '大公报', 'SC_TaKungPao', 1, NOW(), 100, NOW(), 100),
+	(3, '大公報', 'SC_TaKungPao', 1, NOW(), 100, NOW(), 100),
 	(4, '文匯報', 'SC_WenHuiPo', 1, NOW(), 100, NOW(), 100);
 
 ############################ add supplierinfo table
@@ -146,7 +146,7 @@ insert into `libraryinfo` (`libraryId`, `typeId`,`value`, `active`, `created`, `
     ('1', '2', 'ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('1', '2', 'www.ebmv.com.au', 1, NOW(), 100, NOW(), 100),
     ('1', '3', 'Australia/Melbourne', 1, NOW(), 100, NOW(), 100),
-    ('1', '4', 'default', 1, NOW(), 100, NOW(), 100),
+    ('1', '4', 'bankstown', 1, NOW(), 100, NOW(), 100),
     ('1', '5', '1', 1, NOW(), 100, NOW(), 100),
     
     ('2', '1', 'NBANK', 1, NOW(), 100, NOW(), 100),

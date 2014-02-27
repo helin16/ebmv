@@ -1,9 +1,43 @@
 <?php
 class SC_XinMinZhouKan extends SupplierConnectorOpenSourceAbstract implements SupplierConn 
 {
-	protected function _getCoverImageSrc(DOMDocument $doc)
+	/**
+	 * Getting the issue date range
+	 *
+	 * @return multitype:UDate
+	 */
+	protected function _getValidDateRange() 
 	{
-		return '';
+		if (!isset( self::$_cache ['isseRange'] ))
+		{
+			$now = new UDate ();
+			$start = new UDate ();
+			$start->modify ('-3 month');
+			$diff = $now->diff($start);
+			$days = array ();
+			for($i = 0; $i <= $diff->days; $i++)
+			{
+				$isseDate = new UDate ( $start->format( 'Y-m-d H:i:s' ) );
+				$isseDate->modify ( '+' . $i . ' day' );
+				if(strtolower(trim($isseDate->format('D'))) === 'mon')
+					$days[] = new UDate($isseDate->format( 'Y-m-d H:i:s' ));
+			}
+			self::$_cache ['isseRange'] = $days;
+		}
+		return self::$_cache ['isseRange'];
+	}
+	/**
+	 * Getting the cover image
+	 *
+	 * @param string $productKey
+	 *
+	 * @throws SupplierConnectorException
+	 * @return string
+	 */
+	protected function _getCoverImage($productKey)
+	{
+		$dateString = str_replace('/', '-', $productKey);
+		return 'http://xmzk.xinmin.cn/resfile/' . $dateString . '/01/Page_b.jpg';
 	}
 	protected function _getLanguageCode()
 	{
@@ -11,6 +45,6 @@ class SC_XinMinZhouKan extends SupplierConnectorOpenSourceAbstract implements Su
 	}
 	protected function _getProductKey(UDate $date)
 	{
-		return $date->format('Y/m/d');
+		return $date->format('Y-m/d');
 	}
 }
