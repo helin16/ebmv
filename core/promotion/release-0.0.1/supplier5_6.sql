@@ -8,11 +8,11 @@ insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`,
     ('5', 2, 'http://xmwb.xinmin.cn/html/{productKey}/node_1.htm', 1, NOW(), 100, NOW(), 100),
     ('5', 4, '1', 1, NOW(), 100, NOW(), 100),
     ('5', 5, '2', 1, NOW(), 100, NOW(), 100),
-    ('5', 6, '/var/www/html/protected/asset/supplier4/', 1, NOW(), 100, NOW(), 100),
+    ('5', 6, '/var/www/html/protected/asset/supplier5/', 1, NOW(), 100, NOW(), 100),
     ('5', 8, '2', 1, NOW(), 100, NOW(), 100),
     
     ('6', 2, 'http://xmzk.xinmin.cn/html/{productKey}/node_1.htm', 1, NOW(), 100, NOW(), 100),
     ('6', 4, '1', 1, NOW(), 100, NOW(), 100),
     ('6', 5, '3', 1, NOW(), 100, NOW(), 100),
-    ('6', 6, '/var/www/html/protected/asset/supplier4/', 1, NOW(), 100, NOW(), 100),
-    ('6', 8, '2', 1, NOW(), 100, NOW(), 100);
+    ('6', 6, '/var/www/html/protected/asset/supplier6/', 1, NOW(), 100, NOW(), 100),
+    ('6', 8, '3', 1, NOW(), 100, NOW(), 100);
