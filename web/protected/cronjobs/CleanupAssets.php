@@ -46,10 +46,22 @@ class CleanupAssets
 		$sql = "select id from product where active = 0";
 		$pIds = array_map(create_function('$a', 'return $a[0];'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
 
-		//delete productattributes that have inactive product
 		if(count($pIds) > 0)
-			Dao::deleteByCriteria(new DaoQuery('ProductAttribute'), 'productId in (' . implode(',', $pIds) . ')');
-		
+		{
+			$where = 'productId in (' . implode(',', $pIds)  . ')';
+			//delete productattributes that have inactive product
+			Dao::deleteByCriteria(new DaoQuery('ProductAttribute'), 'active = 0 or ' . $where);
+			//delete libraryowns
+			Dao::deleteByCriteria(new DaoQuery('LibraryOwns'), 'active = 0 or  ' . $where);
+			//delete productshelfitem
+			Dao::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'active = 0 or ' . $where);
+			//delete productstatics
+			Dao::deleteByCriteria(new DaoQuery('ProductStatics'), 'active = 0 or  ' . $where);
+			//delete category_product
+			Dao::deleteByCriteria('category_product',  $where);
+			//delete language_product
+			Dao::deleteByCriteria('language_product',  $where);
+		}
 		
 		$sql = "select ass.assetId, ass.path from asset ass
 			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (?, ?))
