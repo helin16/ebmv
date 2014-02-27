@@ -44,6 +44,10 @@ try
 		throw new Exception('patron needed!');
 	if(!isset($_REQUEST['patronpwd']) || ($patronpwd = trim($_REQUEST['patronpwd'])) === '')
 		throw new Exception('patronpwd needed!');
+	if(!isset($_REQUEST['sipuser']) || ($sipuser = trim($_REQUEST['sipuser'])) === '')
+		throw new Exception('sipuser needed!');
+	if(!isset($_REQUEST['sippass']) || ($sippass = trim($_REQUEST['sippass'])) === '')
+		throw new Exception('sippass needed!');
 	
 	$mysip = new SIP2();
 	// Set host name
@@ -68,6 +72,15 @@ try
 		echo '<h3 class="request">Connect to ' . $mysip->hostname . ':' . $mysip->port . '</h3>';
 		$result = $mysip->connect();
 		echo '<div class="response">Result: ' . print_r($result, true) . '</div>';
+	echo '</div>';
+	
+	// login into SIP server
+	$in = $mysip->msgLogin($sipuser, $sippass);
+	echo '<div class="testDiv">';
+		echo '<h3 class="request">Self check <span class="smltxt rawMsg">' . $in . '</span></h3>';
+		$rawResp = $mysip->get_message($in);
+		$result = $mysip->parseLoginResponse($rawResp);
+		echo '<div class="response">Result <span class="smltxt">Raw response: <span class="rawMsg">' . $rawResp . '</span></span>:<div class="blockView">' . print_r($result, true). '</div></div>';
 	echo '</div>';
 	
 	// selfcheck status mesage goes here...
