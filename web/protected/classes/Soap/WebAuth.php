@@ -32,7 +32,7 @@ class WebAuth
 	 * Authentication method
 	 * 
 	 * @param string $CDKey  The scecret key
-	 * @param int    $SiteID The library code
+	 * @param string $SiteID The library code
 	 * @param string $Uid    The username
 	 * @param string $Pwd    The hashed password
 	 * 
