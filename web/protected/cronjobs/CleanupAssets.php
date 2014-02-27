@@ -41,7 +41,7 @@ class CleanupAssets
 	{
 		$return = array();
 		$sql = "select distinct att.attribute from productattribute att where att.typeId IN (?, ?)";
-		$usedAssetIds = array_map(create_function('$a', 'return trim($[a[0]);'), Dao::getResultsNative($sql, array(ProductAttributeType::ID_IMAGE, ProductAttributeType::ID_IMAGE_THUMB), PDO::FETCH_NUM));
+		$usedAssetIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(ProductAttributeType::ID_IMAGE, ProductAttributeType::ID_IMAGE_THUMB), PDO::FETCH_NUM));
 		
 		$sql = "select distinct ass.assetId from asset ass";
 		foreach(Dao::getResultsNative($sql, array(), PDO::FETCH_NUM) as $row)
