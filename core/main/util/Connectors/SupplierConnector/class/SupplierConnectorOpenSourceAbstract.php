@@ -26,7 +26,7 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 			$start->modify ('-1 month');
 			$diff = $now->diff($start);
 			$days = array ();
-			for($i = 0; $i <= $diff-days; $i++)
+			for($i = 0; $i <= $diff->days; $i++)
 			{
 				$isseDate = new UDate ( $start->format( 'Y-m-d H:i:s' ) );
 				$isseDate->modify ( '+' . $i . ' day' );
