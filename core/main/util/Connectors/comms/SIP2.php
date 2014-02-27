@@ -83,8 +83,8 @@ class SIP2
     public $debug        = false;
    
     /* Private variables for building messages */
-    public $AO = 'BOX';
-    public $AN = 'BOX';
+    public $AO = '';
+    public $AN = '';
    
     /* Private variable to hold socket connection */
     private $socket;

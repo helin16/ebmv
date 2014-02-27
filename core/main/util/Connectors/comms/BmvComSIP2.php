@@ -69,6 +69,12 @@ class BmvComSIP2
 				throw new CoreException('SIP2 can NOT connect to HOST:' . $this->_sip2->hostname . ':' . $this->_sip2->port);
 			$connected = true;
 			
+			//login to the SIP server
+			//$in = $this->_sip2->msgLogin($this->_sip2->patron, $this->_sip2->patronpwd);
+			//$result = $mysip->parseLoginResponse($this->_sip2->get_message($in));
+			//if(!isset($result['fixed']) || !isset($result['fixed']['OK']) || trim($result['fixed']['OK']) !== '1')
+				//throw new CoreException('Invalid username and password, please contact your library!');
+			
 			//send selfcheck status message
 			$in = $this->_sip2->msgSCStatus();
 			$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
