@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__) . '/../../bootstrap.php';
 class CleanupAssets
 {
 	public static function run()
@@ -111,7 +110,3 @@ class CleanupAssets
 		return count($result) > 0;
 	}
 }
-
-if (!Core::getUser() instanceof UserAccount)
-	Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
-CleanupAssets::run();

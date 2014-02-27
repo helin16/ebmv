@@ -8,6 +8,11 @@ if ($argc != 4)
 if (!Core::getUser() instanceof UserAccount)
 	Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
 
+echo "== Cleanup Assets ===================================================\n\r";
+CleanupAssets::run();
+echo "== Done with Assets ===================================================\n\r\n\r\n\r\n\r\n\r";
+
+
 $libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $libCodes)));
 $supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
 $totalrecords = (($totalrecords = trim($argv[3])) === 'all' ? null : $totalrecords);
@@ -19,3 +24,8 @@ echo "== Total Records: '" . $totalrecords . "\n\r";
 echo "== Starting Importing @ " . trim(new UDate()) . "========================================================\n\r";
 ImportProduct::run($libCodes, $supplierIds, $totalrecords);
 echo "== Finished Importing @ " . trim(new UDate()) . "========================================================\n\r";
+
+
+echo "== Cleanup Assets ===================================================\n\r";
+CleanupAssets::run();
+echo "== Done with Assets ===================================================\n\r\n\r\n\r\n\r\n\r";
