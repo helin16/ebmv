@@ -68,7 +68,6 @@ class CleanupAssets
 	private static function _removeAsset(array $assetIds)
 	{
 		self::_log(__FUNCTION__, '  :: removing assetIds: ');
-		self::_log(__FUNCTION__, '  :: ' . implode("\n\r      ", $assetIds));
 		BaseServiceAbastract::getInstance('Asset')->removeAssets($assetIds);
 		self::_log(__FUNCTION__, '  :: finish removing assetIds: ');
 	}
