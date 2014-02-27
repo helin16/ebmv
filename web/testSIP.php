@@ -44,12 +44,6 @@ try
 		throw new Exception('patron needed!');
 	if(!isset($_REQUEST['patronpwd']) || ($patronpwd = trim($_REQUEST['patronpwd'])) === '')
 		throw new Exception('patronpwd needed!');
-	if(!isset($_REQUEST['sipuser']) || ($sipuser = trim($_REQUEST['sipuser'])) === '')
-		throw new Exception('sipuser needed!');
-	if(!isset($_REQUEST['sippass']) || ($sippass = trim($_REQUEST['sippass'])) === '')
-		throw new Exception('sippass needed!');
-	if(!isset($_REQUEST['siplocation']) || ($siplocation = trim($_REQUEST['siplocation'])) === '')
-		throw new Exception('siplocation needed!');
 	
 	$mysip = new SIP2();
 	// Set host name
@@ -59,7 +53,6 @@ try
 	// Identify a patron
 	$mysip->patron = $patron;
 	$mysip->patronpwd = $patronpwd;
-	$mysip->scLocation = $siplocation;
 	
 	// asgining all params
 	$refClass = new ReflectionClass($mysip);
@@ -78,7 +71,7 @@ try
 	echo '</div>';
 	
 	// login into SIP server
-	$in = $mysip->msgLogin($sipuser, $sippass);
+	$in = $mysip->msgLogin($mysip->patron, $mysip->patronpwd);
 	echo '<div class="testDiv">';
 		echo '<h3 class="request">Self check <span class="smltxt rawMsg">' . $in . '</span></h3>';
 		$rawResp = $mysip->get_message($in);
