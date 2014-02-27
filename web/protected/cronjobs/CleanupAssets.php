@@ -39,12 +39,16 @@ class CleanupAssets
 	 */
 	private static function _getAllUnusedAssets()
 	{
-		$sql = "select ass.assetId, ass.path from asset ass
-			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (" . ProductAttributeType::ID_IMAGE . ", " . ProductAttributeType::ID_IMAGE_THUMB ."))
-			where att.id is null";
 		$return = array();
-		foreach(Dao::getResultsNative($sql) as $row)
-			$return[] = $row['assetId'];
+		$sql = "select distinct att.attribute from productattribute att where att.typeId IN (?, ?)";
+		$usedAssetIds = array_map(create_function('$a', 'return trim($[a[0]);'), Dao::getResultsNative($sql, array(ProductAttributeType::ID_IMAGE, ProductAttributeType::ID_IMAGE_THUMB), PDO::FETCH_NUM));
+		
+		$sql = "select distinct ass.assetId from asset ass";
+		foreach(Dao::getResultsNative($sql, array(), PDO::FETCH_NUM) as $row)
+		{
+			if(!in_array(trim($row[0]), $usedAssetIds))
+				$return[] = trim($row[0]);
+		}
 		return $return;
 	}
 	/**
