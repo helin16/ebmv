@@ -176,7 +176,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "AddToBookShelf", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new SupplierConnectorException("Connector Error: " .$xml->Value);
+			throw new SupplierConnectorException("Connector Error, when try to add to user's bookshelf: " .$xml->Value);
 		return $xml;
 	}
 	/**
@@ -200,7 +200,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 				'CDKey' => StringUtilsAbstract::getCDKey($this->_supplier->getInfo('skey'), $username, $libCode));
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "RemoveFromBookShelf", $params);
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
-			throw new SupplierConnectorException("Connector Error: " . $xml->Value);
+			throw new SupplierConnectorException("Connector Error, when try to remove from user's bookshelf: " . $xml->Value);
 		return $xml;
 	}
 	/**
@@ -231,7 +231,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		{
 		}
 		if(trim($xml->Code) !== trim(self::CODE_SUCC))
-			throw new SupplierConnectorException("Connector Error: " . trim($xml->Value));
+			throw new SupplierConnectorException("Connector Error, when try to get the download url: " . trim($xml->Value));
 		return trim($xml->Value);
 	}
 	/**
