@@ -37,7 +37,8 @@ class SC_XinMinZhouKan extends SupplierConnectorOpenSourceAbstract implements Su
 	protected function _getCoverImage($productKey)
 	{
 		$dateString = str_replace('/', '-', $productKey);
-		return 'http://xmzk.xinmin.cn/resfile/' . $dateString . '/01/Page_b.jpg';
+		$url = 'http://xmzk.xinmin.cn/resfile/' . $dateString . '/01/Page_b.jpg';
+		return BmvComScriptCURL::is404($url) ? '' : $url;
 	}
 	protected function _getLanguageCode()
 	{

@@ -12,7 +12,8 @@ class SC_XinMinWanBao extends SupplierConnectorOpenSourceAbstract implements Sup
 	protected function _getCoverImage($productKey)
 	{
 		$dateString = str_replace('/', '-', $productKey);
-		return 'http://xmwb.xinmin.cn/resfile/' . $dateString . '/A01/Page_b.jpg';
+		$url = 'http://xmwb.xinmin.cn/resfile/' . $dateString . '/A01/Page_b.jpg';
+		return BmvComScriptCURL::is404($url) ? '' : $url;
 	}
 	protected function _getLanguageCode()
 	{
