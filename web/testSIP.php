@@ -45,6 +45,8 @@ try
 	if(!isset($_REQUEST['patronpwd']) || ($patronpwd = trim($_REQUEST['patronpwd'])) === '')
 		throw new Exception('patronpwd needed!');
 	
+	$siplocation = !isset($_REQUEST['siplocation']) ? '' : trim($_REQUEST['siplocation']);
+	
 	$mysip = new SIP2();
 	// Set host name
 	$mysip->hostname = $hostname;
@@ -53,6 +55,7 @@ try
 	// Identify a patron
 	$mysip->patron = $patron;
 	$mysip->patronpwd = $patronpwd;
+	$mysip->scLocation = $siplocation;
 	
 	// asgining all params
 	$refClass = new ReflectionClass($mysip);
