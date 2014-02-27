@@ -8,25 +8,32 @@
  */
 class HomeController extends FrontEndPageAbstract
 {
+	private function _getLanguage($params)
+	{
+		if(!isset($params->CallbackParameter->languageId) || !($language = BaseServiceAbastract::getInstance('Language')->get(trim($params->CallbackParameter->languageId))) instanceof Language)
+			return null;
+		return $language;
+	}
+	
     public function getNewRelease($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts');
-    }
-    public function getNewNewsPaper($sender, $params)
-    {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', null, BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_NEWSPAPER));
-    }
-    public function getNewMagazine($sender, $params)
-    {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', null, BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_MAGAZINE));
-    }
-    public function getNewBooks($sender, $params)
-    {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', null, BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_BOOK));
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params));
     }
     public function getMostPopular($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getMostPopularProducts');
+	    $params->ResponseData = $this->_listProducts($params, 'getMostPopularProducts', $this->_getLanguage($params));
+    }
+    public function getNewNewsPaper($sender, $params)
+    {
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_NEWSPAPER));
+    }
+    public function getNewMagazine($sender, $params)
+    {
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_MAGAZINE));
+    }
+    public function getNewBooks($sender, $params)
+    {
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_BOOK));
     }
     
     private function _listProducts($params, $funcName, Language $lang = null, ProductType $type = null)

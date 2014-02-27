@@ -58,6 +58,11 @@ class ProductListShowCase extends TTemplateControl
         $js = $this->getJsObjVar() . ' = new ProductListShowCaseJs();';
         $js .= $this->getJsObjVar() . '.pagination.pageSize = ' . $this->getLimit() . ';';
         $js .= $this->getJsObjVar() . '.fetch("' . $this->fetchProductBtn->getUniqueID() . '", "' . $this->getClientID() . '");';
+        $js .= '$("' . $this->getClientID() . '").down(".langlist").getElementsBySelector(".langitem").each(function(item){ ';
+	        $js .= 'item.observe("click", function(){ ';
+	        	$js .= $this->getJsObjVar() . '.changeLanguage(this);';
+	        $js .= '})';
+        $js .= '});';
         return $js;
     }
     /**

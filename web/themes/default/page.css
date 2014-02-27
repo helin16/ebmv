@@ -9,6 +9,8 @@
     border: 1px solid #BBBBBB;
     box-shadow: 0 1px 0 #FFFFFF inset;
     color:inherit;
+    height: 26px;
+    width: 34px;
 }
 .productlistviewbtns .button.active,
 .productlistviewbtns .button:hover {
@@ -16,23 +18,23 @@
 }
 
 .productlistviewbtns .button .icon{
+    background: url("../images/product_show_sprite.png") no-repeat scroll left center rgba(0, 0, 0, 0);
     display: inline-block;
     height: 26px;
-    width: 34px;
     vertical-align: middle;
-    background: transparent url('images/product_show_sprite.png') no-repeat left center;
+    width: 34px;
 }
 .productlistviewbtns .button.list .icon{
     background-position: -68px -3px;
 }
 .productlistviewbtns .button .title{
-    display: inline-block;
+    display: none;
     float: right;
     margin: 3px 0 0 0;
 }
 
 .productlist {
-    padding: 10px;
+    padding: 5px;
 }
 .productlist .loading {
     display: block;
@@ -47,20 +49,20 @@
     border: 1px #eeeeee solid;
 }
 .product .product_image.noimage {
-    background: transparent url('images/no_image_found.jpg') no-repeat center center;
+    background: transparent url('../images/no_image_found.jpg') no-repeat center center;
 }
 
 .product.listitem {
-    padding: 10px 0;
+    padding: 5px 0;
 }
 .product .listcol {
     vertical-align: top;
 }
 .product .listcol.left {
-    width: 27%;
+    width: 25%;
 }
 .product .listcol.right {
-    width: 72%;
+    width: 70%;
 }
 .product .listcol label{
     font-size: 10px;
@@ -80,7 +82,7 @@
 }
 .product .listcol .product_description {
     padding: 8px 0 0 0;
-    font-size: 12px;
+    font-size: 14px;
 }
 .product .listcol .row.btns {
 	padding: 10px 0;
@@ -101,8 +103,10 @@
 .pagination_wrapper .pagin_btn {
     display: inline-block;
     padding: 4px;
-    margin-top: 10px;
+    margin: 10px 20px;
     text-align: center;
+    float:right;
+    width:30%;
 }
 
 .product.griditem {
@@ -149,15 +153,20 @@
 
 /** LoginPage **/
 .LoginPanel {
-    margin: 20px auto;
+    margin: 100px auto;
     width: 400px;
 }
 
 .LoginPanel .row {
-    margin: 10px 0;
+    margin: 40px 0 0 60px;
 }
 
 .LoginPanel .row .title {
+    width: 110px;
+    vertical-align: top;
+    text-align: right;
+}
+.LoginPanel .row .title .top{
     width: 110px;
     vertical-align: top;
     text-align: right;
@@ -172,13 +181,37 @@
     height: 260px;
     border: 1px #cccccc solid;
     border-radius: 4px;
-    margin: 0 0 30px 0;
+    margin: 30px auto;
 }
 
 .homepageWrapper .sectionWrapper .title {
     font-weight: bold;
-    background: #cccccc;
+    background: #213C81;
     padding: 5px;
+    color:#ffffff;
+}
+
+.homepageWrapper .sectionWrapper .title .langchoser{
+	float: right;
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul{
+	list-style: none;
+	margin:0;
+	padding: 0;
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul li{
+	display: inline-block;
+	padding: 5px 8px;
+	font-size: 13px
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul li:hover {
+	text-decoration: underline;
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul li.active,
+.homepageWrapper .sectionWrapper .title .langchoser ul li:hover{
+	background: white;
+	border-radius: 2px;
+	color: #213C81;
 }
 
 .homepageWrapper .jcarousel-skin-tango .jcarousel-container.jcarousel-container-horizontal {
@@ -210,7 +243,7 @@
 
 /** helppage **/
 .helppage .questionListItem {
-	padding: 5px;
+	padding: 5px 0 5px 0;
 }
 
 .helppage .questionListItem:hover {
@@ -219,33 +252,35 @@
 }
 
 .helppage .questionWrapper {
-	margin: 0 0 20px 0;
+		margin: 5px auto;
 }
 
 .helppage .questionWrapper .question {
 	color: #002A5C;
-	font-size: 32px;
+	font-size: 18px;
 }
 .helppage .questionWrapper .question .icon{
+	/**
 	display: inline-block;
 	height: 32px;
 	width: 32px;
-	background: transparent url(images/Icons_sprite.png) left bottom no-repeat;
+	background: transparent url(../images/Icons_sprite.png) left bottom no-repeat;
 	background-position: -230px -430px;
 	margin: 0 5px 0 0;
+	**/
 }
 .helppage .questionWrapper .question.shown .icon{
-	background-position: -310px -430px;
+	/**background-position: -310px -430px;**/
 }
 .helppage .questionWrapper .answer {
-	padding: 5px 10px;
-	font-size: 13px;
+	padding: 5px 5px;
+	font-size: 15px;
 }
 
 /** userpage **/
 .pageWrapper.userpage .leftmenu.singlelevel ul li.active,
 .pageWrapper.userpage .leftmenu.singlelevel ul li:hover {
-    background: #1C5A80;
+    background: #6a8bbe;
     color: white;
 }
 .pageWrapper.userpage .newpadding {
