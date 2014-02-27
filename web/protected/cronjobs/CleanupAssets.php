@@ -39,16 +39,25 @@ class CleanupAssets
 	 */
 	private static function _getAllUnusedAssets()
 	{
-		$return = array();
-		$sql = "select distinct att.attribute from productattribute att where att.typeId IN (?, ?)";
-		$usedAssetIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(ProductAttributeType::ID_IMAGE, ProductAttributeType::ID_IMAGE_THUMB), PDO::FETCH_NUM));
+		//delete inactive
+		Dao::deleteByCriteria(new DaoQuery('ProductAttribute'), 'active = 0');
 		
-		$sql = "select distinct ass.assetId from asset ass";
-		foreach(Dao::getResultsNative($sql, array(), PDO::FETCH_NUM) as $row)
-		{
-			if(!in_array(trim($row[0]), $usedAssetIds))
-				$return[] = trim($row[0]);
-		}
+		//get all inactive product ids
+		$sql = "select id from product where active = 0";
+		$pIds = array_map(create_function('$a', 'return $a[0]'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
+
+		//delete productattributes that have inactive product
+		if(count($pIds) > 0)
+			Dao::deleteByCriteria(new DaoQuery('ProductAttribute'), 'productId in (' . implode(',', $pIds) . ')');
+		
+		
+		$sql = "select ass.assetId, ass.path from asset ass
+			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (?, ?))
+			where att.id is null";
+		$return = array();
+		foreach(Dao::getResultsNative($sql, array(ProductAttributeType::ID_IMAGE,ProductAttributeType::ID_IMAGE_THUMB )) as $row)
+			$return[] = $row['assetId'];
+		
 		return $return;
 	}
 	/**
