@@ -111,6 +111,7 @@ abstract class FrontEndPageAbstract extends TPage
 	{
 	    $this->getPage()->getClientScript()->registerScriptFile('jQueryJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . 'jQuery.js', true));
 	    $this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . __CLASS__ . '.js', true));
+	    $this->getClientScript()->registerBeginScript('jquery.noConflict', 'jQuery.noConflict();');
 	    return $this;
 	}
 	/**
