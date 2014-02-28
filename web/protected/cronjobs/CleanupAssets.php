@@ -39,9 +39,6 @@ class CleanupAssets
 	 */
 	private static function _getAllUnusedAssets()
 	{
-		//delete inactive
-		Dao::deleteByCriteria(new DaoQuery('ProductAttribute'), 'active = 0');
-		
 		//get all inactive product ids
 		$sql = "select id from product where active = 0";
 		$pIds = array_map(create_function('$a', 'return $a[0];'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
@@ -62,6 +59,8 @@ class CleanupAssets
 			//delete language_product
 			Dao::deleteByCriteria('language_product',  $where);
 		}
+		//delete inactive
+		Dao::deleteByCriteria(new DaoQuery('Product'), 'active = 0');
 		
 		$sql = "select ass.assetId, ass.path from asset ass
 			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (?, ?))
