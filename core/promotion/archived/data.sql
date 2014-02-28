@@ -87,7 +87,9 @@ insert into `supplier` (`id`, `name`, `connector`,`active`, `created`, `createdB
 	(1, 'Xin Hua', 'SC_XinHua', 1, NOW(), 100, NOW(), 100),
 	(2, 'Tai Wan', 'SC_TW', 1, NOW(), 100, NOW(), 100),
 	(3, '大公報', 'SC_TaKungPao', 1, NOW(), 100, NOW(), 100),
-	(4, '文匯報', 'SC_WenHuiPo', 1, NOW(), 100, NOW(), 100);
+	(4, '文匯報', 'SC_WenHuiPo', 1, NOW(), 100, NOW(), 100),
+	(5, '新民晚报', 'SC_XinMinWanBao', 1, NOW(), 100, NOW(), 100),
+	(6, '新民周刊', 'SC_XinMinZhouKan', 1, NOW(), 100, NOW(), 100);
 
 ############################ add supplierinfo table
 insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
@@ -120,7 +122,19 @@ insert into `supplierinfo` (`supplierId`, `typeId`,`value`, `active`, `created`,
     ('4', 4, '2', 1, NOW(), 100, NOW(), 100),
     ('4', 5, '2', 1, NOW(), 100, NOW(), 100),
     ('4', 8, '2', 1, NOW(), 100, NOW(), 100),
-    ('4', 6, '/var/www/html/protected/asset/supplier4/', 1, NOW(), 100, NOW(), 100);
+    ('4', 6, '/var/www/html/protected/asset/supplier4/', 1, NOW(), 100, NOW(), 100),
+    
+    ('5', 2, 'http://xmwb.xinmin.cn/html/{productKey}/node_1.htm', 1, NOW(), 100, NOW(), 100),
+    ('5', 4, '1', 1, NOW(), 100, NOW(), 100),
+    ('5', 5, '2', 1, NOW(), 100, NOW(), 100),
+    ('5', 6, '/var/www/html/protected/asset/supplier5/', 1, NOW(), 100, NOW(), 100),
+    ('5', 8, '2', 1, NOW(), 100, NOW(), 100),
+    
+    ('6', 2, 'http://xmzk.xinmin.cn/html/{productKey}/node_1.htm', 1, NOW(), 100, NOW(), 100),
+    ('6', 4, '1', 1, NOW(), 100, NOW(), 100),
+    ('6', 5, '3', 1, NOW(), 100, NOW(), 100),
+    ('6', 6, '/var/www/html/protected/asset/supplier6/', 1, NOW(), 100, NOW(), 100),
+    ('6', 8, '3', 1, NOW(), 100, NOW(), 100);
 
 ############################ add library table
 insert into `library` (`id`, `name`, `connector`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
