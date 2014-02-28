@@ -23,7 +23,7 @@ class CleanupAssets
 			//removing all zombie files
 			self::_log(__FUNCTION__, '== remove all zombie files');
 			$testedFiles = self::_rmAllUnusedAssetsFiles();
-			self::_log(__FUNCTION__, '  :: ' . count($totalFiles) . ' file(s) tested!');
+			self::_log(__FUNCTION__, '  :: ' . count($testedFiles) . ' file(s) tested!');
 
 			//last checking products vs assets
 			self::_log(__FUNCTION__, '== Summary: ');
