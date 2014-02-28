@@ -8,7 +8,7 @@ class SC_XinMinZhouKan extends SupplierConnectorOpenSourceAbstract implements Su
 	 */
 	protected function _getValidDateRange() 
 	{
-		if (!isset( self::$_cache ['isseRange'] ))
+		if (!isset( self::$_cache ['isseRangeChanged'] ))
 		{
 			$now = new UDate ();
 			$start = new UDate ();
@@ -22,9 +22,9 @@ class SC_XinMinZhouKan extends SupplierConnectorOpenSourceAbstract implements Su
 				if(strtolower(trim($isseDate->format('D'))) === 'mon')
 					$days[] = new UDate($isseDate->format( 'Y-m-d H:i:s' ));
 			}
-			self::$_cache ['isseRange'] = $days;
+			self::$_cache ['isseRangeChanged'] = $days;
 		}
-		return self::$_cache ['isseRange'];
+		return self::$_cache ['isseRangeChanged'];
 	}
 	/**
 	 * Getting the cover image
