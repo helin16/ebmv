@@ -149,7 +149,7 @@ class CleanupAssets
 	 */
 	private static function _rmZombieFiles($rootPath, array &$totalFiles)
 	{
-		self::_log(__FUNCTION__, '  :: == removing files under: ' . $rootPath);
+// 		self::_log(__FUNCTION__, '  :: == removing files under: ' . $rootPath);
 		foreach(glob($rootPath . DIRECTORY_SEPARATOR . '*', GLOB_BRACE) as $file)
 		{
 			if(is_file($file))
@@ -166,7 +166,7 @@ class CleanupAssets
 			else if(is_dir($file))
 				self::_rmZombieFiles($file, $totalFiles);
 		}
-		self::_log(__FUNCTION__, '  :: == finished removing files under: ' . $rootPath);
+// 		self::_log(__FUNCTION__, '  :: == finished removing files under: ' . $rootPath);
 	}
 	/**
 	 * Checking whether the assetId exsits in DB
