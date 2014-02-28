@@ -23,12 +23,11 @@ class CleanupAssets
 			//removing all zombie files
 			self::_log(__FUNCTION__, '== remove all zombie files');
 			$testedFiles = self::_rmAllUnusedAssetsFiles();
-			
-			//trying to see the number of product matches with the number of files
-			$sql = "select count(id) from product";
-			$result = Dao::getSingleResultNative($sql, array(), PDO::FETCH_NUM);
-			$testedFiles = self::_rmAllUnusedAssetsFiles();
-			self::_log(__FUNCTION__, '== GOT: ' . $result[0] . ' product(s) and (' . count($testedFiles) . ') file(s), difference: ' . ($result[0] - count($testedFiles)));
+
+			//last checking products vs assets
+			self::_log(__FUNCTION__, '== Summary: ');
+			$diff = self::_showSummary($testedFiles);
+			self::_log(__FUNCTION__, '== Final Difference: ' . $diff);
 		}
 		catch(Exception $ex)
 		{
@@ -36,6 +35,28 @@ class CleanupAssets
 			self::_log(__FUNCTION__, '   ' . $ex->getTraceAsString());
 		}
 		self::_log(__FUNCTION__, '== Finished @ ' . new UDate());
+	}
+	/**
+	 * Showing the summary
+	 * 
+	 * @param array $testedFiles
+	 * 
+	 * @return number
+	 */
+	private function _showSummary($testedFiles)
+	{
+		$noOfTestedFiles = count($testedFiles);
+		//trying to see the number of product matches with the number of files
+		$sql = "select count(id) from product";
+		$result = Dao::getSingleResultNative($sql, array(), PDO::FETCH_NUM);
+		$testedFiles = self::_rmAllUnusedAssetsFiles();
+		self::_log(__FUNCTION__, '== GOT: ' . $result[0] . ' product(s) and ' . $noOfTestedFiles . ' file(s), difference: ' . ($diff = ($result[0] - $noOfTestedFiles)));
+		//trying to see how many products that do NOT attrbites
+		$sql = 'select count(p.id) from product p left join productattribute att on (att.productId = p.id and att.typeId in(?, ?)) where att.id is null';
+		$result = Dao::getSingleResultNative($sql, array(), PDO::FETCH_NUM);
+		self::_log(__FUNCTION__, '== GOT: ' . $result[0] . ' product(s) without assets.');
+		
+		return ($diff - $result[0]);
 	}
 	/**
 	 * Getting the log
