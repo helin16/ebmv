@@ -126,9 +126,9 @@ class CleanupAssets
 	 */
 	private static function _removeAsset(array $assetIds)
 	{
-		self::_log(__FUNCTION__, '  :: removing assetIds: ');
+// 		self::_log(__FUNCTION__, '  :: removing assetIds: ');
 		BaseServiceAbastract::getInstance('Asset')->removeAssets($assetIds);
-		self::_log(__FUNCTION__, '  :: finish removing assetIds: ');
+// 		self::_log(__FUNCTION__, '  :: finish removing assetIds: ');
 	}
 	/**
 	 * removing all zombie files
