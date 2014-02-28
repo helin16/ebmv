@@ -6,6 +6,9 @@ class CleanupAssets
 		self::_log(__FUNCTION__, '== start @ ' . new UDate());
 		try
 		{
+			//clean up DB data
+			self::_log(__FUNCTION__, '== clean up DB data');
+			self::_cleanupDBdata();
 			
 			//find out all the assets in the table that are not used by the system
 			self::_log(__FUNCTION__, '== find out all the assets in the table that are not used by the system');
@@ -39,10 +42,24 @@ class CleanupAssets
 	 */
 	private static function _getAllUnusedAssets()
 	{
+		$sql = "select ass.assetId, ass.path from asset ass
+			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (?, ?))
+			where att.id is null";
+		$return = array();
+		foreach(Dao::getResultsNative($sql, array(ProductAttributeType::ID_IMAGE,ProductAttributeType::ID_IMAGE_THUMB )) as $row)
+			$return[] = $row['assetId'];
+		
+		return $return;
+	}
+	/**
+	 * Clean up the DB data
+	 */
+	private static function _cleanupDBdata()
+	{
 		//get all inactive product ids
 		$sql = "select id from product where active = 0";
 		$pIds = array_map(create_function('$a', 'return $a[0];'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
-
+		
 		if(count($pIds) > 0)
 		{
 			$where = 'productId in (' . implode(',', $pIds)  . ')';
@@ -59,17 +76,14 @@ class CleanupAssets
 			//delete language_product
 			Dao::deleteByCriteria('language_product',  $where);
 		}
+		
 		//delete inactive
 		Dao::deleteByCriteria(new DaoQuery('Product'), 'active = 0');
 		
-		$sql = "select ass.assetId, ass.path from asset ass
-			left join productattribute att on (att.attribute = ass.assetId and att.typeId IN (?, ?))
-			where att.id is null";
-		$return = array();
-		foreach(Dao::getResultsNative($sql, array(ProductAttributeType::ID_IMAGE,ProductAttributeType::ID_IMAGE_THUMB )) as $row)
-			$return[] = $row['assetId'];
-		
-		return $return;
+		//delete any logs that older than a 1 month
+		$oneMonthOld = new UDate();
+		$oneMonthOld->modify('-1 month');
+		Dao::deleteByCriteria(new DaoQuery('Log'), 'created < ?', array(trim($oneMonthOld)));
 	}
 	/**
 	 * removing all the assets from db and files
