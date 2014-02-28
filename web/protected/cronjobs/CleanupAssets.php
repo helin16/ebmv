@@ -71,6 +71,7 @@ class CleanupAssets
 		//get all inactive product ids
 		$sql = "select id from product where active = 0";
 		$pIds = array_map(create_function('$a', 'return $a[0];'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
+		$pIds[] = 0;
 		
 		if(count($pIds) > 0)
 		{
