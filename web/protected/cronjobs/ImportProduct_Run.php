@@ -10,7 +10,8 @@ if (!Core::getUser() instanceof UserAccount)
 
 echo "== Cleanup Assets ===================================================\n\r";
 CleanupAssets::run();
-echo "== Done with Assets ===================================================\n\r\n\r\n\r\n\r\n\r";
+echo "== Done with Assets ===================================================\n\r";
+echo "\n\r\n\r\n\r\n\r\n\r";
 
 
 $libCodes = (($libCodes = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $libCodes)));
@@ -24,8 +25,9 @@ echo "== Total Records: '" . $totalrecords . "\n\r";
 echo "== Starting Importing @ " . trim(new UDate()) . "========================================================\n\r";
 ImportProduct::run($libCodes, $supplierIds, $totalrecords);
 echo "== Finished Importing @ " . trim(new UDate()) . "========================================================\n\r";
+echo "\n\r\n\r\n\r\n\r\n\r";
 
 
 echo "== Cleanup Assets ===================================================\n\r";
 CleanupAssets::run();
-echo "== Done with Assets ===================================================\n\r\n\r\n\r\n\r\n\r";
+echo "== Done with Assets ===================================================\n\r";
