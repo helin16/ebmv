@@ -53,7 +53,7 @@ class CleanupAssets
 		self::_log(__FUNCTION__, '== GOT: ' . $result[0] . ' product(s) and ' . $noOfTestedFiles . ' file(s), difference: ' . ($diff = ($result[0] - $noOfTestedFiles)));
 		//trying to see how many products that do NOT attrbites
 		$sql = 'select count(p.id) from product p left join productattribute att on (att.productId = p.id and att.typeId in(?, ?)) where att.id is null';
-		$result = Dao::getSingleResultNative($sql, array(), PDO::FETCH_NUM);
+		$result = Dao::getSingleResultNative($sql, array(ProductAttributeType::ID_IMAGE,ProductAttributeType::ID_IMAGE_THUMB), PDO::FETCH_NUM);
 		self::_log(__FUNCTION__, '== GOT: ' . $result[0] . ' product(s) without assets.');
 		
 		return ($diff - $result[0]);
