@@ -565,7 +565,7 @@ abstract class Dao
     public static function deleteByCriteria($qry, $criteria, $params = array())
     {
         self::connect();
-        return Dao::_execSql('delete from ' . strtolower($qry instanceof DaoQuery ?  trim($qry) : $qry->getFocusClass()) . ' where (' . $criteria . ')', $params);
+        return Dao::_execSql('delete from ' . strtolower($qry instanceof DaoQuery ? $qry->getFocusClass() :  trim($qry)) . ' where (' . $criteria . ')', $params);
     }
     /**
      * replace into
