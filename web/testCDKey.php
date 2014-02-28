@@ -14,7 +14,7 @@ try
 	echo 'key: ' . $key . '<br />';
 	echo 'uid: ' . $uid . '<br />';
 	echo 'siteid: ' . $siteid . '<br />';
-	$cdkey = StringUtilsAbstract::getCDKey($key, $uid, $siteid);
+	$cdkey = strtolower(StringUtilsAbstract::getCDKey($key, $uid, $siteid));
 	echo 'CDKey: ' . $cdkey . '<br />';
 	echo '</pre>';
 }
