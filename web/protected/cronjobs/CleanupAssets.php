@@ -22,7 +22,13 @@ class CleanupAssets
 			
 			//removing all zombie files
 			self::_log(__FUNCTION__, '== remove all zombie files');
-			self::_rmAllUnusedAssetsFiles();
+			$testedFiles = self::_rmAllUnusedAssetsFiles();
+			
+			//trying to see the number of product matches with the number of files
+			$sql = "select count(id) from product";
+			$result = Dao::getSingleResultNative($sql, array(), PDO::FETCH_NUM);
+			$testedFiles = self::_rmAllUnusedAssetsFiles();
+			self::_log(__FUNCTION__, '== GOT: ' . $result[0] . ' product(s) and (' . count($testedFiles) . ') file(s), difference: ' . ($result[0] - count($testedFiles)));
 		}
 		catch(Exception $ex)
 		{
@@ -31,6 +37,12 @@ class CleanupAssets
 		}
 		self::_log(__FUNCTION__, '== Finished @ ' . new UDate());
 	}
+	/**
+	 * Getting the log
+	 * 
+	 * @param sting $functName
+	 * @param string $msg
+	 */
 	private function _log($functName, $msg)
 	{
 		echo $functName . ': ' . $msg . "\n\r";
@@ -106,6 +118,7 @@ class CleanupAssets
 		foreach(Dao::getResultsNative($sql) as $row)
 			self::_rmZombieFiles($row['value'], $totalFiles);
 		self::_log(__FUNCTION__, '  :: ' . count($totalFiles) . ' file(s) tested!');
+		return $totalFiles;
 	}
 	/**
 	 * removing all zombie files under the root path
