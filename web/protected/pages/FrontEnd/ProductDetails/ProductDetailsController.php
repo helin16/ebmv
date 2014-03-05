@@ -91,9 +91,15 @@ class ProductDetailsController extends FrontEndPageAbstract
         			}
         	}
         	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
-        	BaseServiceAbastract::getInstance('ProductShelfItem')
-        		->addToShelf(Core::getUser(), $this->_product, Core::getLibrary())
-        		->borrowItem(Core::getUser(), $this->_product, Core::getLibrary());
+        	BaseServiceAbastract::getInstance('ProductShelfItem')->addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
+        	try
+        	{
+        		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
+        	} 
+        	catch (SupplierConnectorException $e)
+        	{
+        		$results['warning'] = 'Failed to borrow this item from supplier';
+        	}
         }
         catch(Exception $ex)
         {

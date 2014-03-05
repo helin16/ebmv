@@ -196,13 +196,10 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = ) with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
 		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got results:' . print_r($result, true) , __FUNCTION__);
-		try
-		{
-			$results = $this->_getJsonResult($result, 'results');
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Decoded json:' . print_r($results, true) , __FUNCTION__);
-			//TODO:: need to update the expiry date of the shelfitem
-		}
-		catch (SupplierConnectorException $ex){}
+		
+		$results = $this->_getJsonResult($result, 'results');
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Decoded json:' . print_r($results, true) , __FUNCTION__);
+		//TODO:: need to update the expiry date of the shelfitem
 		return $this;
 	}
 	/**

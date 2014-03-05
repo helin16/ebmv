@@ -120,6 +120,16 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		}, 120000);
 	}
 	
+	,_openNewUrl: function(url) {
+		var tmp = {};
+		tmp.me = this;
+		if(url.url)
+			window.open(url.url);
+		if(url.redirecturl)
+			window.location = url.redirecturl;
+		return this;
+	}
+	
 	,_getLink: function(btn, type) {
 		var tmp = {};
 		tmp.me = this;
@@ -131,10 +141,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					,'onComplete': function(sender, param) {
 						try {
 							tmp.result = tmp.me.getResp(param, false, true);
-							if(tmp.result.url)
-								window.open(tmp.result.url);
-							if(tmp.result.redirecturl)
-								window.location = tmp.result.redirecturl;
+							if(tmp.result.warning && type === 'read') {
+								if(confirm('Warning: ' + tmp.result.warning + '\n\nDo you want to continue with preview? / 你要继续预览？ / 你要繼續預覽？'))
+									tmp.me._openNewUrl(tmp.result);
+							} else {
+								tmp.me._openNewUrl(tmp.result);
+							}
 						} catch(e) {
 							alert(e);
 						}
