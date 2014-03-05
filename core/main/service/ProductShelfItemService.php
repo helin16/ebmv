@@ -71,26 +71,10 @@ class ProductShelfItemService extends BaseServiceAbastract
      */
     public function addToShelf(UserAccount $user, Product $product, Library $lib = null)
     {
-    	$transStarted = false;
-    	try
-    	{
-    		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
-    			
-    		$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
-    		$this->syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_NOT_BORROWED);
-    		SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->addToBookShelfList($user, $product);
-    		
-    		if($transStarted === false)
-    			Dao::commitTransaction();
-    		return $this;
-    	}
-    	catch(Exception $ex)
-    	{
-    		if($transStarted === false)
-    			Dao::rollbackTransaction();
-    		throw $ex;
-    	}
-    	
+    	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
+    	$this->syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_NOT_BORROWED);
+    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->addToBookShelfList($user, $product);
+   		return $this;
     }
     /**
      * Borrow an item / add to our self
@@ -105,25 +89,10 @@ class ProductShelfItemService extends BaseServiceAbastract
      */
     public function borrowItem(UserAccount $user, Product $product, Library $lib = null)
     {
-    	$transStarted = false;
-		try
-		{
-			try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
-			
-	    	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
-    		SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->borrowProduct($product, $user);
-    		$this->syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_BORROWED);
-    		
-	    	if($transStarted === false)
-	    		Dao::commitTransaction();
-    		return $this;
-    	}
-    	catch(Exception $ex)
-    	{
-    		if($transStarted === false)
-    			Dao::rollbackTransaction();
-    		throw $ex;
-    	}
+    	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
+    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->borrowProduct($product, $user);
+    	$this->syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_BORROWED);
+    	return $this;
     }
     /**
      * Removing the item from the bookshelf
@@ -137,25 +106,10 @@ class ProductShelfItemService extends BaseServiceAbastract
      */
     public function removeItem(UserAccount $user, Product $product, Library $lib = null)
     {
-    	$transStarted = false;
-    	try
-    	{
-	    	try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
-	    	
-    		$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
-    		EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`active` = 0', '`productId` = ? and `ownerId` = ?', array($product->getId(), $user->getId()));
-    		SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->removeBookShelfList($user, $product);
-    		
-    		if($transStarted === false)
-    			Dao::commitTransaction();
-    		return $this;
-    	}
-    	catch(Exception $ex)
-    	{
-    		if($transStarted === false)
-    			Dao::rollbackTransaction();
-    		throw $ex;
-    	}
+    	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
+    	EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`active` = 0', '`productId` = ? and `ownerId` = ?', array($product->getId(), $user->getId()));
+    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->removeBookShelfList($user, $product);
+    	return $this;
     }
     /**
      * returnItem
@@ -169,24 +123,10 @@ class ProductShelfItemService extends BaseServiceAbastract
      */
     public function returnItem(UserAccount $user, Product $product, Library $lib = null)
     {
-    	$transStarted = false;
-    	try
-    	{
-	    	try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
-	    	
-    		$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
-    		EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`status` = ?', '`productId` = ? and `ownerId` = ?', array(ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $product->getId(), $user->getId()));
-    		SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->returnProduct($product, $user);
-    		if($transStarted === false)
-    			Dao::commitTransaction();
-    		return $this;
-    	}
-    	catch(Exception $ex)
-    	{
-    		if($transStarted === false)
-    			Dao::rollbackTransaction();
-    		throw $ex;
-    	}
+    	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
+    	EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`status` = ?', '`productId` = ? and `ownerId` = ?', array(ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $product->getId(), $user->getId()));
+    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->returnProduct($product, $user);
+    	return $this;
     }
     /**
      * synchronize shelf item with local database
