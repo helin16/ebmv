@@ -232,7 +232,7 @@ class EntityDao
      *
      * @return GenericDAO
      */
-    protected function resetQuery()
+    public function resetQuery()
     {
         $this->_query = clone $this->_tmpQuery;
         return $this;

@@ -296,3 +296,37 @@
 	float: right;
 }
 
+.pageWrapper.userpage .row.btns {
+	text-align: right;
+}
+
+.pageWrapper.userpage .row.btns .imgBtn {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	background-image: url(../images/Icons_sprite.png);
+	background-repeat: none;
+	background-color: transparent; margin : 0 5px;
+	cursor: pointer;
+	margin: 0 5px;
+}
+
+.pageWrapper.userpage .row.btns .imgBtn.delBtn {
+	background-position: -1000px -61px;
+}
+
+.pageWrapper.userpage .row.btns .imgBtn.returnBookBtn {
+	background-position: -770px -619px;
+}
+
+.pageWrapper.userpage .row.btns .imgBtn.borrowBookBtn {
+	background-position: -694px -619px;
+}
+
+.pageWrapper.userpage .row.btns .imgBtn.loading {
+	background-image: url(../images/loading.gif);
+	background-size: 32px 32px;
+	background-repeat: none;
+	background-position: 0px 0px;
+}
+

@@ -182,5 +182,13 @@ abstract class BaseServiceAbastract
 		EntityDao::getInstance($this->_entityName)->deleteManyToManyJoin($leftEntity, $rightEntity);
 		return $leftEntity;
 	}
+	/**
+	 * reset the dao query
+	 */
+	public function resetQuery()
+	{
+		EntityDao::getInstance($this->_entityName)->resetQuery();
+		return $this;
+	}
 }
 ?>
