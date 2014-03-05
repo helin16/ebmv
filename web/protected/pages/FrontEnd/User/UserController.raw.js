@@ -62,7 +62,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			return;
 		
 		tmp.me = this;
-		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('查看更多 / 查看更多<br />Get more', pagination.pageNumber + 1) });
+		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('æŸ¥çœ‹æ›´å¤š / æŸ¥çœ‹æ›´å¤š<br />Get more', pagination.pageNumber + 1) });
 	}
 	
 	,removeItem: function(btn, itemId) {
@@ -117,7 +117,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,borrowItem: function (btn, shelfItemId) {
 		var tmp = {};
 		tmp.me = this;
-		if(!confirm('You are trying to borrow this BOOK./ 您正试图借这本书./ 您正試圖借這本書。\n\nContinue / 继续 / 繼續?'))
+		if(!confirm('You are trying to borrow this BOOK./ æ‚¨æ­£è¯•å›¾å€Ÿè¿™æœ¬ä¹¦./ æ‚¨æ­£è©¦åœ–å€Ÿé€™æœ¬æ›¸ã€‚\n\nContinue / ç»§ç»­ / ç¹¼çºŒ?'))
 			return;
 		
 		pageJs.postAjax(tmp.me.getCallbackId("borrowItem"), {'itemId': shelfItemId}, {
@@ -132,7 +132,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						if(tmp.itemRow)
 							tmp.itemRow.replace(tmp.me._getProductListItem(tmp.result.item));
 					}
-					alert('You have successfully borrowed this book./ 您已成功借阅这本书./ 您已成功借閱這本書.');
+					alert('You have successfully borrowed this book./ æ‚¨å·²æˆ�åŠŸå€Ÿé˜…è¿™æœ¬ä¹¦./ æ‚¨å·²æˆ�åŠŸå€Ÿé–±é€™æœ¬æ›¸.');
 				} catch (e) {
 					alert(e);
 					$(btn).removeClassName('disabled loading');
@@ -145,7 +145,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,returnItem: function (btn, shelfItemId) {
 		var tmp = {};
 		tmp.me = this;
-		if(!confirm('You are trying to return this BOOK./ 你正在试图返回本书./ 你正在試圖返回本書。\n\nContinue / 继续 / 繼續?'))
+		if(!confirm('You are trying to return this BOOK./ ä½ æ­£åœ¨è¯•å›¾è¿”å›žæœ¬ä¹¦./ ä½ æ­£åœ¨è©¦åœ–è¿”å›žæœ¬æ›¸ã€‚\n\nContinue / ç»§ç»­ / ç¹¼çºŒ?'))
 			return;
 		
 		pageJs.postAjax(tmp.me.getCallbackId("returnItem"), {'itemId': shelfItemId}, {
@@ -160,7 +160,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					if(tmp.itemRow)
 						tmp.itemRow.replace(tmp.me._getProductListItem(tmp.result.item));
 				}
-				alert('You have successfully returned this book./ 您已成功还回本书./ 您已成功還回本書.');
+				alert('You have successfully returned this book./ æ‚¨å·²æˆ�åŠŸè¿˜å›žæœ¬ä¹¦./ æ‚¨å·²æˆ�åŠŸé‚„å›žæœ¬æ›¸.');
 			} catch (e) {
 				alert(e);
 				$(btn).removeClassName('disabled loading');
@@ -175,26 +175,26 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.newDiv = new Element('div', {'class': 'row btns'})
 			//add remove btn
-			.insert({'bottom': new Element('span', {'class': 'imgBtn delBtn', 'title': '删除 / 刪除 Remove From My Shelf'})
+			.insert({'bottom': new Element('span', {'class': 'imgBtn delBtn', 'title': 'åˆ é™¤ / åˆªé™¤ Remove From My Shelf'})
 				.observe('click', function(){
 					tmp.me.removeItem(this, shelfItem.id);
 				})
 			});
-		if(shelfItem.status === tmp.me.borrowStatusId) {
-			//add return book btn
-			tmp.newDiv.insert({'bottom': new Element('span', {'class': 'imgBtn returnBookBtn', 'title': '还书 / 還書 Return This Book'})
-				.observe('click', function(){
-					tmp.me.returnItem(this, shelfItem.id);
-				})
-			});
-		} else {
-			//add return book btn
-			tmp.newDiv.insert({'bottom': new Element('span', {'class': 'imgBtn borrowBookBtn', 'title': '借书 / 借書 Borrow This Book'})
-				.observe('click', function(){
-					tmp.me.borrowItem(this, shelfItem.id);
-				})
-			});
-		}
+//		if(shelfItem.status === tmp.me.borrowStatusId) {
+//			//add return book btn
+//			tmp.newDiv.insert({'bottom': new Element('span', {'class': 'imgBtn returnBookBtn', 'title': 'è¿˜ä¹¦ / é‚„æ›¸ Return This Book'})
+//				.observe('click', function(){
+//					tmp.me.returnItem(this, shelfItem.id);
+//				})
+//			});
+//		} else {
+//			//add return book btn
+//			tmp.newDiv.insert({'bottom': new Element('span', {'class': 'imgBtn borrowBookBtn', 'title': 'å€Ÿä¹¦ / å€Ÿæ›¸ Borrow This Book'})
+//				.observe('click', function(){
+//					tmp.me.borrowItem(this, shelfItem.id);
+//				})
+//			});
+//		}
 		return tmp.newDiv;
 	}
 	
