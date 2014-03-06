@@ -62,7 +62,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			return;
 		
 		tmp.me = this;
-		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('æŸ¥çœ‹æ›´å¤š / æŸ¥çœ‹æ›´å¤š<br />Get more', pagination.pageNumber + 1) });
+		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('查看更多 / 查看更多<br />Get more', pagination.pageNumber + 1) });
 	}
 	
 	,removeItem: function(btn, itemId) {
@@ -117,7 +117,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,borrowItem: function (btn, shelfItemId) {
 		var tmp = {};
 		tmp.me = this;
-		if(!confirm('You are trying to borrow this BOOK./ æ‚¨æ­£è¯•å›¾å€Ÿè¿™æœ¬ä¹¦./ æ‚¨æ­£è©¦åœ–å€Ÿé€™æœ¬æ›¸ã€‚\n\nContinue / ç»§ç»­ / ç¹¼çºŒ?'))
+		if(!confirm('You are trying to borrow this BOOK. / 您正试图借这本书. / 您正試圖借這本書. \n\n Continue / 继续 / 繼續 ?'))
 			return;
 		
 		pageJs.postAjax(tmp.me.getCallbackId("borrowItem"), {'itemId': shelfItemId}, {
@@ -132,7 +132,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						if(tmp.itemRow)
 							tmp.itemRow.replace(tmp.me._getProductListItem(tmp.result.item));
 					}
-					alert('You have successfully borrowed this book./ æ‚¨å·²æˆ�åŠŸå€Ÿé˜…è¿™æœ¬ä¹¦./ æ‚¨å·²æˆ�åŠŸå€Ÿé–±é€™æœ¬æ›¸.');
+					alert('You have successfully borrowed this book./ 您已成功借这本书. / 您已成功借這本書.');
 				} catch (e) {
 					alert(e);
 					$(btn).removeClassName('disabled loading');
@@ -145,7 +145,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,returnItem: function (btn, shelfItemId) {
 		var tmp = {};
 		tmp.me = this;
-		if(!confirm('You are trying to return this BOOK./ ä½ æ­£åœ¨è¯•å›¾è¿”å›žæœ¬ä¹¦./ ä½ æ­£åœ¨è©¦åœ–è¿”å›žæœ¬æ›¸ã€‚\n\nContinue / ç»§ç»­ / ç¹¼çºŒ?'))
+		if(!confirm('You are trying to return this BOOK./ 你正在试图返回本书. / 你正在試圖返回本書。 \n\n Continue / 继续 / 繼續 ?'))
 			return;
 		
 		pageJs.postAjax(tmp.me.getCallbackId("returnItem"), {'itemId': shelfItemId}, {
@@ -160,7 +160,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					if(tmp.itemRow)
 						tmp.itemRow.replace(tmp.me._getProductListItem(tmp.result.item));
 				}
-				alert('You have successfully returned this book./ æ‚¨å·²æˆ�åŠŸè¿˜å›žæœ¬ä¹¦./ æ‚¨å·²æˆ�åŠŸé‚„å›žæœ¬æ›¸.');
+				alert('You have successfully returned this book. / 您已成功返回本书。 / 您已成功返回本書。');
 			} catch (e) {
 				alert(e);
 				$(btn).removeClassName('disabled loading');
@@ -175,7 +175,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.newDiv = new Element('div', {'class': 'row btns'})
 			//add remove btn
-			.insert({'bottom': new Element('span', {'class': 'imgBtn delBtn', 'title': 'åˆ é™¤ / åˆªé™¤ Remove From My Shelf'})
+			.insert({'bottom': new Element('span', {'class': 'imgBtn delBtn', 'title': 'Remove From My Shelf / 从我的书柜中删除 / 從我的書櫃中刪除'})
 				.observe('click', function(){
 					tmp.me.removeItem(this, shelfItem.id);
 				})
