@@ -73,7 +73,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				})
 			});
 		$(tmp.me.resultDivId).update(tmp.newDiv);
-		if(socialBtnJs) {
+		if(socialBtnJs !== undefined && socialBtnJs !== null) {
 			socialBtnJs.load('socialBtns', document.URL, 'Check this out:' + tmp.me.product.title, tmp.newDiv.down('.product_description').innerHTML);
 		}
 		tmp.me._getCopies('copies_display', 'view_btn', 'downloadBtn');
