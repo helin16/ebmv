@@ -160,3 +160,4 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			}
 		);
 	}
+});
