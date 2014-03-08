@@ -73,7 +73,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				})
 			});
 		$(tmp.me.resultDivId).update(tmp.newDiv);
-		socialBtnJs.load('socialBtns', document.URL, 'Check this out:' + tmp.me.product.title, tmp.newDiv.down('.product_description').innerHTML);
+		if(socialBtnJs) {
+			socialBtnJs.load('socialBtns', document.URL, 'Check this out:' + tmp.me.product.title, tmp.newDiv.down('.product_description').innerHTML);
+		}
 		tmp.me._getCopies('copies_display', 'view_btn', 'downloadBtn');
 		return this;
 	}
@@ -88,8 +90,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					tmp.readCopies = tmp.downloadCopies = 'N/A';
-					tmp.readBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('在线阅读/在線閱讀<br />Read Online');
-					tmp.downloadBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('下载阅读/下載閱讀<br />Download This Book');
+					tmp.readBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('在线阅读 / 在線閱讀 <br />Read Online');
+					tmp.downloadBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('下载阅读 / 下載閱讀 <br />Download This Book');
 					
 					//getting the readonline url
 					if(tmp.result.urls.viewUrl && tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail * 1 > 0) {
