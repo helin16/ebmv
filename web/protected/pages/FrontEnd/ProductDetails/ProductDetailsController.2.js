@@ -1,1 +1,166 @@
-var PageJs=new Class.create();PageJs.prototype=Object.extend(new FrontPageJs(),{product:null,resultDivId:"",ownTypeIds:{},_joinAtts:function(a,b){var c={};c.attrs=[];if(a){a.each(function(d){c.attrs.push(d[b])})}return c.attrs},_getAtts:function(e,d,c,a){var b={};b.me=this;if(!b.me.product.attributes[e]&&!a){return[]}b.overRideContent=(a||"");return new Element("span",{"class":c}).addClassName(c).insert({bottom:new Element("label").update(d)}).insert({bottom:new Element("span").update((!b.overRideContent?b.me._joinAtts(b.me.product.attributes[e],"attribute").join(", "):b.overRideContent))})},_getLoadingImg:function(a){return new Element("span",{"class":"loadingImg",id:a})},displayProduct:function(){var a={};a.me=this;a.thumbImg=new Element("div",{"class":"product_image"});if(!a.me.product.attributes.image_thumb||a.me.product.attributes.image_thumb.size()===0){a.thumbImg.addClassName("noimage")}else{a.thumbImg.insert({bottom:new Element("img",{"class":"product_image",src:"/asset/get?id="+a.me.product.attributes.image_thumb[0]["attribute"]})})}a.newDiv=new Element("div",{"class":"wrapper"}).insert({bottom:new Element("div",{"class":"product listitem"}).insert({bottom:new Element("span",{"class":"inlineblock listcol left"}).update(a.thumbImg)}).insert({bottom:new Element("span",{"class":"inlineblock listcol right"}).insert({bottom:new Element("div",{id:"socialBtns","class":"socialBtns"})}).insert({bottom:new Element("div",{"class":"product_title"}).update(a.me.product.title)}).insert({bottom:new Element("div",{"class":"row"}).insert({bottom:a.me._getAtts("author","Author","inlineblock author")}).insert({bottom:a.me._getAtts("isbn","ISBN","inlineblock product_isbn")})}).insert({bottom:new Element("div",{"class":"row"}).insert({bottom:a.me._getAtts("publisher","Publisher","inlineblock product_publisher")}).insert({bottom:a.me._getAtts("publish_date","Publisher Date","inlineblock product_publish_date")})}).insert({bottom:new Element("div",{"class":"row"}).insert({bottom:a.me._getAtts("no_of_words","Length","inlineblock product_no_of_words")}).insert({bottom:a.me._getAtts("languages","Languages","inlineblock product_languages",a.me._joinAtts(a.me.product.languages,"name").join(", "))})}).insert({bottom:new Element("div",{"class":"row"}).update(a.me._getLoadingImg("copies_display"))}).insert({bottom:new Element("div",{"class":"row product_description"}).update(a.me._getAtts("description","",""))}).insert({bottom:new Element("div",{"class":"row btns"}).insert({bottom:a.me._getLoadingImg("view_btn")}).insert({bottom:a.me._getLoadingImg("downloadBtn")})})})});$(a.me.resultDivId).update(a.newDiv);if(socialBtnJs!==undefined&&socialBtnJs!==null){socialBtnJs.load("socialBtns",document.URL,"Check this out:"+a.me.product.title,a.newDiv.down(".product_description").innerHTML)}a.me._getCopies("copies_display","view_btn","downloadBtn");return this},_getCopies:function(a,c,d){var b={};b.me=this;b.me.postAjax(b.me.getCallbackId("getCopies"),{},{onLoading:function(){},onComplete:function(f,h){try{b.result=b.me.getResp(h,false,true);b.readCopies=b.downloadCopies="N/A";b.readBtn=new Element("span",{"class":"button rdcrnr disabled"}).update("在线阅读 / 在線閱讀 <br />Read Online");b.downloadBtn=new Element("span",{"class":"button rdcrnr disabled"}).update("下载阅读 / 下載閱讀 <br />Download This Book");if(b.result.urls.viewUrl&&b.result.copies[b.me.ownTypeIds.OnlineRead].avail*1>0){b.readCopies=b.result.copies[b.me.ownTypeIds.OnlineRead].avail+" out of "+b.result.copies[b.me.ownTypeIds.OnlineRead].total;b.readBtn.removeClassName("disabled").observe("click",function(){b.me._getLink(this,"read")})}if(b.result.urls.downloadUrl&&b.result.copies[b.me.ownTypeIds.Download].avail*1>0){b.downloadCopies=b.result.copies[b.me.ownTypeIds.Download].avail+" out of "+b.result.copies[b.me.ownTypeIds.Download].total;b.downloadBtn.removeClassName("disabled").observe("click",function(){b.me._getLink(this,"download")})}$(a).up(".row").update("").insert({bottom:b.me._getAtts("","Online Read Copies","inlineblock online_read_copies",b.readCopies)}).insert({bottom:b.me._getAtts("","Download Copies","inlineblock download_copies",b.downloadCopies)});$(c).replace(b.readBtn);$(d).replace(b.downloadBtn)}catch(g){alert(g)}}},120000)},_openNewUrl:function(a){var b={};b.me=this;if(a.url){window.open(a.url)}if(a.redirecturl){window.location=a.redirecturl}return this},_getLink:function(b,c){var a={};a.me=this;$(b).writeAttribute("originvalue",$(b).innerHTML);a.me.getUser(b,function(){a.me.postAjax(a.me.getCallbackId("geturl"),{type:c},{onLoading:function(){},onComplete:function(d,g){try{a.result=a.me.getResp(g,false,true);if(a.result.warning&&c==="read"){if(confirm("Warning: "+a.result.warning+"\n\nDo you want to continue with preview? / 你要继续预览？ / 你要繼續預覽？")){a.me._openNewUrl(a.result)}}else{a.me._openNewUrl(a.result)}}catch(f){alert(f)}$(b).update($(b).readAttribute("originvalue")).writeAttribute("disabled",false)}},120000)},function(){$(b).update("Processing ...").writeAttribute("disabled",true)},function(){$(b).update($(b).readAttribute("originvalue")).writeAttribute("disabled",false)})}});
+/**
+ * The page Js file
+ */
+var PageJs = new Class.create();
+PageJs.prototype = Object.extend(new FrontPageJs(), {
+	product: null //the product object
+	,resultDivId: '' //where we are displaying product details
+	,ownTypeIds: {} //the libraryowntypes
+		
+	,_joinAtts: function(attributes, name) {
+		var tmp = {};
+		tmp.attrs = [];
+		if(attributes)
+		{
+			attributes.each(function(item) {
+				tmp.attrs.push(item[name]);
+			});
+		}
+		return tmp.attrs;
+	}
+		
+	,_getAtts: function(attrcode, title, className, overRideContent) {
+		var tmp = {};
+		tmp.me = this;
+		if(!tmp.me.product.attributes[attrcode] && !overRideContent)
+			return [];
+		
+		tmp.overRideContent = (overRideContent || '');
+		return new Element('span', {'class': className}).addClassName(className)
+			.insert({'bottom': new Element('label').update(title) })
+			.insert({'bottom': new Element('span').update((!tmp.overRideContent ? tmp.me._joinAtts(tmp.me.product.attributes[attrcode], 'attribute').join(', ') : tmp.overRideContent)) });
+	}
+	
+	,_getLoadingImg: function (id) {
+		return new Element('span', {'class': 'loadingImg', 'id': id});
+	}
+	
+	,displayProduct: function() {
+		var tmp = {};
+		tmp.me = this;
+		
+		//getting the thumbnail image
+		tmp.thumbImg = new Element('div', {'class': 'product_image'});
+		if(!tmp.me.product.attributes['image_thumb'] || tmp.me.product.attributes['image_thumb'].size() === 0)
+			tmp.thumbImg.addClassName('noimage');
+		else
+			tmp.thumbImg.insert({'bottom': new Element('img', {'class': 'product_image', 'src': '/asset/get?id=' + tmp.me.product.attributes['image_thumb'][0]['attribute']})});
+		
+		tmp.newDiv = new Element('div', {'class': 'wrapper'})
+			.insert({'bottom': new Element('div', {'class': 'product listitem'})
+				.insert({'bottom': new Element('span', {'class': 'inlineblock listcol left'}).update(tmp.thumbImg) })
+				.insert({'bottom': new Element('span', {'class': 'inlineblock listcol right'})
+					.insert({'bottom': new Element('div', {'id': 'socialBtns', 'class': 'socialBtns'}) })
+					.insert({'bottom': new Element('div', {'class': 'product_title'}).update(tmp.me.product.title) })
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': tmp.me._getAtts('author', 'Author', 'inlineblock author') })
+						.insert({'bottom': tmp.me._getAtts('isbn', 'ISBN', 'inlineblock product_isbn') })
+					})
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': tmp.me._getAtts('publisher', 'Publisher', 'inlineblock product_publisher') })
+						.insert({'bottom': tmp.me._getAtts('publish_date', 'Publisher Date', 'inlineblock product_publish_date') })
+					})
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': tmp.me._getAtts('no_of_words', 'Length', 'inlineblock product_no_of_words') })
+						.insert({'bottom': tmp.me._getAtts('languages', 'Languages', 'inlineblock product_languages', tmp.me._joinAtts(tmp.me.product.languages, 'name').join(', ')) })
+					})
+					.insert({'bottom': new Element('div', {'class': 'row'}).update(tmp.me._getLoadingImg('copies_display')) })
+					.insert({'bottom': new Element('div', {'class': 'row product_description'}).update(tmp.me._getAtts('description', '', ''))	})
+					.insert({'bottom': new Element('div', {'class': 'row btns'})
+						.insert({'bottom':  tmp.me._getLoadingImg('view_btn') })
+						.insert({'bottom': tmp.me._getLoadingImg('downloadBtn') })
+					})
+				})
+			});
+		$(tmp.me.resultDivId).update(tmp.newDiv);
+		if(socialBtnJs !== undefined && socialBtnJs !== null) {
+			socialBtnJs.load('socialBtns', document.URL, 'Check this out:' + tmp.me.product.title, tmp.newDiv.down('.product_description').innerHTML);
+		}
+		tmp.me._getCopies('copies_display', 'view_btn', 'downloadBtn');
+		return this;
+	}
+	
+	,_getCopies: function (readCopiesDisplayHolderId, readOnlineBtnId, downloadBtnId) {
+		var tmp = {};
+		tmp.me = this;
+		
+		tmp.me.postAjax(tmp.me.getCallbackId('getCopies'), {}, {
+			'onLoading': function () {}
+			,'onComplete': function(sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					tmp.readCopies = tmp.downloadCopies = 'N/A';
+					tmp.readBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('在线阅读 / 在線閱讀 <br />Read Online');
+					tmp.downloadBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('下载阅读 / 下載閱讀 <br />Download This Book');
+					
+					//getting the readonline url
+					if(tmp.result.urls.viewUrl && tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail * 1 > 0) {
+						tmp.readCopies = tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].total;
+						tmp.readBtn.removeClassName('disabled')
+							.observe('click', function(){
+								tmp.me._getLink(this, 'read');
+							});
+					}
+					
+					//getting the download url
+					if(tmp.result.urls.downloadUrl && tmp.result.copies[tmp.me.ownTypeIds.Download].avail * 1 > 0) {
+						tmp.downloadCopies = tmp.result.copies[tmp.me.ownTypeIds.Download].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.Download].total;
+						tmp.downloadBtn.removeClassName('disabled')
+							.observe('click', function(){
+								tmp.me._getLink(this, 'download');
+							});
+					} 
+					$(readCopiesDisplayHolderId).up('.row').update('')
+						.insert({'bottom': tmp.me._getAtts('', 'Online Read Copies', 'inlineblock online_read_copies', tmp.readCopies) })
+						.insert({'bottom': tmp.me._getAtts('', 'Download Copies', 'inlineblock download_copies', tmp.downloadCopies) });
+					$(readOnlineBtnId).replace(tmp.readBtn);
+					$(downloadBtnId).replace(tmp.downloadBtn);
+				} catch(e) {
+					alert(e);
+				}
+			}
+		}, 120000);
+	}
+	
+	,_openNewUrl: function(url) {
+		var tmp = {};
+		tmp.me = this;
+		if(url.url)
+			window.open(url.url);
+		if(url.redirecturl)
+			window.location = url.redirecturl;
+		return this;
+	}
+	
+	,_getLink: function(btn, type) {
+		var tmp = {};
+		tmp.me = this;
+		
+		$(btn).writeAttribute('originvalue', $(btn).innerHTML);
+		tmp.me.getUser(btn, function(){
+				tmp.me.postAjax(tmp.me.getCallbackId('geturl'), {'type': type}, {
+					'onLoading': function () {}
+					,'onComplete': function(sender, param) {
+						try {
+							tmp.result = tmp.me.getResp(param, false, true);
+							if(tmp.result.warning && type === 'read') {
+								if(confirm('Warning: ' + tmp.result.warning + '\n\nDo you want to continue with preview? / 你要继续预览？ / 你要繼續預覽？'))
+									tmp.me._openNewUrl(tmp.result);
+							} else {
+								tmp.me._openNewUrl(tmp.result);
+							}
+						} catch(e) {
+							alert(e);
+						}
+						$(btn).update($(btn).readAttribute('originvalue')).writeAttribute('disabled', false);
+					}
+				}, 120000);
+			}, function () {
+				$(btn).update( "Processing ...").writeAttribute('disabled', true);
+			}
+			, function () {
+				$(btn).update($(btn).readAttribute('originvalue')).writeAttribute('disabled', false);
+			}
+		);
+	}
+});
