@@ -169,7 +169,11 @@ class ProductShelfItem extends BaseEntityAbstract
     {
     	$array = array();
     	if(!$this->isJsonLoaded($reset))
-    		$array['type'] = $this->getType()->getJson();
+    	{
+    		$array['product'] = array();
+    		if(($product = $this->getProduct()) instanceof Product)
+    			$array['product'] = $this->getProduct()->getJson();
+    	}
     	return parent::getJson($array, $reset);
     }
     /**

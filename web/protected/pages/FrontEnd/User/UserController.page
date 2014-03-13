@@ -1,6 +1,8 @@
 <com:TContent ID="MainContent">
     <com:TCallback ID="getProductsBtn" OnCallback="getProducts" />
     <com:TCallback ID="removeFromShelfBtn" OnCallback="removeFromShelf" />
+    <com:TCallback ID="borrowItemBtn" OnCallback="borrowItem" />
+    <com:TCallback ID="returnItemBtn" OnCallback="returnItem" />
 	<div class="pageWrapper userpage">
 	   <span class="left sidebar inlineblock newpadding">
 	       <h3 class="sidebarmoduletitle">Welcome, <%= Core::getUser()->getPerson() %></h3>
@@ -8,9 +10,6 @@
 	           <ul class="menulist">
 	               <li class="menuitem active">
 			           <span class="menulink inlineblock cursorpntr bookshelflink" onclick="pageJs.showBookShelf();">My Book Shelf</span>
-	               </li>
-	               <li class="menuitem">
-			           <span class="menulink inlineblock cursorpntr changedetailslink">Change Details</span>
 	               </li>
 	               <li class="menuitem">
 			           <com:TLinkButton ID="logout" OnClick="logout" Text="Logout" CssClass="menulink"/>

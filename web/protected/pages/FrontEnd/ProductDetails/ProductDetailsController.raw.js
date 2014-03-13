@@ -73,7 +73,6 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				})
 			});
 		$(tmp.me.resultDivId).update(tmp.newDiv);
-		socialBtnJs.load('socialBtns', document.URL, 'Check this out:' + tmp.me.product.title, tmp.newDiv.down('.product_description').innerHTML);
 		tmp.me._getCopies('copies_display', 'view_btn', 'downloadBtn');
 		return this;
 	}
@@ -88,8 +87,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					tmp.readCopies = tmp.downloadCopies = 'N/A';
-					tmp.readBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('在线阅读/在線閱讀<br />Read Online');
-					tmp.downloadBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('下载阅读/下載閱讀<br />Download This Book');
+					tmp.readBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('在线阅读 / 在線閱讀 <br />Read Online');
+					tmp.downloadBtn = new Element('span', {'class': 'button rdcrnr disabled'}).update('下载阅读 / 下載閱讀 <br />Download This Book');
 					
 					//getting the readonline url
 					if(tmp.result.urls.viewUrl && tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail * 1 > 0) {
@@ -120,6 +119,16 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		}, 120000);
 	}
 	
+	,_openNewUrl: function(url) {
+		var tmp = {};
+		tmp.me = this;
+		if(url.url)
+			window.open(url.url);
+		if(url.redirecturl)
+			window.location = url.redirecturl;
+		return this;
+	}
+	
 	,_getLink: function(btn, type) {
 		var tmp = {};
 		tmp.me = this;
@@ -131,10 +140,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					,'onComplete': function(sender, param) {
 						try {
 							tmp.result = tmp.me.getResp(param, false, true);
-							if(tmp.result.url)
-								window.open(tmp.result.url);
-							if(tmp.result.redirecturl)
-								window.location = tmp.result.redirecturl;
+							if(tmp.result.warning && type === 'read') {
+								if(confirm('Warning: ' + tmp.result.warning + '\n\nDo you want to continue with preview? / 你要继续预览？ / 你要繼續預覽？'))
+									tmp.me._openNewUrl(tmp.result);
+							} else {
+								tmp.me._openNewUrl(tmp.result);
+							}
 						} catch(e) {
 							alert(e);
 						}
