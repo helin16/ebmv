@@ -105,6 +105,16 @@ class AdminLibraryController extends CrudPageAbstract
     		
     		$item = ($item = BaseServiceAbastract::getInstance('Library')->get(trim($param->CallbackParameter->id))) instanceof Library ? $item : new Library();
     		$item->setName(trim($param->CallbackParameter->name));
+    		try
+    		{
+    			if(!class_exists($connector = trim($param->CallbackParameter->connector)))
+    				throw new Exception($connector . " does NOT exsit!");
+    		}
+    		catch (Exception $e)
+    		{
+    			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage());
+    		}
+    		$item->setConnector($connector);
     		$item->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on');
     		BaseServiceAbastract::getInstance('Library')->save($item);
     		foreach($param->CallbackParameter->info as $info)
