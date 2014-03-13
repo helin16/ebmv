@@ -106,11 +106,9 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		if(trim($xml['Code']) !== trim(self::CODE_SUCC))
 			throw new SupplierConnectorException($xml['Value']);
 		$list = array();
-		echo $xml->BookShelfList->asXml();
 		foreach($xml->BookShelfList->children() as $book)
 		{
-			echo $book->asXml();
-// 			$list[] = SupplierConnectorProduct::getProduct($book);
+			$list[] = SupplierConnectorProduct::getProduct($book);
 		}
 		return $list;
 	}
@@ -269,10 +267,16 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::borrowProduct()
 	 */
-	public function borrowProduct(Product &$product, UserAccount $user){}
+	public function borrowProduct(Product &$product, UserAccount $user)
+	{
+		
+	}
 	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::returnProduct()
 	 */
-	public function returnProduct(Product &$product, UserAccount $user){}
+	public function returnProduct(Product &$product, UserAccount $user)
+	{
+		
+	}
 }
