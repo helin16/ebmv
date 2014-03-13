@@ -1,0 +1,300 @@
+
+.productlistviewbtns {
+    text-align: right;
+    vertical-align: bottom;
+}
+
+.productlistviewbtns .button {
+    background: none repeat scroll 0 0 #DDDDDD;
+    border: 1px solid #BBBBBB;
+    box-shadow: 0 1px 0 #FFFFFF inset;
+    color:inherit;
+    height: 26px;
+    width: 34px;
+}
+.productlistviewbtns .button.active,
+.productlistviewbtns .button:hover {
+    background: none repeat scroll 0 0 #eeeeee;
+}
+
+.productlistviewbtns .button .icon{
+    background: url("../images/product_show_sprite.png") no-repeat scroll left center rgba(0, 0, 0, 0);
+    display: inline-block;
+    height: 26px;
+    vertical-align: middle;
+    width: 34px;
+}
+.productlistviewbtns .button.list .icon{
+    background-position: -68px -3px;
+}
+.productlistviewbtns .button .title{
+    display: none;
+    float: right;
+    margin: 3px 0 0 0;
+}
+
+.productlist {
+    padding: 5px;
+}
+.productlist .loading {
+    display: block;
+    width: 50px;
+    margin: 30px auto;
+    text-align: center;
+}
+.product .product_image {
+    display: inline-block;
+    width: 160px;
+    height: 200px;
+    border: 1px #eeeeee solid;
+}
+.product .product_image.noimage {
+    background: transparent url('../images/no_image_found.jpg') no-repeat center center;
+}
+
+.product.listitem {
+    padding: 5px 0;
+}
+.product .listcol {
+    vertical-align: top;
+}
+.product .listcol.left {
+    width: 25%;
+}
+.product .listcol.right {
+    width: 70%;
+}
+.product .listcol label{
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 0 0 5px;
+    color: #aaaaaa;
+    font-style: italic;
+    display:block;
+}
+.product .listcol div .inlineblock{
+    width: 49%;
+    vertical-align: top;
+}
+.product .listcol .product_title {
+    font-size: 20px;
+    font-weight: bold;
+}
+.product .listcol .product_description {
+    padding: 8px 0 0 0;
+    font-size: 14px;
+}
+.product .listcol .row.btns {
+	padding: 10px 0;
+}
+.product .listcol .row.btns .button {
+	display: inline-block;
+	width: auto;
+	text-align: center;
+	font-size: 12px;
+	margin: 5px;
+}
+
+
+.pagination_wrapper {
+    text-align: right;
+}
+
+.pagination_wrapper .pagin_btn {
+    display: inline-block;
+    padding: 4px;
+    margin: 10px 20px;
+    text-align: center;
+    float:right;
+    width:30%;
+}
+
+.product.griditem {
+    text-align: center;
+    width: 160px;
+    height: 200px;
+    display: inline-block;
+    position: relative;
+    padding: 5px;
+	vertical-align: bottom;
+}
+
+.product.griditem .product_image,
+.product.griditem .product_details {
+    position: absolute;
+    border: none;
+    bottom: 5px;
+    left: 5px;
+}
+.product.griditem .product_details {
+	width: 160px;
+	background: black;
+	/*Opacity start*/
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=60);
+    -moz-opacity: 0.60;
+    -khtml-opacity: 0.6;
+    opacity: 0.6;
+    /*Opacity end*/
+    color: white;
+}
+.product.griditem .product_details .product_title{
+	font-size: 12px;
+}
+
+.product.griditem:hover {
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px #1C5A80;
+}
+.product.griditem .product_title {
+    font-weight: bold;
+    padding: 4px 0 ;
+}
+
+/** LoginPage **/
+.LoginPanel {
+    margin: 100px auto;
+    width: 400px;
+}
+
+.LoginPanel .row {
+    margin: 40px 0 0 60px;
+}
+
+.LoginPanel .row .title {
+    width: 110px;
+    vertical-align: top;
+    text-align: right;
+}
+.LoginPanel .row .title .top{
+    width: 110px;
+    vertical-align: top;
+    text-align: right;
+}
+.LoginPanel .row .content {
+    width: 280px;
+    vertical-align: middle;
+}
+
+/** homepage **/
+.homepageWrapper .sectionWrapper{
+    height: 260px;
+    border: 1px #cccccc solid;
+    border-radius: 4px;
+    margin: 30px auto;
+}
+
+.homepageWrapper .sectionWrapper .title {
+    font-weight: bold;
+    background: #213C81;
+    padding: 5px;
+    color:#ffffff;
+}
+
+.homepageWrapper .sectionWrapper .title .langchoser{
+	float: right;
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul{
+	list-style: none;
+	margin:0;
+	padding: 0;
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul li{
+	display: inline-block;
+	padding: 5px 8px;
+	font-size: 13px
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul li:hover {
+	text-decoration: underline;
+}
+.homepageWrapper .sectionWrapper .title .langchoser ul li.active,
+.homepageWrapper .sectionWrapper .title .langchoser ul li:hover{
+	background: white;
+	border-radius: 2px;
+	color: #213C81;
+}
+
+.homepageWrapper .jcarousel-skin-tango .jcarousel-container.jcarousel-container-horizontal {
+   width: 100%;
+   height: 250px;
+   background: none;
+   border: none;
+   border-radius: 0px;
+   padding: 0px;
+   margin: 10px 0 0 0;
+}
+.homepageWrapper .jcarousel-skin-tango .jcarousel-clip.jcarousel-clip-horizontal {
+	width: 900px;
+	height: 250px;
+	margin: 0 30px;
+}
+.homepageWrapper .jcarousel-skin-tango .jcarousel.jcarousel-list.jcarousel-list-horizontal {
+	width: 100%;
+	height: 250px;
+}
+.homepageWrapper .jcarousel-skin-tango .jcarousel-item.jcarousel-item-horizontal {
+	width: auto;
+	height: auto;
+}
+.homepageWrapper .jcarousel-skin-tango .jcarousel-prev-horizontal,
+.homepageWrapper .jcarousel-skin-tango .jcarousel-next-horizontal {
+	width: 30px;
+}
+
+/** helppage **/
+.helppage .questionListItem {
+	padding: 5px 0 5px 0;
+}
+
+.helppage .questionListItem:hover {
+	background: #002A5C;
+	color: white;
+}
+
+.helppage .questionWrapper {
+		margin: 5px auto;
+}
+
+.helppage .questionWrapper .question {
+	color: #002A5C;
+	font-size: 18px;
+}
+.helppage .questionWrapper .question .icon{
+	/**
+	display: inline-block;
+	height: 32px;
+	width: 32px;
+	background: transparent url(../images/Icons_sprite.png) left bottom no-repeat;
+	background-position: -230px -430px;
+	margin: 0 5px 0 0;
+	**/
+}
+.helppage .questionWrapper .question.shown .icon{
+	/**background-position: -310px -430px;**/
+}
+.helppage .questionWrapper .answer {
+	padding: 5px 5px;
+	font-size: 15px;
+}
+
+/** userpage **/
+.pageWrapper.userpage .leftmenu.singlelevel ul li.active,
+.pageWrapper.userpage .leftmenu.singlelevel ul li:hover {
+    background: #6a8bbe;
+    color: white;
+}
+.pageWrapper.userpage .newpadding {
+	padding: 10px 0 10px 10px;
+}
+.pageWrapper.userpage .maincontent{
+	border:1px #1C5A80 solid;
+	border-radius: 5px;
+	min-height: 300px;
+}
+
+
+/** product details page **/
+.pageWrapper.product_details_page .socialBtns {
+	float: right;
+}
+
