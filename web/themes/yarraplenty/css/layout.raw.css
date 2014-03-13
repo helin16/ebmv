@@ -201,11 +201,10 @@ body {
     color: #ffffff;
     background:red;
     text-shadow: purple;
-    padding:20px 55px 20px 55px;
 }
 
 .smalltxt {
-    font-size: 18px;
+    font-size: 14px;
 }
 .subtitle {
 	font-size: 30px;
