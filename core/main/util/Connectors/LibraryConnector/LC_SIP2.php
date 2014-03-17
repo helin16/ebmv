@@ -41,7 +41,8 @@ class LC_SIP2 extends LibraryConnectorAbstract implements LibraryConn
 			}
 			$pInfo = array();
 			if(strtoupper(trim($result['variable']['BL'][0])) === 'Y' 
-					&& strtoupper(trim($result['variable']['CQ'][0])) === 'Y')
+					//&& strtoupper(trim($result['variable']['CQ'][0])) === 'Y'
+				)
 			{
 				$names = explode(' ', trim($result['variable']['AE'][0]));
 				$lastName = array_pop($names);
