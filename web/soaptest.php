@@ -8,7 +8,7 @@ require_once dirname(__FILE__) . '/bootstrap.php';
 function resultFunc($funcName, $result)
 {
 	echo '<h3>Result came back from '. $funcName . ':</h3>';
-	echo '<textarea style="width: 100%; height: 200px;">' . $result . '</textarea>';
+	echo '<textarea style="width: 100%; height: 200px;">' . print_r($result, true) . '</textarea>';
 	echo '</pre>';
 }
 try
