@@ -127,4 +127,41 @@ class WebAuth
 			throw new Exception($ex->getMessage(), self::RESULT_CODE_FAIL);
 		}
 	}
+	/**
+	 * Getting local users
+	 * 
+	 * @param string $libCode The library code
+	 * @param string $Uid     The username
+	 * @param string $Pwd     The hashed password
+	 * 
+	 * @return string
+	 * @soapmethod
+	 */
+	public function getUserLocalInfo($libCode, $username, $password)
+	{
+		$lib = BaseServiceAbastract::getInstance('Library')->getLibFromCode($libCode);
+		if (!$lib instanceof Library)
+			throw new Exception('No Such a Site/Library!', self::RESULT_CODE_FAIL);
+		//getting the user
+		try
+		{
+			$response = new SimpleXMLElement('<Response />');
+			$now = new UDate();
+			$response->addAttribute('Time', trim($now));
+			$response->addAttribute('TimeZone',trim($now->getTimeZone()->getName()));
+			
+			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $lib, true);
+			$user = $response->addChild('User');
+			$user->addAttribute('libraryId', $libCode);
+			$user->addAttribute('LoginName', $username);
+			$user->addAttribute('Password', $password);
+			$user->addAttribute('firstName', $userAccount->getPerson()->getFirstName());
+			$user->addAttribute('lastName', $userAccount->getPerson()->getLastName());
+			return trim($response->asXML());
+		}
+		catch(Exception $ex)
+		{
+			throw new Exception($ex->getMessage(), self::RESULT_CODE_FAIL);
+		}
+	}
 }
