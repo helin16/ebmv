@@ -19,6 +19,10 @@ try
 	$result = $client->$funcName('A3ADC78482897208E84B759E41DD73E9', '37', 'testuser_yl', '2A2877E4DF17AEED392AA42AD36EE5190E1E1DCC');
 	resultFunc($funcName, $result);
 	
+	$funcName = "__getFunctions";
+	$result = $client->__getFunctions();
+	resultFunc($funcName, $result);
+	
 	$funcName = "getUserLocalInfo";
 	$result = $client->getUserLocalInfo('37', 'test_user', sha1('test_pass'));
 	resultFunc($funcName, $result);
