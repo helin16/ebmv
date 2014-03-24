@@ -45,7 +45,7 @@ class LC_LocalSOAP extends LibraryConnectorAbstract
 			$pInfo = array();
 			if(isset($result->User))
 			{
-				$attributes = $result->User->attributes;
+				$attributes = $result->User->attributes();
 				$pInfo = LibraryConnectorUser::getUser($library, $username, sha1($password), $attributes['firstName'], $attributes['lastName']);
 			}
 			self::$_cache[$key] = $pInfo;

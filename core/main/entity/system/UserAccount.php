@@ -179,7 +179,7 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::setManyToOne('library', 'Library', 'lib');
         parent::__loadDaoMap();
         
-        DaoMap::createUniqueIndex('username');
+        DaoMap::createIndex('username');
         DaoMap::createIndex('password');
         DaoMap::commit();
     }
