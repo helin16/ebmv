@@ -24,7 +24,7 @@ try
 	resultFunc($funcName, $result);
 	
 	$funcName = "getUserLocalInfo";
-	$result = $client->getUserLocalInfo('37', 'test_user', sha1('test_pass'));
+	$result = $client->$funcName('37', 'test_user', sha1('test_pass'));
 	resultFunc($funcName, $result);
 }
 catch(Exception $ex)
