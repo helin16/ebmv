@@ -2,16 +2,26 @@
 class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 {
 	/**
-	 * Getting the formatted url
+	 * Getting the xml from url
 	 * 
-	 * @param string $url
-	 * @param string $methodName
+	 * @param string      $url
+	 * @param string      $method
+	 * @param int         $pageNo
+	 * @param int         $pageSize
+	 * @param ProductType $type
 	 * 
-	 * @return string
+	 * @return SimpleXMLElement
 	 */
-	private function _formatURL($url, $methodName)
+	private function _getXmlFromUrl($url, $method, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
 	{
-		return trim(str_replace('{method}', $methodName, str_replace('{SiteID}', $this->_lib->getInfo('aus_code'), $url)));
+		$params = array('type' => $method, 'pagesize' => $pageSize, 'page' => $pageNo, 'siteid' => trim($this->_lib->getInfo('aus_code')));
+		if($type instanceof ProductType)
+			$params['producttype'] = strtolower(trim($type->getName()));
+		$url = $url . '?' . http_build_query($params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url: ' . $url , __FUNCTION__);
+		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . $result , __FUNCTION__);
+		return new SimpleXMLElement($result);
 	}
 	/**
 	 * Gettht product List
@@ -22,10 +32,10 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 	public function getProductListInfo(ProductType $type = null)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list info:', __FUNCTION__);
-		$importUrl = $this->_formatURL($this->_supplier->getInfo('import_url'), 'SyncBooks');
+		$importUrl =trim($this->_supplier->getInfo('import_url'));
 		
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
-		$xml = $this->_getXmlFromUrl($importUrl, 1, 1, $type);
+		$xml = $this->_getXmlFromUrl($importUrl, 'new', 1, 1, $type);
 		
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $importUrl . '!');
@@ -48,10 +58,11 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 		}
 		
 		$array = array();
-		$importUrl = $this->_formatURL($this->_supplier->getInfo('import_url'), 'SyncBooks');
+		$params = array('type'=>'new', 'pagesize' => $pageSize, 'page' => $pageNo, 'siteid' => trim($this->_lib->getInfo('aus_code')));
+		$importUrl =trim($this->_supplier->getInfo('import_url'));
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
 		
-		$xml = $this->_getXmlFromUrl($importUrl, $pageNo, $pageSize, $type);
+		$xml = $this->_getXmlFromUrl($importUrl, 'new', 1, 1, $type);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . (!$xml instanceof SimpleXMLElement ? trim($xml) : $xml->asXML()) , __FUNCTION__);
 		foreach($xml->children() as $childXml)
 		{
@@ -69,153 +80,13 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see SupplierConn::borrowProduct()
-	 */
-	public function borrowProduct(Product &$product, UserAccount $user)
-	{
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Borrowing Product: uid:' . $user->getId() . ', pid: ' . $product->getId() , __FUNCTION__);
-		if(!($supplier = $product->getSupplier()) instanceof Supplier)
-			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT have a supplier linked!');
-		if($supplier->getId() !== $this->_supplier->getId())
-			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
-		
-		$token = $this->_validToken($user);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got token: ' . $token , __FUNCTION__);
-		
-		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
-		
-		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'));
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::submiting to url with params' . print_r($params, true) , __FUNCTION__);
-		
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = ) with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
-		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got results:' . print_r($result, true) , __FUNCTION__);
-		
-		$results = $this->_getJsonResult($result, 'results');
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Decoded json:' . print_r($results, true) , __FUNCTION__);
-		//TODO:: need to update the expiry date of the shelfitem
-		return $this;
-	}
-	/**
-	 * (non-PHPdoc)
-	 * @see SupplierConn::returnProduct()
-	 */
-	public function returnProduct(Product &$product, UserAccount $user)
-	{
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Returning Product: uid:' . $user->getId() . ', pid: ' . $product->getId() , __FUNCTION__);
-		if(!($supplier = $product->getSupplier()) instanceof Supplier)
-			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT have a supplier linked!');
-		if($supplier->getId() !== $this->_supplier->getId())
-			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
-		
-		$token = $this->_validToken($user);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got token: ' . $token , __FUNCTION__);
-		
-		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
-		
-		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'));
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "DELETE") with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
-		
-		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params, 'DELETE');
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got result: ' . print_r($result, true) , __FUNCTION__);
-		
-		return $this;
-	}
-	/**
-	 * Getting the book shelf
-	 * 
-	 * @param UserAccount $user
-	 * 
-	 * @return Ambigous <NULL, SimpleXMLElement>
-	 */
-	public function getBookShelfList(UserAccount $user)
-	{
-		$token = $this->_validToken($user);
-		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
-		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "GET") with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
-		
-		$result = SupplierConnectorAbstract::readUrl($url . '?' . http_build_query($params), BmvComScriptCURL::CURL_TIMEOUT);
-		return $this->_getJsonResult($result, 'bookList');
-	}
-	/**
-	 * (non-PHPdoc)
-	 * @see SupplierConnectorAbstract::syncUserBookShelf()
-	 */
-	public function syncUserBookShelf(UserAccount $user, array $shelfItems)
-	{
-	}
-	/**
-	 * Synchronizing an indivdual product with supplier
-	 * 
-	 * @param UserAccount $user
-	 * @param string      $isbn
-	 * @param string      $no
-	 * @param string      $borrowTime
-	 * @param string      $status
-	 * 
-	 * @return SupplierConnector
-	 */
-	public function syncShelfItem(UserAccount $user, $isbn, $no, $borrowTime, $status)
-	{
-	}
-	/**
-	 * Adding a product to the user's bookshelf
-	 * 
-	 * @param UserAccount $user
-	 * @param Product     $product
-	 * 
-	 * @throws CoreException
-	 * @return Ambigous <NULL, SimpleXMLElement>
-	 */
-	public function addToBookShelfList(UserAccount $user, Product $product)
-	{
-	}
-	/**
-	 * Removing a product from the book shelf
-	 * 
-	 * @param UserAccount $user
-	 * @param Product     $product
-	 * 
-	 * @throws CoreException
-	 * @return Ambigous <NULL, SimpleXMLElement>
-	 */
-	public function removeBookShelfList(UserAccount $user, Product $product)
-	{
-	}
-	/**
-	 * Getting the download url for a book
-	 * 
-	 * @param Product     $product The product we are trying to get the url for
-	 * @param UserAccount $user    Who wants to download it
-	 * 
-	 * @throws Exception
-	 */
-	public function getDownloadUrl(Product $product, UserAccount $user)
-	{
-	}
-	/**
-	 * (non-PHPdoc)
 	 * @see SupplierConn::getOnlineReadUrl()
 	 */
 	public function getOnlineReadUrl(Product $product, UserAccount $user)
 	{
-		$token = $this->_validToken($user);
-		$url = explode(',', $this->_supplier->getInfo('view_url'));
-		if($url === false || count($url) === 0)
+		$readurl = $this->_supplier->getInfo('view_url');
+		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
-		$url = $this->_formatURL($url[0], 'launchViewer');
-		
-		$returnUrls = explode(',', $this->_lib->getInfo('lib_url'));
-		$currentUrl = 'http://' . (trim($_SERVER['SERVER_NAME']) === '' ? $returnUrls[0]: trim($_SERVER['SERVER_NAME'])) . '/mybookshelf.html';
-		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'token' => $token, 'returnUrl' => $currentUrl, 'partnerid' => $this->_supplier->getInfo('partner_id'));
-		
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "POST") with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
-		$results = $this->_getJsonResult(SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params), 'results');
-		if(!isset($results['url']) || ($readurl = trim($results['url'])) === '')
-			throw new SupplierConnectorException("System Error: can not get the online reading url for supplier(" . $this->_supplier->getName() ."), contact admin for further support!");
 		return $readurl;
 	}
 	/**
@@ -226,17 +97,66 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
 		
-		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
-				'Isbn' => trim($isbn),
-				'NO' => trim($no),
-				'format' => 'xml'
+		$params = array("siteid" => trim($this->_lib->getInfo('aus_code')),
+				'type' => 'one',
+				'magid' => trim($isbn) . trim($no),
+				'no' => trim($no)
 		);
-		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), "getBookInfo") . '?' . http_build_query($params);
+		$url = $this->_supplier->getInfo('import_url') . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
 		
 		$results = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got results:' . print_r($results, true), __FUNCTION__);
 		
 		return SupplierConnectorProduct::getProduct(new SimpleXMLElement($results));
+	}
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see SupplierConn::getBookShelfList()
+	 */
+	public function getBookShelfList(UserAccount $user) {
+	}
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see SupplierConn::syncUserBookShelf()
+	 */
+	public function syncUserBookShelf(UserAccount $user, array $shelfItems) {
+	}
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see SupplierConn::addToBookShelfList()
+	 */
+	public function addToBookShelfList(UserAccount $user, Product $product) {
+	}
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see SupplierConn::removeBookShelfList()
+	 */
+	public function removeBookShelfList(UserAccount $user, Product $product) {
+	}
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see SupplierConn::borrowProduct()
+	 */
+	public function borrowProduct(Product &$product, UserAccount $user) {
+	}
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see SupplierConn::returnProduct()
+	 */
+	public function returnProduct(Product &$product, UserAccount $user) {
+	}
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see SupplierConn::getDownloadUrl()
+	 */
+	public function getDownloadUrl(Product $product, UserAccount $user) {
 	}
 }
