@@ -87,6 +87,7 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 		$readurl = $this->_supplier->getInfo('view_url');
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
+		$readurl = str_replace('{cno}', $product->getAttribute('cno'), $readurl);
 		return $readurl;
 	}
 	/**
@@ -99,8 +100,8 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 		
 		$params = array("siteid" => trim($this->_lib->getInfo('aus_code')),
 				'type' => 'one',
-				'magid' => trim($isbn) . trim($no),
-				'no' => trim($no)
+				'magid' =>  trim($no),
+				'$isbn' => trim($isbn)
 		);
 		$url = $this->_supplier->getInfo('import_url') . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
