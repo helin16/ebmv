@@ -62,7 +62,7 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 		$importUrl =trim($this->_supplier->getInfo('import_url'));
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
 		
-		$xml = $this->_getXmlFromUrl($importUrl, 'new', 1, 1, $type);
+		$xml = $this->_getXmlFromUrl($importUrl, 'new', $pageNo, $pageSize, $type);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results:' . (!$xml instanceof SimpleXMLElement ? trim($xml) : $xml->asXML()) , __FUNCTION__);
 		foreach($xml->children() as $childXml)
 		{
