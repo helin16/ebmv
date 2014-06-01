@@ -169,7 +169,7 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 		$xml->Language = trim($this->_getLanguageCode());
 	
 		$publishDate = new UDate ( $xml->PublicationDate );
-		$xml->BookType = $this->_supplier->getName() . '/' . $publishDate->format ('Y') . '/' . $publishDate->format('m');
+		$xml->BookType = ($bookName = trim($this->_supplier->getName())) . '/' . ($bookName . $publishDate->format ('Y')) . '/' . ($bookName . $publishDate->format('m'));
 		$copiesXml = $xml->addChild( 'Copies' );
 		$readOnline = $copiesXml->addChild ($this->_getLibOwnsType ( LibraryOwnsType::ID_ONLINE_VIEW_COPIES )->getCode ());
 		$readOnline->Available = $readOnlineCopy;
