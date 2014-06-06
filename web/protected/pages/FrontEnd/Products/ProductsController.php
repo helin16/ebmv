@@ -129,10 +129,10 @@ class ProductsController extends FrontEndPageAbstract
 	    {
 	    	if(($searchTxt = trim($this->Request['searchtext'])) === '')
 	    		return $flatArray();
-	    	$categories = BaseServiceAbastract::getInstance('Category')->searchCategoryByProduct($searchTxt, Core::getLibrary());
+	    	$categories = BaseServiceAbastract::getInstance('Category')->searchCategoryByProduct($searchTxt, Core::getLibrary(), true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('pcat.name' => 'asc'));
 	    }
 	    else
-	    	$categories = ($this->category instanceof Category ? $this->category->getChildren() : BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language));
+	    	$categories = ($this->category instanceof Category ? $this->category->getChildren() : BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language, true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('pcat.name' => 'asc')));
 	    foreach($categories as $cate)
 	    {
 	        $flatArray[$cate->getId()] = $cate;
