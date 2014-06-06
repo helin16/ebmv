@@ -46,6 +46,7 @@ class BmvComScriptCURL
 		$timeout = (!is_numeric($timeout) ? self::CURL_TIMEOUT : $timeout);
 		$options = array(
 				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_CONNECTTIMEOUT => 0, 
 				CURLOPT_TIMEOUT => $timeout, // set this to 8 hours so we dont timeout on big files
 				CURLOPT_URL     => $url
 				//,CURLOPT_PROXY   => 'proxy.bytecraft.internal:3128'
