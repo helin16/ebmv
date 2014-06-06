@@ -55,7 +55,7 @@ class ImportProduct
 		$scriptRunningtime = $finishScript->diff($startScript);
 		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================", __FUNCTION__, self::FLAG_END);
 		$transId = self::getLogTransId();
-		//echo self::showLogs($transId);
+		echo self::showLogs($transId);
 		return $transId;
 	}
 	
@@ -163,8 +163,8 @@ class ImportProduct
 	public static function showLogs($logKey = '', $lineBreaker = "\r\n")
 	{
 		$logKey = (($logKey = trim($logKey)) === '' ? self::getLogTransId() : $logKey);
-		$where = 'transId = ? and entityName = ?';
-		$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria($where, array($logKey, 'ImportProduct'));
+		$where = 'transId = ?';
+		$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria($where, array($logKey));
 		foreach($logs as $log)
 		{
 			echo $log . $lineBreaker;
