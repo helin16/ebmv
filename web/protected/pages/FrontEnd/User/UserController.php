@@ -92,7 +92,9 @@ class UserController extends FrontEndPageAbstract
 		{
 			if(!isset($params->CallbackParameter->itemId) || !($item = BaseServiceAbastract::getInstance('ProductShelfItem')->get(trim($params->CallbackParameter->itemId))) instanceof ProductShelfItem)
 				throw new Exception("System Error: invalid shelfitem!");
-			BaseServiceAbastract::getInstance('ProductShelfItem')->removeItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
+			BaseServiceAbastract::getInstance('ProductShelfItem')
+				->returnItem(Core::getUser(), $item->getProduct(), Core::getLibrary())
+				->removeItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
 			$result['item'] = $item->getJson();
 		}
 		catch(Exception $ex)
