@@ -229,7 +229,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 		{
 		}
 		if(trim($xml->Code) !== trim(self::CODE_SUCC))
-			throw new SupplierConnectorException("Connector Error, when try to get the download url: " . $xml['Value']);
+			throw new SupplierConnectorException("Connector Error, when try to get the download url: " . $xml->Value);
 		return trim($xml->Value);
 	}
 	/**
@@ -277,6 +277,5 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function returnProduct(Product &$product, UserAccount $user)
 	{
-		
 	}
 }

@@ -125,7 +125,9 @@ class ProductShelfItemService extends BaseServiceAbastract
     {
     	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
     	EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`status` = ?', '`productId` = ? and `ownerId` = ?', array(ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $product->getId(), $user->getId()));
-    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->returnProduct($product, $user);
+    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)
+    		->returnProduct($product, $user)
+    		->removeBookShelfList($user, $product);
     	return $this;
     }
     /**
