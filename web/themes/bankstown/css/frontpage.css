@@ -1,0 +1,23 @@
+ul.topmenu {
+	background: none repeat scroll 0 0 #6A8BBE;
+}
+
+ul.topmenu > li > a {
+	color: #fff;
+}
+ul.topmenu > li > a:hover {
+	color: #213C81;
+}
+
+.logoheader {
+	background: none repeat scroll 0 0 #213C81;
+    color: #FFFFFF;
+}
+
+.logoheader a,
+.logoheader a:hover {
+	color: #ffffff;
+}
+.logoheader .logo {
+	background: url("../images/logo.png") no-repeat scroll left top rgba(0, 0, 0, 0);
+}

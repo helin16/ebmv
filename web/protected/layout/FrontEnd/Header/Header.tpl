@@ -1,48 +1,43 @@
-<div class="systemtitle">
-	<span class="inlineblock headleft">
-		<a class="arrow" href="/" >
-			<span class="logo"></span>
-			<span class="libname"><%= Core::getLibrary()->getName() %></span>
-		</a>
-	</span>
-	<span class="inlineblock headright">
-		<a href="/user.html"><%= Core::getUser() instanceof UserAccount ? 'Welcome, ' . Core::getUser()->getPerson() : '登录/登錄' %></a>
-	</span>
-	<span class="inlineblock headright">
-		<a href="/help.html">
-		<span>帮助/幫助</span>
-		<span class="help"></help>
-		</a>
-	</span>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="media">
+				  <a class="pull-left" href="/">
+				    <img class="media-object" src="/themes/<%= $this->getPage()->getTheme()->getName() %>/images/logo.png" alt="<%= Core::getLibrary()->getName() %>">
+				  </a>
+				  <div class="media-body">
+				    <h4 ><%= Core::getLibrary()->getName() %></h4>
+				  </div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<ul class="nav navbar-nav">
+					<li><a href="/">帮助/幫助 <span class=" glyphicon glyphicon-question-sign"></span></a></li>
+					<li><a href="/user.html">登录/登錄</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="container topmenu">
+		<div class="navbar-header">
+			<button class="navbar-toggle" data-target="#topmenulist" data-toggle="collapse" type="button">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+		<div class="collapse navbar-collapse" id="topmenulist">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">首页/首頁<small>Home</small> <span class="glyphicon glyphicon-home"></span></a></li>
+				<li><a href="/user.html">我的书架/我的書架 <span class="glyphicon glyphicon-signal"></span></a></li>
+				<li><a> | </a></li>
+				<li><a>Transactions</a></li>
+				<li><a>Properties</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
 
-</div>
-
-<ul class="menuH decor1">
- <li><a class="arrow" href="/" >
- <span>首页/首頁</span>
- <span class="home"></span>
- </a></li> 
-
- <li><a class="arrow" href="/user.html">
- <span>我的书架/我的書架</span>
- <span class="shelf"></span>
- </a></li> 
- <li><a>&nbsp;|&nbsp;</a></li>
-
- <li><a>简体中文</a>
-<ul>
-<li><a href="/products/1/1">书</a> </li>
-
-<li><a href="/products/1/3">杂志</a> </li>
-<li><a href="/products/1/2">报纸</a></li> 
-</ul> </li> 
-
- <li><a>繁體中文</a>
-<ul>
-<li><a href="/products/2/1">書</a> </li>
-
-<li><a href="/products/2/3">雜誌</li>
-<li><a href="/products/2/2">報紙</a></li> 
-</ul> </li> 
-</ul>
 

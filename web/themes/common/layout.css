@@ -1,0 +1,18 @@
+.nodefault .panel-heading {
+    padding: 10px 15px 0;
+}
+
+.nodefault .panel-heading {
+	height: 40px;
+}
+.nodefault .panel-heading .title {
+	padding: 0px;
+}
+
+.nodefault .panel-heading .nav-tabs {
+    border-bottom: medium none;
+}
+
+.nodefault .panel-heading .nav-tabs > li > a {
+	padding: 4px 15px;
+}

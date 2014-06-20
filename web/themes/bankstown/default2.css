@@ -1,5 +1,2 @@
-@import url("css/layout.css");
-@import url("css/page.2.css");
-@import url("css/adminpage.css");
-@import url("dropdown/ddsmoothmenu.css");
-@import url("dropdown/ddsmoothmenu-v.css");
+@import url("../common/layout.css");
+/*@import url("css/frontpage.css");*/
