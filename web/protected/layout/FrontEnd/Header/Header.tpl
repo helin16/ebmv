@@ -30,13 +30,77 @@
 		</div>
 		<div class="collapse navbar-collapse" id="topmenulist">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="/">首页/首頁/Home <span class="glyphicon glyphicon-home"></span></a></li>
-				<li><a href="/user.html">我的书架/我的書架/My BookShelf <span class="glyphicon glyphicon-signal"></span></a></li>
+				<li class="active">
+				    <a href="/"><div class="btnname">首页/首頁<small>Home</small></div><span class="glyphicon glyphicon-home"></span></a>
+				</li>
+				<li><a href="/user.html"><div class="btnname">我的书架/我的書架<small>My BookShelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>
 				<li class="hidden-xs"><a> | </a></li>
-				<li><a>Transactions</a></li>
-				<li><a>Properties</a></li>
-				<li class="visible-xs"><a href="/">帮助/幫助/Help<span class=" glyphicon glyphicon-question-sign"></span></a></li>
-				<li class="visible-xs"><a href="/user.html">登录/登錄/Login</a></li>
+				<li class="dropdown">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="schinese-dropdown-btn">
+				        <div class="btnname">简体中文<small>Simplifed Chinese</small></div>
+				        <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu" role="menu"  aria-labelledby="schinese-dropdown-btn">
+						<li>
+						  <a href="/products/1/1">
+						      <div class="row">
+							      <div class="col-xs-4">书</div>
+							      <div class="col-xs-8 en">Books</div>
+						      </div>
+						  </a>
+						</li>
+						<li>
+						  <a href="/products/1/3">
+						      <div class="row">
+							      <div class="col-xs-4">杂志</div>
+							      <div class="col-xs-8 en">Magazines</div>
+						      </div>
+						  </a>
+						</li>
+						<li>
+						  <a href="/products/1/2">
+						      <div class="row">
+							      <div class="col-xs-4">报纸</div>
+							      <div class="col-xs-8 en">NewsPapers</div>
+						      </div>
+						  </a>
+						</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+                    <a href="#" class="btn dropdown-toggle" data-toggle="dropdown" id="tchinese-dropdown-btn">
+                        <div class="btnname">繁體中文<small>Traditional Chinese</small></div>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu"  aria-labelledby="tchinese-dropdown-btn">
+                        <li>
+                          <a href="/products/2/1">
+                              <div class="row">
+                                  <div class="col-xs-4">書</div>
+                                  <div class="col-xs-8 en">Books</div>
+                              </div>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="/products/2/3">
+                              <div class="row">
+                                  <div class="col-xs-4">雜誌</div>
+                                  <div class="col-xs-8 en">Magazines</div>
+                              </div>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="/products/2/2">
+                              <div class="row">
+                                  <div class="col-xs-4">報紙</div>
+                                  <div class="col-xs-8 en">NewsPapers</div>
+                              </div>
+                          </a>
+                        </li>
+                    </ul>
+                </li>
+				<li class="visible-xs"><a href="/"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
+				<li class="visible-xs"><a href="/user.html"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
 			</ul>
 		</div>
 	</div>

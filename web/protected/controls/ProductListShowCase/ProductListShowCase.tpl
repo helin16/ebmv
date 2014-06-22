@@ -4,10 +4,10 @@
 	class="panel panel-default nodefault">
 	<div class="panel-heading">
 	  <div class="row">
-	      <div class="col-xs-10">
+	      <div class="col-xs-10 title">
 	          <%=$this->getTitle() %>
 	      </div>
-	      <div class="col-xs-2 navbar-right">
+	      <div class="col-xs-2 rightbtns">
 	          <div class="hidden-sm hidden-xs">
                 <ul class="nav nav-tabs langlist">
                     <li class="langitem active" langid=''><a href="javascript: void(0);">All</a></li>
@@ -28,7 +28,69 @@
 	      </div>
 	  </div>
 	</div>
-	<div class="panel-body">
+	<div class="panel-body container-fluid">
+	   <div class="row">
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div href="#" class="thumbnail nodefault"> 
+				    <a href="#">
+				        <img data-src="holder.js/100%x180" alt="..." src="https://ebmv.com.au/asset/get?id=c6ca6dc99fab39eb5bb4c61f425cb1b4">
+				    </a>
+				    <div class="caption">
+						test test test test test test test test test test test test 
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div href="#" class="thumbnail"> 
+				    <a href="#">
+				        <img data-src="holder.js/100%x180" alt="..." src="https://ebmv.com.au/asset/get?id=c6ca6dc99fab39eb5bb4c61f425cb1b4">
+				    </a>
+				    <div class="caption">
+						<p>test test test test test test test test test test test test </p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div href="#" class="thumbnail"> 
+				    <a href="#">
+				        <img data-src="holder.js/100%x180" alt="..." src="https://ebmv.com.au/asset/get?id=c6ca6dc99fab39eb5bb4c61f425cb1b4">
+				    </a>
+				    <div class="caption">
+						<p>test test test test test test test test test test test test </p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div href="#" class="thumbnail"> 
+				    <a href="#">
+				        <img data-src="holder.js/100%x180" alt="..." src="https://ebmv.com.au/asset/get?id=c6ca6dc99fab39eb5bb4c61f425cb1b4">
+				    </a>
+				    <div class="caption">
+						<p>test test test test test test test test test test test test </p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div href="#" class="thumbnail"> 
+				    <a href="#">
+				        <img data-src="holder.js/100%x180" alt="..." src="https://ebmv.com.au/asset/get?id=c6ca6dc99fab39eb5bb4c61f425cb1b4">
+				    </a>
+				    <div class="caption">
+						<p>testtesttesttesttesttesttesttest test test test test </p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div href="#" class="thumbnail"> 
+				    <a href="#">
+				        <img data-src="holder.js/100%x180" alt="..." src="https://ebmv.com.au/asset/get?id=c6ca6dc99fab39eb5bb4c61f425cb1b4">
+				    </a>
+				    <div class="caption">
+						<p>test test test test test test test test test test test test </p>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="list"></div>
 	</div>
 </div>
