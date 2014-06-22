@@ -11,15 +11,15 @@
 				  </div>
 				</div>
 			</div>
-			<div class="col-sm-4 hidden-sm hidden-xs">
-				<ul class="nav navbar-nav">
-					<li><a href="/">帮助/幫助/Help<span class=" glyphicon glyphicon-question-sign"></span></a></li>
-					<li><a href="/user.html">登录/登錄/Login</a></li>
+			<div class="col-sm-4 hidden-sm hidden-xs topmenu">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="/" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
+					<li><a href="/user.html" class="iconbtn"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="container topmenu">
+	<div class="container mainmenu">
 		<div class="navbar-header">
 			<button class="navbar-toggle" data-target="#topmenulist" data-toggle="collapse" type="button">
 				<span class="sr-only">Toggle navigation</span>
@@ -31,18 +31,18 @@
 		<div class="collapse navbar-collapse" id="topmenulist">
 			<ul class="nav navbar-nav">
 				<li class="active">
-				    <a href="/"><div class="btnname">首页/首頁<small>Home</small></div><span class="glyphicon glyphicon-home"></span></a>
+				    <a href="/" class="iconbtn"><div class="btnname">首页/首頁<small>Home</small></div><span class="glyphicon glyphicon-home"></span></a>
 				</li>
-				<li><a href="/user.html"><div class="btnname">我的书架/我的書架<small>My BookShelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>
+				<li><a href="/user.html" class="iconbtn"><div class="btnname">我的书架/我的書架<small>My BookShelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>
 				<li class="hidden-xs"><a> | </a></li>
 				<li class="dropdown">
-				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="schinese-dropdown-btn">
+				    <a href="#" class="dropdown-toggle iconbtn" data-toggle="dropdown" id="schinese-dropdown-btn">
 				        <div class="btnname">简体中文<small>Simplifed Chinese</small></div>
 				        <b class="caret"></b>
 				    </a>
 				    <ul class="dropdown-menu" role="menu"  aria-labelledby="schinese-dropdown-btn">
 						<li>
-						  <a href="/products/1/1">
+						  <a href="/products/1/1" class="iconbtn">
 						      <div class="row">
 							      <div class="col-xs-4">书</div>
 							      <div class="col-xs-8 en">Books</div>
@@ -50,7 +50,7 @@
 						  </a>
 						</li>
 						<li>
-						  <a href="/products/1/3">
+						  <a href="/products/1/3" class="iconbtn">
 						      <div class="row">
 							      <div class="col-xs-4">杂志</div>
 							      <div class="col-xs-8 en">Magazines</div>
@@ -58,7 +58,7 @@
 						  </a>
 						</li>
 						<li>
-						  <a href="/products/1/2">
+						  <a href="/products/1/2" class="iconbtn">
 						      <div class="row">
 							      <div class="col-xs-4">报纸</div>
 							      <div class="col-xs-8 en">NewsPapers</div>
@@ -68,13 +68,13 @@
 					</ul>
 				</li>
 				<li class="dropdown">
-                    <a href="#" class="btn dropdown-toggle" data-toggle="dropdown" id="tchinese-dropdown-btn">
+                    <a href="#" class="dropdown-toggle iconbtn" data-toggle="dropdown" id="tchinese-dropdown-btn">
                         <div class="btnname">繁體中文<small>Traditional Chinese</small></div>
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu" role="menu"  aria-labelledby="tchinese-dropdown-btn">
                         <li>
-                          <a href="/products/2/1">
+                          <a href="/products/2/1" class="iconbtn">
                               <div class="row">
                                   <div class="col-xs-4">書</div>
                                   <div class="col-xs-8 en">Books</div>
@@ -82,7 +82,7 @@
                           </a>
                         </li>
                         <li>
-                          <a href="/products/2/3">
+                          <a href="/products/2/3" class="iconbtn">
                               <div class="row">
                                   <div class="col-xs-4">雜誌</div>
                                   <div class="col-xs-8 en">Magazines</div>
@@ -90,7 +90,7 @@
                           </a>
                         </li>
                         <li>
-                          <a href="/products/2/2">
+                          <a href="/products/2/2" class="iconbtn">
                               <div class="row">
                                   <div class="col-xs-4">報紙</div>
                                   <div class="col-xs-8 en">NewsPapers</div>
@@ -99,8 +99,8 @@
                         </li>
                     </ul>
                 </li>
-				<li class="visible-xs"><a href="/"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
-				<li class="visible-xs"><a href="/user.html"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
+				<li class="visible-xs"><a href="/" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
+				<li class="visible-xs"><a href="/user.html" class="iconbtn"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
 			</ul>
 		</div>
 	</div>

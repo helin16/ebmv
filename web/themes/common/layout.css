@@ -1,20 +1,25 @@
-.topmenu .nav.navbar-nav .glyphicon,
-.topmenu .nav.navbar-nav .btnname{
+.topmenu .nav{
+	text-align: right;
+}
+
+
+.iconbtn .glyphicon,
+.iconbtn .btnname{
 	display: inline-block;
 	text-align: center;
 	vertical-align: middle;
 }
-.topmenu .nav.navbar-nav .glyphicon {
+.iconbtn .glyphicon {
 	margin-left: 4px;
 }
-.topmenu .nav.navbar-nav .btnname small {
+.iconbtn .btnname small {
 	display: block;
 	font-size: 9px;
 	line-height: 0px;
 	margin: 2px 0 0 0;
 	
 }
-.topmenu .nav.navbar-nav .dropdown-menu .en {
+.iconbtn .en {
 	text-align: right;
 	font-size: 9px;
 }
