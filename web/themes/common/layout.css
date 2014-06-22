@@ -5,8 +5,16 @@
 .nodefault .panel-heading {
 	height: 40px;
 }
-.nodefault .panel-heading .title {
-	padding: 0px;
+.nodefault .panel-heading .col-xs-2{
+	padding: 0px 4px;
+	text-align: right;
+}
+.nodefault .panel-heading [data-toggle="dropdown"] {
+	padding: 0px 5px;
+}
+.nodefault .panel-heading .dropdown-menu {
+	min-width: 40px;
+	text-align: left;
 }
 
 .nodefault .panel-heading .nav-tabs {
@@ -14,5 +22,5 @@
 }
 
 .nodefault .panel-heading .nav-tabs > li > a {
-	padding: 4px 15px;
+	padding: 4px 10px;
 }

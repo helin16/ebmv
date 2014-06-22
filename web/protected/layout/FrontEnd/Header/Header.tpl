@@ -11,10 +11,10 @@
 				  </div>
 				</div>
 			</div>
-			<div class="col-sm-4">
+			<div class="col-sm-4 hidden-sm hidden-xs">
 				<ul class="nav navbar-nav">
-					<li><a href="/">帮助/幫助 <span class=" glyphicon glyphicon-question-sign"></span></a></li>
-					<li><a href="/user.html">登录/登錄</a></li>
+					<li><a href="/">帮助/幫助/Help<span class=" glyphicon glyphicon-question-sign"></span></a></li>
+					<li><a href="/user.html">登录/登錄/Login</a></li>
 				</ul>
 			</div>
 		</div>
@@ -30,11 +30,13 @@
 		</div>
 		<div class="collapse navbar-collapse" id="topmenulist">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="/">首页/首頁<small>Home</small> <span class="glyphicon glyphicon-home"></span></a></li>
-				<li><a href="/user.html">我的书架/我的書架 <span class="glyphicon glyphicon-signal"></span></a></li>
-				<li><a> | </a></li>
+				<li class="active"><a href="/">首页/首頁/Home <span class="glyphicon glyphicon-home"></span></a></li>
+				<li><a href="/user.html">我的书架/我的書架/My BookShelf <span class="glyphicon glyphicon-signal"></span></a></li>
+				<li class="hidden-xs"><a> | </a></li>
 				<li><a>Transactions</a></li>
 				<li><a>Properties</a></li>
+				<li class="visible-xs"><a href="/">帮助/幫助/Help<span class=" glyphicon glyphicon-question-sign"></span></a></li>
+				<li class="visible-xs"><a href="/user.html">登录/登錄/Login</a></li>
 			</ul>
 		</div>
 	</div>
