@@ -1,1 +1,178 @@
-var PageJs=new Class.create();PageJs.prototype=Object.extend(new FrontPageJs(),{resultDivId:"",getProductsBtn:"",pagination:{pageNo:1,pageSize:10},searchCriteria:{searchString:"",categoryIds:[],searchOpt:"",searchCat:"",language:"",productType:""},getProductItemFunc:"_getProductGridItem",initialize:function(b,a){this.resultDivId=b;this.getProductsBtn=a},showProducts:function(a,c){var b={};b.me=this;b.clear=(a===true?true:false);if(b.clear===true){this.pagination.pageNo=1;$(b.me.resultDivId).update(b.me._getLoadingDiv())}pageJs.postAjax(this.getProductsBtn,{pagination:b.me.pagination,searchCriteria:b.me.searchCriteria},{onLoading:function(){},onComplete:function(d,g){if(b.clear===true){$(b.me.resultDivId).update("")}try{b.result=pageJs.getResp(g,false,true);if(!b.result.pagination||b.result.pagination.totalRows===0){throw"Nothing found!"}b.result.products.each(function(e){$(b.me.resultDivId).insert({bottom:b.me[b.me.getProductItemFunc](e)})});$(b.me.resultDivId).insert({bottom:b.me._getPaginationDiv(b.result.pagination)})}catch(f){if(b.clear===true){$(b.me.resultDivId).update(f)}else{alert(f)}}if(typeof(c)==="function"){c()}}});return this},_getLoadingDiv:function(){return new Element("span",{"class":"loading"}).insert({bottom:new Element("img",{src:"/themes/default/images/loading.gif"})}).insert({bottom:"Loading ..."})},_getPaginationDiv:function(a){var b={};if(a.pageNumber>=a.totalPages){return}b.me=this;return new Element("div",{"class":"pagination_wrapper fullwith"}).insert({bottom:b.me._getPaginationBtn("查看更多 / 查看更多<br />Get more",a.pageNumber+1)})},changePage:function(d,b,a){var c={};this.pagination.pageNo=b;this.pagination.pageSize=a;$(d).update("Getting more ....").writeAttribute("disabled",true);this.showProducts(false,function(){$(d).up(".pagination_wrapper").remove()})},_getPaginationBtn:function(a,b){var c={};c.me=this;return new Element("span",{"class":"fullwith button rdcrnr pagin_btn"}).update(a).observe("click",function(){c.me.changePage(this,b,c.me.pagination.pageSize)})},_getProductListItem:function(b){var a={};a.me=this;a.productDiv=new Element("div",{"class":"product listitem"}).insert({bottom:new Element("span",{"class":"inlineblock listcol left"}).insert({bottom:a.me._getProductImgDiv(b.attributes.image_thumb||null).addClassName("cursorpntr").observe("click",function(){a.me.showDetailsPage(b.id)})})}).insert({bottom:new Element("span",{"class":"inlineblock listcol right"}).insert({bottom:new Element("div",{"class":"product_title"}).update(b.title).addClassName("cursorpntr").observe("click",function(){a.me.showDetailsPage(b.id)})}).insert({bottom:new Element("div",{"class":"row"}).insert({bottom:new Element("span",{"class":"author inlineblock"}).insert({bottom:new Element("label").update("Author:")}).insert({bottom:new Element("span").update(b.attributes.author?a.me._getAttrString(b.attributes.author).join(" "):"")})}).insert({bottom:new Element("span",{"class":"product_isbn inlineblock textright"}).insert({bottom:new Element("label").update("ISBN:")}).insert({bottom:new Element("span").update(b.attributes.isbn?a.me._getAttrString(b.attributes.isbn).join(" "):"")})})}).insert({bottom:new Element("div",{"class":"row"}).insert({bottom:new Element("span",{"class":"product_publisher inlineblock"}).insert({bottom:new Element("label").update("Publisher:")}).insert({bottom:new Element("span").update(b.attributes.publisher?a.me._getAttrString(b.attributes.publisher).join(" "):"")})}).insert({bottom:new Element("span",{"class":"product_publish_date inlineblock textright"}).insert({bottom:new Element("label").update("Publisher Date:")}).insert({bottom:new Element("span").update(b.attributes.publish_date?a.me._getAttrString(b.attributes.publish_date).join(" "):"")})})}).insert({bottom:new Element("div",{"class":"product_description"}).update((b.attributes.description?a.me._getAttrString(b.attributes.description).join(" "):""))})});return a.productDiv},_getProductGridItem:function(a){return this._getProductThumbnail(a)},_getAttrString:function(a){return a.map(function(b){return b.attribute||""})}});
+/**
+ * The page Js file
+ */
+var PageJs = new Class.create();
+PageJs.prototype = Object.extend(new FrontPageJs(), {
+	
+	resultDivId: '', //the result div for the product list
+	getProductsBtn: '', //the callbackId for getting the products
+	pagination: {'pageNo': 1, 'pageSize': 10},
+	searchCriteria: {'searchString': '', 'categoryIds': [], 'searchOpt': '', 'searchCat' : '', 'language' : '', 'productType' : ''},
+	getProductItemFunc: '_getProductListItem',
+	
+	//constructor
+	initialize: function(resultDivId, getProductsBtn) {
+		this.resultDivId = resultDivId;
+		this.getProductsBtn = getProductsBtn;
+	}
+
+	//show the products
+	,showProducts: function(clear, afterFunc) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.clear = (clear === true ? true : false);
+		if(tmp.clear === true)
+		{
+			this.pagination.pageNo = 1;
+			$(tmp.me.resultDivId).update(tmp.me._getLoadingDiv());
+		}
+		pageJs.postAjax(this.getProductsBtn, {'pagination': tmp.me.pagination, 'searchCriteria':  tmp.me.searchCriteria}, {
+			'onLoading': function () {
+			}
+			,'onComplete': function(sender, param) {
+				if(tmp.clear === true)
+				{
+					tmp.list = (tmp.me.getProductItemFunc === '_getProductGridItem' ? new Element('div', {'class': 'row'}) : new Element('ul', {'class': 'media-list'}) );
+					tmp.list.addClassName('plist');
+					$(tmp.me.resultDivId).update(tmp.list);
+				}
+				try {
+					tmp.result = pageJs.getResp(param, false, true);
+					if(!tmp.result.pagination || tmp.result.pagination.totalRows === 0)
+						throw 'Nothing found!';
+					
+					tmp.list = $(tmp.me.resultDivId).down('.plist');
+					tmp.result.products.each(function(item){
+						tmp.list.insert({'bottom': tmp.me[tmp.me.getProductItemFunc](item) });
+					});
+					$(tmp.me.resultDivId).insert({'bottom': tmp.me._getPaginationDiv(tmp.result.pagination) });
+				} catch (e) {
+					if(tmp.clear === true)
+						$(tmp.me.resultDivId).update(e);
+					else
+						alert(e);
+				}
+				if(typeof(afterFunc) === 'function')
+					afterFunc();
+			}
+		});
+		return this;
+	}
+	
+	//getting the loading div
+	,_getLoadingDiv: function() {
+		return new Element('span', {'class': 'loading'})
+			.insert({'bottom': new Element('img', {'src': '/images/loading.gif'})})
+			.insert({'bottom': 'Loading ...'});
+	}
+	
+	//get pagination div
+	,_getPaginationDiv: function(pagination) {
+		var tmp = {};
+		if(pagination.pageNumber >= pagination.totalPages)
+			return;
+		
+		tmp.me = this;
+		return new Element('div', {'class': 'pagination_wrapper pull-right'}).insert({'bottom': tmp.me._getPaginationBtn('查看更多 / 查看更多<br />Get more', pagination.pageNumber + 1) });
+	}
+	
+	,changePage: function (btn, pageNo, pageSize) {
+		var tmp = {};
+		this.pagination.pageNo = pageNo;
+		this.pagination.pageSize = pageSize;
+		$(btn).update('Getting more ....').writeAttribute('disabled', true);
+		this.showProducts(false, function() {
+			$(btn).up('.pagination_wrapper').remove();
+		});
+	}
+	
+	,_getPaginationBtn: function (txt, pageNo) {
+		var tmp = {};
+		tmp.me = this;
+		return new Element('button', {'class': 'btn btn-primary', 'type': 'button'})
+			.update(txt)
+			.observe('click', function() {
+				tmp.me.changePage(this, pageNo, tmp.me.pagination.pageSize);
+			})
+		;
+	}
+	
+	//get product list item
+	,_getProductListItem: function(product) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.productDiv = new Element('div', {'class': 'row nodefault plistitem'})
+			.insert({'bottom': new Element('div', {'class': 'col-xs-3'})
+				.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(product.id)})
+					.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null).addClassName('img-thumbnail') })
+				})
+			})
+			.insert({'bottom': new Element('div', {'class': 'col-xs-9'})
+				.insert({'bottom': new Element('a', {'class': 'product_title', 'href': tmp.me.getProductDetailsUrl(product.id)})
+					.insert({'bottom': new Element('h4')
+						.update(product.title) 
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+						.insert({'bottom': new Element('div', {'class': 'row'})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+								.insert({'bottom': new Element('strong')
+									.insert({'bottom': 'Author:' })
+								})
+							})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(product.attributes.author ? tmp.me._getAttrString(product.attributes.author).join(' ') : '')})
+						})
+					})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+						.insert({'bottom': new Element('div', {'class': 'row'})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+								.insert({'bottom': new Element('strong')
+									.insert({'bottom': 'ISBN:' })
+								})
+							})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(product.attributes.isbn ? tmp.me._getAttrString(product.attributes.isbn).join(' ') : '')})
+						})
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+						.insert({'bottom': new Element('div', {'class': 'row'})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+								.insert({'bottom': new Element('strong')
+									.insert({'bottom': 'Publisher:' })
+								})
+							})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(product.attributes.publisher ? tmp.me._getAttrString(product.attributes.publisher).join(' ') : '')})
+						})
+					})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+						.insert({'bottom': new Element('div', {'class': 'row'})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+								.insert({'bottom': new Element('strong')
+									.insert({'bottom': 'Pub. Date:' })
+								})
+							})
+							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(product.attributes.publish_date ? tmp.me._getAttrString(product.attributes.publish_date).join(' ') : '')})
+						})
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('small')
+						.insert({'bottom': product.attributes.description ? tmp.me._getAttrString(product.attributes.description).join(' ') : '' })
+					})
+				})
+			})
+		;
+		return tmp.productDiv;
+	}
+	
+	//get product grid item
+	,_getProductGridItem: function(product) {
+		return new Element('div', {"class": "col-md-3 col-sm-4 col-xs-6"}).update(this._getProductThumbnail(product));
+	}
+	
+	,_getAttrString: function(attArray){
+		return attArray.map(function(attr) { return attr.attribute || '';});
+	}
+});

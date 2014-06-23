@@ -8,7 +8,7 @@
  */
 class ProductsController extends FrontEndPageAbstract  
 {
-    public $pageSize = 40;
+    public $pageSize = 12;
     public $type;
     public $language;
     public $category;
@@ -61,14 +61,7 @@ class ProductsController extends FrontEndPageAbstract
 	 */
 	protected function _getEndJs()
 	{
-	    $js = 'ddsmoothmenu.init({';
-           $js .= 'mainmenuid: "catelist",';
-           $js .= 'orientation: "v",';
-           $js .= 'classname: "ddsmoothmenu-v",';
-           $js .= 'arrowswap: true,';
-           $js .= 'contentsource: "markup"';
-		$js .= '});';
-		$js .= 'var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); ';
+		$js = 'var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); ';
 		$js .= 'pageJs.pagination.pageSize = ' . $this->pageSize . ';';
 		$js .= (($catId = trim($this->Request['cateid'])) === '' ? '' : 'pageJs.searchCriteria.categoryIds.push(' . $catId . ');');
 		
@@ -102,22 +95,23 @@ class ProductsController extends FrontEndPageAbstract
 	{
 	    if(!is_array($array) || count($array) === 0)
 	        return;
-	    $html = '<ul>';
+	    $html = '';
 	    foreach($array as $key => $nextLevelArray)
 	    {
-	        if(!isset($categories[$key]))
+	        if(!isset($categories[$key]) || trim($categories[$key]->getName()) === '')
 	            continue;
-	        
+
 	        $url = '/products/category/' . $categories[$key]->getId();
-	        $html .= '<li><a href="' .$url  . '">' . $categories[$key]->getName() . '</a>';
+	        $nextLevelArray = (isset($relArray[$key]) ? $relArray[$key] : $nextLevelArray);
+	        	$html .= '<a href="' .$url  . '" class="list-group-item">';
+	        	$html .= $categories[$key]->getName();
+	        	$html .= (count($nextLevelArray) === 0 ? '' : ' <span class="glyphicon glyphicon-chevron-right pull-right"></span>');
+	        	$html .= '</a>';
+	        	$html .= (count($nextLevelArray) === 0 ? '' : ' <div class="list-group" style="display: none;">');
+	        	$html .= $this->_getCateLi($nextLevelArray, $relArray, $categories);
+	        	$html .= (count($nextLevelArray) === 0 ? '' : ' </div>');
 	            unset($categories[$key]);
-	        if(isset($relArray[$key]))
-	            $html .= $this->_getCateLi($relArray[$key], $relArray, $categories);
-	        else
-	            $html .= $this->_getCateLi($nextLevelArray, $relArray, $categories);
-	        $html .= '</li>';
 	    }
-	    $html .= "</ul>";
 	    return $html;
 	}
 	

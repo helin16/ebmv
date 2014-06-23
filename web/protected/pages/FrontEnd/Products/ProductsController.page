@@ -1,38 +1,40 @@
 <com:TContent ID="MainContent">
-    <com:Application.controls.AccordinMenu.AccordinMenuJs />
     <com:TCallback ID="getProductsBtn" OnCallback="getProducts" />
-    
-    <div class="pageWrapper">
-        <span class="left sidebar inlineblock">
-            <div ID="menu-accordion" class="sidebarmodule">
-                <h3 class="sidebarmoduletitle">Subjects</h3>
-                <div id="catelist" class="sidebarmodulecontent">
-                    <%= $this->getCategories() %>
-                    <br style="clear: left" />
-                </div>
-            </div>
-        </span>
-        <span class="maincontent inlineblock">
-            <div class="controlbtns">
-                <span class="inlineblock" style="width: 66%;">
-                    <input id="searchtxt" type="textbox" class="padding5 fullwith rdcrnr lightBrdr" 
-                    		value="<%= $this->getSearchText() %>"
-                    	   placeholder="Search Your <%= $this->type instanceof ProductType ? $this->type->getName() : 'items' %> by title, author or ISBN" 
-                    	   onkeydown="return pageJs.keydown(event, function(){ $('searchbtn').click();})"/>
-                </span>
-                <span class="inlineblock" style="width: 10%">
-                    <input id="searchbtn" type="button" class="button rdcrnr" value="Search" OnClick="window.location='/products/search/' + $F('searchtxt');"/>
-                </span>
-                <span class="inlineblock productlistviewbtns">
-                    <ul class="btn-group">
-                        <li class="rdcrnrfirst grid button active" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(true); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">Grid</span></li>
-                        <li class="rdcrnrlast list button" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(true); $(this).up().getElementsBySelector('.active').each(function(item){item.removeClassName('active');}); $(this).addClassName('active');"><span class="icon"></span><span class="title">List</span></li>
-                    </ul>
-                </span>
-            </div>
-            <com:Application.controls.AdvancedSearch.AdvanceSearchControl />
-            <div id="productlist" class="productlist">
-            </div>
-        </span>
-    </div>
+    <div class="pagewrapper products">
+	    <div class="row">
+	        <div class="maincontent col-md-9 col-md-push-3" role="main">
+	       		 <div class="well well-sm">
+		            <div class="row">
+		            	<div class="col-xs-8">
+							<div class="input-group">
+								<input type="text" class="form-control" id="searchtxt" placeholder="Search Your <%= $this->type instanceof ProductType ? $this->type->getName() : 'items' %> by title, author or ISBN">
+								<span class="input-group-btn">
+									<button class="btn btn-default" OnClick="if($F('searchtxt').blank()){alert('没什么可搜索\n沒什麼可搜索\nNothing to Search.');return false;}window.location='/products/search/' + $F('searchtxt');" title="搜索/搜索/Search">
+										<span class="glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+		            	</div>
+		            	<div class="col-xs-4">
+		            		<div class="btn-group">
+		            			<button type="button" class="btn btn-default" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(true); "><span class="glyphicon glyphicon-th-large"></span> Grid</button>
+		            			<button type="button" class="btn btn-default" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(true); "><span class="glyphicon glyphicon-list"></span> List</button>
+		            		</div>
+		            	</div>
+		            </div>
+		        </div>
+	            <div class="clearfix"></div>
+	            <div id="productlist">
+	            </div>
+	        </div>
+	        <div class="col-md-3 col-md-pull-9">
+	            <div ID="menu-accordion" role="complementary">
+	                <h3 class="sidebarmoduletitle">Subjects</h3>
+	                <div id="catelist" class="list-group">
+	                    <%= $this->getCategories() %>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 </com:TContent>

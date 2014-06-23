@@ -1,8 +1,6 @@
 .topmenu .nav{
 	text-align: right;
 }
-
-
 .iconbtn .glyphicon,
 .iconbtn .btnname{
 	display: inline-block;
@@ -67,8 +65,35 @@
     bottom: 5px;
     left: 5px;
     position: absolute;
-    
-     background: none repeat scroll 0 0 #000000;
+    background: none repeat scroll 0 0 #000000;
     color: #FFFFFF;
     opacity: 0.6;
+    width: 95%;
+    overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.nodefault.row {
+	margin: 0 0 8px 0;
+}
+.nodefault.row dl.dl-horizontal {
+	margin-bottom: 2px;
+}
+.nodefault.row dl.dl-horizontal dt {
+	width: 110px;
+}
+.nodefault.row dl.dl-horizontal dd {
+	margin-left: 120px;
+}
+
+.mainbody {
+	min-height: 400px;
+}
+
+.footer {
+	margin: 15px 0 0 0;
+}
+.footer .container .row {
+	text-align: center;
+	margin: 10px 0 0 0;
 }

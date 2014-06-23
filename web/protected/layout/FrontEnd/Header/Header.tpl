@@ -35,12 +35,12 @@
 				</li>
 				<li><a href="/user.html" class="iconbtn"><div class="btnname">我的书架/我的書架<small>My BookShelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>
 				<li class="hidden-xs"><a> | </a></li>
-				<li class="dropdown">
-				    <a href="#" class="dropdown-toggle iconbtn" data-toggle="dropdown" id="schinese-dropdown-btn">
+				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
+				    <a href="#" role="button" class="dropdown-toggle iconbtn" data-toggle="dropdown" id="schinese-dropdown-btn" data-target="#">
 				        <div class="btnname">简体中文<small>Simplifed Chinese</small></div>
 				        <b class="caret"></b>
 				    </a>
-				    <ul class="dropdown-menu" role="menu"  aria-labelledby="schinese-dropdown-btn">
+				    <ul class="dropdown-menu" role="menu" aria-labelledby="schinese-dropdown-btn">
 						<li>
 						  <a href="/products/1/1" class="iconbtn">
 						      <div class="row">
@@ -67,8 +67,8 @@
 						</li>
 					</ul>
 				</li>
-				<li class="dropdown">
-                    <a href="#" class="dropdown-toggle iconbtn" data-toggle="dropdown" id="tchinese-dropdown-btn">
+				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
+                    <a href="#" class="iconbtn" data-toggle="dropdown" id="tchinese-dropdown-btn">
                         <div class="btnname">繁體中文<small>Traditional Chinese</small></div>
                         <b class="caret"></b>
                     </a>
