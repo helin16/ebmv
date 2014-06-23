@@ -13,7 +13,7 @@
 			</div>
 			<div class="col-sm-4 hidden-sm hidden-xs topmenu">
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="/" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
+					<li><a href="/help.html" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
 					<li><a href="/user.html" class="iconbtn"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
 				</ul>
 			</div>

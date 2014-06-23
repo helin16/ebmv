@@ -1,7 +1,9 @@
 <com:TContent ID="MainContent">
 	<div class="pageWrapper helppage">
-		<span class="left sidebar inlineblock" id="topQs"></span>
-		<span class="maincontent inlineblock" id="questionlist"></span>
+		<div class="row">
+			<div class="col-sm-3" id="topQs"></div>
+			<div class="col-sm-9" id="questionlist"></div>
+		</div>
 	</div>
 	
 </com:TContent>
