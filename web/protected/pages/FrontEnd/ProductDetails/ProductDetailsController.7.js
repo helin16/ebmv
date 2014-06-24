@@ -96,12 +96,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					tmp.readCopies = tmp.downloadCopies = 'N/A';
-					tmp.readBtn = new Element('button', {'class': 'btn btn-primary iconbtn'})
+					tmp.readBtn = new Element('span', {'class': 'btn btn-primary iconbtn disabled popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'preadonlinebtn', 'data-loading-text': "处理中/處理中/Processing ..."})
 						.insert({'bottom': new Element('div', {'class': 'btnname'})
 							.insert({'bottom': '在线阅读 / 在線閱讀'})
 							.insert({'bottom': new Element('small').update('Read Online') })
 						});
-					tmp.downloadBtn = new Element('button', {'class': 'btn btn-primary iconbtn disabled'})
+					tmp.downloadBtn = new Element('span', {'class': 'btn btn-primary iconbtn popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'pdownloadbtn', 'data-loading-text': "处理中/處理中/Processing ..."})
 						.insert({'bottom': new Element('div', {'class': 'btnname'})
 							.insert({'bottom': '下载阅读 / 下載閱讀'})
 							.insert({'bottom': new Element('small').update('Download') })
@@ -112,18 +112,18 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						tmp.readCopies = tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].total;
 						tmp.readBtn.removeClassName('disabled')
 							.observe('click', function(){
-								tmp.me._getLink(this, 'read');
+								return tmp.me._getLink(this, 'read');
 							});
 					}
 					
 					//getting the download url
-					if(tmp.result.urls.downloadUrl && tmp.result.copies[tmp.me.ownTypeIds.Download].avail * 1 > 0) {
+//					if(tmp.result.urls.downloadUrl && tmp.result.copies[tmp.me.ownTypeIds.Download].avail * 1 > 0) {
 						tmp.downloadCopies = tmp.result.copies[tmp.me.ownTypeIds.Download].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.Download].total;
 						tmp.downloadBtn.removeClassName('disabled')
 							.observe('click', function(){
-								tmp.me._getLink(this, 'download');
+								return tmp.me._getLink(this, 'download');
 							});
-					} 
+//					} 
 					$(readCopiesDisplayHolderId).up('.row').update('')
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Online Read Copies:</strong>', 'online_read_copies', tmp.readCopies) })
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Download Copies:</strong>', 'download_copies', tmp.downloadCopies) });
@@ -146,11 +146,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return this;
 	}
 	
+	/**
+	 * trying to get the read or download url
+	 */
 	,_getLink: function(btn, type) {
 		var tmp = {};
 		tmp.me = this;
 		
-		$(btn).writeAttribute('originvalue', $(btn).innerHTML);
 		tmp.me.getUser(btn, function(){
 				tmp.me.postAjax(tmp.me.getCallbackId('geturl'), {'type': type}, {
 					'onLoading': function () {}
@@ -166,15 +168,17 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						} catch(e) {
 							alert(e);
 						}
-						$(btn).update($(btn).readAttribute('originvalue')).writeAttribute('disabled', false);
+						jQuery('#' + btn.id).button('reset');
 					}
 				}, 120000);
 			}, function () {
-				$(btn).update( "Processing ...").writeAttribute('disabled', true);
+				jQuery('#' + btn.id).button('loading');
 			}
 			, function () {
-				$(btn).update($(btn).readAttribute('originvalue')).writeAttribute('disabled', false);
+				jQuery('#' + btn.id).button('reset');
 			}
 		);
+		
+		return false;
 	}
 });

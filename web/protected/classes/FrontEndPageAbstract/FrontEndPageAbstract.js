@@ -133,57 +133,76 @@ FrontPageJs.prototype = {
 					if(typeof(afterFunc) === 'function')
 						afterFunc();
 				} catch(e) {
-					tmp.me.showLoginPanel(btn, cancelLoginFunc);
+					jQuery('#' + btn.id).popover({
+						'html': true,
+						'placement': 'auto',
+						'title': '登陆/登陸/Sign In',
+						'content': tmp.me._getLoginPanel(btn, cancelLoginFunc),
+						'container': 'body'
+					})
+					.popover('show');
+//					jQuery('.popoverbtn').not(jQuery('#' + btn.id)).popover('hide').button('reset');
+//					tmp.me.showLoginPanel(btn, cancelLoginFunc);
 				}
 			}
 		});
 	}
 	//showing login panel
-	,showLoginPanel: function(btn, cancelLoginFunc) {
+	,_getLoginPanel: function(btn, cancelLoginFunc) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.newDiv = new Element('div', {'class': 'floatingpanel'})
+		return new Element('div', {'class': 'login-form loginpanel', 'role': 'form'})
 			.insert({'bottom': new Element('div', {'class': 'row msgpanel'}) })
-			.insert({'bottom': new Element('div', {'class': 'row'})
-				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('图书馆卡号/圖書館卡號:') 
-				})
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('input', {'type': 'textbox', 'class': 'username rdcrnr padding5 lightBrdr ', 'placeholder': 'Username'}) 
+			.insert({'bottom': new Element('div', {'class': 'form-group'})
+				.insert({'bottom': new Element('label', {'for': 'username'}).update('图书馆卡号/圖書館卡號/Library Card No.') })
+				.insert({'bottom': new Element('div', {'class': 'input-group'})
+					.insert({'bottom': new Element('span', {'class': 'input-group-addon'}) 
+						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-user'}) })
+					})
+					.insert({'bottom': new Element('input', {'id': 'username', 'type': 'text', 'class': 'form-control username', 'placeholder': 'Username', 'required': true, 'autofocus': true}) 
 						.observe('keydown', function(event) {
 							pageJs.keydown(event, function(){$(Event.element(event)).up('.loginpanel').down('.loginbtn').click();});
 						})
 					})
 				})
 			})
-			.insert({'bottom': new Element('div', {'class': 'row'})
-				.insert({'bottom': new Element('span', {'class': 'inlineblock title'}).update('PIN:')
-				})
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('input', {'type': 'password', 'class': 'password rdcrnr padding5 lightBrdr ', 'placeholder': 'Password'}) 
+			.insert({'bottom': new Element('div', {'class': 'form-group'})
+				.insert({'bottom': new Element('label', {'for': 'password'}).update('密码/密碼/PIN') })
+				.insert({'bottom': new Element('div', {'class': 'input-group'})
+					.insert({'bottom': new Element('span', {'class': 'input-group-addon'}) 
+						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-lock'}) })
+					})
+					.insert({'bottom': new Element('input', {'id': 'password', 'type': 'password', 'class': 'form-control password', 'placeholder': 'Password', 'required': true}) 
 						.observe('keydown', function(event) {
 							pageJs.keydown(event, function(){$(Event.element(event)).up('.loginpanel').down('.loginbtn').click();});
 						})
 					})
 				})
 			})
-			.insert({'bottom': new Element('div', {'class': 'row btns'})
-				.insert({'bottom': new Element('input', {'class': 'loginbtn button rdcrnr', 'value': 'Login', 'type': 'button'})
-						.observe('click', function() {
-							tmp.me._login(this, null, function() {
-								window.location = document.URL;
-							});
+			.insert({'bottom': new Element('div', {'class': 'form-group btns'})
+				.insert({'bottom': new Element('span', {'id': 'pop_login_btn', 'class': 'loginbtn btn btn-sm btn-primary btn-block iconbtn', 'data-loading-text': '登陆中/登陸中/Processing...'})
+					.insert({'bottom': new Element('div', {'class': 'btnname'})
+						.insert({'bottom': '登陆/登陸' })
+						.insert({'bottom': new Element('small').update('Sign in') })
 					})
-				})
-				.insert({'bottom': new Element('input', {'class': 'cancelbtn button rdcrnr', 'value': 'Cancel', 'type': 'button'})
 					.observe('click', function() {
-						$(this).up('.floatpanelwrapper').remove();
+						tmp.me._login(this, null, function() {
+							window.location = document.URL;
+						});
+					})	
+				})
+				.insert({'bottom': new Element('span', {'class': 'btn btn-sm btn-default btn-block iconbtn'})
+					.insert({'bottom': new Element('div', {'class': 'btnname'})
+						.insert({'bottom': '取消/撤消' })
+						.insert({'bottom': new Element('small').update('Cancel') })
+					})
+					.observe('click', function() {
+						jQuery(btn).popover('hide');
 						if(typeof(cancelLoginFunc) === 'function')
 							cancelLoginFunc();
 					})
 				})
 			});
-		$(btn).insert({'after': tmp.newDiv.wrap(new Element('div', {'class': 'loginpanel floatpanelwrapper'}))});
-		tmp.newDiv.down('.username').focus();
 	}
 	
 	,_getErrMsg: function (msg) {
@@ -224,23 +243,32 @@ FrontPageJs.prototype = {
 			}
 		});
 	}
+	/**
+	 * pre checking for login
+	 */
 	,_preLogin: function (usernamebox, passwordbox) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.loginPanel = $(usernamebox).up('.loginpanel');
 		//cleanup error msg
-		$(usernamebox).up('.loginpanel').getElementsBySelector('.errmsg').each(function(item) {
-			item.remove();
+		tmp.loginPanel.getElementsBySelector('.has-error').each(function(item) {
+			item.removeClassName('has-error');
 		});
+		tmp.loginPanel.down('.msgpanel').update('');
 		
+		tmp.me.errorMsg = '';
 		if($F(usernamebox).blank()) {
-			$(usernamebox).insert({'after': tmp.me._getErrMsg('Please provide an username!') });
-			$(usernamebox).focus();
-			return false;
+			$(usernamebox).up('.form-group').addClassName('has-error');
+			tmp.me.errorMsg += '<span class="label label-danger">Username is required</span> ';
 		}
 		
 		if($F(passwordbox).blank()) {
-			$(passwordbox).insert({'after': tmp.me._getErrMsg('Please provide an password!') });
-			$(passwordbox).focus();
+			$(passwordbox).up('.form-group').addClassName('has-error');
+			tmp.me.errorMsg += '<span class="label label-danger">Password is required</span> ';
+		}
+		
+		if(!tmp.me.errorMsg.blank()) {
+			tmp.loginPanel.down('.msgpanel').update(tmp.me.errorMsg);
 			return false;
 		}
 		return true;

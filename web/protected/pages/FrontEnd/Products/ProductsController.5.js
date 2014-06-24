@@ -8,7 +8,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	getProductsBtn: '', //the callbackId for getting the products
 	pagination: {'pageNo': 1, 'pageSize': 10},
 	searchCriteria: {'searchString': '', 'categoryIds': [], 'searchOpt': '', 'searchCat' : '', 'language' : '', 'productType' : ''},
-	getProductItemFunc: '_getProductListItem',
+	getProductItemFunc: '_getProductGridItem',
 	
 	//constructor
 	initialize: function(resultDivId, getProductsBtn) {
