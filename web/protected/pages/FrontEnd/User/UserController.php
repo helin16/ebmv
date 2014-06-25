@@ -28,7 +28,7 @@ class UserController extends FrontEndPageAbstract
 			$js .= '.setCallbackId("borrowItem", "' . $this->borrowItemBtn->getUniqueID() . '")';
 			$js .= '.setCallbackId("returnItem", "' . $this->returnItemBtn->getUniqueID() . '")';
 			$js .= '.setCallbackId("removeProduct", "' . $this->removeFromShelfBtn->getUniqueID() . '");';
-		$js .= '$$(".leftmenu.singlelevel .menulist .menuitem .menulink").first().click();';
+		$js .= '$("mybookshelfbtn").click();';
 		return $js;
 	}
 	/**

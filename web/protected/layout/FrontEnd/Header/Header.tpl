@@ -13,8 +13,17 @@
 			</div>
 			<div class="col-sm-4 hidden-sm hidden-xs topmenu">
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="/help.html" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
-					<li><a href="/user.html" class="iconbtn"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
+					<li><a href="/help.html" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class="glyphicon glyphicon-question-sign"></span></a></li>
+					<li>
+						<a href="/user.html" class="iconbtn">
+							<%= Core::getUser() instanceof UserAccount ?
+								'<div class="btnname">Welcome<small>' . Core::getUser()->getPerson() . '</small></div>'
+								:
+								'<div class="btnname">登录/登錄<small>Login</small></div>'
+							%>
+							<span class="glyphicon glyphicon-user">
+						</a>
+					</li>
 				</ul>
 			</div>
 		</div>
