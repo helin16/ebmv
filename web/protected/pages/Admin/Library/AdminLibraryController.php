@@ -31,12 +31,12 @@ class AdminLibraryController extends CrudPageAbstract
     {
         $pageNumber = 1;
         $pageSize = 10;
-        $supplierId = 0;
+        $libraryId = 0;
     	
     	$js = parent::_getEndJs();
         $js .= 'pageJs.resultDivId="alllibraryDiv";';
         $js .= 'pageJs.types = ' . json_encode($this->_getInfoTypes()) . ';';
-        $js .= 'pageJs.showItems(' . $pageNumber . ', ' . $pageSize . ', ' . $supplierId . ');';
+        $js .= 'pageJs.showItems(' . $pageNumber . ', ' . $pageSize . ', ' . $libraryId . ');';
         return $js;
     }
     /**
@@ -57,7 +57,7 @@ class AdminLibraryController extends CrudPageAbstract
      */	
     public function getItems($sender, $param)
     {
-    	$result = $errors = $supplierArray = array();
+    	$result = $errors = $libraries = array();
     	try
     	{
     		$pageNumber = 1;
@@ -68,20 +68,20 @@ class AdminLibraryController extends CrudPageAbstract
     			$pageNumber = (isset($pagination->pageNo) && trim($pagination->pageNo) !== '' && is_numeric($pagination->pageNo)) ? trim($pagination->pageNo) : $pageNumber;
     			$pageSize = (isset($pagination->pageSize) && trim($pagination->pageSize) !== '' && is_numeric($pagination->pageSize)) ? trim($pagination->pageSize) : $pageSize;
     		}
-    		$supplierId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
-    		if($supplierId === '' || $supplierId === '0')
+    		$libraryId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
+    		if($libraryId === '' || $libraryId === '0')
     		{
-    			$supplierArray = BaseServiceAbastract::getInstance('Library')->findAll(false, $pageNumber, $pageSize, array());
+    			$libraries = BaseServiceAbastract::getInstance('Library')->findAll(false, $pageNumber, $pageSize, array());
     			$result['pagination'] = BaseServiceAbastract::getInstance('Library')->getPageStats();
     		}
     		else
     		{
-    			$supplierArray[] = BaseServiceAbastract::getInstance('Library')->get($supplierId);
+    			$libraries[] = BaseServiceAbastract::getInstance('Library')->get($libraryId);
     			$result['pagination'] = BaseServiceAbastract::getInstance('Library')->getPageStats();
     		}
     		$items = array();
-    		foreach($supplierArray as $supplier)
-    			$items[] = $supplier->getJson();
+    		foreach($libraries as $library)
+    			$items[] = $library->getJson();
     		$result['items'] = $items;
     	}
     	catch(Exception $ex)
@@ -96,7 +96,7 @@ class AdminLibraryController extends CrudPageAbstract
 	 */
 	public function saveItems($sender, $param)
     {
-    	$result = $errors = $supplierArray = array();
+    	$result = $errors = array();
     	try
     	{
     		Dao::beginTransaction();
@@ -123,6 +123,7 @@ class AdminLibraryController extends CrudPageAbstract
     			$infoItem->setType(BaseServiceAbastract::getInstance('LibraryInfoType')->get(trim($info->typeId)));
     			$infoItem->setValue(trim($info->value));
     			$infoItem->setLibrary($item);
+    			$infoItem->setActive(trim($info->active) === '1');
     			BaseServiceAbastract::getInstance('LibraryInfo')->save($infoItem);
     		}
     		

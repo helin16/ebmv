@@ -174,7 +174,7 @@ class Library extends BaseEntityAbstract
 		if(!$this->isJsonLoaded($reset))
 		{
 			$infoArray = array();
-			$sql = "select distinct libInfo.id `infoId`, libInfo.value `infoValue`, libInfoType.id `typeId`, libInfoType.name `typeName` from libraryinfo libInfo inner join libraryinfotype libInfoType on (libInfo.typeId = libInfoType.id) where libInfo.libraryId = ?";
+			$sql = "select distinct libInfo.id `infoId`, libInfo.value `infoValue`, libInfoType.id `typeId`, libInfoType.name `typeName` from libraryinfo libInfo inner join libraryinfotype libInfoType on (libInfo.typeId = libInfoType.id) where libInfo.libraryId = ? and libInfo.active = 1";
 			$result = Dao::getResultsNative($sql, array($this->getId()), PDO::FETCH_ASSOC);
 			foreach($result as $row)
 			{

@@ -188,7 +188,7 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 				$(field).up('.form-group').addClassName('has-error');
 				tmp.errMsg += '<li>' + $(field).up('.form-group').down('.control-label').innerHTML + ' is required</li>';
 			}
-			tmp.attrs.push({'id': tmp.attrId, 'typeId': tmp.attrTypeId, 'value': tmp.fieldValue});
+			tmp.attrs.push({'id': tmp.attrId, 'typeId': tmp.attrTypeId, 'value': tmp.fieldValue, 'active': (field.hasAttribute('deactivated') ? 0 : 1) });
 		});
 		tmp.data['info'] = tmp.attrs;
 		
@@ -196,6 +196,7 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 			tmp.savePanel.down('.msgRow').update(new Element('p', {'class': 'alert alert-danger'}).update(tmp.errMsg) );
 			return null;
 		}
+		console.debug(tmp.data);
 		return tmp.data;
 	}
 	
@@ -220,9 +221,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 				.observe('click', function(){
 					if(!confirm('You are about to delete this attribute.\n Continue?'))
 						return false;
-					$(this).up('.fielddiv').fade();
 					if($(this).up('.fielddiv').down('.value'))
 						$(this).up('.fielddiv').down('.value').writeAttribute('deactivated', true);
+					$(this).up('.fielddiv').fade();
 				})
 			});
 		}
