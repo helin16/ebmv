@@ -102,17 +102,16 @@ class AdminSupplierController extends CrudPageAbstract
     		Dao::beginTransaction();
     		if(!isset($param->CallbackParameter->id))
     			throw new Exception("System Error: No item id passed in!");
-    		
     		$supplier = ($supplier = BaseServiceAbastract::getInstance('Supplier')->get(trim($param->CallbackParameter->id))) instanceof Supplier ? $supplier : new Supplier();
     		$supplier->setName(trim($param->CallbackParameter->name));
     		try
     		{
-    			if(!class_exists($connector = trim($param->CallbackParameter->connector)))
+    			if(!class_exists($connector = trim($param->CallbackParameter->connector)) )
     				throw new Exception($connector . " does NOT exsit!");
     		} 
     		catch (Exception $e)
     		{
-    			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage());
+    			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage(), 0, $e);
     		} 
     		
     		$supplier->setConnector($connector);
@@ -124,7 +123,7 @@ class AdminSupplierController extends CrudPageAbstract
     			$supplierInfo->setType(BaseServiceAbastract::getInstance('SupplierInfoType')->get(trim($info->typeId)));
     			$supplierInfo->setValue(trim($info->value));
     			$supplierInfo->setSupplier($supplier);
-    			$supplierInfo->setActive($info->active);
+    			$supplierInfo->setActive(trim($info->active) === '1');
     			BaseServiceAbastract::getInstance('SupplierInfo')->save($supplierInfo);
     		}
     		

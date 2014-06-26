@@ -103,7 +103,8 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		}
 		tmp.i = (itemrowindex || 0);
 		items.each(function(item) {
-			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item, tmp.me._getItemRowEditBtn(item)).addClassName(tmp.i % 2 === 1 ? 'even' : 'odd')
+			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item, tmp.me._getItemRowEditBtn(item))
+				
 			});
 			tmp.i++;
 		});
@@ -196,7 +197,6 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 			tmp.savePanel.down('.msgRow').update(new Element('p', {'class': 'alert alert-danger'}).update(tmp.errMsg) );
 			return null;
 		}
-		console.debug(tmp.data);
 		return tmp.data;
 	}
 	
