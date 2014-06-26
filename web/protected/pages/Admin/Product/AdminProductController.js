@@ -4,49 +4,78 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new CrudPageJs(), {
 	
-	types: null, //the attribute types
+	types: null //the attribute types
 	
-	_getResultDiv: function(items, includetitlerow, itemrowindex) {
+	,_geDl: function(dt, dd) {
+		return new Element('dl')
+			.insert({'bottom': new Element('dt').update(dt) })
+			.insert({'bottom': new Element('dd').update(dd) });
+	}
+	
+	,_getResultDiv: function(items, includetitlerow, itemrowindex) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.includetitlerow = (includetitlerow === false ? false : true);
 		
-		tmp.resultDiv = new Element('div');
-		if(tmp.includetitlerow === true)
-			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow({'id': 'id', 'suk': 'suk', 'title': 'title', 'active': 'active', 'istitle': true}, 'option', false).addClassName('titleRow') });
-		tmp.i = (itemrowindex || 1);
+		tmp.resultDiv = $(tmp.me.resultDivId);
 		items.each(function(item) {
 			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item, new Element('img', {'editId': item.id, 'class': 'btn', 'src': '/themes/default/images/edit.png', 'alt': 'EDIT'})
-				.observe('click', function() {tmp.me.editItem(this); }), false).addClassName(tmp.i % 2 === 0 ? 'even' : 'odd')
+				.observe('click', function() {tmp.me.editItem(this); }), false)
 			});
-			tmp.i++;
 		});
-		return tmp.resultDiv;
 	}
 
-	,_getItemRow: function (item, option, isEdit) {
+	,_getAttrString: function(attArray){
+		return attArray.map(function(attr) { return attr.attribute || '';});
+	}
+	
+	,_getInfoDiv: function (item) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.isEditing = ((isEdit === true) ? true : false);
-		
-		tmp.divClassName = (tmp.isEditing === true) ? 'editProductDiv' : 'viewProductDiv';
-		tmp.contentDiv = new Element('div', {'class': tmp.divClassName})
-							.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(item.id) })
-							.insert({'bottom' : new Element('span', {'class' : 'col suk'}).update(item.suk) })	
-							.insert({'bottom' : (tmp.isEditing === false) ? new Element('span', {'class' : 'col title', 'item': 'title'}).update(item.title) : new Element('input', {'type' : 'text', 'class' : 'eTitleBox rdcrnr lightBrdr', 'value' : item.title}) })	
-							.insert({'bottom' : (tmp.isEditing === false) ? new Element('span', {'class' : 'col active', 'item': 'active',  'itemedittype': 'checkbox'}).update(item.active) : new Element('input', {'type' : 'checkbox', 'name' : 'activeFlag', 'checked': (item.active ? 'checked' : '')}) })	
-							.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) })
-							.insert({'bottom' : tmp.me._getAdditionalProductInfo(item, tmp.isEditing) });
-		
-		if(tmp.isEditing === false)
-		{
-			tmp.div = new Element('div', {'class' : 'row singleRowDiv'}).store('main_item', item)
-						.insert({'bottom' : tmp.contentDiv});
-		}
-		else
-			tmp.div = tmp.contentDiv;
-		
+		tmp.div = new Element('div');
+		tmp.code = '';
+		$H(item.attributes).each(function(itemArr) {
+			tmp.attrCode = itemArr.key;
+			if(typeof(itemArr.value) === 'object') {
+				tmp.attrDiv = new Element('dl', {'class': 'dl-horizontal'}); 
+				
+				//getting the title div
+				tmp.attrDiv.insert({'bottom': new Element('dt').update(itemArr.value[0].type.name + ':') });
+				if(tmp.attrCode !== tmp.code) {
+					tmp.code = tmp.attrCode;
+				} 
+				
+				//getting the value div
+				tmp.attrValeusDiv = new Element('dd'); 
+				itemArr.value.each(function(attr) {
+					console.debug(attr);
+					tmp.attrValeusDiv.insert({'bottom': new Element('div', {'class': 'attr_value'}).update(attr.attribute) });
+						
+				});
+				tmp.attrDiv.insert({'bottom': tmp.attrValeusDiv });
+				tmp.div.insert({'bottom': tmp.attrDiv });
+			};
+		});
 		return tmp.div;
+	}
+
+	,_getItemRow: function (product, option, isEdit) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.productDiv = new Element('div', {'class': 'list-group-item row nodefault plistitem'})
+			.insert({'bottom': new Element('div', {'class': 'col-xs-3'})
+				.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null).addClassName('img-thumbnail') })
+			})
+			.insert({'bottom': new Element('div', {'class': 'col-xs-9'})
+				.insert({'bottom': new Element('h4')
+					.update(product.title) 
+				})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': tmp.me._getInfoDiv(product) })
+				})
+			})
+		;
+		return tmp.productDiv;
 	}
 	
 	,_getAdditionalProductInfo: function (item, isEdit) {

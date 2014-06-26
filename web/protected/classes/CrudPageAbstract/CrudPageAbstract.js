@@ -1,4 +1,5 @@
-var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPageJs(),{
+var CrudPageJs=new Class.create();
+CrudPageJs.prototype=Object.extend(new AdminPageJs(),{
 	pagination: {pageNo: 1, pageSize: 30} //this is the pagination for the crud page
 	,resultDivId: null //this is the result div id
 	
@@ -19,7 +20,10 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 						throw 'No item found/generated'; 
 					if(tmp.resetResult === true) {
 						$(tmp.me.resultDivId).update('');
+						if($('total_no_of_items'))
+							$('total_no_of_items').update(tmp.result.pagination.totalRows);
 					}
+					
 					tmp.index = (tmp.me.pagination.pageNo - 1) * tmp.me.pagination.pageSize;
 					$(tmp.me.resultDivId).insert({'bottom': tmp.me._getResultDiv(tmp.result.items, tmp.resetResult, tmp.index) })
 						.insert({'bottom': tmp.me._getPaginBtns(tmp.result.pagination)});
@@ -37,7 +41,7 @@ var CrudPageJs=new Class.create();CrudPageJs.prototype=Object.extend(new AdminPa
 		var tmp = {};
 		tmp.me = this;
 		tmp.paginDiv = new Element('div', {'class': 'paginDiv'})
-			.insert({'bottom': new Element('span', {'class': 'btn'}).update('Get more')
+			.insert({'bottom': new Element('span', {'class': 'btn btn-success'}).update('Get more')
 				.observe('click', function() {
 					$(this).up('.paginDiv').remove();
 					tmp.me.showItems(tmp.me.pagination.pageNo + 1, tmp.me.pagination.pageSize, null, false);
