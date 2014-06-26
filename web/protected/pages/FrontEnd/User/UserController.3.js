@@ -4,8 +4,54 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	resultDivId: ''
-	,pagination: {'pageNo': 1, 'pageSize': 5}
+	,pagination: {'pageNo': 1, 'pageSize': 2}
 	,borrowStatusId: ''
+		
+	,_getEmptyBookShelfInfo: function () {
+		return new Element('div', {'class': 'infobox bg-info iconbtn'})
+			.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-info-sign'}) })
+			.insert({'bottom': new Element('span', {'class': 'btnname'})
+				.insert({'bottom': '您的书架是空的/您的書架是空的' })
+				.insert({'bottom': new Element('div').update('Your bookshelf is empty') })
+			})
+	}
+	
+	,changePage: function (btn, pageNo, pageSize) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.pagination.pageNo = pageNo;
+		tmp.me.pagination.pageSize = pageSize;
+		jQuery(btn.id).button('loading');
+		tmp.me.showBookShelf(false, function() {
+			$(btn).up('.pagination_wrapper').remove();
+		});
+	}
+	//getting the loading div
+	,_getLoadingDiv: function() {
+		return new Element('span', {'class': 'loading'})
+			.insert({'bottom': new Element('img', {'src': '/themes/default/images/loading.gif'})})
+			.insert({'bottom': 'Loading ...'});
+	}
+	
+	//get pagination div
+	,_getPaginationDiv: function(pagination) {
+		var tmp = {};
+		if(pagination.pageNumber >= pagination.totalPages)
+			return;
+		
+		tmp.me = this;
+		return new Element('div', {'class': 'pagination_wrapper'})
+			.insert({'bottom': new Element('span', {'class': 'btn btn-primary iconbtn', 'id': 'get_more_btn', 'data-loading-text': '处理中/處理中/Processing...'})
+				.insert({'bottom': new Element('span', {'class': 'btnname'})
+					.insert({'bottom': '查看更多/查看更多' })
+					.insert({'bottom': new Element('small').update('Get more') })
+				})
+				.observe('click', function() {
+					tmp.me.changePage(this, pagination.pageNumber + 1, tmp.me.pagination.pageSize);
+				})
+			});
+	}
+	
 	
 	//show the products
 	,showBookShelf: function(clear, afterFunc) {
@@ -26,8 +72,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					tmp.resultDiv.update('');
 				try {
 					tmp.result = pageJs.getResp(param, false, true);
-					if(!tmp.result.pagination || tmp.result.pagination.totalRows === 0 || tmp.result.items.size() === 0)
-						throw 'Nothing on your shelf!';
+					if((!tmp.result.pagination || tmp.result.pagination.totalRows === 0 || tmp.result.items.size() === 0) && $(tmp.me.resultDivId).getElementsBySelector('.listitem').size() === 0)
+						tmp.resultDiv.update(tmp.me._getEmptyBookShelfInfo());
 					
 					tmp.result.items.each(function(item){
 						tmp.resultDiv.insert({'bottom': tmp.me._getProductListItem(item) });
@@ -37,7 +83,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						tmp.resultDiv.insert({'bottom':tmp.me._getPaginationDiv(tmp.result.pagination) });
 				} catch (e) {
 					if(tmp.clear === true)
-						tmp.resultDiv.update(e);
+						tmp.resultDiv.update(new Element('p', {'class': 'infobox bg-danger'}).update(e));
 					else
 						alert(e);
 				}
@@ -48,70 +94,39 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return this;
 	}
 	
-	//getting the loading div
-	,_getLoadingDiv: function() {
-		return new Element('span', {'class': 'loading'})
-			.insert({'bottom': new Element('img', {'src': '/themes/default/images/loading.gif'})})
-			.insert({'bottom': 'Loading ...'});
-	}
-	
-	//get pagination div
-	,_getPaginationDiv: function(pagination) {
-		var tmp = {};
-		if(pagination.pageNumber >= pagination.totalPages)
-			return;
-		
-		tmp.me = this;
-		return new Element('div', {'class': 'pagination_wrapper fullwith'}).insert({'bottom': tmp.me._getPaginationBtn('查看更多 / 查看更多<br />Get more', pagination.pageNumber + 1) });
-	}
-	
 	,removeItem: function(btn, itemId) {
 		var tmp = {};
 		tmp.me = this;
-		if(!confirm('You are removing this BOOK from your book shelf?\n\nContinue?'))
+		if(!confirm('你确定要从书柜中删除这本书吗？/ 你確定要從書櫃中刪除這本書嗎？\n You are removing this BOOK from your book shelf?\n\n继续/繼續/Continue?'))
 			return;
 		
-		pageJs.postAjax(tmp.me.getCallbackId("removeProduct"), {'itemId': itemId}, {
+		pageJs.postAjax(tmp.me.getCallbackId("removeProduct"), {'itemId': itemId, pagination: tmp.me.pagination}, {
 			'onLoading': function () {
-				$(btn).addClassName('disabled loading');
+				jQuery(btn.id).button('loading');
 			}
 			,'onComplete': function(sender, param) {
 				try {
 					tmp.result = pageJs.getResp(param, false, true);
-					if(tmp.result.item && tmp.result.item.id) {
-						tmp.itemRow = $(tmp.me.resultDivId).down('.listitem[item_id=' + tmp.result.item.id + ']');
+					if(tmp.result.delItem && tmp.result.delItem.id) {
+						tmp.itemRow = $(tmp.me.resultDivId).down('.listitem[item_id=' + tmp.result.delItem.id + ']');
 						if(tmp.itemRow)
 							tmp.itemRow.remove();
 					}
+					if(tmp.result.nextItem) {
+						if($(tmp.me.resultDivId).down('.pagination_wrapper'))
+							$(tmp.me.resultDivId).down('.pagination_wrapper').insert({'before': tmp.me._getProductListItem(tmp.result.nextItem) });
+						else
+							$(tmp.me.resultDivId).insert({'bottom': tmp.me._getProductListItem(tmp.result.nextItem)});
+					}
+					if($(tmp.me.resultDivId).getElementsBySelector('.listitem').size() === 0)
+						$(tmp.me.resultDivId).update(tmp.me._getEmptyBookShelfInfo());
 				} catch (e) {
 					alert(e);
-					$(btn).removeClassName('disabled loading');
+					jQuery(btn.id).button('reset');
 				}
 			}
 		});
 		return this;
-	}
-	
-	,changePage: function (btn, pageNo, pageSize) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.me.pagination.pageNo = pageNo;
-		tmp.me.pagination.pageSize = pageSize;
-		$(btn).update('Getting more ....').writeAttribute('disabled', true);
-		tmp.me.showBookShelf(false, function() {
-			$(btn).up('.pagination_wrapper').remove();
-		});
-	}
-	
-	,_getPaginationBtn: function (txt, pageNo) {
-		var tmp = {};
-		tmp.me = this;
-		return new Element('span', {'class': 'fullwith button rdcrnr pagin_btn'})
-			.update(txt)
-			.observe('click', function() {
-				tmp.me.changePage(this, pageNo, tmp.me.pagination.pageSize);
-			})
-		;
 	}
 	
 	,borrowItem: function (btn, shelfItemId) {
@@ -175,7 +190,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.newDiv = new Element('div', {'class': 'row btns'})
 			//add remove btn
-			.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-sm iconbtn'})
+			.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-sm iconbtn', 'id': 'removebtn_' + shelfItem.id, 'data-loading-text': '处理中/處理中/Processing...'})
 				.insert({'bottom': new Element('span', {'class': 'btnname'})
 					.update('从我的书柜中删除 / 從我的書櫃中刪除')
 					.insert({'bottom': new Element('small').update('Remove From My Shelf') })
@@ -210,66 +225,70 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		if(!shelfItem.product || !shelfItem.product.id)
 			return null;
 		
-		tmp.productDiv = new Element('div', {'class': 'row nodefault plistitem', 'item_id': shelfItem.id}).store('data', shelfItem)
-			.insert({'bottom': new Element('div', {'class': 'col-xs-3'})
-				.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
-					.insert({'bottom': tmp.me._getProductImgDiv(shelfItem.product.attributes.image_thumb || null).addClassName('img-thumbnail') })
-				})
-			})
-			.insert({'bottom': new Element('div', {'class': 'col-xs-9'})
-				.insert({'bottom': new Element('a', {'class': 'product_title', 'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
-					.insert({'bottom': new Element('h4')
-						.update(shelfItem.product.title) 
-					})
-				})
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-						.insert({'bottom': new Element('div', {'class': 'row'})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-								.insert({'bottom': new Element('strong')
-									.insert({'bottom': 'Author:' })
-								})
-							})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.author ? tmp.me._getAttrString(shelfItem.product.attributes.author).join(' ') : '')})
+		tmp.productDiv = new Element('div', {'class': 'panel panel-default listitem', 'item_id': shelfItem.id}).store('data', shelfItem)
+			.insert({'bottom': new Element('div', {'class': 'panel-body'})
+				.insert({'bottom': new Element('div', {'class': 'row nodefault plistitem'})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-3'})
+						.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
+							.insert({'bottom': tmp.me._getProductImgDiv(shelfItem.product.attributes.image_thumb || null).addClassName('img-thumbnail') })
 						})
 					})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-9'})
+						.insert({'bottom': new Element('a', {'class': 'product_title', 'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
+							.insert({'bottom': new Element('h4')
+								.update(shelfItem.product.title) 
+							})
+						})
 						.insert({'bottom': new Element('div', {'class': 'row'})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-								.insert({'bottom': new Element('strong')
-									.insert({'bottom': 'ISBN:' })
+							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+								.insert({'bottom': new Element('div', {'class': 'row'})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+										.insert({'bottom': new Element('strong')
+											.insert({'bottom': 'Author:' })
+										})
+									})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.author ? tmp.me._getAttrString(shelfItem.product.attributes.author).join(' ') : '')})
 								})
 							})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.isbn ? tmp.me._getAttrString(shelfItem.product.attributes.isbn).join(' ') : '')})
-						})
-					})
-				})
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-						.insert({'bottom': new Element('div', {'class': 'row'})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-								.insert({'bottom': new Element('strong')
-									.insert({'bottom': 'Publisher:' })
+							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+								.insert({'bottom': new Element('div', {'class': 'row'})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+										.insert({'bottom': new Element('strong')
+											.insert({'bottom': 'ISBN:' })
+										})
+									})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.isbn ? tmp.me._getAttrString(shelfItem.product.attributes.isbn).join(' ') : '')})
 								})
 							})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.publisher ? tmp.me._getAttrString(shelfItem.product.attributes.publisher).join(' ') : '')})
 						})
-					})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
 						.insert({'bottom': new Element('div', {'class': 'row'})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-								.insert({'bottom': new Element('strong')
-									.insert({'bottom': 'Pub. Date:' })
+							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+								.insert({'bottom': new Element('div', {'class': 'row'})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+										.insert({'bottom': new Element('strong')
+											.insert({'bottom': 'Publisher:' })
+										})
+									})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.publisher ? tmp.me._getAttrString(shelfItem.product.attributes.publisher).join(' ') : '')})
 								})
 							})
-							.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.publish_date ? tmp.me._getAttrString(shelfItem.product.attributes.publish_date).join(' ') : '')})
+							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+								.insert({'bottom': new Element('div', {'class': 'row'})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+										.insert({'bottom': new Element('strong')
+											.insert({'bottom': 'Pub. Date:' })
+										})
+									})
+									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.publish_date ? tmp.me._getAttrString(shelfItem.product.attributes.publish_date).join(' ') : '')})
+								})
+							})
 						})
-					})
-				})
-				.insert({'bottom': tmp.me._getBtnDiv(shelfItem) })
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('small')
-						.insert({'bottom': shelfItem.product.attributes.description ? tmp.me._getAttrString(shelfItem.product.attributes.description).join(' ') : '' })
+						.insert({'bottom': tmp.me._getBtnDiv(shelfItem) })
+						.insert({'bottom': new Element('div', {'class': 'row'})
+							.insert({'bottom': new Element('small')
+								.insert({'bottom': shelfItem.product.attributes.description ? tmp.me._getAttrString(shelfItem.product.attributes.description).join(' ') : '' })
+							})
+						})
 					})
 				})
 			})

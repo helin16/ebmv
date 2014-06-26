@@ -52,7 +52,7 @@ abstract class AdminPageAbstract extends FrontEndPageAbstract
 	public function onInit($params)
 	{
 		parent::onInit($params);
-		$this->getPage()->setTheme($this->_getThemeByName('default'));
+		$this->getPage()->setTheme($this->_getThemeByName('admin'));
 	}
 }
 ?>

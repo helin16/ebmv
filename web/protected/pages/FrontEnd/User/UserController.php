@@ -95,7 +95,16 @@ class UserController extends FrontEndPageAbstract
 			BaseServiceAbastract::getInstance('ProductShelfItem')
 				->returnItem(Core::getUser(), $item->getProduct(), Core::getLibrary())
 				->removeItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
-			$result['item'] = $item->getJson();
+			$result['delItem'] = $item->getJson();
+			
+			if(isset($params->CallbackParameter->pagination) && isset($params->CallbackParameter->pagination->pageNo) )
+			{
+				$pageNo = trim($params->CallbackParameter->pagination->pageNo);
+				$items = BaseServiceAbastract::getInstance('ProductShelfItem')
+					->getShelfItems(Core::getUser(), null, $pageNo + 1, 1, array('psitem.updated' => 'desc'));
+				if(count($items) > 0)
+					$result['nextItem'] = $items[0]->getJson();
+			}
 		}
 		catch(Exception $ex)
 		{

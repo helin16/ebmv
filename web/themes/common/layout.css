@@ -1,3 +1,7 @@
+.infobox {
+	padding: 10px;
+}
+
 .topmenu .nav{
 	text-align: right;
 }
@@ -60,6 +64,9 @@
 .nodefault.thumbnail {
 	position: relative;
 }
+.nodefault.thumbnail img {
+	height: 180px;
+}
 .nodefault.thumbnail .caption {
     border: 0 none;
     bottom: 5px;
@@ -97,7 +104,6 @@
 	text-align: center;
 	margin: 10px 0 0 0;
 }
-
 
 .login-form {
 	margin: 0 auto;

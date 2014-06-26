@@ -10,14 +10,13 @@ class Menu extends TTemplateControl
 {
 	public function getMenu()
 	{
-		$html = "<ul>";
+		$html = "";
 		foreach($this->_getMenuItems() as $item)
 		{
-			$html .= "<li>";
-				$html .= "<a href='" . $item['href'] . "' class='menuitem " . (trim($item['code']) === trim($this->getPage()->menuItemCode) ? 'active' : '')  . "'>" . $item['name'] . "</a>";
+			$html .= "<li " . (trim($item['code']) === trim($this->getPage()->menuItemCode) ? 'class="active"' : '')  . ">";
+				$html .= "<a href='" . $item['href'] . "'>" . $item['name'] . "</a>";
 			$html .= "</li>";
 		}
-		$html .= "</ul>";
 		return $html;
 	}
 	private function _getMenuItems()

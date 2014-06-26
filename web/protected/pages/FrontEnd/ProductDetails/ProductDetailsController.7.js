@@ -96,12 +96,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					tmp.readCopies = tmp.downloadCopies = 'N/A';
-					tmp.readBtn = new Element('span', {'class': 'btn btn-primary iconbtn disabled popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'preadonlinebtn', 'data-loading-text': "处理中/處理中/Processing ..."})
+					tmp.readBtn = new Element('span', {'class': 'btn btn-success iconbtn disabled popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'preadonlinebtn', 'data-loading-text': "处理中/處理中/Processing ..."})
 						.insert({'bottom': new Element('div', {'class': 'btnname'})
 							.insert({'bottom': '在线阅读 / 在線閱讀'})
 							.insert({'bottom': new Element('small').update('Read Online') })
 						});
-					tmp.downloadBtn = new Element('span', {'class': 'btn btn-primary iconbtn popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'pdownloadbtn', 'data-loading-text': "处理中/處理中/Processing ..."})
+					tmp.downloadBtn = new Element('span', {'class': 'btn btn-success iconbtn disabled popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'pdownloadbtn', 'data-loading-text': "处理中/處理中/Processing ..."})
 						.insert({'bottom': new Element('div', {'class': 'btnname'})
 							.insert({'bottom': '下载阅读 / 下載閱讀'})
 							.insert({'bottom': new Element('small').update('Download') })
@@ -117,13 +117,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					}
 					
 					//getting the download url
-//					if(tmp.result.urls.downloadUrl && tmp.result.copies[tmp.me.ownTypeIds.Download].avail * 1 > 0) {
+					if(tmp.result.urls.downloadUrl && tmp.result.copies[tmp.me.ownTypeIds.Download].avail * 1 > 0) {
 						tmp.downloadCopies = tmp.result.copies[tmp.me.ownTypeIds.Download].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.Download].total;
 						tmp.downloadBtn.removeClassName('disabled')
 							.observe('click', function(){
 								return tmp.me._getLink(this, 'download');
 							});
-//					} 
+					} 
 					$(readCopiesDisplayHolderId).up('.row').update('')
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Online Read Copies:</strong>', 'online_read_copies', tmp.readCopies) })
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Download Copies:</strong>', 'download_copies', tmp.downloadCopies) });
