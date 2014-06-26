@@ -3,7 +3,7 @@
 		<div class="row">
 			<div class="col-sm-8">
 				<div class="media">
-				  <a class="pull-left" href="/">
+				  <a class="pull-left logo" href="/">
 				    <img class="media-object" src="/themes/<%= $this->getPage()->getTheme()->getName() %>/images/logo.png" alt="<%= Core::getLibrary()->getName() %>">
 				  </a>
 				  <div class="media-body">
@@ -39,7 +39,7 @@
 		</div>
 		<div class="collapse navbar-collapse" id="topmenulist">
 			<ul class="nav navbar-nav">
-				<li class="active">
+				<li>
 				    <a href="/" class="iconbtn"><div class="btnname">首页/首頁<small>Home</small></div><span class="glyphicon glyphicon-home"></span></a>
 				</li>
 				<li><a href="/user.html" class="iconbtn"><div class="btnname">我的书架/我的書架<small>My BookShelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>

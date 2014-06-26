@@ -28,7 +28,7 @@
 	/*]]>*/
 	</script>
 </com:THead>
-<body>
+<body role="document">
     <com:TForm>
 	    <div id="frontend" >
 	        <div class="framewrapper header">
