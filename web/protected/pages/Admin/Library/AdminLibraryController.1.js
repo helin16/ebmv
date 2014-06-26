@@ -9,13 +9,16 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 	,_getItemRow: function (item, option) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.div = new Element('div', {'class' : 'row', 'item_id': item.id}).store('item', item)
-			.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(item.id) })
-			.insert({'bottom' : new Element('span', {'class' : 'col name'}).update(item.name) })	
-			.insert({'bottom' : new Element('span', {'class' : 'col connector'}).update(item.connector) })	
-			.insert({'bottom' : new Element('span', {'class' : 'col active'}).update(item.istitle === true ? item.active : new Element('input', {'type': 'checkbox', 'checked': item.active, 'disabled': true})) })	
-			.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) })
-			.insert({'bottom' : tmp.me._getInfoDiv(item) });
+		tmp.div = new Element('div', {'class' : 'panel panel-primary', 'item_id': item.id}).store('item', item)
+			.insert({'bottom' : new Element('div', {'class' : 'panel-heading'}).update(item.name) })
+			.insert({'bottom' : new Element('div', {'class' : 'panel-body'})
+				.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(item.id) })
+				.insert({'bottom' : new Element('span', {'class' : 'col name'}).update(item.name) })	
+				.insert({'bottom' : new Element('span', {'class' : 'col connector'}).update(item.connector) })	
+				.insert({'bottom' : new Element('span', {'class' : 'col active'}).update(item.istitle === true ? item.active : new Element('input', {'type': 'checkbox', 'checked': item.active, 'disabled': true})) })	
+				.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) })
+				.insert({'bottom' : tmp.me._getInfoDiv(item) })
+			});
 		return tmp.div;
 	}
 
