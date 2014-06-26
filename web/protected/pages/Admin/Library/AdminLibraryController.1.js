@@ -6,42 +6,60 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 	
 	types: null //the information types
 	
+	,_geDl: function(dt, dd) {
+		return new Element('dl')
+			.insert({'bottom': new Element('dt').update(dt) })
+			.insert({'bottom': new Element('dd').update(dd) });
+	}
+	
 	,_getItemRow: function (item, option) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.div = new Element('div', {'class' : 'panel panel-primary', 'item_id': item.id}).store('item', item)
-			.insert({'bottom' : new Element('div', {'class' : 'panel-heading'}).update(item.name) })
+		tmp.div = new Element('div', {'class' : 'panel panel-primary item', 'item_id': item.id}).store('item', item)
+			.insert({'bottom' : new Element('div', {'class' : 'panel-heading'})
+				.insert({'bottom' : new Element('div', {'class': "panel-title"})
+					.insert({'bottom' : item.name })
+					.insert({'bottom' : option.addClassName('pull-right') })
+				})
+			})
 			.insert({'bottom' : new Element('div', {'class' : 'panel-body'})
-				.insert({'bottom' : new Element('span', {'class' : 'col id'}).update(item.id) })
-				.insert({'bottom' : new Element('span', {'class' : 'col name'}).update(item.name) })	
-				.insert({'bottom' : new Element('span', {'class' : 'col connector'}).update(item.connector) })	
-				.insert({'bottom' : new Element('span', {'class' : 'col active'}).update(item.istitle === true ? item.active : new Element('input', {'type': 'checkbox', 'checked': item.active, 'disabled': true})) })	
-				.insert({'bottom' : new Element('span', {'class' : 'col btns'}).update(option) })
-				.insert({'bottom' : tmp.me._getInfoDiv(item) })
-			});
+				.insert({'bottom' : new Element('div', {'class' : 'row'})
+					.insert({'bottom' : new Element('div', {'class' : 'col-xs-1'}).update(tmp.me._geDl('id:', item.id) ) })	
+					.insert({'bottom' : new Element('div', {'class' : 'col-xs-6'}).update(tmp.me._geDl('Name:', item.name) ) })	
+					.insert({'bottom' : new Element('div', {'class' : 'col-xs-4'}).update(tmp.me._geDl('Connector:', item.connector) ) })	
+					.insert({'bottom' : new Element('div', {'class' : 'col-xs-1'}).update(tmp.me._geDl('Active?', item.istitle === true ? item.active : new Element('input', {'type': 'checkbox', 'checked': item.active, 'disabled': true})) ) })	
+				})
+			})
+			.insert({'bottom' : tmp.me._getInfoDiv(item) });
 		return tmp.div;
 	}
 
 	,_getItemRowEditBtn: function(item) {
 		var tmp = {};
 		tmp.me = this;
-		return new Element('span')
-			.insert({'bottom': new Element('span', {'class': 'btn editbtn', 'title': 'EDIT'})
+		return new Element('span', {'class': 'btn-group btn-group-xs'})
+			.insert({'bottom': new Element('span', {'id': 'edit_btn' + item.id, 'class': 'btn btn-default', 'title': 'EDIT', 'data-loading-text': 'Processing...'})
+				.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'})})
+				.insert({'bottom': ' Edit' })
 				.observe('click', function() {tmp.me.editItem(this); })
 			})
-			.insert({'bottom': new Element('span', {'class': 'btn delbtn', 'title': 'DELETE'})
+			.insert({'bottom': new Element('span', {'id': 'del_btn' + item.id, 'class': 'btn btn-danger', 'title': 'DELETE', 'data-loading-text': 'Processing...'})
+				.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove'})})
+				.insert({'bottom': ' Delete' })
 				.observe('click', function() {tmp.me.delItems([item.id]); })
 			})
-			.insert({'bottom': new Element('span', {'class': 'btn importbtn', 'title': 'IMPORT'})
+			.insert({'bottom': new Element('span', {'id': 'import_btn' + item.id, 'class': 'btn btn-default', 'title': 'IMPORT', 'data-loading-text': 'Processing...'})
+				.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-download'})})
+				.insert({'bottom': ' Import' })
 				.observe('click', function() {
 					tmp.btn = this;
-					$(tmp.btn).hide().insert({'after': new Element('span', {'class': 'loadingImg'}) });
+					jQuery(tmp.btn.id).button('loading');
 					try {
 						pImportView.load(null, {'id': item.id, 'name': item.name}, function() {
-							$(tmp.btn).show().next('.loadingImg').remove();
+							jQuery(tmp.btn.id).button('reset');
 						});
 					} catch (e) {
-						$(tmp.btn).show().next('.loadingImg').remove();
+						jQuery(tmp.btn.id).button('reset');
 						alert(e);
 					}
 				})
@@ -60,9 +78,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		if(isNEW === true) {
-			$(tmp.me.resultDivId).down('.row.titleRow').insert({'after': tmp.me._getSavePanel({}, 'addDiv') });
+			$(tmp.me.resultDivId).down('.item.titleRow').insert({'after': tmp.me._getSavePanel({}, 'addDiv') });
 		} else {
-			tmp.row = $(btn).up('.row');
+			tmp.row = $(btn).up('.item');
 			tmp.row.replace(this._getSavePanel(tmp.row.retrieve('item'), 'editDiv'));
 		}
 		return this;
@@ -74,10 +92,15 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		tmp.includetitlerow = (includetitlerow === false ? false : true);
 		
 		tmp.resultDiv = new Element('div');
-		if(tmp.includetitlerow === true)
-			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow({'id': 'id', 'name': 'Name', 'connector': 'Connector', 'active': 'active', 'istitle': true}, new Element('span', {'class': 'button padding5 rdcrnr'}).update('Create NEW')
+		if(tmp.includetitlerow === true) {
+			tmp.resultDiv.insert({'bottom': new Element('p', {'class': 'item titleRow'})
+				.insert({'bottom': new Element('span', {'class': 'btn btn-success'})
+					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus-sign'})})
+					.insert({'bottom':' Create NEW' })
 					.observe('click', function(){ tmp.me.createItem(this); })
-			).addClassName('titleRow') });
+				})
+			})
+		}
 		tmp.i = (itemrowindex || 0);
 		items.each(function(item) {
 			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item, tmp.me._getItemRowEditBtn(item)).addClassName(tmp.i % 2 === 1 ? 'even' : 'odd')
@@ -90,21 +113,21 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 	,_getInfoDiv: function (item) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.div = new Element('div', {'class': 'attrs_wrapper'});
+		tmp.div = new Element('div', {'class': 'list-group'});
 		tmp.code = '';
 		$H(item.info).each(function(itemArr) {
 			tmp.attrCode = itemArr.key;
 			if(typeof(itemArr.value) === 'object') {
-				tmp.attrDiv = new Element('div', {'class': 'attr_wrapper'}); 
+				tmp.attrDiv = new Element('dl', {'class': 'list-group-item dl-horizontal'}); 
 				
 				//getting the title div
-				tmp.attrDiv.insert({'bottom': new Element('span', {'class': 'attr_name inlineblock'}).update(itemArr.value[0].type.name) });
+				tmp.attrDiv.insert({'bottom': new Element('dt').update(itemArr.value[0].type.name) });
 				if(tmp.attrCode !== tmp.code) {
 					tmp.code = tmp.attrCode;
 				} 
 				
 				//getting the value div
-				tmp.attrValeusDiv = new Element('span', {'class': 'attr_values_wrapper inlineblock'}); 
+				tmp.attrValeusDiv = new Element('dd'); 
 				itemArr.value.each(function(attr) {
 					tmp.attrValeusDiv.insert({'bottom': new Element('div', {'class': 'attr_value'}).update(attr.value) });
 						
@@ -132,26 +155,25 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 	,_collectSavePanel: function (saveBtn) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.hasError = false;
 		tmp.data = {};
 		tmp.savePanel = $(saveBtn).up('.savePanel');
 		tmp.item = tmp.savePanel.retrieve('item');
 		
 		tmp.data['id'] = (tmp.item.id === null || tmp.item.id === undefined ? '' : tmp.item.id);
 		//clearup all the error messages
-		tmp.savePanel.getElementsBySelector('.hasError').each(function(div){ 
-			if(div.down('.errmsg'))
-				div.down('.errmsg').remove(); 
-			div.removeClassName('hasError');
+		tmp.savePanel.down('.msgRow').update('');
+		tmp.savePanel.getElementsBySelector('.has-error').each(function(div){ 
+			div.removeClassName('has-error');
 		});
 		
-		//getting all column for a supplier
+		//getting all column for a library
+		tmp.errMsg = '';
 		tmp.savePanel.getElementsBySelector('[colname]').each(function(field) {
 			tmp.fieldValue = $F(field);
 			tmp.field = field.readAttribute('colname');
 			if(tmp.fieldValue.blank() && field.readAttribute('noblank')) {
-				$(field).up('.fielddiv').addClassName('hasError').down('.value').insert({'after': new Element('span', {'class': 'errmsg smalltxt'}).update(tmp.field + ' is required!') });
-				tmp.hasError = true;
+				$(field).up('.form-group').addClassName('has-error');
+				tmp.errMsg += '<li>' + tmp.field + ' is required</li>';
 			}
 			tmp.data[tmp.field] = $F(field);
 		});
@@ -163,13 +185,18 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 			tmp.attrId = field.readAttribute('attr_id');
 			tmp.attrTypeId = field.readAttribute('attr_type_id');
 			if(tmp.fieldValue.blank() && field.readAttribute('noblank')) {
-				$(field).up('.fielddiv').addClassName('hasError').down('.value').insert({'after': new Element('span', {'class': 'errmsg smalltxt'}).update('required!') });
-				tmp.hasError = true;
+				$(field).up('.form-group').addClassName('has-error');
+				tmp.errMsg += '<li>' + $(field).up('.form-group').down('.control-label').innerHTML + ' is required</li>';
 			}
 			tmp.attrs.push({'id': tmp.attrId, 'typeId': tmp.attrTypeId, 'value': tmp.fieldValue});
 		});
 		tmp.data['info'] = tmp.attrs;
-		return tmp.hasError === true ? null : tmp.data;
+		
+		if(!tmp.errMsg.blank()) {
+			tmp.savePanel.down('.msgRow').update(new Element('p', {'class': 'alert alert-danger'}).update(tmp.errMsg) );
+			return null;
+		}
+		return tmp.data;
 	}
 	
 	//after saving the items
@@ -179,17 +206,70 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		$(saveBtn).up('.savePanel').replace(this._getItemRow(tmp.item, this._getItemRowEditBtn(tmp.item)));
 		return this;
 	}
-	
+	//getting the field div for savePanel
+	,_getSaveFieldDiv: function (fieldName, field, showDelBtn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.showDelBtn = (showDelBtn === true ? true : false);
+		tmp.ddDiv = new Element('dd')
+			.insert({'bottom':field.addClassName('form-control') });
+		if(tmp.showDelBtn === true) {
+			tmp.ddDiv.addClassName('input-group input-group-sm')
+				.insert({'bottom': new Element('span', {'class': 'btn btn-default input-group-addon'})
+				.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove'}) })
+				.observe('click', function(){
+					if(!confirm('You are about to delete this attribute.\n Continue?'))
+						return false;
+					$(this).up('.fielddiv').fade();
+					if($(this).up('.fielddiv').down('.value'))
+						$(this).up('.fielddiv').down('.value').writeAttribute('deactivated', true);
+				})
+			});
+		}
+		return new Element('dl', {'class': 'form-group fielddiv'})
+			.insert({'bottom':  new Element('dt', {'class': 'control-label'}).update(fieldName) })
+			.insert({'bottom':  tmp.ddDiv });
+	}
+	/**
+	 * Getting the save panel for editing and creating
+	 */
 	,_getSavePanel: function (item, cssClass) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.isNew = (item.id === undefined || item.id === null);
-		tmp.newDiv = new Element('div', {'class': 'savePanel'}).addClassName(cssClass).store('item', item)
-			.insert({'bottom':  tmp.me._getSaveFieldDiv('Name', new Element('input', {'value': (tmp.isNew ? '': item.name), "class": "txt value", 'colname': 'name', 'noblank': true}) ) })
-			.insert({'bottom':  tmp.me._getSaveFieldDiv('Connector', new Element('input', {'value': (tmp.isNew ? '': item.connector), "class": "txt value", 'colname': 'connector', 'noblank': true}) ) })
-			.insert({'bottom':  tmp.me._getSaveFieldDiv('Act?', new Element('input', {'type': 'checkbox', "class": "value", 'checked': (tmp.isNew === true ? true : item.active), 'disabled': tmp.isNew, 'colname': 'active'}) ) })
-			.insert({'bottom':  new Element('span', {'class': 'button padding5 rdcrnr saveBtn'}).update('Save').observe('click', function() { tmp.me.saveEditedItem(this); }) })
-			.insert({'bottom':  new Element('span', {'class': 'button padding5 rdcrnr cancelBtn'}).update('Cancel').observe('click', function() { tmp.me.cancelEdit(this); }) })
+		tmp.newDiv = new Element('div', {'class': 'panel panel-default savePanel'}).addClassName(cssClass).store('item', item)
+			.insert({'bottom':  new Element('div', {'class': 'panel-heading'})
+				.insert({'bottom':  new Element('div', {'class': 'panel-title'})
+					.insert({'bottom':  'Creating a new Library:' })
+					.insert({'bottom': new Element('span', {'class': 'btn-group btn-group-xs pull-right'})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-primary saveBtn'})
+							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-ok-circle'}) })
+							.insert({'bottom': ' Save' })
+							.observe('click', function() { tmp.me.saveEditedItem(this); }) 
+						
+						})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-default cancelBtn'})
+							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove-circle'}) })
+							.insert({'bottom':' Cancel' })
+							.observe('click', function() { tmp.me.cancelEdit(this); }) 
+						})
+					})
+				})
+			})
+			.insert({'bottom':  new Element('div', {'class': 'panel-body' })
+				.insert({'bottom':  new Element('div', {'class': 'msgRow' }) })
+				.insert({'bottom':  new Element('div', {'class': 'row' })
+					.insert({'bottom':  tmp.me._getSaveFieldDiv('Name', new Element('input', {'value': (tmp.isNew ? '': item.name), "class": "txt value", 'colname': 'name', 'noblank': true, 'placeholder': 'The name of the library'}) )
+						.addClassName('col-xs-7')
+					})
+					.insert({'bottom':  tmp.me._getSaveFieldDiv('Connector', new Element('input', {'value': (tmp.isNew ? '': item.connector), "class": "txt value", 'colname': 'connector', 'noblank': true, 'placeholder': 'The connector script of the library'}) ) 
+						.addClassName('col-xs-4')
+					})
+					.insert({'bottom':  tmp.me._getSaveFieldDiv('Act?', new Element('input', {'type': 'checkbox', "class": "value", 'checked': (tmp.isNew === true ? true : item.active), 'disabled': tmp.isNew, 'colname': 'active'}) ) 
+						.addClassName('col-xs-1')
+					})
+				})
+			})
 			.insert({'bottom':  tmp.me._getSaveAttrPanel(item.info) });
 		return tmp.newDiv;
 	}
@@ -197,9 +277,14 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 	,_getNewAttrDiv: function() {
 		var tmp = {};
 		tmp.me = this;
-		tmp.typeSelection = new Element('select').update(new Element('option', {'value': ''}).update('Pls Select:')).observe('change', function() {
-			$(this).up('.fielddiv').replace(tmp.me._getSaveFieldDiv($(this).options[$(this).selectedIndex].innerHTML,  new Element('input', {'value': '', 'class': 'txt value', 'attr_id': '', 'attr_type_id':$F(this), 'noblank': true}), true));
-		});
+		tmp.typeSelection = new Element('select')
+			.update(new Element('option', {'value': ''}).update('Pls Select:'))
+			.observe('change', function() {
+				$(this).up('.list-group-item')
+					.replace(tmp.me._getSaveFieldDiv($(this).options[$(this).selectedIndex].innerHTML,  new Element('input', {'value': '', 'class': 'txt value', 'attr_id': '', 'attr_type_id':$F(this), 'noblank': true}), true)
+						.addClassName('list-group-item dl-horizontal')
+					);
+			});
 		tmp.me.types.each(function(type) {
 			tmp.typeSelection.insert({'bottom': new Element('option', {'value': type.id}).update(type.name) });
 		});
@@ -209,42 +294,23 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 	,_getSaveAttrPanel: function(attrs) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.div = new Element('div', {"class": "attrs_div"}); 
+		tmp.div = new Element('div', {"class": "list-group"}); 
 		$H(attrs).each(function(itemArr) {
 			if(typeof(itemArr.value) === 'object') {
 				itemArr.value.each(function(attr) {
-					tmp.div.insert({'bottom': tmp.me._getSaveFieldDiv(attr.type.name, new Element('input', {'value': attr.value, 'class': 'txt value', 'attr_id': attr.id, 'attr_type_id': attr.type.id, 'noblank': true}), true) });
+					tmp.div.insert({'bottom': tmp.me._getSaveFieldDiv(attr.type.name, new Element('input', {'value': attr.value, 'class': 'txt value', 'attr_id': attr.id, 'attr_type_id': attr.type.id, 'noblank': true}), true) 
+						.addClassName('list-group-item dl-horizontal')
+					});
 				});
 			};
 		});
-		tmp.div.insert({'bottom': tmp.me._getSaveFieldDiv('', new Element('span', {'class': 'button padding5 rdcrnr'}).update('NEW Info')
-					.observe('click', function() {
-						$(this).up('.fielddiv').insert({'before': tmp.me._getNewAttrDiv() });
-					})
-		) });
+		tmp.div.insert({'bottom': new Element('span', {'class': 'btn btn-default'})
+			.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus-sign'}) })
+			.insert({'bottom': ' NEW Info' })
+			.observe('click', function() {
+				$(this).insert({'before': tmp.me._getNewAttrDiv().addClassName('list-group-item dl-horizontal') });
+			})
+		});
 		return tmp.div;
-	}
-	
-	,_getSaveFieldDiv: function (fieldName, field, showDelBtn) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.showDelBtn = (showDelBtn === true ? true : false);
-		tmp.titleDiv = new Element('span', {'class': 'title'}).update(fieldName);
-		if(tmp.showDelBtn === true) {
-			tmp.titleDiv.insert({'bottom': new Element('span', {'class': 'inlineblock btns'})
-				.insert({'bottom': new Element('span', {'class': 'delBtn cursorpntr'}).update('x')
-					.observe('click', function(){
-						if(!confirm('You are about to delete this attribute.\n Continue?'))
-							return false;
-						$(this).up('.fielddiv').fade();
-						if($(this).up('.fielddiv').down('.value'))
-							$(this).up('.fielddiv').down('.value').writeAttribute('deactivated', true);
-					})
-				})
-			});
-		}
-		return new Element('div', {'class': 'fielddiv inlineblock padding5'})
-			.insert({'bottom':  tmp.titleDiv})
-			.insert({'bottom':  new Element('span', {'class': 'content'}).update(field) });
 	}
 });
