@@ -26,7 +26,7 @@ ProductListShowCaseJs.prototype = Object.extend(new FrontPageJs(), {
 					if(tmp.result.products.size() === 0) 
 						throw 'Nothing found!';
 					tmp.result.products.each(function(item){
-						tmp.listDiv.insert({'bottom': tmp.me._getProductThumbnail(item).wrap(new Element('div', {"class": "col-md-2 col-sm-4 col-xs-6"})) });
+						tmp.listDiv.insert({'bottom': tmp.me._getProductThumbnail(item).wrap(new Element('div', {"class": "col-lg-2 col-md-3 col-sm-4 col-xs-6"})) });
 					});
 					$(tmp.resultDiv).update(tmp.listDiv);
 				} catch (e) {

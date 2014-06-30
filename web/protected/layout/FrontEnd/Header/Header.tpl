@@ -1,3 +1,4 @@
+<com:Application.controls.FancyBox.FancyBox />
 <nav class="navbar navbar-default navbar-static-top" role="navigation">
 	<div class="container">
 		<div class="row">
