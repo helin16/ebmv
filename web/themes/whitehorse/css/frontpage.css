@@ -3,6 +3,7 @@
 .panel.nodefault > .panel-heading .btn.dropdown-toggle {
     background: #12677C;
     color: #fff;
+    filter: none;
 }
 .header .navbar-default .navbar-nav > li > a {
     color: #fff;

@@ -4,6 +4,7 @@
 #catelist .list-group-item {
     background: #5CAFDB;
     color: #fff;
+    filter: none;
 }
 .header .navbar-default .navbar-nav > li > a {
     color: #fff;
