@@ -17,7 +17,7 @@ class HomeController extends FrontEndPageAbstract
 	
     public function getNewRelease($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params));
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params)); ProductService::
     }
     public function getMostPopular($sender, $params)
     {
@@ -42,7 +42,7 @@ class HomeController extends FrontEndPageAbstract
         try
         {
             $pageNo = 1;
-	        $pageSize = 10;
+	        $pageSize = 12;
 	        if(isset($params->CallbackParameter->pagination))
 	        {
 	            $pageNo = trim(isset($params->CallbackParameter->pagination->pageNo) ? $params->CallbackParameter->pagination->pageNo : $pageNo);
