@@ -139,18 +139,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,_openNewUrl: function(url) {
 		var tmp = {};
 		tmp.me = this;
-		if(url.url) {
-			jQuery.fancybox({
-				'width'			: '95%',
-				'height'		: '95%',
-				'autoScale'     : false,
-				'autoDimensions': false,
-				'fitToView'     : false,
-				'autoSize'      : false,
-				'type'			: 'iframe',
-				'href'			: url.url
-	 		});
-		}
+		if(url.url)
+			window.open(url.url);
+		if(url.redirecturl)
+			window.location = url.redirecturl;
 		return this;
 	}
 	
@@ -167,10 +159,11 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					,'onComplete': function(sender, param) {
 						try {
 							tmp.result = tmp.me.getResp(param, false, true);
-							if(type === 'read') {
-								tmp.me._openNewUrl(tmp.result);
+							if(tmp.result.warning && type === 'read') {
+								if(confirm('Warning: ' + tmp.result.warning + '\n\nDo you want to continue with preview? / ‰Ω†Ë¶ÅÁªßÁª≠È¢ÑËßàÔºü / ‰Ω†Ë¶ÅÁπºÁ∫åÈ†êË¶ΩÔºü'))
+									tmp.me._openNewUrl(tmp.result);
 							} else {
-								window.location = tmp.result.url;
+								tmp.me._openNewUrl(tmp.result);
 							}
 						} catch(e) {
 							alert(e);
