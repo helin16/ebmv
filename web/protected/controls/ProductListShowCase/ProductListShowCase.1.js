@@ -24,13 +24,13 @@ ProductListShowCaseJs.prototype = Object.extend(new FrontPageJs(), {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(tmp.result.products.size() === 0) 
-						throw 'No product found!';
+						throw 'Nothing found!';
 					tmp.result.products.each(function(item){
 						tmp.listDiv.insert({'bottom': tmp.me._getProductThumbnail(item).wrap(new Element('div', {"class": "col-md-2 col-sm-4 col-xs-6"})) });
 					});
 					$(tmp.resultDiv).update(tmp.listDiv);
 				} catch (e) {
-					$(tmp.resultDiv).update(e);
+					$(tmp.resultDiv).update(new Element('p', {'class': 'bg-danger'}).update(e));
 				}
 			}
 		});
@@ -40,7 +40,7 @@ ProductListShowCaseJs.prototype = Object.extend(new FrontPageJs(), {
 	//getting the loading div
 	,_getLoadingDiv: function() {
 		return new Element('span', {'class': 'loading'})
-			.insert({'bottom': new Element('img', {'src': '/themes/default/images/loading.gif'})})
+			.insert({'bottom': new Element('img', {'src': '/themes/images/loading.gif'})})
 			.insert({'bottom': 'Loading ...'});
 	}
 	

@@ -17,8 +17,8 @@
 		            	</div>
 		            	<div class="col-xs-4">
 		            		<div class="btn-group">
-		            			<button type="button" class="btn btn-default" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(true); "><span class="glyphicon glyphicon-th-large"></span> Grid</button>
-		            			<button type="button" class="btn btn-default" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(true); "><span class="glyphicon glyphicon-list"></span> List</button>
+		            			<button type="button" class="btn btn-default" onclick="pageJs.getProductItemFunc='_getProductGridItem'; pageJs.showProducts(true); " title="格子查看 /格子查看 / Grid View"><span class="glyphicon glyphicon-th-large"></span></button>
+		            			<button type="button" class="btn btn-default" onclick="pageJs.getProductItemFunc='_getProductListItem'; pageJs.showProducts(true); " title="列表查看 /列表查看 / List View"><span class="glyphicon glyphicon-list"></span></button>
 		            		</div>
 		            	</div>
 		            </div>
@@ -28,8 +28,10 @@
 	            </div>
 	        </div>
 	        <div class="col-md-3 col-md-pull-9">
-	            <div ID="menu-accordion" role="complementary">
-	                <h3 class="sidebarmoduletitle">Subjects</h3>
+	            <div class="panel panel-default">
+	                <div class="panel-heading">
+	                	类别 / 類別 / <small>Subjects</small>
+	                </div>
 	                <div id="catelist" class="list-group">
 	                    <%= $this->getCategories() %>
 	                </div>

@@ -6,7 +6,7 @@
 				  <a class="pull-left logo" href="/">
 				    <img class="media-object" src="/themes/<%= $this->getPage()->getTheme()->getName() %>/images/logo.png" alt="<%= Core::getLibrary()->getName() %>">
 				  </a>
-				  <div class="media-body">
+				  <div class="media-body title">
 				    <h4 ><%= Core::getLibrary()->getName() %></h4>
 				  </div>
 				</div>

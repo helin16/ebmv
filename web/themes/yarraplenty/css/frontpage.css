@@ -1,7 +1,7 @@
 .header .navbar-default,
 .panel.nodefault > .panel-heading,
 .panel.nodefault > .panel-heading .btn.dropdown-toggle {
-    background: #213c81;
+    background: #3B4D09;
     color: #fff;
 }
 .header .navbar-default .navbar-nav > li > a {
@@ -9,7 +9,7 @@
 }
 
 .header #topmenulist {
-	background: #6a8bbe
+	background: #E68217;
 }
 
 .header #topmenulist .navbar-nav > .active > a, 
@@ -17,5 +17,23 @@
 .header #topmenulist .navbar-nav > .active > a:focus,
 .header #topmenulist .navbar-nav > li > a:hover,
 .header #topmenulist .navbar-nav > li > a:focus {
-    color: #213c81;
+    color: #3B4D09;
+}
+
+.header .logo,
+.header .media-body {
+	margin: 10px 0 0 0;
+	height: 80px;
+	vertical-align: bottom;
+}
+.header .media-body h4 {
+	vertical-align: bottom;
+}
+
+.header .topmenu {
+	margin: 10px 0 0 0;
+}
+
+.header .title {
+	display: none;
 }

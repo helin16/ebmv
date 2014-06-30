@@ -1,8 +1,8 @@
 <com:TContent ID="MainContent">
     <div class="homepageWrapper">
-        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="mostPopular" Title="最受欢迎/最受歡迎/Most Popular" DataFunc="getMostPopular"/>
-        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newNewsPaper" Title="最新报纸/最新報紙/Lastest NewsPaper" DataFunc="getNewNewsPaper"/>
-        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newMagazine" Title="最新杂志/最新雜誌Lastest Magazine" DataFunc="getNewMagazine"/>
-        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newBooks" Title="最新书/最新書/Lastest Books" DataFunc="getNewBooks"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="mostPopular" Title="最受欢迎 / 最受歡迎<small>Most Popular</small>" DataFunc="getMostPopular"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newNewsPaper" Title="最新报纸 / 最新報紙<small>Lastest NewsPaper</small>" DataFunc="getNewNewsPaper"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newMagazine" Title="最新杂志 / 最新雜誌<small>Lastest Magazine</small>" DataFunc="getNewMagazine"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newBooks" Title="最新书 / 最新書<small>Lastest Books</small>" DataFunc="getNewBooks"/>
     </div>
 </com:TContent>
