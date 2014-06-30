@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	resultDivId: ''
-	,pagination: {'pageNo': 1, 'pageSize': 2}
+	,pagination: {'pageNo': 1, 'pageSize': 10}
 	,borrowStatusId: ''
 		
 	,_getEmptyBookShelfInfo: function () {
