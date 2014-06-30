@@ -1,5 +1,4 @@
 <com:TCallback ID="fetchProductBtn" OnCallback="fetchProducts" />
-<com:Application.controls.JCarousel.JCarouselJs />
 <div ID="<%= $this->getClientID()%>"
 	class="panel panel-default nodefault prolistshowcase">
 	<div class="panel-heading">
