@@ -3,7 +3,7 @@
  */
 var ProductListShowCaseJs = new Class.create();
 ProductListShowCaseJs.prototype = Object.extend(new FrontPageJs(), {
-	pagination: {'pageNo': 1, 'pageSize': 10}
+	pagination: {'pageNo': 1, 'pageSize': 12}
 	,_langId: null//the languageId
 	,_callbackId: '' //the callbackId
 	,_wrapperId: '' //the wrapper id

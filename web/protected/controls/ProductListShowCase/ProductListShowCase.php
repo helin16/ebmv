@@ -9,7 +9,7 @@
 class ProductListShowCase extends TTemplateControl
 {
     private $_title;
-    private $_limit = 6;
+    private $_limit = 12;
     private $_dataFunc;
     private $_fetchCallBack;
     /**
