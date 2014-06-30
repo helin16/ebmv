@@ -17,7 +17,7 @@ class HomeController extends FrontEndPageAbstract
 	
     public function getNewRelease($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params)); ProductService::
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params));
     }
     public function getMostPopular($sender, $params)
     {
