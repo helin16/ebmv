@@ -9,6 +9,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	pagination: {'pageNo': 1, 'pageSize': 10},
 	searchCriteria: {'searchString': '', 'categoryIds': [], 'searchOpt': '', 'searchCat' : '', 'language' : '', 'productType' : ''},
 	getProductItemFunc: '_getProductGridItem',
+	searchProductUrl: '/products/search/{searchTxt}', //the searching product url
 	
 	//constructor
 	initialize: function(resultDivId, getProductsBtn) {
@@ -174,5 +175,16 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	
 	,_getAttrString: function(attArray){
 		return attArray.map(function(attr) { return attr.attribute || '';});
+	}
+	
+	,searchProducts: function(searchBox) {
+		var tmp = {};
+		tmp.me = this;
+		if($F(searchBox).blank()){
+			alert('没什么可搜索\n沒什麼可搜索\nNothing to Search.');
+		} else {
+			window.location= tmp.me.searchProductUrl.replace('{searchTxt}', $F(searchBox));
+		}
+		return tmp.me;
 	}
 });

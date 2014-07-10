@@ -63,6 +63,7 @@ class ProductsController extends FrontEndPageAbstract
 	{
 		$js = 'var pageJs = new PageJs("productlist", "' . $this->getProductsBtn->getUniqueID() . '"); ';
 		$js .= 'pageJs.pagination.pageSize = ' . $this->pageSize . ';';
+		$js .= 'pageJs.searchProductUrl = "/products/search/{searchTxt}";';
 		$js .= (($catId = trim($this->Request['cateid'])) === '' ? '' : 'pageJs.searchCriteria.categoryIds.push(' . $catId . ');');
 		
 		if(isset($this->Request['languageId']) && (($languageId = $this->Request['languageId']) !== ''))

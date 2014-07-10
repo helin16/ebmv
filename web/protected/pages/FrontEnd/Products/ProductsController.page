@@ -7,11 +7,14 @@
 		            <div class="row">
 		            	<div class="col-xs-8">
 							<div class="input-group">
-								<input type="text" class="form-control" id="searchtxt" placeholder="Search Your <%= $this->type instanceof ProductType ? $this->type->getName() : 'items' %> by title, author or ISBN">
+								<input type="search" class="form-control" id="searchtxt" 
+									placeholder="Search Your <%= $this->type instanceof ProductType ? $this->type->getName() : 'items' %> by title, author or ISBN"
+									onkeydown="return pageJs.keydown(event, function(){ $('searchbtn').click();})"
+								/>
 								<span class="input-group-btn">
-									<button class="btn btn-default" OnClick="if($F('searchtxt').blank()){alert('没什么可搜索\n沒什麼可搜索\nNothing to Search.');return false;}window.location='/products/search/' + $F('searchtxt');" title="搜索/搜索/Search">
+									<span class="btn btn-default" id='searchbtn' OnClick="pageJs.searchProducts('searchtxt')" title="搜索/搜索/Search">
 										<span class="glyphicon glyphicon-search"></span>
-									</button>
+									</span>
 								</span>
 							</div>
 		            	</div>
