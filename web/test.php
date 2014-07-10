@@ -7,12 +7,13 @@
 require_once dirname(__FILE__) . '/bootstrap.php';
 try
 {
-	$xml = simplexml_load_file(dirname(__FILE__) . '/test.xml');
-	var_dump($xml);
-// 	$result = SupplierConnectorAbstract::getInstance(SupplierService::getInstance('Supplier')->get(1), LibraryService::getInstance('Library')->get(1))
-// 		->getProduct('1234567890', '34494');
-// 	var_dump($result);
-	die;
+// 	$xml = simplexml_load_file(dirname(__FILE__) . '/test.xml');
+// 	var_dump($xml);
+	Core::setUser(UserAccountService::getInstance('UserAccount')->get(1));
+	$result = SupplierConnectorAbstract::getInstance(SupplierService::getInstance('Supplier')->get(8), LibraryService::getInstance('Library')->get(1))
+		->getProduct('', 3894);
+	var_dump($result);
+	
 // 	$wsdl = "http://localhost:8080/?soap=webauth.wsdl";
 // 	$params = array(
 // 			'libCode' => '37',
@@ -35,10 +36,10 @@ catch(Exception $ex)
 	echo '<h3>' . $ex->getMessage() . '</h3>';
 	echo $ex->getTraceAsString();
 }
-	foreach(Log::getLatestLogs() as $log)
-	{
-		echo $log . '<br />';
-	}
+foreach(Log::getLatestLogs() as $log)
+{
+	echo $log . '<br />';
+}
 ?>
 </body>
 </html>

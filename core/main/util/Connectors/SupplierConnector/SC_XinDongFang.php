@@ -1,5 +1,5 @@
 <?php
-class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
+class SC_XinDongFang extends SupplierConnectorAbstract implements SupplierConn
 {
 	/**
 	 * Getting the xml from url
@@ -14,7 +14,7 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _getXmlFromUrl($url, $method, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null)
 	{
-		$params = array('type' => $method, 'pagesize' => $pageSize, 'page' => $pageNo, 'siteid' => trim($this->_lib->getInfo('aus_code')));
+		$params = array('_method' => $method, 'pageSize' => $pageSize, 'pageNo' => $pageNo, 'siteId' => trim($this->_lib->getInfo('aus_code')));
 		if($type instanceof ProductType)
 			$params['producttype'] = strtolower(trim($type->getName()));
 		$url = $url . '?' . http_build_query($params);
@@ -35,7 +35,7 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 		$importUrl =trim($this->_supplier->getInfo('import_url'));
 		
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
-		$xml = $this->_getXmlFromUrl($importUrl, 'new', 1, 1, $type);
+		$xml = $this->_getXmlFromUrl($importUrl, 'courseList', 1, 1, $type);
 		
 		if(!$xml instanceof SimpleXMLElement)
 			throw new SupplierConnectorException('Can NOT get the pagination information from ' . $importUrl . '!');
@@ -98,10 +98,10 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
 		
-		$params = array("siteid" => trim($this->_lib->getInfo('aus_code')),
-				'type' => 'one',
-				'magid' =>  trim($no),
-				'isbn' => trim($isbn)
+		$params = array(
+				"siteId"  => trim($this->_lib->getInfo('aus_code')),
+				'_method' => 'singleCourse',
+				'id'      => trim($no)
 		);
 		$url = $this->_supplier->getInfo('import_url') . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
