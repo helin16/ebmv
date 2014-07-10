@@ -97,7 +97,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,removeItem: function(btn, itemId) {
 		var tmp = {};
 		tmp.me = this;
-		if(!confirm('你确定要从书柜中删除这本书吗？/ 你確定要從書櫃中刪除這本書嗎？\n You are removing this BOOK from your book shelf?\n\n继续/繼續/Continue?'))
+		if(!confirm('你确定要从书架中删除这本书吗？/ 你確定要從書架中刪除這本書嗎？\n You are removing this BOOK from your book shelf?\n\n继续/繼續/Continue?'))
 			return;
 		
 		pageJs.postAjax(tmp.me.getCallbackId("removeProduct"), {'itemId': itemId, pagination: tmp.me.pagination}, {
@@ -192,7 +192,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			//add remove btn
 			.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-sm iconbtn', 'id': 'removebtn_' + shelfItem.id, 'data-loading-text': '处理中/處理中/Processing...'})
 				.insert({'bottom': new Element('span', {'class': 'btnname'})
-					.update('从我的书柜中删除 / 從我的書櫃中刪除')
+					.update('从我的书架中删除 / 從我的書架中刪除')
 					.insert({'bottom': new Element('small').update('Remove From My Shelf') })
 				})
 				.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-trash'}) })
