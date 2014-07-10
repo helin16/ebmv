@@ -125,12 +125,12 @@ class HelpController extends FrontEndPageAbstract
 			 			         .'The course will start. The list under ESL will display the Xin Dong Fang English courses your library subscribed to.</p>'
 				)
 			 	,'zh_cn' => array (
-        			'question' => "怎样使用英语和中文课程?"
+        			'question' => "怎样学英语和学中文课程?"
         			,'answer'  => '<p>从eBMV你可以使用由新东方提供的从初级到雅思各种级别英语课程; 以及不同程度的孔子学院中文教程. 现在有三个初学者中文课程样本可供使用.'
 			 			         .' 请单击鼠标在”学中文”下面选择一个课程, 就开始上课了. 在“ESL”下面的课程表会列出你的图书馆已采购的新东方英语课程.</p>'
 				)
 			 	,'zh_tw' => array (
-        			'question' => "怎樣使用英語和中文課程?"
+        			'question' => "怎樣學英語和學中文課程?"
         			,'answer'  => '<p>從eBMV你可以使用由新東方提供的從初級到雅思各種級別英語課程; 以及不同程度的孔子學院中文教程. 現在有三個初學者中文課程樣本可供使用.'
 			 			         .' 請單擊鼠標在”學中文”下麵選擇一個課程, 就開始上課了. 在“ESL”下麵的課程表會列出你的圖書館採購的新東方的英語課程.</p>'
 				)
