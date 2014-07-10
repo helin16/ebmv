@@ -193,7 +193,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-sm iconbtn', 'id': 'removebtn_' + shelfItem.id, 'data-loading-text': '处理中/處理中/Processing...'})
 				.insert({'bottom': new Element('span', {'class': 'btnname'})
 					.update('从我的书架中删除 / 從我的書架中刪除')
-					.insert({'bottom': new Element('small').update('Remove From My Shelf') })
+					.insert({'bottom': new Element('small').update('Remove From My Bookshelf') })
 				})
 				.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-trash'}) })
 				.observe('click', function(){
