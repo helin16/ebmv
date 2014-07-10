@@ -1,0 +1,12 @@
+<com:TContent ID="MainContent">
+	<div class="pageWrapper helppage">
+		<div class="page-header">
+			<h3>关于我们 / 關於我們  <small>About Us</small> </h3>
+		</div>
+		<p class="text-justify">
+			Established in 1996 Books Music & Videos is a library supplier specialised in Chinese language materials and associated services. We supply Simplified and Traditional Chinese books and AV products published or produced in the Great China region. We also provide selection, cataloguing and end-processing service when required.
+		</p>	
+		<p class="text-justify">eBMV is our latest product that enables library patrons to access Chinese language e-books, e-magazines, e-newspapers and other electronic resources through one integrated user interface.</p>
+	</div>
+	
+</com:TContent>
