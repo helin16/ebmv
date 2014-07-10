@@ -18,7 +18,8 @@
 		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
 		
 			<!-- FrontEnd:: static page -->
-			<url ServiceParameter="FrontEnd.CMS.HelpController" pattern="help.html"/>
+			<url ServiceParameter="FrontEnd.CMS.FAQ.HelpController" pattern="help.html"/>
+			<url ServiceParameter="FrontEnd.CMS.AboutUs.AboutUsController" pattern="aboutus.html"/>
 			
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />
