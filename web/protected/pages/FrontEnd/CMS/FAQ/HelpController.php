@@ -42,7 +42,7 @@ class HelpController extends FrontEndPageAbstract
 			 )
 			 ,array (
         		'en' => array (
-        			'question' => "How can I read Simplified e-books?"
+        			'question' => "How can I read Simplified Chinese e-books?"
         			,'answer'   => 'Click on the cover of the book you want to read. There are two buttons to select: <b>Read Online</b> and <b>Download This Book</b>. Read Online will work on anything that runs Windows, Mac OSX, iOS or Android.'
 				)
 			 	,'zh_cn' => array (
@@ -98,7 +98,7 @@ class HelpController extends FrontEndPageAbstract
 			 )
 			 ,array (
         		'en' => array (
-        			'question' => "How can I read Traditional  e-books and e-magazines?"
+        			'question' => "How can I read Traditional Chinese e-books and e-magazines?"
         			,'answer'   => '<p>Select the traditional Chinese e-book or e-magazine you want to read, click its cover. This publication’s metadata will appear on a new web page, together with a “Borrow” button. After borrow the e-book or e-magazine you can read it online using a desktop, notebook or tablet.</p>'
         						  .'<p>If you’d like to use an Apple or Android mobile device, please go to Apple App Store or Google Play and download<strong>臺灣雲端書庫2014</strong> app.</p>'
         				          .'<p>You can borrow up to 10 Traditional Chinese e-books and e-magazines, loan period is two weeks. eBMV will automatically return Traditional Chinese e-books and e-magazines when it’s due.</p>'
