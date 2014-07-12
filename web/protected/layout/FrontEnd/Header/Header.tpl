@@ -146,28 +146,28 @@
                         <div class="btnname">学汉语/學漢語<small>Learn Chinese</small></div>
                         <b class="caret"></b>
                     </a>
-                    <ul class="dropdown-menu" role="menu"  aria-labelledby="lch-dropdown-btn">
-                        <li>
-                          <a href="#" class="iconbtn">
+                    <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
+                        <li role="presentation">
+                          <a href="#" role="menuitem" class="iconbtn">
                               <div class="row">
-                                  <div class="col-xs-8">第1课/第1課</div>
-                                  <div class="col-xs-4 en">Course 1</div>
+                                  <div class="col-xs-6">汉语速成/漢語速成</div>
+                                  <div class="col-xs-6 en">Chinese Crash Course</div>
                               </div>
                           </a>
                         </li>
-                        <li>
-                          <a href="#" class="iconbtn">
+                        <li role="presentation">
+                          <a href="#" role="menuitem" class="iconbtn">
                               <div class="row">
-                                  <div class="col-xs-8">第2课/第2課</div>
-                                  <div class="col-xs-4 en">Course 2</div>
+                                  <div class="col-xs-8">汉语900句/漢語900句</div>
+                                  <div class="col-xs-4 en">Chinese 900</div>
                               </div>
                           </a>
                         </li>
-                        <li>
-                          <a href="#" class="iconbtn">
+                        <li role="presentation">
+                          <a href="#" role="menuitem" class="iconbtn">
                               <div class="row">
-                                  <div class="col-xs-8">第2课/第2課</div>
-                                  <div class="col-xs-4 en">Course 3</div>
+                                  <div class="col-xs-8">快乐汉语/快樂漢語</div>
+                                  <div class="col-xs-4 en">Happy Chinese</div>
                               </div>
                           </a>
                         </li>

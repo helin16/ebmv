@@ -2,6 +2,10 @@
 	padding: 10px;
 }
 
+.dropdown-menu.extra-long {
+	min-width: 260px;
+}
+
 .topmenu .nav{
 	text-align: right;
 }
