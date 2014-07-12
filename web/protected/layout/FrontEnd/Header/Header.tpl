@@ -109,6 +109,70 @@
                         </li>
                     </ul>
                 </li>
+				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
+                    <a href="#" class="iconbtn" data-toggle="dropdown" id="esl-dropdown-btn">
+                        <div class="btnname">学英语/學英語<small>ESL</small></div>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu"  aria-labelledby="esl-dropdown-btn">
+                        <li>
+                          <a href="#" class="iconbtn">
+                              <div class="row">
+                                  <div class="col-xs-8">第1课/第1課</div>
+                                  <div class="col-xs-4 en">Course 1</div>
+                              </div>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" class="iconbtn">
+                              <div class="row">
+                                  <div class="col-xs-8">第2课/第2課</div>
+                                  <div class="col-xs-4 en">Course 2</div>
+                              </div>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" class="iconbtn">
+                              <div class="row">
+                                  <div class="col-xs-8">第2课/第2課</div>
+                                  <div class="col-xs-4 en">Course 3</div>
+                              </div>
+                          </a>
+                        </li>
+                    </ul>
+                </li>
+				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
+                    <a href="#" class="iconbtn" data-toggle="dropdown" id="lch-dropdown-btn">
+                        <div class="btnname">学汉语/學漢語<small>Learn Chinese</small></div>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu"  aria-labelledby="lch-dropdown-btn">
+                        <li>
+                          <a href="#" class="iconbtn">
+                              <div class="row">
+                                  <div class="col-xs-8">第1课/第1課</div>
+                                  <div class="col-xs-4 en">Course 1</div>
+                              </div>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" class="iconbtn">
+                              <div class="row">
+                                  <div class="col-xs-8">第2课/第2課</div>
+                                  <div class="col-xs-4 en">Course 2</div>
+                              </div>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" class="iconbtn">
+                              <div class="row">
+                                  <div class="col-xs-8">第2课/第2課</div>
+                                  <div class="col-xs-4 en">Course 3</div>
+                              </div>
+                          </a>
+                        </li>
+                    </ul>
+                </li>
 				<li class="visible-xs"><a href="/" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
 				<li class="visible-xs"><a href="/user.html" class="iconbtn"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
 			</ul>
