@@ -12,7 +12,7 @@
 				  </div>
 				</div>
 			</div>
-			<div class="col-sm-4 hidden-sm hidden-xs topmenu">
+			<div class="col-sm-4 hidden-xs topmenu">
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="/help.html" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class="glyphicon glyphicon-question-sign"></span></a></li>
 					<li>
