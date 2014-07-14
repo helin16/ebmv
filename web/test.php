@@ -10,8 +10,8 @@ try
 // 	$xml = simplexml_load_file(dirname(__FILE__) . '/test.xml');
 // 	var_dump($xml);
 	Core::setUser(UserAccountService::getInstance('UserAccount')->get(1));
-	$result = SupplierConnectorAbstract::getInstance(SupplierService::getInstance('Supplier')->get(8), LibraryService::getInstance('Library')->get(1))
-		->getProduct('', 3894);
+	$result = SupplierConnectorAbstract::getInstance(SupplierService::getInstance('Supplier')->get(9), LibraryService::getInstance('Library')->get(1))
+		->getProductList();
 	var_dump($result);
 	
 // 	$wsdl = "http://localhost:8080/?soap=webauth.wsdl";
@@ -29,6 +29,8 @@ try
 // 	$result = $connector->getUserInfo($library, 'test_user', 'test_pass');
 // 	$auth = new WebAuth();
 // 	$result = $auth->getUserLocalInfo('37', 'test_user',  sha1('test_pass'));
+
+	//test apabi
 	var_dump('done');
 }
 catch(Exception $ex)
