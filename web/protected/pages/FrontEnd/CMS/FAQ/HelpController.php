@@ -42,7 +42,7 @@ class HelpController extends FrontEndPageAbstract
 			 )
 			 ,array (
         		'en' => array (
-        			'question' => "How can I read Simplified Chinese e-books?"
+        			'question' => "How can I read Simplified Chinese e-books?"
         			,'answer'   => 'Click on the cover of the book you want to read. There are two buttons to select: <b>Read Online</b> and <b>Download This Book</b>. Read Online will work on anything that runs Windows, Mac OSX, iOS or Android.'
 				)
 			 	,'zh_cn' => array (
