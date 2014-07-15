@@ -5,12 +5,9 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		'n.D310000dycjrb' => array('name' => '第一财经日报', 'productId' =>  'CN31-0024', 'paperUid' => 'n.D310000dycjrb', 'productType' => 'NewsPaper'),
 		'n.D310000xmzk'   => array('name' => '新民周刊',    'productId' =>  'CN31-1802/D', 'paperUid' => 'n.D310000xmzk', 'productType' => 'Magazine'),
 		'n.D440100nfdsb'  => array('name' => '南方都市报',  'productId' =>  'CN44-0175', 'paperUid' => 'n.D440100nfdsb', 'productType' => 'NewsPaper'),
-		'n.D440100nfzm'   => array('name' => '南方周末',    'productId' =>  'CN44-0003', 'paperUid' => 'n.D440100nfzm', 'productType' => 'Magazine')
+		'n.D440100nfzm'   => array('name' => '南方周末',    'productId' =>  'CN44-0003', 'paperUid' => 'n.D440100nfzm', 'productType' => 'NewsPaper')
 	);
 	private $_orgnizationNo = 'tiyan';
-	private $_urls = array(
-		'getImgs' => 'http://paper.apabi.com/servlet/getPagePicsServlet'
-	);
 	private static $_cache = array();
 	/**
 	 * Getting the library owns type
@@ -96,7 +93,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 			,'picType' => ''
 			,'orgNo' => trim($this->_orgnizationNo)
 		);
-		$xml = BmvComScriptCURL::readUrl($this->_urls['getImgs'], BmvComScriptCURL::CURL_TIMEOUT, $data);
+		$xml = BmvComScriptCURL::readUrl(trim($this->_supplier->getInfo('import_url')), BmvComScriptCURL::CURL_TIMEOUT, $data);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Trying to get images, got ' . $xml, __FUNCTION__);
 		
 		$xml = new SimpleXMLElement($xml);
@@ -134,7 +131,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 			,'picType' => ''
 			,'orgNo' => trim($this->_orgnizationNo)
 		);
-		$xml = BmvComScriptCURL::readUrl($this->_urls['getImgs'], BmvComScriptCURL::CURL_TIMEOUT, $data);
+		$xml = BmvComScriptCURL::readUrl(trim($this->_supplier->getInfo('import_url')), BmvComScriptCURL::CURL_TIMEOUT, $data);
 		$fakeProductXml = new SimpleXMLElement($xml);
 		$attributes = $fakeProductXml->PagePicInfo->attributes();
 		$paperUid = trim($attributes['paperUid']);
