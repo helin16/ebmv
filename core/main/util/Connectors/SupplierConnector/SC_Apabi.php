@@ -2,15 +2,32 @@
 class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 {
 	private $_products = array(
-		'n.D310000dycjrb' => array('name' => '第一财经日报', 'productId' =>  'CN31-0024', 'paperUid' => 'n.D310000dycjrb', 'productType' => 'NewPaper'),
+		'n.D310000dycjrb' => array('name' => '第一财经日报', 'productId' =>  'CN31-0024', 'paperUid' => 'n.D310000dycjrb', 'productType' => 'NewsPaper'),
 		'n.D310000xmzk'   => array('name' => '新民周刊',    'productId' =>  'CN31-1802/D', 'paperUid' => 'n.D310000xmzk', 'productType' => 'Magazine'),
-		'n.D440100nfdsb'  => array('name' => '南方都市报',  'productId' =>  'CN44-0175', 'paperUid' => 'n.D440100nfdsb', 'productType' => 'NewPaper'),
+		'n.D440100nfdsb'  => array('name' => '南方都市报',  'productId' =>  'CN44-0175', 'paperUid' => 'n.D440100nfdsb', 'productType' => 'NewsPaper'),
 		'n.D440100nfzm'   => array('name' => '南方周末',    'productId' =>  'CN44-0003', 'paperUid' => 'n.D440100nfzm', 'productType' => 'Magazine')
 	);
 	private $_orgnizationNo = 'tiyan';
 	private $_urls = array(
 		'getImgs' => 'http://paper.apabi.com/servlet/getPagePicsServlet'
 	);
+	private static $_cache = array();
+	/**
+	 * Getting the library owns type
+	 *
+	 * @param unknown $typeId
+	 *
+	 * @return LibraryOwnsType
+	 */
+	private function _getLibOwnsType($typeId) {
+		if (! isset ( self::$_cache ['libType'] ))
+			self::$_cache ['libType'] = array ();
+	
+		if (! isset ( self::$_cache ['libType'] [$typeId] ))
+			self::$_cache ['libType'] [$typeId] = BaseServiceAbastract::getInstance ( 'LibraryOwnsType' )->get ( $typeId );
+	
+		return self::$_cache ['libType'] [$typeId];
+	}
 	/**
 	 * Getting a fake xml element for product
 	 *
@@ -37,7 +54,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$xml->Language = 'zh_CN';
 	
 		$publishDate = new UDate ( $xml->PublicationDate );
-		$xml->BookType = ($bookName = trim($this->_supplier->getName())) . '/' . ($bookName . $publishDate->format ('Y')) . '/' . ($bookName . $publishDate->format('m'));
+		$xml->BookType = ($bookName = trim($productName)) . '/' . ($bookName . $publishDate->format ('Y')) . '/' . ($bookName . $publishDate->format('m'));
 		$copiesXml = $xml->addChild( 'Copies' );
 		$readOnline = $copiesXml->addChild ($this->_getLibOwnsType ( LibraryOwnsType::ID_ONLINE_VIEW_COPIES )->getCode ());
 		$readOnline->Available = 1;
@@ -86,7 +103,9 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$array = array();
 		foreach($xml->children() as $fakeProductXml)
 		{
-			$array[] = $this->_getFakeXml($this->_products[$fakeProductXml->paperUid]['productType'], $fakeProductXml->paperName, $fakeProductXml->paperUid, $fakeProductXml->pageUid, $fakeProductXml->issueDate, trim($fakeProductXml));
+			$attributes = $fakeProductXml->attributes();
+			$paperUid = trim($attributes['paperUid']);
+			$array[] = $this->_getFakeXml($this->_products[$paperUid]['productType'], $attributes['paperName'], $paperUid, $attributes['pageUid'], $attributes['issueDate'], trim($fakeProductXml));
 		}
 		return $array;
 	}
@@ -110,18 +129,17 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
 		
-		$params = array(
-				"siteId"  => trim($this->_lib->getInfo('aus_code')),
-				'_method' => 'singleCourse',
-				'id'      => trim($no)
+		$data = array(
+			'paperUids' => $isbn
+			,'picType' => ''
+			,'orgNo' => trim($this->_orgnizationNo)
 		);
-		$url = $this->_supplier->getInfo('import_url') . '?' . http_build_query($params);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
-		
-		$results = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got results:' . print_r($results, true), __FUNCTION__);
-		
-		return SupplierConnectorProduct::getProduct(new SimpleXMLElement($results));
+		$xml = BmvComScriptCURL::readUrl($this->_urls['getImgs'], BmvComScriptCURL::CURL_TIMEOUT, $data);
+		$fakeProductXml = new SimpleXMLElement($xml);
+		$attributes = $fakeProductXml->PagePicInfo->attributes();
+		$paperUid = trim($attributes['paperUid']);
+		$productXML = $this->_getFakeXml($this->_products[$paperUid]['productType'], $attributes['paperName'], $paperUid, $attributes['pageUid'], $attributes['issueDate'], trim($fakeProductXml));
+		return SupplierConnectorProduct::getProduct($productXML);
 	}
 	/**
 	 * (non-PHPdoc)

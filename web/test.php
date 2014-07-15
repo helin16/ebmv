@@ -11,7 +11,7 @@ try
 // 	var_dump($xml);
 	Core::setUser(UserAccountService::getInstance('UserAccount')->get(1));
 	$result = SupplierConnectorAbstract::getInstance(SupplierService::getInstance('Supplier')->get(9), LibraryService::getInstance('Library')->get(1))
-		->getProductList();
+		->getProduct('n.D310000dycjrb', '');
 	var_dump($result);
 	
 // 	$wsdl = "http://localhost:8080/?soap=webauth.wsdl";
