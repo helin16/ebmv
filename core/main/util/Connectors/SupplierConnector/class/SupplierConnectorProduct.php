@@ -48,7 +48,7 @@ class SupplierConnectorProduct
 				trim(self::_getAttribute($productinfo, 'Introduction')), 
 				trim(self::_getAttribute($productinfo, 'Cip')), 
 				trim(self::_getAttribute($productinfo, 'SiteID')), 
-				explode('+', trim(self::_getAttribute($productinfo, 'Language'))), 
+				preg_split('/[+\/]/', trim(self::_getAttribute($productinfo, 'Language'))), 
 				explode('/', self::_getAttribute($productinfo, 'BookType')), 
 				strtolower(trim($productinfo->getName())), 
 				self::_getCopies($productinfo)

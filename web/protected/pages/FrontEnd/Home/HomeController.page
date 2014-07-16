@@ -4,5 +4,6 @@
         <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newNewsPaper" Title="最新报纸 / 最新報紙<small>Lastest NewsPaper</small>" DataFunc="getNewNewsPaper"/>
         <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newMagazine" Title="最新杂志 / 最新雜誌<small>Lastest Magazine</small>" DataFunc="getNewMagazine"/>
         <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newBooks" Title="最新书 / 最新書<small>Lastest Books</small>" DataFunc="getNewBooks"/>
+        <com:Application.controls.ProductListShowCase.ProductListShowCase ID="newCourses" Title="最新课程 / 最新課程<small>Lastest Courses</small>" DataFunc="getNewCourses"/>
     </div>
 </com:TContent>

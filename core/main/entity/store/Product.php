@@ -246,14 +246,10 @@ class Product extends BaseEntityAbstract
 		if(count($languages) === 0)
 			return;
 		
-		$values = array();
-		$langIds = array();
 		foreach($languages as $lang)
 		{
-			$values[] = '?, ' . $this->getId() . ', ' . Core::getUser()->getId();
-			$langIds[] = $lang->getId();
+			EntityDao::getInstance('Product')->replaceInto('language_product', array('languageId', 'productId', 'createdById'), array('?', $this->getId(), Core::getUser()->getId()), array($lang->getId()));
 		}
-		EntityDao::getInstance('Product')->replaceInto('language_product', array('languageId', 'productId', 'createdById'), $values, $langIds);
 		return $this;
 	}
 	/**

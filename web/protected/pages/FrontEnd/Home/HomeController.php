@@ -35,6 +35,10 @@ class HomeController extends FrontEndPageAbstract
     {
 	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_BOOK));
     }
+    public function getNewCourses($sender, $params)
+    {
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_COURSE));
+    }
     
     private function _listProducts($params, $funcName, Language $lang = null, ProductType $type = null)
     {
