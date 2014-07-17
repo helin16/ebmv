@@ -20,6 +20,7 @@
 			<!-- FrontEnd:: static page -->
 			<url ServiceParameter="FrontEnd.CMS.FAQ.HelpController" pattern="help.html"/>
 			<url ServiceParameter="FrontEnd.CMS.AboutUs.AboutUsController" pattern="aboutus.html"/>
+			<url ServiceParameter="FrontEnd.CMS.ChineseLearning.ChineseLearningController" pattern="learn_chinese/{title}.html" parameters.title="\w+"/>
 			
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />

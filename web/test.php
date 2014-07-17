@@ -6,7 +6,15 @@
 <?php
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-
+function encrypt($encrypt, $key="") 
+{
+	$iv = mcrypt_create_iv ( mcrypt_get_iv_size ( MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB ), MCRYPT_RAND );
+	$passcrypt = mcrypt_encrypt ( MCRYPT_RIJNDAEL_256, $key, $encrypt, MCRYPT_MODE_ECB, $iv );
+	$encode = base64_encode ( $passcrypt );
+	return $encode;
+}
+$result = encrypt('testing1$apabi$2011041812:20','apabikey');
+var_dump($result);die;
 try
 {
 // 	$xml = simplexml_load_file(dirname(__FILE__) . '/test.xml');
