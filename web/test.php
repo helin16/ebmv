@@ -7,6 +7,15 @@
 require_once dirname(__FILE__) . '/bootstrap.php';
 
 
+function Encrypt($string, $key)
+{
+ 	//Encryption
+    $iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB), MCRYPT_RAND); 
+    $encrypted_string = mcrypt_encrypt(MCRYPT_TRIPLEDES, $key, $string, MCRYPT_MODE_ECB, $iv); 
+    return base64_encode($encrypted_string);
+}
+
+
 // $expected = 'gxapNMS25J1q3X/TO4tp+5Kq6d/K0LzHreBZZ6PnMj4=';
 // $result = trim(Encrypt('testing1$apabi$2011041812:20', 'apabikey'));
 // var_dump('Excepted: ' . $expected);

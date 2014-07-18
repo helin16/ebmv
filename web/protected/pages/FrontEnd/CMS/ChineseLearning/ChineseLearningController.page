@@ -1,0 +1,11 @@
+<com:TContent ID="MainContent">
+	<div class="pageWrapper helppage">
+		<div class="page-header">
+			<com:TLabel ID="title" />
+		</div>
+		<div>
+			<iframe src="http://www.chinesecio.com/cms/en/course_iframe/course/chinese-crash-course" style="border: none;width:100%;height:500px;"></iframe>
+		</div>
+	</div>
+	
+</com:TContent>
