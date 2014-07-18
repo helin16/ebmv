@@ -8,7 +8,23 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		'n.D440100nfzm'   => array('name' => '南方周末',    'productId' =>  'CN44-0003', 'paperUid' => 'n.D440100nfzm', 'productType' => 'NewsPaper')
 	);
 	private $_orgnizationNo = 'tiyan';
+	private $_orgnizationKey = 'apabikey';
 	private static $_cache = array();
+	/**
+	 * DES with Zeros encryption
+	 * 
+	 * @param string $string The data that we are trying to encrypt
+	 * @param string $key    The salt
+	 * 
+	 * @return string
+	 */
+	private function _getSign($string, $key)
+	{
+		//Encryption
+		$iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB), MCRYPT_RAND);
+		$encrypted_string = mcrypt_encrypt(MCRYPT_TRIPLEDES, $key, $string, MCRYPT_MODE_ECB, $iv);
+		return base64_encode($encrypted_string);
+	}
 	/**
 	 * Getting the library owns type
 	 *
@@ -115,8 +131,26 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$readurl = $this->_supplier->getInfo('view_url');
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
-		$readurl = str_replace('{cno}', $product->getAttribute('cno'), $readurl);
-		return $readurl;
+		
+		$baseUrl = $readurl .  trim($this->_orgnizationNo) . '/';
+		$now = new UDate('now', 'Asia/Hong_Kong');
+		$sigleProductUrlData = array(
+			'pid' => 'newspaper.page',
+			'issueid' => $product->getAttribute('cno'),
+			'cult' => 'CN'
+		);
+		
+		$data = array(
+				'pid' => 'sso'
+				,'uid' => $user->getUserName()
+				,'pwd'=> md5($user->getPassword())
+				,'sign' => $this->_getSign($user->getUserName() . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
+				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
+				,'autoreg' => '1'
+				,'pdm' => '0'
+				,'errorurl'=>'http://ebmv.com.au'
+		);
+		return $baseUrl . '?' . http_build_query($data);
 	}
 	/**
 	 * (non-PHPdoc)
