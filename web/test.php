@@ -43,7 +43,7 @@ try
 	$data = array(
 		'pid' => 'sso'
 		,'uid' => $uid
-		,'pwd'=> md5('111111')
+		,'pwd'=> strtoupper(md5('111111'))
 		,'sign' => $sign
 		,'returnurl' => 'http://www.apabi.com/' . $xxx2 . '/?pid=newspaper.page&issueid=nq.D310000dycjrb_20140709&cult=CN'
 		,'autoreg' => '1'

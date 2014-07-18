@@ -143,7 +143,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$data = array(
 				'pid' => 'sso'
 				,'uid' => $user->getUserName()
-				,'pwd'=> md5($user->getPassword())
+				,'pwd'=> strtoupper(md5($user->getPassword()))
 				,'sign' => $this->_getSign($user->getUserName() . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
 				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
 				,'autoreg' => '1'
