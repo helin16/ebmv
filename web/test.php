@@ -34,7 +34,7 @@ try
 
 	$xxx2 = 'tiyan';
 	$url = 'http://www.apabi.com/' . $xxx2 . '/';
-	$now = new UDate('now', 'Asia/Hong_Kong');
+	$now = new UDate('now');
 	$uid = 'auchen';
 	$myEncryptData = $uid . '$' . $xxx2 . '$' . $now->format('YmdH:i');
 	$myEncryptKey = "apabikey";

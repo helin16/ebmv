@@ -133,13 +133,13 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
 		
 		$baseUrl = $readurl .  trim($this->_orgnizationNo) . '/';
-		$now = new UDate('now', 'Asia/Hong_Kong');
 		$sigleProductUrlData = array(
 			'pid' => 'newspaper.page',
 			'issueid' => $product->getAttribute('cno'),
 			'cult' => 'CN'
 		);
 		
+		$now = new UDate();
 		$data = array(
 				'pid' => 'sso'
 				,'uid' => $user->getUserName()
