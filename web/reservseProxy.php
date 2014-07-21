@@ -1,6 +1,10 @@
 <?php
 require 'bootstrap.php';
-$reuqestUrlParams = parse_url ( trim ( $_REQUEST ['url'] ) );
+$url = trim ( $_REQUEST ['url'] );
+if($url === '')
+	die;
+
+$reuqestUrlParams = parse_url ( $url );
 $proxy = new ProxyHandler ( array (
 		'baseUri' => '/' . basename ( __FILE__ ),
 		'proxyUri' => trim ( $_REQUEST ['url'] ) 
@@ -20,7 +24,7 @@ $html = trim(ob_get_contents ());
 ob_end_clean ();
 
 if($html === '') {
-	FrontEndPageAbstract::show404Page('Can NOT requested page', 'Can NOT requested page: ' . trim ( $_REQUEST ['url'] ));
+	FrontEndPageAbstract::show404Page('Can NOT requested page', 'Can NOT requested page: ' . $url);
 }
 
 $doc = new DOMDocument ();
