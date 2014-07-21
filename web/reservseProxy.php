@@ -5,7 +5,7 @@ $proxy = new ProxyHandler ( array (
 		'baseUri' => '/' . basename ( __FILE__ ),
 		'proxyUri' => trim ( $_REQUEST ['url'] ) 
 ) );
-$proxy->setCurlOption ( CURLOPT_PROXY, 'proxy.bytecraft.internal:3128' );
+// $proxy->setCurlOption ( CURLOPT_PROXY, 'proxy.bytecraft.internal:3128' );
 
 ob_start ();
 // Check for a success
