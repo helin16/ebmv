@@ -5,6 +5,7 @@ $proxy = new ProxyHandler ( array (
 		'baseUri' => '/' . basename ( __FILE__ ),
 		'proxyUri' => trim ( $_REQUEST ['url'] ) 
 ) );
+$proxy->setCurlOption ( CURLOPT_HTTPHEADER, array('X-PARTNER: ebmv.com.au') );
 // $proxy->setCurlOption ( CURLOPT_PROXY, 'proxy.bytecraft.internal:3128' );
 
 ob_start ();
