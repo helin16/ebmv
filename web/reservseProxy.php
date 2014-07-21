@@ -16,8 +16,12 @@ if ($proxy->execute ()) {
 	echo $proxy->getCurlError ();
 }
 $proxy->close ();
-$html = ob_get_contents ();
+$html = trim(ob_get_contents ());
 ob_end_clean ();
+
+if($html === '') {
+	FrontEndPageAbstract::show404Page('Can NOT requested page', 'Can NOT requested page: ' . trim ( $_REQUEST ['url'] ));
+}
 
 $doc = new DOMDocument ();
 @$doc->loadHTML ( $html ); // supress parsing errors with @
