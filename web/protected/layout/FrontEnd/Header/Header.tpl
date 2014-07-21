@@ -121,7 +121,7 @@
                     </a>
                     <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
                         <li role="presentation">
-                          <a href="#" role="menuitem" class="iconbtn">
+                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/chinese-crash-course" role="menuitem" class="iconbtn fancyboxmenuitem">
                               <div class="row">
                                   <div class="col-xs-6">汉语速成/漢語速成</div>
                                   <div class="col-xs-6 en">Chinese Crash Course</div>
@@ -129,7 +129,7 @@
                           </a>
                         </li>
                         <li role="presentation">
-                          <a href="#" role="menuitem" class="iconbtn">
+                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/chinese-900" role="menuitem" class="iconbtn fancyboxmenuitem">
                               <div class="row">
                                   <div class="col-xs-8">汉语900句/漢語900句</div>
                                   <div class="col-xs-4 en">Chinese 900</div>
@@ -137,7 +137,7 @@
                           </a>
                         </li>
                         <li role="presentation">
-                          <a href="#" role="menuitem" class="iconbtn">
+                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/happy-chinese" role="menuitem" class="iconbtn fancyboxmenuitem">
                               <div class="row">
                                   <div class="col-xs-8">快乐汉语/快樂漢語</div>
                                   <div class="col-xs-4 en">Happy Chinese</div>
