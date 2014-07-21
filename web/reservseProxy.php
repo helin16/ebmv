@@ -1,7 +1,6 @@
 <?php
 require 'bootstrap.php';
-$url = trim ( $_REQUEST ['url'] );
-if($url === '')
+if(!isset($_REQUEST ['url']) || ($url = trim ( $_REQUEST ['url'] )) === '')
 	die;
 
 $reuqestUrlParams = parse_url ( $url );
