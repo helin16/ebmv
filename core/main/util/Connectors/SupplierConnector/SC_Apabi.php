@@ -74,6 +74,9 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$readOnline->Total = 1;
 		$download = $copiesXml->addChild ( $this->_getLibOwnsType ( LibraryOwnsType::ID_DOWNLOAD_COPIES )->getCode () );
 		$download->Available = 0;
+		$download->Total = 0;
+		$download = $copiesXml->addChild ( $this->_getLibOwnsType ( LibraryOwnsType::ID_BORROW_TIMES )->getCode () );
+		$download->Available = 1;
 		$download->Total = 1;
 		return $xml;
 	}
@@ -131,7 +134,6 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$readurl = $this->_supplier->getInfo('view_url');
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
-		
 		$baseUrl = $readurl .  trim($this->_orgnizationNo) . '/';
 		$sigleProductUrlData = array(
 			'pid' => 'newspaper.page',

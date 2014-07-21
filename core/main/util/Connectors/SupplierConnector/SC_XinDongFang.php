@@ -90,12 +90,12 @@ class SC_XinDongFang extends SupplierConnectorAbstract implements SupplierConn
 		$query_data = array(
 			'_method' => 'ebmv',
 			'siteId'  => trim($this->_lib->getInfo('aus_code')),
-			'userName' => trim($user->getUserName())
-			'nextPage' => trim($url . '/' . $product->getAttribute('cno'))
+			'userName' => trim($user->getUserName()),
+			'nextPage' => trim($url . '/' . $product->getAttribute('cno')),
+			'enc'	   => trim(enc)
 		);
 		$readurl = $url . '?' . http_build_query($query_data);
 		http://library.koolearn.com/externalRemoteService?_method=ebmv&siteId=37&userName=111&enc=B9B8F6684C45A15E9B775800717BCE6A&nextPage=http://library.koolearn.com/externalRemoteService/3894
-		$readurl = str_replace('{cno}', $product->getAttribute('cno'), $readurl);
 		return $readurl;
 	}
 	/**
