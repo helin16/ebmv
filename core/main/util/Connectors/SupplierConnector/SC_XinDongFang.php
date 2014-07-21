@@ -85,17 +85,16 @@ class SC_XinDongFang extends SupplierConnectorAbstract implements SupplierConn
 	public function getOnlineReadUrl(Product $product, UserAccount $user)
 	{
 		$url = $this->_supplier->getInfo('view_url');
-		if($readurl === false || count($readurl) === 0)
+		if($url === false || count($url) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
 		$query_data = array(
 			'_method' => 'ebmv',
 			'siteId'  => trim($this->_lib->getInfo('aus_code')),
 			'userName' => trim($user->getUserName()),
 			'nextPage' => trim($url . '/' . $product->getAttribute('cno')),
-			'enc'	   => trim(enc)
+			'enc'	   => trim($this->_supplier->getInfo('skey'))
 		);
 		$readurl = $url . '?' . http_build_query($query_data);
-		http://library.koolearn.com/externalRemoteService?_method=ebmv&siteId=37&userName=111&enc=B9B8F6684C45A15E9B775800717BCE6A&nextPage=http://library.koolearn.com/externalRemoteService/3894
 		return $readurl;
 	}
 	/**
@@ -116,7 +115,6 @@ class SC_XinDongFang extends SupplierConnectorAbstract implements SupplierConn
 		
 		$results = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got results:' . print_r($results, true), __FUNCTION__);
-		
 		return SupplierConnectorProduct::getProduct(new SimpleXMLElement($results));
 	}
 	/**

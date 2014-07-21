@@ -110,36 +110,9 @@
                     </ul>
                 </li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
-                    <a href="#" class="iconbtn" data-toggle="dropdown" id="esl-dropdown-btn">
+                    <a href="/products/1/4" class="iconbtn">
                         <div class="btnname">学英语/學英語<small>ESL</small></div>
-                        <b class="caret"></b>
                     </a>
-                    <ul class="dropdown-menu" role="menu"  aria-labelledby="esl-dropdown-btn">
-                        <li>
-                          <a href="#" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-8">第1课/第1課</div>
-                                  <div class="col-xs-4 en">Course 1</div>
-                              </div>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-8">第2课/第2課</div>
-                                  <div class="col-xs-4 en">Course 2</div>
-                              </div>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-8">第2课/第2課</div>
-                                  <div class="col-xs-4 en">Course 3</div>
-                              </div>
-                          </a>
-                        </li>
-                    </ul>
                 </li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
                     <a href="#" class="iconbtn" data-toggle="dropdown" id="lch-dropdown-btn">
