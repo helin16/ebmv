@@ -139,7 +139,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$baseUrl = $readurl .  trim($this->_orgnizationNo) . '/';
 		$sigleProductUrlData = array(
 			'pid' => 'newspaper.page',
-			'issueid' => $product->getAttribute('cno'),
+			'metaid' => $product->getAttribute('cno'),
 			'cult' => 'CN'
 		);
 		
@@ -173,7 +173,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$fakeProductXml = new SimpleXMLElement($xml);
 		$attributes = $fakeProductXml->PagePicInfo->attributes();
 		$paperUid = trim($attributes['paperUid']);
-		$productXML = $this->_getFakeXml($this->_products[$paperUid]['productType'], $attributes['paperName'], $paperUid, $attributes['pageUid'], $attributes['issueDate'], trim($fakeProductXml));
+		$productXML = $this->_getFakeXml($this->_products[$paperUid]['productType'], $attributes['paperName'], $paperUid, $attributes['pageUid'], $attributes['issueDate'], trim($fakeProductXml->PagePicInfo));
 		return SupplierConnectorProduct::getProduct($productXML);
 	}
 	/**
