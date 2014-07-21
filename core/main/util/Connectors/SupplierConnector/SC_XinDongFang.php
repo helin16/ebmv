@@ -92,7 +92,7 @@ class SC_XinDongFang extends SupplierConnectorAbstract implements SupplierConn
 			'siteId'  => trim($this->_lib->getInfo('aus_code')),
 			'userName' => trim($user->getUserName()),
 			'nextPage' => trim($url . '/' . $product->getAttribute('cno')),
-			'enc'	   => trim($this->_supplier->getInfo('skey'))
+			'enc'	   => StringUtilsAbstract::getCDKey(trim($this->_supplier->getInfo('skey')), trim($user->getUserName()), trim($this->_lib->getInfo('aus_code')))
 		);
 		$readurl = $url . '?' . http_build_query($query_data);
 		return $readurl;
