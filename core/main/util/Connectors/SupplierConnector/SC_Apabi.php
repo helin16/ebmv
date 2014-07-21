@@ -9,6 +9,8 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 	);
 	private $_orgnizationNo = 'tiyan';
 	private $_orgnizationKey = 'apabikey';
+	private $_supplierUserName ='auchen';
+	private $_supplierPassword = '111111';
 	private static $_cache = array();
 	/**
 	 * DES with Zeros encryption
@@ -144,9 +146,9 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		$now = new UDate();
 		$data = array(
 				'pid' => 'sso'
-				,'uid' => $user->getUserName()
-				,'pwd'=> strtoupper(md5($user->getPassword()))
-				,'sign' => $this->_getSign($user->getUserName() . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
+				,'uid' => trim($this->_supplierUserName)
+				,'pwd'=> strtoupper(md5($this->_supplierPassword))
+				,'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
 				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
 				,'autoreg' => '1'
 				,'pdm' => '0'
