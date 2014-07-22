@@ -40,7 +40,7 @@ ProductListShowCaseJs.prototype = Object.extend(new FrontPageJs(), {
 	//getting the loading div
 	,_getLoadingDiv: function() {
 		return new Element('span', {'class': 'loading'})
-			.insert({'bottom': new Element('img', {'src': '/themes/images/loading.gif'})})
+			.insert({'bottom': new Element('img', {'src': '/themes/images/loading.gif', "style": "width: 33px; height: 33px;"})})
 			.insert({'bottom': 'Loading ...'});
 	}
 	

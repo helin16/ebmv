@@ -109,7 +109,9 @@ abstract class FrontEndPageAbstract extends TPage
 	 */
 	protected function _loadPageJsClass()
 	{
-	    $this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/' . __CLASS__ . '.js', true));
+		$cScripts = self::getLastestJS(__CLASS__);
+		if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
+			$this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/'  . $lastestJs, true));
 	    return $this;
 	}
 	/**
