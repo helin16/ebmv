@@ -35,6 +35,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				{
 					tmp.list = (tmp.me.getProductItemFunc === '_getProductGridItem' ? new Element('div', {'class': 'row'}) : new Element('ul', {'class': 'media-list'}) );
 					tmp.list.addClassName('plist');
+					if(!tmp.me.searchCriteria.searchString.blank()) {
+						tmp.list.insert({'top': new Element('h4').update('搜索结果 / 搜索結果 / Search result for: ' + tmp.me.searchCriteria.searchString)});
+					}
 					$(tmp.me.resultDivId).update(tmp.list);
 				}
 				try {
@@ -48,10 +51,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					});
 					$(tmp.me.resultDivId).insert({'bottom': tmp.me._getPaginationDiv(tmp.result.pagination) });
 				} catch (e) {
-					if(tmp.clear === true)
-						$(tmp.me.resultDivId).update(e);
-					else
-						alert(e);
+					$(tmp.me.resultDivId).insert({'bottom': tmp.me.getAlertBox('ERROR: ' + e).addClassName('alert-danger') });
 				}
 				if(typeof(afterFunc) === 'function')
 					afterFunc();
@@ -104,8 +104,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.productDiv = new Element('div', {'class': 'row nodefault plistitem'})
 			.insert({'bottom': new Element('div', {'class': 'col-xs-3'})
-				.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(product.id)})
-					.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null).addClassName('img-thumbnail') })
+				.insert({'bottom': new Element('div', {'class': 'thumbnail'})
+					.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(product.id)})
+						.insert({'bottom': tmp.me._getProductImgDiv(product.attributes.image_thumb || null).addClassName('img-thumbnail') })
+					})
 				})
 			})
 			.insert({'bottom': new Element('div', {'class': 'col-xs-9'})
@@ -181,7 +183,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		if($F(searchBox).blank()){
-			alert('没什么可搜索\n沒什麼可搜索\nNothing to Search.');
+			tmp.me.markFormGroupError($(searchBox), '没什么可搜索 / 沒什麼可搜索<br />Nothing to Search.');
 		} else {
 			window.location= tmp.me.searchProductUrl.replace('{searchTxt}', $F(searchBox));
 		}

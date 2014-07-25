@@ -82,10 +82,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					if(tmp.result.pagination.pageNumber < tmp.result.pagination.totalPages)
 						tmp.resultDiv.insert({'bottom':tmp.me._getPaginationDiv(tmp.result.pagination) });
 				} catch (e) {
-					if(tmp.clear === true)
-						tmp.resultDiv.update(new Element('p', {'class': 'infobox bg-danger'}).update(e));
-					else
-						alert(e);
+					tmp.resultDiv.insert({'bottom': tmp.me.getAlertBox('ERROR: ' + e).addClassName('alert-danger') });
 				}
 				if(typeof(afterFunc) === 'function')
 					afterFunc();
@@ -121,7 +118,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					if($(tmp.me.resultDivId).getElementsBySelector('.listitem').size() === 0)
 						$(tmp.me.resultDivId).update(tmp.me._getEmptyBookShelfInfo());
 				} catch (e) {
-					alert(e);
+					$(btn).insert({'before': tmp.me.getAlertBox('ERROR: ' + e).addClassName('alert-danger') });
 					jQuery(btn.id).button('reset');
 				}
 			}
@@ -149,7 +146,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					}
 					alert('You have successfully borrowed this book./ 您已成功借这本书. / 您已成功借這本書.');
 				} catch (e) {
-					alert(e);
+					$(btn).insert({'before': tmp.me.getAlertBox('ERROR: ' + e).addClassName('alert-danger') });
 					$(btn).removeClassName('disabled loading');
 				}
 			}
@@ -177,7 +174,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				}
 				alert('You have successfully returned this book. / 您已成功返回本书。 / 您已成功返回本書。');
 			} catch (e) {
-				alert(e);
+				$(btn).insert({'before': tmp.me.getAlertBox('ERROR: ' + e).addClassName('alert-danger') });
 				$(btn).removeClassName('disabled loading');
 			}
 		}
@@ -229,8 +226,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			.insert({'bottom': new Element('div', {'class': 'panel-body'})
 				.insert({'bottom': new Element('div', {'class': 'row nodefault plistitem'})
 					.insert({'bottom': new Element('div', {'class': 'col-xs-3'})
-						.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
-							.insert({'bottom': tmp.me._getProductImgDiv(shelfItem.product.attributes.image_thumb || null).addClassName('img-thumbnail') })
+						.insert({'bottom': new Element('div', {'class': 'thumbnail'})
+							.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
+								.insert({'bottom': tmp.me._getProductImgDiv(shelfItem.product.attributes.image_thumb || null).addClassName('img-thumbnail') })
+							})
 						})
 					})
 					.insert({'bottom': new Element('div', {'class': 'col-xs-9'})
@@ -295,52 +294,6 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		;
 		return tmp.productDiv;
 	}
-	
-//	//get product list item
-//	,_getProductListItem: function(shelfItem) {
-//		var tmp = {};
-//		tmp.me = this;
-//		if(!shelfItem.product || !shelfItem.product.id)
-//			return null;
-//		tmp.productDiv = new Element('div', {'class': 'product listitem', 'item_id': shelfItem.id}).store('data', shelfItem)
-//			.insert({'bottom': new Element('span', {'class': 'inlineblock listcol left'})
-//				.insert({'bottom': tmp.me._getProductImgDiv(shelfItem.product.attributes.image_thumb || null)
-//						.addClassName('cursorpntr')
-//						.observe('click', function(){ tmp.me.showDetailsPage(shelfItem.product.id); })
-//				})
-//			})
-//			.insert({'bottom': new Element('span', {'class': 'inlineblock listcol right'})
-//				.insert({'bottom': new Element('div', {'class': 'product_title'}).update(shelfItem.product.title)
-//					.addClassName('cursorpntr')
-//					.observe('click', function(){ tmp.me.showDetailsPage(shelfItem.product.id); })
-//				})
-//				.insert({'bottom': new Element('div', {'class': 'row'})
-//					.insert({'bottom': new Element('span', {'class': 'author inlineblock'})
-//						.insert({'bottom': new Element('label').update('Author:')})
-//						.insert({'bottom': new Element('span').update(shelfItem.product.attributes.author ? tmp.me._getAttrString(shelfItem.product.attributes.author).join(' ') : '')})
-//					})
-//					.insert({'bottom': new Element('span', {'class': 'product_isbn inlineblock textright'})
-//						.insert({'bottom': new Element('label').update('ISBN:')})
-//						.insert({'bottom': new Element('span').update(shelfItem.product.attributes.isbn ? tmp.me._getAttrString(shelfItem.product.attributes.isbn).join(' ') : '')})
-//					})
-//				})
-//				.insert({'bottom': new Element('div', {'class': 'row'})
-//					.insert({'bottom': new Element('span', {'class': 'product_publisher inlineblock'})
-//						.insert({'bottom': new Element('label').update('Publisher:')})
-//						.insert({'bottom': new Element('span').update(shelfItem.product.attributes.publisher ? tmp.me._getAttrString(shelfItem.product.attributes.publisher).join(' ') : '')})
-//					})
-//					.insert({'bottom': new Element('span', {'class': 'product_publish_date inlineblock textright'})
-//						.insert({'bottom': new Element('label').update('Publisher Date:')})
-//						.insert({'bottom': new Element('span').update(shelfItem.product.attributes.publish_date ? tmp.me._getAttrString(shelfItem.product.attributes.publish_date).join(' ') : '')})
-//					})
-//				})
-//				.insert({'bottom': tmp.me._getBtnDiv(shelfItem) })
-//				.insert({'bottom': new Element('div', {'class': 'product_description'}).update((shelfItem.product.attributes.description ? tmp.me._getAttrString(shelfItem.product.attributes.description).join(' ') : '')) })
-//			})
-//		;
-//		return tmp.productDiv;
-//	}
-	
 	,_getAttrString: function(attArray){
 		return attArray.map(function(attr) { return attr.attribute || '';});
 	}

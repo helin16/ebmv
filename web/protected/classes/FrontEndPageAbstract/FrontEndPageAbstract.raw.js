@@ -285,4 +285,16 @@ FrontPageJs.prototype = {
 		}
 		return true;
 	}
+	/**
+	 * Getting an alert box
+	 */
+	,getAlertBox: function(title, msg) {
+		return new Element('div', {'class': 'alert alert-dismissible', 'role': 'alert'})
+		.insert({'bottom': new Element('button', {'class': 'close', 'data-dismiss': 'alert'})
+			.insert({'bottom': new Element('span', {'aria-hidden': 'true'}).update('&times;') })
+			.insert({'bottom': new Element('span', {'class': 'sr-only'}).update('Close') })
+		})
+		.insert({'bottom': new Element('strong').update(title) })
+		.insert({'bottom': msg })
+	}
 };
