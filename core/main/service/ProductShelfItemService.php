@@ -25,14 +25,16 @@ class ProductShelfItemService extends BaseServiceAbastract
      */
     public function cleanUpShelfItems(UserAccount $user = null)
     {
-    	$sql = "select p.productId from productshelfitem p left join product pro on (pro.id = p.productId and pro.active = 1) where pro.id is null;";
     	if($user instanceof UserAccount)
-    		$sql .= " AND p.ownerId = " . $user->getId();
-    	$productIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
-    	
-    	if(count($productIds) > 0)
-    		Dao::deleteByCriteria(new DaoQuery($this->_entityName), 'productId in (' . implode(', ', $productIds) . ')' . ($user instanceof UserAccount ? " AND ownerId = " . $user->getId() : ''));
-    	Dao::deleteByCriteria(new DaoQuery($this->_entityName), 'active = 0' . ($user instanceof UserAccount ? " AND ownerId = " . $user->getId() : ''));
+    		$user->deleteInactiveShelfItems();
+    	else
+    	{
+	    	$sql = "select p.productId from productshelfitem p left join product pro on (pro.id = p.productId and pro.active = 1) where pro.id is null;";
+	    	$productIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
+	    	if(count($productIds) > 0)
+	    		Dao::deleteByCriteria(new DaoQuery($this->_entityName), 'productId in (' . implode(', ', $productIds) . ')');
+	    	Dao::deleteByCriteria(new DaoQuery($this->_entityName), 'active = 0');
+    	}
     	return $this;
     }
     /**
@@ -146,15 +148,19 @@ class ProductShelfItemService extends BaseServiceAbastract
     	$count = EntityDao::getInstance('ProductShelfItem')->countByCriteria($where, $params);
     	if($count == 0 )
     	{
+    		$libraryLoanTime = Core::getLibrary()->getInfo('max_loan_time');
+    		if(trim($libraryLoanTime) === '')
+    			$libraryLoanTime = SystemSettings::getSettings(SystemSettings::TYPE_DEFAULT_MAX_LOAN_TIME);
     		$item = new ProductShelfItem();
     		$item->setOwner($user);
     		$item->setProduct($product);
     		$item->setBorrowTime($borrowTime);
+    		$item->setExpiryTime($item->getBorrowTime()->modify($libraryLoanTime));
     		$item->setStatus($status);
-    		EntityDao::getInstance('ProductShelfItem')->save($item);
+    		$this->save($item);
     	}
     	else
-    		EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`borrowTime` = ?, `status` = ?', $where, array_merge(array($borrowTime, $status), $params));
+    		$this->updateByCriteria('`status` = ?', $where, array_merge(array($status), $params));
     	return $this;
     }
 }

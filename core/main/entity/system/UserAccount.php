@@ -158,6 +158,20 @@ class UserAccount extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Cleanup all inactive product shelf items for the current user
+     * 
+     * @return UserAccount
+     */
+    public function deleteInactiveShelfItems()
+    {
+    	$sql = "select p.productId from productshelfitem p left join product pro on (pro.id = p.productId and pro.active = 1) where pro.id is null;";
+    	$productIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
+    	if(count($productIds) > 0)
+    		Dao::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'productId in (' . implode(', ', $productIds) . ')  AND ownerId = ' . $this->getId());
+    	Dao::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'active = 0 AND ownerId = ' . $this->getId());
+    	return $this;
+    }
+    /**
      * Getting the bookshelfitems for a user
      * 
      * @param int   $pageNo
@@ -170,6 +184,7 @@ class UserAccount extends BaseEntityAbstract
     {
     	if(intval($this->getId()) === self::ID_GUEST_ACCOUNT)
     		return array();
+    	$this->deleteInactiveShelfItems();
     	return EntityDao::getInstance('ProductShelfItem')->findByCriteria('ownerId = ?', array($this->getId()), $pageNo, $pageSize, $orderby);
     }
     /**
@@ -181,6 +196,7 @@ class UserAccount extends BaseEntityAbstract
     {
     	if(intval($this->getId()) === self::ID_GUEST_ACCOUNT)
     		return 0;
+    	$this->deleteInactiveShelfItems();
     	return EntityDao::getInstance('ProductShelfItem')->countByCriteria('ownerId = ? and active = ? ', array($this->getId(), 1));
     }
     /**
