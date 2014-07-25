@@ -158,6 +158,32 @@ class UserAccount extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Getting the bookshelfitems for a user
+     * 
+     * @param int   $pageNo
+     * @param int   $pageSize
+     * @param array $orderby
+     * 
+     * @return array
+     */
+    public function getBookShelfItem($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderby = array())
+    {
+    	if(intval($this->getId()) === self::ID_GUEST_ACCOUNT)
+    		return array();
+    	return EntityDao::getInstance('ProductShelfItem')->findByCriteria('ownerId = ?', array($this->getId()), $pageNo, $pageSize, $orderby);
+    }
+    /**
+     * Getting the count of bookshelfitem for this user
+     * 
+     * @return int
+     */
+    public function countBookShelfItem()
+    {
+    	if(intval($this->getId()) === self::ID_GUEST_ACCOUNT)
+    		return 0;
+    	return EntityDao::getInstance('ProductShelfItem')->countByCriteria('ownerId = ? and active = ? ', array($this->getId(), 1));
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */

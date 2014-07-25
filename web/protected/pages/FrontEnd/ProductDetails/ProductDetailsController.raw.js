@@ -89,7 +89,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,_getCopies: function (readCopiesDisplayHolderId, readOnlineBtnId, downloadBtnId) {
 		var tmp = {};
 		tmp.me = this;
-		
+		tmp.copiesHolder = $(readCopiesDisplayHolderId).up('.row');
+		tmp.btnsHolder = $(readOnlineBtnId).up('.row');
 		tmp.me.postAjax(tmp.me.getCallbackId('getCopies'), {}, {
 			'onLoading': function () {}
 			,'onComplete': function(sender, param) {
@@ -124,13 +125,20 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 								return tmp.me._getLink(this, 'download');
 							});
 					} 
-					$(readCopiesDisplayHolderId).up('.row').update('')
+					
+					tmp.copiesHolder.update('')
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Online Read Copies:</strong>', 'online_read_copies', tmp.readCopies) })
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Download Copies:</strong>', 'download_copies', tmp.downloadCopies) });
+					if(tmp.result.warningMsg) {
+						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Error:</h4>', new Element('small').update(
+								tmp.result.warningMsg.zh_CN + ' / ' + tmp.result.warningMsg.zh_TW + '<br />' + tmp.result.warningMsg.en)
+							).addClassName('alert-danger') 
+						});
+					}
 					$(readOnlineBtnId).replace(tmp.readBtn);
 					$(downloadBtnId).replace(tmp.downloadBtn);
 				} catch(e) {
-					alert(e);
+					tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('ERROR:', e).addClassName('alert-danger') });
 				}
 			}
 		}, 120000);
@@ -152,22 +160,18 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,_getLink: function(btn, type) {
 		var tmp = {};
 		tmp.me = this;
-		
 		tmp.me.getUser(btn, function(){
 				tmp.me.postAjax(tmp.me.getCallbackId('geturl'), {'type': type}, {
 					'onLoading': function () {}
-					,'onComplete': function(sender, param) {
+					,'onSuccess': function (sender, param) {
 						try {
 							tmp.result = tmp.me.getResp(param, false, true);
-							if(tmp.result.warning && type === 'read') {
-								if(confirm('Warning: ' + tmp.result.warning + '\n\nDo you want to continue with preview? / ‰Ω†Ë¶ÅÁªßÁª≠È¢ÑËßàÔºü / ‰Ω†Ë¶ÅÁπºÁ∫åÈ†êË¶ΩÔºü'))
-									tmp.me._openNewUrl(tmp.result);
-							} else {
-								tmp.me._openNewUrl(tmp.result);
-							}
+							tmp.me._openNewUrl(tmp.result);
 						} catch(e) {
-							alert(e);
+							$(btn).insert({'before': tmp.me.getAlertBox('Error: ', e).addClassName('alert-danger') });
 						}
+					}
+					,'onComplete': function(sender, param) {
 						jQuery('#' + btn.id).button('reset');
 					}
 				}, 120000);
