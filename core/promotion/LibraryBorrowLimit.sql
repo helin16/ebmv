@@ -21,5 +21,5 @@ insert into `systemsettings` (`type`, `value`, `description`, `active`, `created
 
 
 insert into `libraryinfotype` (`id`, `name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
-	(1, 'The Library Borrow Limit', 'borrow_limit',  1, NOW(), 100, NOW(), 100),
-	(1, 'The Library Max Loan Time', 'max_loan_time',  1, NOW(), 100, NOW(), 100);
+	(8, 'The Library Borrow Limit', 'borrow_limit',  1, NOW(), 100, NOW(), 100),
+	(9, 'The Library Max Loan Time', 'max_loan_time',  1, NOW(), 100, NOW(), 100);
