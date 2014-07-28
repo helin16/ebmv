@@ -148,14 +148,17 @@ class ProductShelfItemService extends BaseServiceAbastract
     	$count = EntityDao::getInstance('ProductShelfItem')->countByCriteria($where, $params);
     	if($count == 0 )
     	{
+    		$expiryTime = new UDate(trim($borrowTime));
     		$libraryLoanTime = Core::getLibrary()->getInfo('max_loan_time');
     		if(trim($libraryLoanTime) === '')
     			$libraryLoanTime = SystemSettings::getSettings(SystemSettings::TYPE_DEFAULT_MAX_LOAN_TIME);
+    		$expiryTime->modify($libraryLoanTime);
+    		
     		$item = new ProductShelfItem();
     		$item->setOwner($user);
     		$item->setProduct($product);
-    		$item->setBorrowTime($borrowTime);
-    		$item->setExpiryTime($item->getBorrowTime()->modify($libraryLoanTime));
+    		$item->setBorrowTime(trim($borrowTime));
+    		$item->setExpiryTime(trim($expiryTime));
     		$item->setStatus($status);
     		$this->save($item);
     	}
