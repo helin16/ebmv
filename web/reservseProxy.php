@@ -8,7 +8,7 @@ function replaceTag(&$dom, $tagName, $attributeName)
 		$link = trim($node->getAttribute($attributeName));
 		if(substr($link, 0, 1) === '/')
 			$link  = 'http://www.chinesecio.com' . $link;
-		$node->setAttribute($attributeName, basename(__FILE__) . '?url=' . $link);
+		$node->setAttribute($attributeName, '/' . basename(__FILE__) . '?url=' . $link);
 	}
 }
 
