@@ -12,10 +12,13 @@ function replaceTag(&$dom, $tagName, $attributeName)
 	}
 }
 
-function getHTML($pageUrl)
+function getHTML($pageUrl, $isHTML = true)
 {
 	// to specify http headers like `User-Agent`,
 	// you could create a context like so:
+	if($isHTML === false)
+		return file_get_contents ( $pageUrl);
+	
 	$options = array (
 			'http' => array (
 					'method' => "GET",
@@ -41,10 +44,17 @@ if (! isset ( $_REQUEST ['url'] ) || ($url = trim ( $_REQUEST ['url'] )) === '')
 
 $linkC = parse_url($url);
 $ext = strtolower(trim(pathinfo(basename($linkC['path']), PATHINFO_EXTENSION)));
+$isHTML = true;
 if(in_array($ext, array('png', 'jpg', 'gif', 'jpge')))
+{
 	header("content-type: image/" . $ext);
+	$isHTML = false;
+}
 else if($ext === 'js')
+{
 	header('Content-Type: application/javascript');
+	$isHTML = false;
+}
 
 $caching = (! isset ( $_REQUEST ['nocaching'] ) || trim ( $_REQUEST ['nocaching'] ) !== '1') ? true : false;
 if($caching === true && extension_loaded('apc') && ini_get('apc.enabled'))
@@ -52,13 +62,13 @@ if($caching === true && extension_loaded('apc') && ini_get('apc.enabled'))
 	$key = md5($url);
 	if(!apc_exists($key))
 	{
-		$html = getHTML($url);
+		$html = getHTML($url, $isHTML);
 		apc_add($key, $html);
 	}
 	else
 		$html = apc_fetch($key);
 }
 else
-	$html = getHTML($url);
+	$html = getHTML($url, $isHTML);
 echo $html;
 ?>
