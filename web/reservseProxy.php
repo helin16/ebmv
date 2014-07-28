@@ -30,6 +30,8 @@ function getHTML($pageUrl, $isHTML = true)
 	// open file with the above http headers
 	$content = file_get_contents ( $pageUrl, false, $context );
 	
+	$content = str_replace('url("http://www.chinesecio.com/', 'url("/'. basename(__FILE__) . '?url=http://www.chinesecio.com/', $content);
+	
 	$dom = new DOMDocument();
 	$dom->loadHTML($content);
 	replaceTag($dom, 'img', 'src');
@@ -53,6 +55,11 @@ if(in_array($ext, array('png', 'jpg', 'gif', 'jpge')))
 else if($ext === 'js')
 {
 	header('Content-Type: application/javascript');
+	$isHTML = false;
+}
+else if($ext === 'css')
+{
+	header("Content-type: text/css", true);
 	$isHTML = false;
 }
 
