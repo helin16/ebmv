@@ -6,9 +6,12 @@ function replaceTag(&$dom, $tagName, $attributeName)
 		if(!$node->hasAttribute($attributeName))
 			continue;
 		$link = trim($node->getAttribute($attributeName));
-		if(substr($link, 0, 1) === '/')
-			$link  = 'http://www.chinesecio.com' . $link;
-		$node->setAttribute($attributeName, '/' . basename(__FILE__) . '?url=' . $link);
+		if(substr($link, 0, 1) === '/' || substr($link, 0, 4) === 'http')
+		{
+			if(substr($link, 0, 1) === '/')
+				$link  = 'http://www.chinesecio.com' . $link;
+			$node->setAttribute($attributeName, '/' . basename(__FILE__) . '?url=' . $link);
+		}
 	}
 }
 
