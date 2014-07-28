@@ -28,8 +28,10 @@ class Header extends TTemplateControl
 		$js = 'jQuery(".mainmenu .fancyboxmenuitem").fancybox({
 				type	    : "iframe",
 				fitToView	: true,
-				width		: "70%",
-				height		: "70%",
+				maxWidth    : "1100",
+				maxHeight   : "700",
+				width		: "94%",
+				height		: "94%",
 				autoSize	: false,
 				closeClick	: false,
 				openEffect	: "none",
