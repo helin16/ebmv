@@ -13,8 +13,8 @@ function getHTML($pageUrl)
 	$context = stream_context_create ( $options );
 	// open file with the above http headers
 	$content = file_get_contents ( $pageUrl, false, $context );
-	$content = preg_replace ( "#(<\s*img\s+[^>]*src\s*=\s*[\"']\s*)(?!http)([^\"'>]+)(\s*[\"'>]+)#", '$1http://www.chinesecio.com/$2$3', $content );
-	$content = preg_replace ( "#(<\s*a\s+[^>]*href\s*=\s*[\"']\s*)(?!http)([^\"'>]+)(\s*[\"'>]+)#", '$1/' . basename(__FILE__) . '?url=http://www.chinesecio.com/$2$3', $content );
+	$content = preg_replace ( "#(<\s*src\s*=\s*[\"']\s*)(?!http)([^\"'>]+)(\s*[\"'>]+)#", '$1/' . basename(__FILE__) . '?url=http://www.chinesecio.com/$2$3', $content );
+	$content = preg_replace ( "#(<\s*href\s*=\s*[\"']\s*)(?!http)([^\"'>]+)(\s*[\"'>]+)#", '$1/' . basename(__FILE__) . '?url=http://www.chinesecio.com/$2$3', $content );
 	return $content;
 }
 
