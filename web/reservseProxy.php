@@ -1,4 +1,17 @@
 <?php
+function replaceTag(&$dom, $tagName, $attributeName)
+{
+	foreach($dom->getElementsByTagName($tagName) as $node)
+	{
+		if(!$node->hasAttribute($attributeName))
+			continue;
+		$link = trim($node->getAttribute($attributeName));
+		if(substr($link, 0, 1) === '/')
+			$link  = 'http://www.chinesecio.com' . $link;
+		$node->setAttribute($attributeName, basename(__FILE__) . '?url=' . $link);
+	}
+}
+
 function getHTML($pageUrl)
 {
 	// to specify http headers like `User-Agent`,
@@ -13,9 +26,14 @@ function getHTML($pageUrl)
 	$context = stream_context_create ( $options );
 	// open file with the above http headers
 	$content = file_get_contents ( $pageUrl, false, $context );
-	$content = preg_replace ( "#(<\s*src\s*=\s*[\"']\s*)(?!http)([^\"'>]+)(\s*[\"'>]+)#", '$1/' . basename(__FILE__) . '?url=http://www.chinesecio.com/$2$3', $content );
-	$content = preg_replace ( "#(<\s*href\s*=\s*[\"']\s*)(?!http)([^\"'>]+)(\s*[\"'>]+)#", '$1/' . basename(__FILE__) . '?url=http://www.chinesecio.com/$2$3', $content );
-	return $content;
+	
+	$dom = new DOMDocument();
+	$dom->loadHTML($content);
+	replaceTag($dom, 'img', 'src');
+	replaceTag($dom, 'a', 'href');
+	replaceTag($dom, 'script', 'src');
+	replaceTag($dom, 'link', 'href');
+	return $dom->saveHTML();
 }
 
 if (! isset ( $_REQUEST ['url'] ) || ($url = trim ( $_REQUEST ['url'] )) === '')
