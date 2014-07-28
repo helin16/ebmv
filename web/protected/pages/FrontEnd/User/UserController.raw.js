@@ -186,6 +186,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.newDiv = new Element('div', {'class': 'row btns'})
+			.insert({'bottom': new Element('div', {'class': 'col-xs-12'})
 			//add remove btn
 			.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-sm iconbtn', 'id': 'removebtn_' + shelfItem.id, 'data-loading-text': '处理中/處理中/Processing...'})
 				.insert({'bottom': new Element('span', {'class': 'btnname'})
@@ -196,7 +197,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				.observe('click', function(){
 					tmp.me.removeItem(this, shelfItem.id);
 				})
-			});
+			})
+		});
 //		if(shelfItem.status === tmp.me.borrowStatusId) {
 //			//add return book btn
 //			tmp.newDiv.insert({'bottom': new Element('span', {'class': 'imgBtn returnBookBtn', 'title': 'è¿˜ä¹¦ / é‚„æ›¸ Return This Book'})
@@ -215,6 +217,30 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return tmp.newDiv;
 	}
 	
+	,_getProductListItemDetailsRow: function(title1, content1, title2, content2) {
+		return new Element('div', {'class': 'row'})
+			.insert({'bottom': new Element('div', {'class': 'col-sm-6'})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+						.insert({'bottom': new Element('strong')
+							.insert({'bottom': title1 })
+						})
+					})
+					.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(content1)})
+				})
+			})
+			.insert({'bottom': new Element('div', {'class': 'col-sm-6'})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
+						.insert({'bottom': new Element('strong')
+							.insert({'bottom': title2 })
+						})
+					})
+					.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(content2)})
+				})
+			});
+	}
+	
 	//get product list item
 	,_getProductListItem: function(shelfItem) {
 		var tmp = {};
@@ -225,62 +251,27 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.productDiv = new Element('div', {'class': 'panel panel-default listitem', 'item_id': shelfItem.id}).store('data', shelfItem)
 			.insert({'bottom': new Element('div', {'class': 'panel-body'})
 				.insert({'bottom': new Element('div', {'class': 'row nodefault plistitem'})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-3'})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-4 col-sm-3'})
 						.insert({'bottom': new Element('div', {'class': 'thumbnail'})
 							.insert({'bottom': new Element('a', {'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
 								.insert({'bottom': tmp.me._getProductImgDiv(shelfItem.product.attributes.image_thumb || null).addClassName('img-thumbnail') })
 							})
 						})
 					})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-9'})
+					.insert({'bottom': new Element('div', {'class': 'col-xs-8 col-sm-9'})
 						.insert({'bottom': new Element('a', {'class': 'product_title', 'href': tmp.me.getProductDetailsUrl(shelfItem.product.id)})
 							.insert({'bottom': new Element('h4')
 								.update(shelfItem.product.title) 
 							})
 						})
-						.insert({'bottom': new Element('div', {'class': 'row'})
-							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-								.insert({'bottom': new Element('div', {'class': 'row'})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-										.insert({'bottom': new Element('strong')
-											.insert({'bottom': 'Author:' })
-										})
-									})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.author ? tmp.me._getAttrString(shelfItem.product.attributes.author).join(' ') : '')})
-								})
-							})
-							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-								.insert({'bottom': new Element('div', {'class': 'row'})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-										.insert({'bottom': new Element('strong')
-											.insert({'bottom': 'ISBN:' })
-										})
-									})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.isbn ? tmp.me._getAttrString(shelfItem.product.attributes.isbn).join(' ') : '')})
-								})
-							})
+						.insert({'bottom': tmp.me._getProductListItemDetailsRow('Author:', (shelfItem.product.attributes.author ? tmp.me._getAttrString(shelfItem.product.attributes.author).join(' ') : ''),
+									'ISBN:', (shelfItem.product.attributes.isbn ? tmp.me._getAttrString(shelfItem.product.attributes.isbn).join(' ') : '') 	)
 						})
-						.insert({'bottom': new Element('div', {'class': 'row'})
-							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-								.insert({'bottom': new Element('div', {'class': 'row'})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-										.insert({'bottom': new Element('strong')
-											.insert({'bottom': 'Publisher:' })
-										})
-									})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.publisher ? tmp.me._getAttrString(shelfItem.product.attributes.publisher).join(' ') : '')})
-								})
-							})
-							.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-								.insert({'bottom': new Element('div', {'class': 'row'})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-5'})
-										.insert({'bottom': new Element('strong')
-											.insert({'bottom': 'Pub. Date:' })
-										})
-									})
-									.insert({'bottom': new Element('div', {'class': 'col-sm-7'}).update(shelfItem.product.attributes.publish_date ? tmp.me._getAttrString(shelfItem.product.attributes.publish_date).join(' ') : '')})
-								})
-							})
+						.insert({'bottom': tmp.me._getProductListItemDetailsRow('Publisher:', (shelfItem.product.attributes.publisher ? tmp.me._getAttrString(shelfItem.product.attributes.publisher).join(' ') : ''),
+								'Pub. Date:', (shelfItem.product.attributes.publish_date ? tmp.me._getAttrString(shelfItem.product.attributes.publish_date).join(' ') : '') 	)
+						})
+						.insert({'bottom': tmp.me._getProductListItemDetailsRow('Borrowed @:', (shelfItem.borrowTime ? shelfItem.borrowTime : ''),
+								'Expiry:', (shelfItem.expiryTime ? shelfItem.expiryTime : '') 	)
 						})
 						.insert({'bottom': tmp.me._getBtnDiv(shelfItem) })
 						.insert({'bottom': new Element('div', {'class': 'row'})
