@@ -39,6 +39,13 @@ function getHTML($pageUrl)
 if (! isset ( $_REQUEST ['url'] ) || ($url = trim ( $_REQUEST ['url'] )) === '')
 	die ();
 
+$linkC = parse_url($url);
+$ext = strtolower(trim(pathinfo(basename($linkC['path']), PATHINFO_EXTENSION)));
+if(in_array($ext, array('png', 'jpg', 'gif', 'jpge')))
+	header("content-type: image/" . $ext);
+else if($ext === 'js')
+	header('Content-Type: application/javascript');
+
 $caching = (! isset ( $_REQUEST ['nocaching'] ) || trim ( $_REQUEST ['nocaching'] ) !== '1') ? true : false;
 if($caching === true && extension_loaded('apc') && ini_get('apc.enabled'))
 {
