@@ -30,7 +30,7 @@ function getHTML($pageUrl, $isHTML = true)
 	// open file with the above http headers
 	$content = file_get_contents ( $pageUrl, false, $context );
 	
-	$content = str_replace('url("http://www.chinesecio.com/', 'url("/'. basename(__FILE__) . '?url=http://www.chinesecio.com/', $content);
+	$content = str_replace('url("', 'url("/'. basename(__FILE__) . '?url=', $content);
 	
 	$dom = new DOMDocument();
 	$dom->loadHTML($content);
