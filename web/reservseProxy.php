@@ -41,6 +41,7 @@ function getHTML($pageUrl, $isHTML = true)
 	replaceTag($dom, 'a', 'href');
 	replaceTag($dom, 'script', 'src');
 	replaceTag($dom, 'link', 'href');
+	replaceTag($dom, 'iframe', 'src');
 	return $dom->saveHTML();
 }
 
