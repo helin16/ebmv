@@ -68,7 +68,7 @@ class ReservseProxy
 			$this->setCurlOption(CURLOPT_BINARYTRANSFER, true); // For images, etc.
 			$this->setCurlOption(CURLOPT_WRITEFUNCTION, array($this, '_readResponse'));
 			$this->setCurlOption(CURLOPT_HEADERFUNCTION, array($this, '_readHeaders'));
-			$this->setCurlOption(CURLOPT_PROXY, 'proxy.bytecraft.internal:3128');
+// 			$this->setCurlOption(CURLOPT_PROXY, 'proxy.bytecraft.internal:3128');
 			// This ignores HTTPS certificate verification, libcurl decided not to bundle ca certs anymore.
 			// Alternatively, specify CURLOPT_CAINFO, or CURLOPT_CAPATH if you have access to your cert(s)
 			$this->setCurlOption(CURLOPT_SSL_VERIFYPEER, false);
