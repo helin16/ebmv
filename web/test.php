@@ -35,7 +35,7 @@ try
 	$xxx2 = 'tiyan';
 	$url = 'http://www.apabi.com/' . $xxx2 . '/';
 	$now = new UDate('now');
-	$uid = 'auchen';
+	$uid = 'admin';
 	$myEncryptData = $uid . '$' . $xxx2 . '$' . $now->format('YmdH:i');
 	$myEncryptKey = "apabikey";
 	$sign = Encrypt($myEncryptData, $myEncryptKey);
@@ -43,7 +43,7 @@ try
 	$data = array(
 		'pid' => 'sso'
 		,'uid' => $uid
-		,'pwd'=> strtoupper(md5('111111'))
+		,'pwd'=> strtoupper(md5('admin'))
 		,'sign' => $sign
 		,'returnurl' => 'http://www.apabi.com/' . $xxx2 . '/?pid=newspaper.page&issueid=nq.D310000dycjrb_20140709&cult=CN'
 		,'autoreg' => '1'

@@ -79,6 +79,11 @@ class ReservseProxy
 				header("Content-Disposition:attachment;filename='" . $fileName . "'");
 				break;
 			}
+			case 'mp3':
+			{
+				header("Content-Disposition: inline;filename='" . $fileName . "'");
+				break;
+			}
 			default:
 			{
 				$isHTML = true;
