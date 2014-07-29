@@ -198,6 +198,7 @@ class ProxyHandler
         $xForwardedFor[] = $_SERVER['REMOTE_ADDR'];
         $this->setClientHeader('X-Forwarded-For', implode(',', $xForwardedFor));
         $this->setClientHeader('X-Real-IP', $xForwardedFor[0]);
+        $this->setClientHeader('User-Agent','X-PARTNER:ebmv.com.au');
     }
 
     /**
@@ -255,9 +256,32 @@ class ProxyHandler
         if ($this->_chunked) {
             echo dechex($length) . self::RN . $body . self::RN;
         } else {
-            echo $body;
+        	$dom = new DOMDocument();
+        	$dom->loadHTML($body);
+        	$this->_replaceTag($dom, 'img', 'src');
+        	$this->_replaceTag($dom, 'a', 'href');
+        	$this->_replaceTag($dom, 'script', 'src');
+        	$this->_replaceTag($dom, 'link', 'href');
+        	$this->_replaceTag($dom, 'iframe', 'src');
+        	echo  $dom->saveHTML();
         }
         return $length;
+    }
+    
+    private function _replaceTag(&$dom, $tagName, $attributeName)
+    {
+    	foreach($dom->getElementsByTagName($tagName) as $node)
+    	{
+    		if(!$node->hasAttribute($attributeName))
+    			continue;
+    		$link = trim($node->getAttribute($attributeName));
+    		if(substr($link, 0, 1) === '/' || substr($link, 0, 4) === 'http')
+    		{
+    			if(substr($link, 0, 1) === '/')
+    				$link  = 'http://www.chinesecio.com' . $link;
+    			$node->setAttribute($attributeName, '/' . basename(__FILE__) . '?url=' . $link);
+    		}
+    	}
     }
 
     /**
