@@ -300,32 +300,13 @@ class ReservseProxy
 		$xForwardedFor[] = $_SERVER['REMOTE_ADDR'];
 		$this->setClientHeader('X-Forwarded-For', implode(',', $xForwardedFor));
 		$this->setClientHeader('X-Real-IP', $xForwardedFor[0]);
-		$this->setClientHeader('User-Agent', 'X-PARTNER:ebmv.com.au');
+// 		$this->setClientHeader('User-Agent', 'X-PARTNER:ebmv.com.au');
 	}
 	
 	public function getContent()
 	{
 		return $this->_content;
 	}
-	
-// 	public function render($url, $caching = true)
-// 	{
-// 		$isHTML = $this->_addHeader($url);
-// 		if($caching === true && extension_loaded('apc') && ini_get('apc.enabled'))
-// 		{
-// 			$key = md5($url);
-// 			if(!apc_exists($key))
-// 			{
-// 				$html = $this->_getContent($url, $isHTML);
-// 				apc_add($key, $html);
-// 			}
-// 			else
-// 				$html = apc_fetch($key);
-// 		}
-// 		else
-// 			$html = $this->_getContent($url, $isHTML);
-// 		return $html;
-// 	}
 }
 
 
