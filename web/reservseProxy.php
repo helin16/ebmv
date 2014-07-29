@@ -40,6 +40,12 @@ class ReservseProxy
 		$dom = Simple_HTML_DOM_Abstract::str_get_html($content);
 		$this->_replaceTag($dom, 'src')
 			->_replaceTag($dom, 'href');
+		$moreCss = '';
+		$extraCss = array('blocks.css', 'comments.css', 'navigation.css', 'normalize.css', 'pages.css', 'print.css', 'style.css');
+		foreach($extraCss as $css)
+			$moreCss .= '<link rel="stylesheet" type="text/css" href="/' . basename(__FILE__) . '?url=http://www.chinesecio.com/cms/sites/all/themes/cio/css/' . $css . '">';
+		$head = $dom->find("head", 0);
+		$head->outertext = $head->makeup() . $head->innertext . $moreCss . '</head>';
 		return trim($dom);
 	}
 	
