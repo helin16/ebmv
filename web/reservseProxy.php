@@ -2,7 +2,7 @@
 require_once 'bootstrap.php';
 class ReservseProxy
 {
-	private function _replaceTag(&$dom, $tagName, $attributeName)
+	private function _replaceTag(&$dom, $attributeName)
 	{
 		foreach($dom->find('[' . $attributeName . ']') as $node)
 		{
