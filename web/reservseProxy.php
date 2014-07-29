@@ -200,7 +200,8 @@ class ReservseProxy
 		
 		if(extension_loaded('apc') && ini_get('apc.enabled') && $this->_apc_cached === false)
 			apc_add($this->_apc_key, $this->_content);
-		curl_close($this->_curlHandle);
+		if($this->_curlHandle)
+			curl_close($this->_curlHandle);
 		return $this;
 	}
 	/**
