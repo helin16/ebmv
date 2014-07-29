@@ -90,6 +90,7 @@ class ReservseProxy
 	
 	public function render($url, $caching = true)
 	{
+		$isHTML = $this->_addHeader($url);
 		if($caching === true && extension_loaded('apc') && ini_get('apc.enabled'))
 		{
 			$key = md5($url);
@@ -110,7 +111,6 @@ class ReservseProxy
 
 if (! isset ( $_REQUEST ['url'] ) || ($url = trim ( $_REQUEST ['url'] )) === '')
 	die ();
-
 $caching = (! isset ( $_REQUEST ['nocaching'] ) || trim ( $_REQUEST ['nocaching'] ) !== '1') ? true : false;
 $proxy = new ReservseProxy();
 echo $proxy->render($url, $caching);
