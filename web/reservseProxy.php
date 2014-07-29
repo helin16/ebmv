@@ -1,4 +1,5 @@
 <?php
+require_once 'bootstrap.php';
 class ReservseProxy
 {
 	private function _replaceTag(&$dom, $tagName, $attributeName)
