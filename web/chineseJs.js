@@ -38,7 +38,7 @@ function tabContent(obj,courseId)
 	$.ajax(
 		{
 			type: "POST",
-			url: '/online/courseLessons.htm',
+			url: 'http://www.chinesecio.com/online/courseLessons.htm',
 			cache: false,
 			data: params,
 			dataType: "json",
@@ -88,7 +88,7 @@ hblogtracker();
 	$.ajax(
 		{
 			type: "POST",
-			url: 'http://res.chinese.cn/online/lessonStyles.htm',
+			url: 'http://www.chinesecio.com/online/lessonStyles.htm',
 			cache: false,
 			data: params,
 			dataType: "json",
