@@ -34,11 +34,11 @@ function tabContent(obj,courseId)
     "s":Math.random()
     };
  	
- 	$(obj).parent().next().html('<img src="\reservseProxy.php?url=http://res.chinese.cn/images/ajax-loader.gif" alt="loading" />');
+ 	$(obj).parent().next().html('<img src="/reservseProxy.php?url=http://res.chinese.cn/images/ajax-loader.gif" alt="loading" />');
 	$.ajax(
 		{
 			type: "POST",
-			url: '\reservseProxy.php?directRead=1&url=http://www.chinesecio.com/online/courseLessons.htm',
+			url: '/reservseProxy.php?directRead=1&url=http://www.chinesecio.com/online/courseLessons.htm',
 			cache: false,
 			data: params,
 			dataType: "json",
@@ -83,12 +83,12 @@ hblogtracker();
     "s":Math.random()
     };
 
-	$("#flashcontent").html('<img src="\reservseProxy.php?url=http://res.chinese.cn/images/ajax-loader.gif" alt="loading" />');  
+	$("#flashcontent").html('<img src="/reservseProxy.php?url=http://res.chinese.cn/images/ajax-loader.gif" alt="loading" />');  
 	$("#styles").html(''); 
 	$.ajax(
 		{
 			type: "POST",
-			url: '\reservseProxy.php?directRead=1&url=http://www.chinesecio.com/online/lessonStyles.htm',
+			url: '/reservseProxy.php?directRead=1&url=http://www.chinesecio.com/online/lessonStyles.htm',
 			cache: false,
 			data: params,
 			dataType: "json",
@@ -160,7 +160,7 @@ function tabStylesClick(lesTypesId, mediaUrl, obj)
    //if(mediaUrl != '')
    if(endWith(mediaUrl,'.swf'))
    {
-	   var so = new SWFObject("\reservseProxy.php?url=http://res.chinese.cn" + mediaUrl, "online", "438", "292", "7", "#FF0000");
+	   var so = new SWFObject("/reservseProxy.php?url=http://res.chinese.cn" + mediaUrl, "online", "438", "292", "7", "#FF0000");
 	   so.addParam("quality", "height");
 	   so.addParam("wmode", "transparent"); 
 	   so.addParam("allowFullScreen","true");
@@ -169,10 +169,10 @@ function tabStylesClick(lesTypesId, mediaUrl, obj)
    }
    else  if(endWith(mediaUrl,'.flv'))
    {
-	  var url = "\reservseProxy.php?url=http://res.chinese.cn" + mediaUrl;
+	  var url = "/reservseProxy.php?url=http://res.chinese.cn" + mediaUrl;
 	  //alert(url);
 	  var player = document.createElement("a");
-	  //player.href="\reservseProxy.php?url=http://202.205.173.114/E-learning/HappyChinese/unit1/L2/2SituationalVideo/2.flv";
+	  //player.href="/reservseProxy.php?url=http://202.205.173.114/E-learning/HappyChinese/unit1/L2/2SituationalVideo/2.flv";
 	  player.href=url;
 	  //player.style="display:block;width:438px;height:292px";
 	  player.id="player";
@@ -182,7 +182,7 @@ function tabStylesClick(lesTypesId, mediaUrl, obj)
 	  var fplayer = flowplayer("player", "swf/flowplayer.swf",
 				{
 				clip:{ 
-					//url:"\reservseProxy.php?url=http://202.205.173.114/E-learning/HappyChinese/unit1/L2/2SituationalVideo/2.flv",
+					//url:"/reservseProxy.php?url=http://202.205.173.114/E-learning/HappyChinese/unit1/L2/2SituationalVideo/2.flv",
 	       		    autoPlay: false, 
 	        	    autoBuffering: true
 	    		},
@@ -282,7 +282,7 @@ function zoomimg(img)
 
 $(document).ready(function()
 {
-	   var so = new SWFObject("\reservseProxy.php?url=http://res.chinese.cn/flash/guide.swf", "demo", "505", "400", "7", "#ffffff");
+	   var so = new SWFObject("/reservseProxy.php?url=http://res.chinese.cn/flash/guide.swf", "demo", "505", "400", "7", "#ffffff");
 	   so.addParam("quality", "height");
 	   so.addParam("wmode", "transparent"); 
 	   so.addParam("allowFullScreen","true");
