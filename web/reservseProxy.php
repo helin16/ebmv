@@ -130,7 +130,7 @@ class ReservseProxy
 if (! isset ( $_REQUEST ['url'] ) || ($url = trim ( $_REQUEST ['url'] )) === '')
 	die ();
 $caching = (! isset ( $_REQUEST ['nocaching'] ) || trim ( $_REQUEST ['nocaching'] ) !== '1') ? true : false;
-$directRead = (! isset ( $_REQUEST ['directRead'] ) || trim ( $_REQUEST ['directRead'] ) !== '1') ? true : false;
+$directRead = (isset ( $_REQUEST ['directRead'] ) && trim ( $_REQUEST ['directRead'] ) === '1') ? true : false;
 $proxy = new ReservseProxy();
 echo $proxy->render($url, $caching, $directRead);
 ?>
