@@ -362,6 +362,19 @@ class Product extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * add statics to a product
+	 * 
+	 * @param Library            $lib
+	 * @param ProductStaticsType $type
+	 * @param number             $increaseBy
+	 * @return Product
+	 */
+	public function addStatic(Library $lib, ProductStaticsType $type, $increaseBy = 1)
+	{
+		ProductStatics::create($this, $type, $lib)->add();
+		return $this;
+	}
+	/**
 	 * Getting the suppliers for this product
 	 * 
 	 * @return multitype:|Ambigous <multitype:, multitype:BaseEntityAbstract >

@@ -8,6 +8,8 @@
  */
 class ProductStaticsType extends BaseEntityAbstract
 {
+	const ID_CLICK_RATE = 1;
+	const ID_BORROW_RATE = 2;
     /**
      * The attribute of the product
      * 
@@ -61,6 +63,16 @@ class ProductStaticsType extends BaseEntityAbstract
     {
         $this->code = $code;
         return $this;
+    }
+    public static function getByCode($code)
+    {
+    	$class = __CLASS__;
+    	$objects = EntityDao::getInstance($class)->findByCriteria('code = ?', array(trim($code)),1, 1);
+    	return (count($objects) > 0 ? $objects[0] : null);
+    }
+    public static function get($id)
+    {
+    	return EntityDao::getInstance($class)->findById($id);
     }
     /**
      * (non-PHPdoc)
