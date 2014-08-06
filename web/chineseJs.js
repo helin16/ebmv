@@ -38,7 +38,7 @@ function tabContent(obj,courseId)
 	$.ajax(
 		{
 			type: "POST",
-			url: '/reservseProxy.php?directRead=1&url=http://happychinese.chinese.cn/online/courseLessons.htm?wareCourse.id=' + lessonsId + '&reqType=json&s=' + Math.random(),
+			url: '/reservseProxy.php?directRead=1&url=http://happychinese.chinese.cn/online/courseLessons.htm?wareCourse.id=' + courseId + '&reqType=json&s=' + Math.random(),
 			cache: false,
 			data: params,
 			dataType: "json",
