@@ -96,7 +96,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	{
         		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
         		//increasing statics
-        		$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::ID_BORROW_RATE, 1);
+        		$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_BORROW_RATE), 1);
         	} 
         	catch (SupplierConnectorException $e)
         	{
@@ -119,7 +119,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         		throw new Exception('System Error: no supplier found for this book!');
         	
         	//increasing statics
-        	$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::ID_CLICK_RATE, 1);
+        	$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_CLICK_RATE), 1);
         	
         	//get the borrow limitation
         	$libraryMaxCount = trim(Core::getLibrary()->getInfo('borrow_limit'));
