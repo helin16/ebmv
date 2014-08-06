@@ -44,27 +44,18 @@ class ReservseProxy
 		$extraCss = array('blocks.css', 'comments.css', 'navigation.css', 'normalize.css', 'pages.css', 'print.css', 'style.css');
 		foreach($extraCss as $css)
 			$moreCss .= '<link rel="stylesheet" type="text/css" href="/' . basename(__FILE__) . '?url=http://www.chinesecio.com/cms/sites/all/themes/cio/css/' . $css . '">';
-		$moreJs = '<script>
-			document.domain="chinese.cn";
-			var _currentCourseId = 0;
-			var _currentLessonsId = 0;
-			var _courseId =0;
-			var _lessonsId = 0;
-			
-			function tabLiClick(liObj,courseId)
-			{
-			  hblogtracker();
-			  _currentCourseId = courseId;
-			  $("#tabs1 ul li").removeClass("on");
-			  $("#tabs1 div").hide();
-			  tabContent(liObj,courseId);
-			  $(liObj).addClass("on");
-			  $(liObj).parent().next().show();
-			}
-		</script>';
+		$moreJs = $this->_getMoreJs();
 		$head = $dom->find("head", 0);
 		$head->outertext = $head->makeup() . $head->innertext . $moreCss . $moreJs . '</head>';
 		return trim($dom);
+	}
+	private function _getMoreJs()
+	{
+		return '<script language="javascript">
+				<!--
+				' . file_get_contents(dirname(__FILE__) . '/chineseJs.js') . 
+				'//-->
+				</script>';
 	}
 	
 	private function _addHeader($url)
