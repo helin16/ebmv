@@ -44,6 +44,7 @@ class ReservseProxy
 		$extraCss = array('blocks.css', 'comments.css', 'navigation.css', 'normalize.css', 'pages.css', 'print.css', 'style.css');
 		foreach($extraCss as $css)
 			$moreCss .= '<link rel="stylesheet" type="text/css" href="/' . basename(__FILE__) . '?url=http://www.chinesecio.com/cms/sites/all/themes/cio/css/' . $css . '">';
+		$moreCss .= '<link rel="stylesheet" type="text/css" href="/' . basename(__FILE__) . '?url=http://res.chinese.cn/en/css/learning01.css">';
 		$moreJs = $this->_getMoreJs();
 		$head = $dom->find("head", 0);
 		$head->outertext = $head->makeup() . $head->innertext . $moreCss . $moreJs . '</head>';
