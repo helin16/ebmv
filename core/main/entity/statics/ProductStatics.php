@@ -71,7 +71,7 @@ class ProductStatics extends BaseEntityAbstract
      * 
      * @return ProductStatics
      */
-    public function setType(Library $library)
+    public function setLibrary(Library $library)
     {
         $this->library = $library;
         return $this;
@@ -124,12 +124,11 @@ class ProductStatics extends BaseEntityAbstract
      * @param Product            $product
      * @param ProductStaticsType $type
      * @param Library            $library
-     * @param number $value
      * @return Ambigous <GenericDAO, BaseEntityAbstract>
      */
     public static function create(Product $product, ProductStaticsType $type, Library $library)
     {
-    	$class = __CLASS__;
+    	$class = get_called_class();
     	$objects = EntityDao::getInstance($class)->findByCriteria('productId = ? and typeId = ? and libraryId = ?', array($product->getId(), $type->getId(), $library->getId()),1, 1);
     	$obj = (count($objects) > 0 ? $objects[0] : new $class());
     	$obj->setProduct($product)

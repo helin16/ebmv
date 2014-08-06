@@ -371,7 +371,9 @@ class Product extends BaseEntityAbstract
 	 */
 	public function addStatic(Library $lib, ProductStaticsType $type, $increaseBy = 1)
 	{
-		ProductStatics::create($this, $type, $lib)->add();
+		if(trim($this->getId()) === '')
+			EntityDao::getInstance(get_class($this))->save($this);
+		ProductStatics::create($this, $type, $lib)->add($increaseBy);
 		return $this;
 	}
 	/**
