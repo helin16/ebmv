@@ -72,7 +72,7 @@ class ProductStaticsType extends BaseEntityAbstract
     }
     public static function get($id)
     {
-    	return EntityDao::getInstance($class)->findById($id);
+    	return EntityDao::getInstance(__CLASS__)->findById($id);
     }
     /**
      * (non-PHPdoc)
