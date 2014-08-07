@@ -27,6 +27,12 @@ class ProductStatics extends BaseEntityAbstract
      */
     protected $product;
     /**
+     * The library this value is for
+     * 
+     * @var Library
+     */
+    protected $library;
+    /**
      * Getter for the ProductStatics type
      * 
      * @return ProductStaticsType
@@ -46,6 +52,28 @@ class ProductStatics extends BaseEntityAbstract
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
+    }
+    /**
+     * Getter for the library
+     * 
+     * @return Library
+     */
+    public function getLibrary()
+    {
+        $this->loadManyToOne('library');
+        return $this->library;
+    }
+    /**
+     * Setter for the Library
+     * 
+     * @param Library $library The library of the product value
+     * 
+     * @return ProductStatics
+     */
+    public function setLibrary(Library $library)
+    {
+        $this->library = $library;
         return $this;
     }
     /**
@@ -91,6 +119,38 @@ class ProductStatics extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Creating a object for ProductStatics
+     * 
+     * @param Product            $product
+     * @param ProductStaticsType $type
+     * @param Library            $library
+     * @return Ambigous <GenericDAO, BaseEntityAbstract>
+     */
+    public static function create(Product $product, ProductStaticsType $type, Library $library)
+    {
+    	$class = get_called_class();
+    	$objects = EntityDao::getInstance($class)->findByCriteria('productId = ? and typeId = ? and libraryId = ?', array($product->getId(), $type->getId(), $library->getId()),1, 1);
+    	$obj = (count($objects) > 0 ? $objects[0] : new $class());
+    	$obj->setProduct($product)
+    		->setType($type)
+    		->setLibrary($library);
+    	if(trim($obj->getId()) === '')
+    		$obj->setValue(0);
+    	return EntityDao::getInstance($class)->save($obj);
+    }
+    /**
+     * increasing the value of the statics
+     * 
+     * @param number $increase
+     * 
+     * @return ProductStatics
+     */
+    public function add($increase = 1)
+    {
+    	$this->setValue($this->getValue() + $increase);
+    	return EntityDao::getInstance(get_class($this))->save($this);
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntityAbstract::getJson()
      */
@@ -111,6 +171,7 @@ class ProductStatics extends BaseEntityAbstract
         DaoMap::setManyToOne('product', 'Product');
         DaoMap::setIntType('value','int', 100);
         DaoMap::setManyToOne('type', 'ProductStaticsType');
+        DaoMap::setManyToOne('library', 'Library');
         parent::__loadDaoMap();
         DaoMap::createIndex('value');
         DaoMap::commit();

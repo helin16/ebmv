@@ -109,8 +109,12 @@ class ProductShelfItemService extends BaseServiceAbastract
     public function removeItem(UserAccount $user, Product $product, Library $lib = null)
     {
     	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
+    	$origi = DaoQuery::$selectActiveOnly;
+    	DaoQuery::$selectActiveOnly = false;
+    	$supplier = $product->getSupplier();
+    	DaoQuery::$selectActiveOnly = $origi;
     	EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`active` = 0', '`productId` = ? and `ownerId` = ?', array($product->getId(), $user->getId()));
-    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->removeBookShelfList($user, $product);
+    	SupplierConnectorAbstract::getInstance($supplier, $lib)->removeBookShelfList($user, $product);
     	return $this;
     }
     /**
@@ -126,9 +130,14 @@ class ProductShelfItemService extends BaseServiceAbastract
     public function returnItem(UserAccount $user, Product $product, Library $lib = null)
     {
     	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
+    	$origi = DaoQuery::$selectActiveOnly;
+    	DaoQuery::$selectActiveOnly = false;
+    	$supplier = $product->getSupplier();
+    	DaoQuery::$selectActiveOnly = $origi;
+    	
     	EntityDao::getInstance('ProductShelfItem')->updateByCriteria('`status` = ?', '`productId` = ? and `ownerId` = ?', array(ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $product->getId(), $user->getId()));
-    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->returnProduct($product, $user);
-    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->removeBookShelfList($user, $product);
+    	SupplierConnectorAbstract::getInstance($supplier, $lib)->returnProduct($product, $user);
+    	SupplierConnectorAbstract::getInstance($supplier, $lib)->removeBookShelfList($user, $product);
     	return $this;
     }
     /**

@@ -95,6 +95,8 @@ class ProductDetailsController extends FrontEndPageAbstract
         	try
         	{
         		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
+        		//increasing statics
+        		$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_BORROW_RATE), 1);
         	} 
         	catch (SupplierConnectorException $e)
         	{
@@ -116,6 +118,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	if(!($supplier = $this->_product->getSupplier()) instanceof Supplier)
         		throw new Exception('System Error: no supplier found for this book!');
         	
+        	
         	//get the borrow limitation
         	$libraryMaxCount = trim(Core::getLibrary()->getInfo('borrow_limit'));
         	$maxBorrowCount = !is_numeric($libraryMaxCount) ? intval(SystemSettings::getSettings(SystemSettings::TYPE_DEFAULT_BORROW_LIMIT)) : intval($libraryMaxCount);
@@ -124,6 +127,9 @@ class ProductDetailsController extends FrontEndPageAbstract
         	if(!($user = Core::getUser()) instanceof UserAccount)
         		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_GUEST_ACCOUNT));
         	$totalBorrowedNo = intval(Core::getUser()->countBookShelfItem());
+        	
+        	//increasing statics
+        	$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_CLICK_RATE), 1);
         	
         	$results['urls'] = array('viewUrl' => false, 'downloadUrl' => false);
         	$results['copies'] = array();

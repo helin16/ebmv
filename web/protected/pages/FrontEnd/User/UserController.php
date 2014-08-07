@@ -108,7 +108,7 @@ class UserController extends FrontEndPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+			$errors[] = $ex->getMessage();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
@@ -134,7 +134,7 @@ class UserController extends FrontEndPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+			$errors[] = $ex->getMessage();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
@@ -161,7 +161,7 @@ class UserController extends FrontEndPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+			$errors[] = $ex->getMessage();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}

@@ -44,9 +44,18 @@ class ReservseProxy
 		$extraCss = array('blocks.css', 'comments.css', 'navigation.css', 'normalize.css', 'pages.css', 'print.css', 'style.css');
 		foreach($extraCss as $css)
 			$moreCss .= '<link rel="stylesheet" type="text/css" href="/' . basename(__FILE__) . '?url=http://www.chinesecio.com/cms/sites/all/themes/cio/css/' . $css . '">';
+		$moreJs = $this->_getMoreJs();
 		$head = $dom->find("head", 0);
-		$head->outertext = $head->makeup() . $head->innertext . $moreCss . '</head>';
+		$head->outertext = $head->makeup() . $head->innertext . $moreCss . $moreJs . '</head>';
 		return trim($dom);
+	}
+	private function _getMoreJs()
+	{
+		return '<script language="javascript">
+				<!--
+				' . file_get_contents(dirname(__FILE__) . '/chineseJs.js') . 
+				'//-->
+				</script>';
 	}
 	
 	private function _addHeader($url)
@@ -95,9 +104,11 @@ class ReservseProxy
 		return $isHTML;
 	}
 	
-	public function render($url, $caching = true)
+	public function render($url, $caching = true, $directRead = false)
 	{
 		$isHTML = $this->_addHeader($url);
+		if($directRead === true)
+			$isHTML = false;
 		if($caching === true && extension_loaded('apc') && ini_get('apc.enabled'))
 		{
 			$key = md5($url);
@@ -119,6 +130,7 @@ class ReservseProxy
 if (! isset ( $_REQUEST ['url'] ) || ($url = trim ( $_REQUEST ['url'] )) === '')
 	die ();
 $caching = (! isset ( $_REQUEST ['nocaching'] ) || trim ( $_REQUEST ['nocaching'] ) !== '1') ? true : false;
+$directRead = (isset ( $_REQUEST ['directRead'] ) && trim ( $_REQUEST ['directRead'] ) === '1') ? true : false;
 $proxy = new ReservseProxy();
-echo $proxy->render($url, $caching);
+echo $proxy->render($url, $caching, $directRead);
 ?>

@@ -362,6 +362,21 @@ class Product extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * add statics to a product
+	 * 
+	 * @param Library            $lib
+	 * @param ProductStaticsType $type
+	 * @param number             $increaseBy
+	 * @return Product
+	 */
+	public function addStatic(Library $lib, ProductStaticsType $type, $increaseBy = 1)
+	{
+		if(trim($this->getId()) === '')
+			EntityDao::getInstance(get_class($this))->save($this);
+		ProductStatics::create($this, $type, $lib)->add($increaseBy);
+		return $this;
+	}
+	/**
 	 * Getting the suppliers for this product
 	 * 
 	 * @return multitype:|Ambigous <multitype:, multitype:BaseEntityAbstract >
