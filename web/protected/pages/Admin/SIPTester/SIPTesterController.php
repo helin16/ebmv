@@ -48,77 +48,81 @@ class SIPTesterController extends AdminPageAbstract
     		$i = 0;
     		$logs = array();
     		$mysip = new SIP2();
-    		$logs[$i++]['title'] = 'Initialising SIP object ...';
-    		$logs[$i]['info'] = array();
+    		$logs[$i]['title'] = 'Initialising SIP object ...';
+    		$info = array();
     		// Set host name
     		$mysip->hostname = $host;
-    		$logs[$i]['info'][] = ':: Assigin the host: ' . $host;
+    		$info[] = ':: Assigin the host: ' . $host;
     		$mysip->port = $port;
-    		$logs[$i]['info'][] = ':: Assigin the port: ' . $port;
+    		$info[] = ':: Assigin the port: ' . $port;
     		// Identify a patron
     		$mysip->patron = $patron;
-    		$logs[$i]['info'][] = ':: Assigin the patron: ' . $patron;
+    		$info[] = ':: Assigin the patron: ' . $patron;
     		$mysip->patronpwd = $patronpwd;
-    		$logs[$i]['info'][] = ':: Assigin the patronpwd: ' . $patronpwd;
+    		$info[] = ':: Assigin the patronpwd: ' . $patronpwd;
     		$mysip->scLocation = $mysiplocation;
-    		$logs[$i]['info'][] = ':: Assigin the scLocation: ' . $mysiplocation;
+    		$info[] = ':: Assigin the scLocation: ' . $mysiplocation;
+    		$logs[$i++]['info'] = $info;
     		
     		// connect to SIP server
-    		$logs[$i++]['title'] = 'Initialiszing the connection to: ' . $server;
+    		$logs[$i]['title'] = 'Initialiszing the connection to: ' . $server;
+    		$info = array();
     		$result = $mysip->connect();
-    		$logs[$i]['info'] = array();
-    		$logs[$i]['info'][] = ':: Got Results: ';
-    		$logs[$i]['info'][] = print_r($result, true);
+    		$info[] = ':: Got Results: ';
+    		$info[] = print_r($result, true);
+    		$logs[$i++]['info'] = $info;
     		
     		// login into SIP server
-    		$logs[$i++]['title'] = 'login into SIP server:' . $server;
-    		$logs[$i]['info'] = array();
+    		$logs[$i]['title'] = 'login into SIP server:' . $server;
+    		$info = array();
 			$in = $mysip->msgLogin($mysip->patron, $mysip->patronpwd);
-    		$logs[$i]['info'][] = ':: login response from server: ';
-    		$logs[$i]['info'][] = print_r($in, true);
+    		$info[] = ':: login response from server: ';
+    		$info[] = print_r($in, true);
     		$rawResp = $mysip->get_message($in);
     		$result = $mysip->parseLoginResponse($rawResp);
-    		$logs[$i]['info'][] = ':: RAW Response: ' . $rawResp;
-    		$logs[$i]['info'][] = ':: Formatted Response: ';
-    		$logs[$i]['info'][] = print_r($result, true);
+    		$info[] = ':: RAW Response: ' . $rawResp;
+    		$info[] = ':: Formatted Response: ';
+    		$info[] = print_r($result, true);
+    		$logs[$i++]['info'] = $info;
     		
     		// selfcheck status mesage
-    		$logs[$i++]['title'] = 'Requesting Self-checking:';
-    		$logs[$i]['info'] = array();
+    		$logs[$i]['title'] = 'Requesting Self-checking:';
+    		$info = array();
     		$in = $mysip->msgSCStatus();
-    		$logs[$i]['info'][] = ':: Self check response from server: ';
-    		$logs[$i]['info'][] = print_r($in, true);
+    		$info[] = ':: Self check response from server: ';
+    		$info[] = print_r($in, true);
     		$rawResp = $mysip->get_message($in);
     		$result = $mysip->parseACSStatusResponse($rawResp);
-    		$logs[$i]['info'][] = ':: RAW Response: ' . $rawResp;
-    		$logs[$i]['info'][] = ':: Formatted Response: ';
-    		$logs[$i]['info'][] = print_r($result, true);
-    		
+    		$info[] = ':: RAW Response: ' . $rawResp;
+    		$info[] = ':: Formatted Response: ';
+    		$info[] = print_r($result, true);
     		//getting AO & AN
-    		$logs[$i]['info'][] = ':: Trying to assign AO: ';
+    		$info[] = ':: Trying to assign AO: ';
     		if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0]))
     		{
     			$mysip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
-    			$logs[$i]['info'][] = ':: GOT AO: ' . $mysip->AO;
+    			$info[] = ':: GOT AO: ' . $mysip->AO;
     		}
-    		$logs[$i]['info'][] = ':: Trying to assign AN: ';
+    		$info[] = ':: Trying to assign AN: ';
     		if(isset($result['variable']['AN']) && isset($result['variable']['AN'][0]))
     		{
     			$mysip->AN = $result['variable']['AN'][0]; /* set AN to value returned */
-    			$logs[$i]['info'][] = ':: GOT AN: ' . $mysip->AN;
+    			$info[] = ':: GOT AN: ' . $mysip->AN;
     		}
+    		$logs[$i++]['info'] = $info;
     		
     		// Get Charged Items Raw response
-    		$logs[$i++]['title'] = ' Get Charged Items Raw response:';
-    		$logs[$i]['info'] = array();
+    		$logs[$i]['title'] = ' Get Charged Items Raw response:';
+    		$info = array();
     		$in = $mysip->msgPatronInformation('none');
-    		$logs[$i]['info'][] = ':: Get Response for PatronInformation: ';
-    		$logs[$i]['info'][] =  print_r($in, true);
+    		$info[] = ':: Get Response for PatronInformation: ';
+    		$info[] =  print_r($in, true);
     		$rawResp = $mysip->get_message($in);
-    		$logs[$i]['info'][] = ':: RAW Response: ' . $rawResp;
-    		$logs[$i]['info'][] = ':: Formatted Response: ';
+    		$info[] = ':: RAW Response: ' . $rawResp;
+    		$info[] = ':: Formatted Response: ';
     		$result = $mysip->parsePatronInfoResponse($rawResp);
-    		$logs[$i]['info'][] = print_r($result, true);
+    		$info[] = print_r($result, true);
+    		$logs[$i++]['info'] = $info;
     		
     		$result['logs'] = $logs;
     	}
