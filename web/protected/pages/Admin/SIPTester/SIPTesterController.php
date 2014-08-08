@@ -29,68 +29,98 @@ class SIPTesterController extends AdminPageAbstract
     	try
     	{
     		$testData = json_decode(json_encode($param->CallbackParameter->testdata), true);
-    		if(!isset($testData['url']) || trim($testData['url']) === '')
-    			throw new Exception("URL needed!");
-    		$urls = parse_url($url = trim($testData['url']));
-    		if(!isset($urls['host']) || trim($urls['host']) === '')
+    		
+    		if(!isset($testData['Server']) || ($server = trim($testData['Server'])) === '')
+    			throw new Exception("Server needed!");
+    		
+    		$urls = parse_url($server);
+    		if(!isset($urls['host']) || ($host = trim($urls['host'])) === '')
     			throw new Exception("Invalid url for host!");
-    		$host = trim($urls['host']);
-    		if(!isset($urls['port']) || trim($urls['port']) === '')
+    		if(!isset($urls['port']) || ($port = trim($urls['port'])) === '')
     			throw new Exception("Invalid url for port!");
-    		$port = trim($urls['port']);
     		
-    		if(!isset($testData['varname']) || trim($testData['varname']) === '')
-    			throw new Exception("varname needed!");
-    		if(!isset($testData['patron']) || trim($testData['patron']) === '')
+    		if(!isset($testData['patron']) || ($patron = trim($testData['patron'])) === '')
     			throw new Exception("patron needed!");
-    		if(!isset($testData['patronpwd']) || trim($testData['patronpwd']) === '')
+    		if(!isset($testData['patronpwd']) || ($patronpwd = trim($testData['patronpwd'])) === '')
     			throw new Exception("patronpwd needed!");
+    		$mysiplocation = !isset($_REQUEST['siplocation']) ? '' : trim($_REQUEST['siplocation']);
     		
-    		$varName = trim($testData['varname']);
-    		$patron = trim($testData['patron']);
-    		$patronpwd = trim($testData['patronpwd']);
-    		
-    		$result['logs'] = array();
-    		$sip = new SIP2();
-    		$result['logs'][] = 'Initialising SIP object ...';
-    		$sip->hostname = $host;
-    		$result['logs'][] = ':: Assigin the host: ' . $host;
-    		$sip->port  = $port;
-    		$result['logs'][] = ':: Assigin the port: ' . $port;
-    		
-    		// connect to SIP server
-    		$result = $sip->connect();
-    		$result['logs'][] = '';
-    		$result['logs'][] = 'Initialiszing the connection to: ' . $url;
-    		
-    		//send selfcheck status message
-    		$result['logs'][] = ':: Getting the self checking status msg';
-    		$in = $mysip->msgSCStatus();
-    		$result['logs'][] = ':: passing the self checking with status: ' . $in;
-    		$result = $mysip->parseACSStatusResponse($mysip->get_message($in));
-    		$result['logs'][] = ':: done: ' . print_r($result, true);
-    		
-    		//Use result to populate SIP2 setings
-    		//	(In the real world, you should check for an actual value
-    		//	before trying to use it... but this is a simple example)
-    		$mysip->AO = $result[$varName]['AO'][0]; /* set AO to value returned */
-    		$result['logs'][] = ':: Using the result to check the AO of variable: ' . $mysip->AO;
-    		$mysip->AN = $result[$varName]['AN'][0]; /* set AN to value returned */
-    		$result['logs'][] = ':: Using the result to check the AN of variable: ' . $mysip->AN;
-    		
+    		$i = 0;
+    		$logs = array();
+    		$mysip = new SIP2();
+    		$logs[$i++]['title'] = 'Initialising SIP object ...';
+    		$logs[$i]['info'] = array();
+    		// Set host name
+    		$mysip->hostname = $host;
+    		$logs[$i]['info'][] = ':: Assigin the host: ' . $host;
+    		$mysip->port = $port;
+    		$logs[$i]['info'][] = ':: Assigin the port: ' . $port;
     		// Identify a patron
     		$mysip->patron = $patron;
+    		$logs[$i]['info'][] = ':: Assigin the patron: ' . $patron;
     		$mysip->patronpwd = $patronpwd;
-    		$result['logs'][] = 'Identifying the patron: ' . $mysip->patron . ' | ' . $mysip->patronpwd;
+    		$logs[$i]['info'][] = ':: Assigin the patronpwd: ' . $patronpwd;
+    		$mysip->scLocation = $mysiplocation;
+    		$logs[$i]['info'][] = ':: Assigin the scLocation: ' . $mysiplocation;
+    		
+    		// connect to SIP server
+    		$logs[$i++]['title'] = 'Initialiszing the connection to: ' . $server;
+    		$result = $mysip->connect();
+    		$logs[$i]['info'] = array();
+    		$logs[$i]['info'][] = ':: Got Results: ';
+    		$logs[$i]['info'][] = print_r($result, true);
+    		
+    		// login into SIP server
+    		$logs[$i++]['title'] = 'login into SIP server:' . $server;
+    		$logs[$i]['info'] = array();
+			$in = $mysip->msgLogin($mysip->patron, $mysip->patronpwd);
+    		$logs[$i]['info'][] = ':: login response from server: ';
+    		$logs[$i]['info'][] = print_r($in, true);
+    		$rawResp = $mysip->get_message($in);
+    		$result = $mysip->parseLoginResponse($rawResp);
+    		$logs[$i]['info'][] = ':: RAW Response: ' . $rawResp;
+    		$logs[$i]['info'][] = ':: Formatted Response: ';
+    		$logs[$i]['info'][] = print_r($result, true);
+    		
+    		// selfcheck status mesage
+    		$logs[$i++]['title'] = 'Requesting Self-checking:';
+    		$logs[$i]['info'] = array();
+    		$in = $mysip->msgSCStatus();
+    		$logs[$i]['info'][] = ':: Self check response from server: ';
+    		$logs[$i]['info'][] = print_r($in, true);
+    		$rawResp = $mysip->get_message($in);
+    		$result = $mysip->parseACSStatusResponse($rawResp);
+    		$logs[$i]['info'][] = ':: RAW Response: ' . $rawResp;
+    		$logs[$i]['info'][] = ':: Formatted Response: ';
+    		$logs[$i]['info'][] = print_r($result, true);
+    		
+    		//getting AO & AN
+    		$logs[$i]['info'][] = ':: Trying to assign AO: ';
+    		if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0]))
+    		{
+    			$mysip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
+    			$logs[$i]['info'][] = ':: GOT AO: ' . $mysip->AO;
+    		}
+    		$logs[$i]['info'][] = ':: Trying to assign AN: ';
+    		if(isset($result['variable']['AN']) && isset($result['variable']['AN'][0]))
+    		{
+    			$mysip->AN = $result['variable']['AN'][0]; /* set AN to value returned */
+    			$logs[$i]['info'][] = ':: GOT AN: ' . $mysip->AN;
+    		}
     		
     		// Get Charged Items Raw response
-    		$in = $mysip->msgPatronInformation('charged');
-    		$result['logs'][] = 'Get Charged Items Raw response: ' . $in;
+    		$logs[$i++]['title'] = ' Get Charged Items Raw response:';
+    		$logs[$i]['info'] = array();
+    		$in = $mysip->msgPatronInformation('none');
+    		$logs[$i]['info'][] = ':: Get Response for PatronInformation: ';
+    		$logs[$i]['info'][] =  print_r($in, true);
+    		$rawResp = $mysip->get_message($in);
+    		$logs[$i]['info'][] = ':: RAW Response: ' . $rawResp;
+    		$logs[$i]['info'][] = ':: Formatted Response: ';
+    		$result = $mysip->parsePatronInfoResponse($rawResp);
+    		$logs[$i]['info'][] = print_r($result, true);
     		
-    		// parse the raw response into an array
-    		$result['logs'][] = 'Parse the raw response into an array: ';
-			$result = $mysip->parsePatronInfoResponse( $mysip->get_message($in) );
-    		$result['logs'][] = ':: Get result:' . print_r($result, true);
+    		$result['logs'] = $logs;
     	}
     	catch(Exception $ex)
     	{
