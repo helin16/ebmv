@@ -28,7 +28,7 @@ PageJs.prototype = Object.extend(new AdminPageJs(), {
 					tmp.result.logs.each(function(log) {
 						$(tmp.me.resultDivId).insert({'bottom': new Element('div', {'class': 'panel panel-default'})
 							.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update('<strong>' + log.title + '</strong>') })
-							.insert({'bottom': tmp.listGroup = new Element('div': {'class': 'list-group'}) })
+							.insert({'bottom': tmp.listGroup = new Element('div', {'class': 'list-group'}) })
 						});
 						log.info.each(function(msg){
 							tmp.listGroup.insert({'bottom': new Element('div', {'class': 'list-group-item'}).update(msg) });
