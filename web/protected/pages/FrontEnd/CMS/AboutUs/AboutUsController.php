@@ -17,4 +17,8 @@ class AboutUsController extends FrontEndPageAbstract
         $js = parent::_getEndJs();
         return $js;
     }
+    public function getSystemSettings($type)
+    {
+    	return SystemSettings::getSettings($type);
+    }
 }

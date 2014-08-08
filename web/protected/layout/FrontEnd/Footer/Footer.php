@@ -15,5 +15,10 @@ class Footer extends TTemplateControl
 	public function onLoad($param)
 	{
 	}
+	public function getCurrentYear()
+	{
+		$now = new UDate();
+		return $now->format('Y');
+	}
 }
 ?>

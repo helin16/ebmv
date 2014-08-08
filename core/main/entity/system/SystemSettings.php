@@ -10,6 +10,10 @@ class SystemSettings extends BaseEntityAbstract
 {
 	const TYPE_DEFAULT_BORROW_LIMIT = 'def_borrow_limit';
 	const TYPE_DEFAULT_MAX_LOAN_TIME = 'def_max_borrow_time';
+	const TYPE_CONTACT_NAME = 'contact_name';
+	const TYPE_CONTACT_PHONE = 'contact_phone';
+	const TYPE_CONTACT_FAX = 'contact_fax';
+	const TYPE_CONTACT_MOBILE = 'contact_mobile';
 	/**
 	 * The value of the setting
 	 * 

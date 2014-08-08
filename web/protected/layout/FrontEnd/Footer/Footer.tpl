@@ -14,7 +14,7 @@
 		</a>
 	</div>
 	<div class="row">
-		<div class="copyright"> <span>&copy;</span> <img src="/themes/images/ebmv_logo.png"></span> <span>2013</span></div>
+		<div class="copyright"> <span>&copy;</span> <img src="/themes/images/ebmv_logo.png"></span> <span>2013 ~ <%= $this->getCurrentYear()%></span></div>
 	</div>
 </div>
 
