@@ -12,6 +12,12 @@
 			</div>
 			<b class="glyphicon glyphicon-envelope"></b>
 		</a>
+		<a href="/tnc.html" class="btn iconbtn">
+			<div class="btnname">条款及细则 / 條款及細則
+				<small>Terms & Conditions</small>
+			</div>
+			<b class="glyphicon glyphicon-exclamation-sign"></b>
+		</a>
 	</div>
 	<div class="row">
 		<div class="copyright"> <span>&copy;</span> <img src="/themes/images/ebmv_logo.png"></span> <span>2013 ~ <%= $this->getCurrentYear()%></span></div>

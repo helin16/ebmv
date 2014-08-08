@@ -231,5 +231,16 @@ abstract class FrontEndPageAbstract extends TPage
 		$html .= $content;
 		return $html;
 	}
+	/**
+	 * Getting system setting passing to the .page file
+	 * 
+	 * @param string $type The system setting's type code
+	 * 
+	 * @return Ambigous <string, multitype:>
+	 */
+	public function getSystemSettings($type)
+	{
+		return SystemSettings::getSettings($type);
+	}
 }
 ?>

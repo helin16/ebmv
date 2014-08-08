@@ -14,6 +14,7 @@ class SystemSettings extends BaseEntityAbstract
 	const TYPE_CONTACT_PHONE = 'contact_phone';
 	const TYPE_CONTACT_FAX = 'contact_fax';
 	const TYPE_CONTACT_MOBILE = 'contact_mobile';
+	const TYPE_CONTACT_EMAIL = 'contact_email';
 	/**
 	 * The value of the setting
 	 * 

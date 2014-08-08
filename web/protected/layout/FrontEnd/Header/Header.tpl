@@ -111,7 +111,7 @@
                 </li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
                     <a href="/products/1/4" class="iconbtn">
-                        <div class="btnname">学英语/學英語<small>ESL</small></div>
+                        <div class="btnname">学英语<small>ESL</small></div>
                     </a>
                 </li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">

@@ -1,12 +1,12 @@
 <?php
 /**
- * This is the AboutUs page
+ * This is the T&C page
  * 
  * @package    Web
  * @subpackage Controller
  * @author     lhe<helin16@gmail.com>
  */
-class AboutUsController extends FrontEndPageAbstract
+class TnCController extends FrontEndPageAbstract
 {
     /**
      * (non-PHPdoc)
