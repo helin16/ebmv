@@ -113,7 +113,7 @@ FrontPageJs.prototype = {
 	}
 	
 	//getting the product image div
-	,_getProductImgDiv: function (images) {
+	,_getProductImgDiv: function (images, attributes) {
 		var tmp = {};
 		tmp.loadingImg = new Image();
 		tmp.loadingImg.writeAttribute('data-src', "holder.js/100%x180")
@@ -123,6 +123,11 @@ FrontPageJs.prototype = {
 		if(images !== undefined && images !== null && images.size() > 0)
 			tmp.imgSRC = '/asset/get?id=' + images[0].attribute;
 		tmp.img = new Image();
+		if(attributes) {
+			$H(attributes).each(function(attr) {
+				tmp.img.writeAttribute(attr.key, attr.value);
+			})
+		}
 		tmp.img.writeAttribute('data-src', "holder.js/100%x180")
 		.writeAttribute('src',tmp.imgSRC)
 		.observe('load', function(){

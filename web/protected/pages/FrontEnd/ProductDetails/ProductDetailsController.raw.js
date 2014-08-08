@@ -41,7 +41,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		
 		tmp.newDiv = new Element('div', {'class': 'row'})
 			.insert({'bottom': new Element('div', {'class': 'col-sm-5 left'})
-				.insert({'bottom':	tmp.me._getProductImgDiv(tmp.me.product.attributes.image_thumb || null)
+				.insert({'bottom':	tmp.me._getProductImgDiv((tmp.me.product.attributes.image_thumb || null), {'class': 'img-thumbnail'})
 					.addClassName('img-thumbnail')
 				})
 			})
