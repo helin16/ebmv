@@ -25,6 +25,7 @@ PageJs.prototype = Object.extend(new AdminPageJs(), {
 					if(!tmp.result.logs || tmp.result.logs.size() === 0)
 						throw 'System Error: No result return!';
 					
+					console.debug(tmp.result);
 					tmp.result.logs.each(function(log) {
 						$(tmp.me.resultDivId).insert({'bottom': new Element('div', {'class': 'panel panel-default'})
 							.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update('<strong>' + log.title + '</strong>') })
