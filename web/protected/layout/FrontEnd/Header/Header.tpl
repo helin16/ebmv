@@ -116,7 +116,7 @@
                 </li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
                     <a href="#" class="iconbtn" data-toggle="dropdown" id="lch-dropdown-btn">
-                        <div class="btnname">学汉语/學漢語<small>Learn Chinese</small></div>
+                        <div class="btnname">学汉语<small>Learn Chinese</small></div>
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
