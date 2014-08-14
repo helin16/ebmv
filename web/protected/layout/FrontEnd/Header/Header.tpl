@@ -136,14 +136,6 @@
                               </div>
                           </a>
                         </li>
-                        <li role="presentation">
-                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/happy-chinese" role="menuitem" class="iconbtn fancyboxmenuitem">
-                              <div class="row">
-                                  <div class="col-xs-8">快乐汉语/快樂漢語</div>
-                                  <div class="col-xs-4 en">Happy Chinese</div>
-                              </div>
-                          </a>
-                        </li>
                     </ul>
                 </li>
 				<li class="visible-xs"><a href="/" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
