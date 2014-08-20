@@ -7,7 +7,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 		'n.D440100nfdsb'  => array('name' => '南方都市报',  'productId' =>  'CN44-0175', 'paperUid' => 'n.D440100nfdsb', 'productType' => 'NewsPaper'),
 		'n.D440100nfzm'   => array('name' => '南方周末',    'productId' =>  'CN44-0003', 'paperUid' => 'n.D440100nfzm', 'productType' => 'NewsPaper')
 	);
-	private $_orgnizationNo = 'tiyan';
+	private $_orgnizationNo = 'bmv';
 	private $_orgnizationKey = 'apabikey';
 	private $_supplierUserName ='auchen';
 	private $_supplierPassword = '111111';
