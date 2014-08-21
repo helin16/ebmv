@@ -248,7 +248,9 @@ class EntityDao
      */
     public function updateByCriteria($setClause, $criteria, $params = array())
     {
-        return Dao::updateByCriteria($this->_query, $setClause, $criteria, $params);
+        $result = Dao::updateByCriteria($this->_query, $setClause, $criteria, $params);
+        $this->resetQuery();
+        return $result;
     }
     /**
      * Getting the total count for the search criteria
@@ -260,7 +262,9 @@ class EntityDao
      */
     public function countByCriteria($criteria, $params = array())
     {
-        return Dao::countByCriteria($this->_query, $criteria, $params);
+        $result = Dao::countByCriteria($this->_query, $criteria, $params);
+        $this->resetQuery();
+        return $result;
     }
     /**
      * delete a table for the search criteria
@@ -272,7 +276,9 @@ class EntityDao
      */
     public function deleteByCriteria($criteria, $params = array())
     {
-        return Dao::deleteByCriteria($this->_query, $criteria, $params);
+        $result = Dao::deleteByCriteria($this->_query, $criteria, $params);
+        $this->resetQuery();
+        return $result;
     }
     /**
      * replace into
