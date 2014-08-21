@@ -90,8 +90,6 @@ class ProductDetailsController extends FrontEndPageAbstract
         				throw new Exception("invalid type:" . $type);
         			}
         	}
-        	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
-        	BaseServiceAbastract::getInstance('ProductShelfItem')->addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
         	try
         	{
         		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
@@ -102,6 +100,8 @@ class ProductDetailsController extends FrontEndPageAbstract
         	{
         		$results['warning'] = 'Failed to borrow this item from supplier';
         	}
+        	BaseServiceAbastract::getInstance('ProductShelfItem')->addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
+        	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
         }
         catch(Exception $ex)
         {
