@@ -15,8 +15,6 @@ class ReAuthController extends TService
      */
     public function run()
     {
-    	if(!isset($_REQUEST['SiteID']))
-    		die();
     	$CDKey = $this->_getRequestVar('CDKey');
     	$SiteID = $this->_getRequestVar('SiteID');
     	$Uid = $this->_getRequestVar('Uid');
