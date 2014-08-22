@@ -55,6 +55,8 @@ class WebAuth
 			$supplier = $this->_getSupplier($CDKey, $Uid, $SiteID);
 			//get the User
 			$userAccount = $this->_getUser($SiteID, $Uid, $Pwd);
+			if(!$userAccount instanceof UserAccount)
+				throw new Exception('Invalid User!');
 			
 			$response->addAttribute('CDkey', $CDKey);
 			$user = $response->addChild('User');
