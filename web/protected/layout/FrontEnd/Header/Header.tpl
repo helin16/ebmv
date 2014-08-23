@@ -110,9 +110,26 @@
                     </ul>
                 </li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
-                    <a href="/products/1/4" class="iconbtn">
+                    <a href="/products/1/4" class="iconbtn" data-toggle="dropdown" id="len-dropdown-btn">
                         <div class="btnname">学英语<small>ESL</small></div>
+                        <b class="caret"></b>
                     </a>
+                    <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
+                        <li role="presentation">
+                          <a href="/product/62" role="menuitem" class="iconbtn fancyboxmenuitem">
+                              <div class="row">
+                                  <div class="col-xs-12">新概念英语一册</div>
+                              </div>
+                          </a>
+                        </li>
+                        <li role="presentation">
+                          <a href="/product/61" role="menuitem" class="iconbtn fancyboxmenuitem">
+                              <div class="row">
+                                  <div class="col-xs-12">托福词汇课</div>
+                              </div>
+                          </a>
+                        </li>
+                    </ul>
                 </li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
                     <a href="#" class="iconbtn" data-toggle="dropdown" id="lch-dropdown-btn">
