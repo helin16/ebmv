@@ -116,14 +116,14 @@
                     </a>
                     <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
                         <li role="presentation">
-                          <a href="/product/62" role="menuitem" class="iconbtn fancyboxmenuitem">
+                          <a href="/product/62" role="menuitem" class="iconbtn">
                               <div class="row">
                                   <div class="col-xs-12">新概念英语一册</div>
                               </div>
                           </a>
                         </li>
                         <li role="presentation">
-                          <a href="/product/61" role="menuitem" class="iconbtn fancyboxmenuitem">
+                          <a href="/product/61" role="menuitem" class="iconbtn">
                               <div class="row">
                                   <div class="col-xs-12">托福词汇课</div>
                               </div>
