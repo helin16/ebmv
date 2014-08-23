@@ -43,7 +43,7 @@
 				<li class='hidden-sm'>
 				    <a href="/" class="iconbtn "><div class="btnname">首页/首頁<small>Home</small></div><span class="glyphicon glyphicon-home"></span></a>
 				</li>
-				<li><a href="/user.html" class="iconbtn"><div class="btnname">我的书架/我的書架<small>My BookShelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>
+				<li><a href="/user.html" class="iconbtn"><div class="btnname">我的书架/我的書架<small>My Bookshelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>
 				<li class="hidden-xs"><a> | </a></li>
 				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
 				    <a href="#" role="button" class="dropdown-toggle iconbtn" data-toggle="dropdown" id="schinese-dropdown-btn" data-target="#">
