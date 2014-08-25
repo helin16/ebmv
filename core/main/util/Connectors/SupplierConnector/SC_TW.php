@@ -304,7 +304,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		
 		$returnUrls = explode(',', $this->_lib->getInfo('lib_url'));
 		$currentUrl = 'http://' . (trim($_SERVER['SERVER_NAME']) === '' ? $returnUrls[0]: trim($_SERVER['SERVER_NAME'])) . '/mybookshelf.html';
-		$params = array('isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'token' => $token, 'returnUrl' => $currentUrl, 'partnerid' => $this->_supplier->getInfo('partner_id'));
+		$params = array('uid' => trim($user->getUsername()), 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'token' => $token, 'returnUrl' => $currentUrl, 'partnerid' => $this->_supplier->getInfo('partner_id'));
 		
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = "POST") with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
 		$results = $this->_getJsonResult(SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, $params), 'results');
