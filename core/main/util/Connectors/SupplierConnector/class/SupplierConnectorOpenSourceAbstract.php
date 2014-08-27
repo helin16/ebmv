@@ -21,8 +21,8 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 	protected function _getValidDateRange() {
 		if (!isset( self::$_cache ['isseRange'] )) 
 		{
-			$now = new UDate ();
-			$start = new UDate ();
+			$now = new UDate('now', $this->_lib->getInfo('lib_timezone'));
+			$start = new UDate('now', $this->_lib->getInfo('lib_timezone'));
 			$start->modify ('-1 month');
 			$diff = $now->diff($start);
 			$days = array ();
