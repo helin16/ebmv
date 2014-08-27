@@ -325,7 +325,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 				'NO' => trim($product->getAttribute('cno')),
 				'format' => 'xml',
 		);
-		if($type instanceof ProductType && trim($type->getId()) === trim(ProductType::ID_BOOK))
+		if($type instanceof ProductType && trim($type->getId()) !== trim(ProductType::ID_BOOK))
 			$params['type'] = trim(strtolower($type->getName()));
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), "getBookInfo") . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
