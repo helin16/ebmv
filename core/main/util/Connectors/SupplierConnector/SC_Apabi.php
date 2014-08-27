@@ -160,12 +160,11 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getProduct()
 	 */
-	public function getProduct($isbn, $no)
+	public function getProduct(Product $product)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
-		
 		$data = array(
-			'paperUids' => $isbn
+			'paperUids' => trim($product->getAttribute('isbn'))
 			,'picType' => ''
 			,'orgNo' => trim($this->_orgnizationNo)
 		);

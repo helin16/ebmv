@@ -270,14 +270,7 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 	 *
 	 * @see SupplierConn::getProduct()
 	 */
-	public function getProduct($isbn, $no) {
-		if ($this->_debugMode === true)
-			SupplierConnectorAbstract::log ( $this, 'Getting product(ISBN=' . $isbn . ', NO=' . $no . '):', __FUNCTION__ );
-		if (! ($product = BaseServiceAbastract::getInstance ( 'Product' )->findProductWithISBNnCno ( $isbn, $no, $this->_supplier )) instanceof Product) {
-			if ($this->_debugMode === true)
-				SupplierConnectorAbstract::log ( $this, 'Can NOT find any product (ISBN=' . $isbn . ', NO=' . $no . ')', __FUNCTION__ );
-			return null;
-		}
+	public function getProduct(Product $product) {
 		$pro = SupplierConnectorProduct::getProduct ( $this->_fakeProduct ( $product->getProductType(), null, $product ) );
 		return $pro;
 	}

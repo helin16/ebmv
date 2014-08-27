@@ -316,15 +316,17 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getProduct()
 	 */
-	public function getProduct($isbn, $no)
+	public function getProduct(Product $product)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
-		
+		$type = $product->getProductType();
 		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
-				'Isbn' => trim($isbn),
-				'NO' => trim($no),
-				'format' => 'xml'
+				'Isbn' => trim($product->getAttribute('isbn')),
+				'NO' => trim($product->getAttribute('cno')),
+				'format' => 'xml',
 		);
+		if($type instanceof ProductType && trim($type->getId()) === trim(ProductType::ID_BOOK))
+			$params['type'] = trim(strtolower($type->getName()));
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), "getBookInfo") . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
 		
