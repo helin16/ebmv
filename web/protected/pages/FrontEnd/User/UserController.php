@@ -69,7 +69,14 @@ class UserController extends FrontEndPageAbstract
 			$result['items'] = array();
 			foreach($items as $item)
 			{
-				$result['items'][] = $item->getJson();
+				$array = $item->getJson();
+				$expiryTime = new UDate(trim($item->getExpiryTime()));
+				$expiryTime->setTimeZone(Core::getLibrary()->getInfo('lib_timezone'));
+				$borrowTime= new UDate(trim($item->getBorrowTime()));
+				$borrowTime->setTimeZone(Core::getLibrary()->getInfo('lib_timezone'));
+				$array['expiryTime'] = trim($expiryTime);
+				$array['expiryTime'] = trim($borrowTime);
+				$result['items'][] = $array;
 			}
 		}
 		catch(Exception $ex)
