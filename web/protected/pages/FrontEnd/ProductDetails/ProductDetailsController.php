@@ -133,12 +133,24 @@ class ProductDetailsController extends FrontEndPageAbstract
         	
         	$results['urls'] = array('viewUrl' => false, 'downloadUrl' => false);
         	$results['copies'] = array();
-        	if ($totalBorrowedNo >= $maxBorrowCount)
-        		$results['warningMsg'] = array(
+        	if ($totalBorrowedNo >= $maxBorrowCount) //full
+        		$results['stopMsg'] = array(
         			'en' => '<a href="/user.html" title="Go to yourbookshelf">Your bookshelf</a> is now full, please go to your bookshelf and return some, before you continue.',
+        			'zh_CN' => '<a href="/user.html"  title="点击进入您的书架">您的书架</a>快满了',
+        			'zh_TW' => '<a href="/user.html" title="點擊進入您的書架">您的書架</a>快滿了'
+        		);
+        	else if ($totalBorrowedNo >= $maxBorrowCount * 0.9) 
+        	{
+        		$results['warningMsg'] = array(
+        			'en' => '<a href="/user.html" title="Go to yourbookshelf">Your bookshelf</a> nearly full.',
         			'zh_CN' => '<a href="/user.html"  title="点击进入您的书架">您的书架</a>已满，请归还一些，然后再继续',
         			'zh_TW' => '<a href="/user.html" title="點擊進入您的書架">您的書架</a>已滿，請歸還一些，然後再繼續'
         		);
+        		SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->updateProduct($this->_product);
+        		$results['urls'] = array('viewUrl' => (trim($supplier->getInfo('view_url')) !== ''), 'downloadUrl' => (trim($supplier->getInfo('download_url')) !== ''));
+        		foreach($this->_product->getLibOwns() as $owns)
+        			$results['copies'][$owns->getType()->getId()] = $owns->getJson();
+        	}
         	else
         	{
 	        	SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->updateProduct($this->_product);

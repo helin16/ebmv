@@ -132,7 +132,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					if(tmp.result.warningMsg) {
 						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Error:</h4>', new Element('small').update(
 								tmp.result.warningMsg.zh_CN + ' / ' + tmp.result.warningMsg.zh_TW + '<br />' + tmp.result.warningMsg.en)
-							).addClassName('alert-danger') 
+							).addClassName('alert-warning') 
+						});
+					}
+					if(tmp.result.stopMsg) {
+						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Error:</h4>', new Element('small').update(
+								tmp.result.warningMsg.zh_CN + ' / ' + tmp.result.warningMsg.zh_TW + '<br />' + tmp.result.warningMsg.en)
+						).addClassName('alert-danger') 
 						});
 					}
 					$(readOnlineBtnId).replace(tmp.readBtn);
