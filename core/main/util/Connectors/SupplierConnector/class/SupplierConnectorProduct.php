@@ -117,8 +117,10 @@ class SupplierConnectorProduct
 	 */
 	public function __construct($title, $isbn, $cno, $author, $publisher, $publish_date, $no_of_words, $image_thumb, $description, $cip, $libCode, $languageCodes, $categoryNames, $productTypeName, array $copies)
 	{
-		if(trim($isbn) === '' && trim($cno) === '')
-			throw new SupplierConnectorException('No ISBN and cno provided!');
+		if(trim($isbn) === '')
+			throw new SupplierConnectorException('No ISBN provided!');
+		if(trim($cno) === '')
+			$cno = 0;
 		$this->_title = $title;
 		$this->_isbn = $isbn;
 		$this->_cno = $cno;
