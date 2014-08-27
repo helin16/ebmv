@@ -194,7 +194,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$token = $this->_validToken($user);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got token: ' . $token , __FUNCTION__);
 		
-		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'borrowBook');
+		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
 		
 		$params = array('uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
