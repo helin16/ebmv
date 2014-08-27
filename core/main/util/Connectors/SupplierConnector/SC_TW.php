@@ -184,12 +184,12 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($supplier->getId() !== $this->_supplier->getId())
 			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
 		
-		$hasBorrowed = (BaseServiceAbastract::getInstance('ProductShelfItem')->countByCriteria('productId = ? and ownerId = ? and status = ?', array($product->getId(), $user->getId(), ProductShelfItem::ITEM_STATUS_BORROWED)) > 0);
-		if($hasBorrowed === true)
-		{
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'This product is already borrowed: pid=' . $product->getId() .', uid=' . $user->getId(), __FUNCTION__);
-			return $this;
-		}
+// 		$hasBorrowed = (BaseServiceAbastract::getInstance('ProductShelfItem')->countByCriteria('productId = ? and ownerId = ? and status = ?', array($product->getId(), $user->getId(), ProductShelfItem::ITEM_STATUS_BORROWED)) > 0);
+// 		if($hasBorrowed === true)
+// 		{
+// 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'This product is already borrowed: pid=' . $product->getId() .', uid=' . $user->getId(), __FUNCTION__);
+// 			return $this;
+// 		}
 		
 		$token = $this->_validToken($user);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got token: ' . $token , __FUNCTION__);
@@ -197,7 +197,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'borrowBook');
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
 		
-		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
+		$params = array('uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::submiting to url with params' . print_r($params, true) , __FUNCTION__);
 		
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = ) with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
