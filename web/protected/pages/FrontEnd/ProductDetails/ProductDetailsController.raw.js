@@ -130,9 +130,15 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Online Read Copies:</strong>', 'online_read_copies', tmp.readCopies) })
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Download Copies:</strong>', 'download_copies', tmp.downloadCopies) });
 					if(tmp.result.warningMsg) {
+						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Warning:</h4>', new Element('small').update(
+								tmp.result.warningMsg.zh_CN + ' / ' + tmp.result.warningMsg.zh_TW + '<br />' + tmp.result.warningMsg.en)
+							).addClassName('alert-warning') 
+						});
+					}
+					if(tmp.result.stopMsg) {
 						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Error:</h4>', new Element('small').update(
 								tmp.result.warningMsg.zh_CN + ' / ' + tmp.result.warningMsg.zh_TW + '<br />' + tmp.result.warningMsg.en)
-							).addClassName('alert-danger') 
+						).addClassName('alert-danger') 
 						});
 					}
 					$(readOnlineBtnId).replace(tmp.readBtn);

@@ -194,10 +194,10 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$token = $this->_validToken($user);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got token: ' . $token , __FUNCTION__);
 		
-		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'borrowBook');
+		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), 'bookShelf');
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got url:' . $url , __FUNCTION__);
 		
-		$params = array('partnerid' => $this->_supplier->getInfo('partner_id'), 'uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
+		$params = array('uid' => $user->getUserName(), 'token' => $token, 'isbn' => $product->getAttribute('isbn'), 'no' => $product->getAttribute('cno'), 'partnerid' => trim($this->_supplier->getInfo('partner_id')));
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::submiting to url with params' . print_r($params, true) , __FUNCTION__);
 		
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::reading from url (' . $url . ') with (' . print_r($params, true) . ', type = ) with timeout limit: ' . BmvComScriptCURL::CURL_TIMEOUT , __FUNCTION__);
@@ -316,15 +316,17 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getProduct()
 	 */
-	public function getProduct($isbn, $no)
+	public function getProduct(Product $product)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
-		
+		$type = $product->getProductType();
 		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
-				'Isbn' => trim($isbn),
-				'NO' => trim($no),
-				'format' => 'xml'
+				'Isbn' => trim($product->getAttribute('isbn')),
+				'NO' => trim($product->getAttribute('cno')),
+				'format' => 'xml',
 		);
+		if($type instanceof ProductType && trim($type->getId()) !== trim(ProductType::ID_BOOK))
+			$params['type'] = trim(strtolower($type->getName()));
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), "getBookInfo") . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
 		

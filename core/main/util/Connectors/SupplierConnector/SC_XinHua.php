@@ -250,13 +250,13 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::getProduct()
 	 */
-	public function getProduct($isbn, $no)
+	public function getProduct(Product $product)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
 		
 		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
-				'Isbn' => trim($isbn),
-				'NO' => trim($no)
+				'Isbn' => trim($product->getAttribute('isbn')),
+				'NO' => trim($product->getAttribute('cno'))
 		);
 		$xml = $this->_getFromSoap($this->_supplier->getInfo('import_url'), "GetBookInfo", $params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got result from supplier:' . $xml->asXML(), __FUNCTION__);

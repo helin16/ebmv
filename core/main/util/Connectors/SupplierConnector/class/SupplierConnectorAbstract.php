@@ -421,7 +421,7 @@ class SupplierConnectorAbstract
 	public function updateProduct(Product &$product)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'updating product for ID:' . $product->getId() , __FUNCTION__);
-		$pro = $this->getProduct(trim($product->getAttribute('isbn')), trim($product->getAttribute('cno')));
+		$pro = $this->getProduct($product);
 		if(!$pro instanceof SupplierConnectorProduct)
 		{
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Invalid product info from supplier, quiting now!' , __FUNCTION__);

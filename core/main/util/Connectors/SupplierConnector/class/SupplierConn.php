@@ -127,5 +127,5 @@ interface SupplierConn
 	 * 
 	 * @return SupplierConnectorProduct
 	 */
-	public function getProduct($isbn, $no);
+	public function getProduct(Product $product);
 }
