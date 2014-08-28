@@ -74,8 +74,8 @@ class UserController extends FrontEndPageAbstract
 				$expiryTime->setTimeZone(Core::getLibrary()->getInfo('lib_timezone'));
 				$borrowTime= new UDate(trim($item->getBorrowTime()));
 				$borrowTime->setTimeZone(Core::getLibrary()->getInfo('lib_timezone'));
+				$array['borrowTime'] = trim($borrowTime);
 				$array['expiryTime'] = trim($expiryTime);
-				$array['expiryTime'] = trim($borrowTime);
 				$result['items'][] = $array;
 			}
 		}
