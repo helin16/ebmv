@@ -152,6 +152,7 @@ class ImportProduct
 	 */
 	public static function log($msg, $funcName, $comments = '')
 	{
+		echo $log . "\r\n";
 		Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
 	}
 	/**
