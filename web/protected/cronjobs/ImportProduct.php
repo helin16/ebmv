@@ -55,7 +55,7 @@ class ImportProduct
 		$scriptRunningtime = $finishScript->diff($startScript);
 		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================", __FUNCTION__, self::FLAG_END);
 		$transId = self::getLogTransId();
-		echo self::showLogs($transId);
+// 		echo self::showLogs($transId);
 		return $transId;
 	}
 	
