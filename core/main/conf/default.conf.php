@@ -5,7 +5,7 @@ return array(
 			'DBHost' => 'localhost',
 			'DB' => 'bmv',
 			'Username' => 'root',
-			'Password' => ''
+			'Password' => 'root'
 		)
 	,'social' => array (
 		'addThisAccount' => 'helin16' 
