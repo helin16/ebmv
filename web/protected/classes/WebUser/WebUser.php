@@ -26,6 +26,7 @@ class WebUser extends TUser
 	public function setUserAccount(UserAccount $userAccount)
 	{
 		$this->userAccount = $userAccount;
+		return $this;
 	}
 	
 	public function saveToString()

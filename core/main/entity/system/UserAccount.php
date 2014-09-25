@@ -168,7 +168,7 @@ class UserAccount extends BaseEntityAbstract
     	$productIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
     	if(count($productIds) > 0)
     		ProductShelfItem::deleteByCriteria('productId in (' . implode(', ', $productIds) . ')  AND ownerId = ' . $this->getId());
-    	ProductShelfItem::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'active = 0 AND ownerId = ' . $this->getId());
+    	ProductShelfItem::deleteByCriteria('active = 0 AND ownerId = ' . $this->getId());
     	return $this;
     }
     /**
@@ -306,7 +306,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function updateUser(UserAccount &$userAccount, Library $lib, $username, $password, array $allRoles = null, Person $newPerson = null)
     {
-    	$person = $this->getPerson();
+    	$person = $userAccount->getPerson();
     	//user wants to update the person
     	if($newPerson instanceof Person)
     	{
@@ -326,7 +326,7 @@ class UserAccount extends BaseEntityAbstract
     		//need to create whatever has left after the loop
     		foreach($allRoles as $role)
     		{
-    			$this->saveManyToMany($role, $userAccount);
+    			self::saveManyToMany($role, $userAccount);
     		}
     	}
     	return ($userAccount = self::get($userAccount->getId())); //refersh the object

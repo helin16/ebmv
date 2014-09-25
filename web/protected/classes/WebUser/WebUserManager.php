@@ -50,7 +50,7 @@ class WebUserManager extends TModule implements IUserManager
 	{
 		if(!Core::getUser() instanceof UserAccount)
 		{
-			if(!($userAccount = BaseServiceAbastract::getInstance('UserAccount')->login(Core::getLibrary(), $username, $password)) instanceof UserAccount)
+			if(!($userAccount = UserAccount::login(Core::getLibrary(), $username, $password)) instanceof UserAccount)
 				return false;
 		}
 		return true;
