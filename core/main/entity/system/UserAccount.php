@@ -167,8 +167,8 @@ class UserAccount extends BaseEntityAbstract
     	$sql = "select p.productId from productshelfitem p left join product pro on (pro.id = p.productId and pro.active = 1) where pro.id is null;";
     	$productIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
     	if(count($productIds) > 0)
-    		Dao::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'productId in (' . implode(', ', $productIds) . ')  AND ownerId = ' . $this->getId());
-    	Dao::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'active = 0 AND ownerId = ' . $this->getId());
+    		ProductShelfItem::deleteByCriteria('productId in (' . implode(', ', $productIds) . ')  AND ownerId = ' . $this->getId());
+    	ProductShelfItem::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'active = 0 AND ownerId = ' . $this->getId());
     	return $this;
     }
     /**

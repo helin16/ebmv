@@ -25,19 +25,19 @@ class HomeController extends FrontEndPageAbstract
     }
     public function getNewNewsPaper($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_NEWSPAPER));
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), ProductType::get(ProductType::ID_NEWSPAPER));
     }
     public function getNewMagazine($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_MAGAZINE));
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), ProductType::get(ProductType::ID_MAGAZINE));
     }
     public function getNewBooks($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_BOOK));
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), ProductType::get(ProductType::ID_BOOK));
     }
     public function getNewCourses($sender, $params)
     {
-	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), BaseServiceAbastract::getInstance('ProductType')->get(ProductType::ID_COURSE));
+	    $params->ResponseData = $this->_listProducts($params, 'getNewReleasedProducts', $this->_getLanguage($params), ProductType::get(ProductType::ID_COURSE));
     }
     
     private function _listProducts($params, $funcName, Language $lang = null, ProductType $type = null)
@@ -54,7 +54,7 @@ class HomeController extends FrontEndPageAbstract
 	        }
 	        
             $result['products'] = array();
-            $products = BaseServiceAbastract::getInstance('Product')->$funcName(Core::getLibrary(), $pageSize, $lang, $type);
+            $products = Product::$funcName(Core::getLibrary(), $lang, $type, 1, $pageSize);
             foreach($products as $product)
             {
                 $result['products'][] = $product->getJson();

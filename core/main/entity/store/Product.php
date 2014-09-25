@@ -503,6 +503,301 @@ class Product extends BaseEntityAbstract
 		DaoMap::createIndex('suk');
 		DaoMap::commit();
 	}
+	/**
+	 * Searching any product which has that attributetype code and same attribute content
+	 *
+	 * @param string $code             The code of the attribute type
+	 * @param string $attribute        The content of the attribute
+	 * @param bool   $searchActiveOnly Whether we return the inactive products
+	 * @param int    $pageNo           The page number
+	 * @param int    $pageSize         The page size
+	 * @param array  $orderBy          The order by clause
+	 *
+	 * @return array
+	 */
+	public static function findProductWithAttrCode($code, $attribute, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+	{
+		$query = Product::getQuery();
+		$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
+		$where = array('pt.code = ? and pa.attribute = ?');
+		$params = array($code, $attribute);
+		return Product::getAllByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+	}
+	/**
+	 * Get the product with isbn and cno
+	 *
+	 * @param string   $isbn     The ISBN string
+	 * @param string   $cno      The cno
+	 * @param Supplier $supplier A supplier we are looking in
+	 *
+	 * @return Ambigous <NULL, BaseEntityAbstract>
+	 */
+	public static function findProductWithISBNnCno($isbn, $cno, Supplier $supplier = null)
+	{
+		$query = Product::getQuery();
+		$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
+		$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa1')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt1', 'pa1.typeId = pt1.id');
+		$where = array('pt.code = ? and pa.attribute = ? and pt1.code = ? and pa1.attribute = ?');
+		$params = array('isbn', $isbn, 'cno', $cno);
+		if($supplier instanceof Supplier)
+		{
+			$where[] = 'pro.supplierId = ?';
+			$params[] = $supplier->getId();
+		}
+		$results = Product::getAllByCriteria(implode(' AND ', $where), $params, true, 1, 1);
+		return count($results) > 0 ? $results[0] : null;
+	}
+	/**
+	 * Searching the products in category
+	 *
+	 * @param Libraray $lib              The library  we are search in
+	 * @param string   $searchText       The searching text
+	 * @param array    $categorIds       the ids of the category
+	 * @param bool     $searchActiveOnly Whether we return the inactive products
+	 * @param int      $pageNo           The page number
+	 * @param int      $pageSize         The page size
+	 * @param array    $orderBy          The order by clause
+	 *
+	 * @return array
+	 */
+	public static function findProductsInCategory(Library $lib, $searchText = '', $categorIds = array(), $searchOption = '', Language $language = null, ProductType $productType = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+	{
+		$searchMode = false;
+		$where = $params = array();
+		$searchOption = trim($searchOption);
+	
+		$query = Product::getQuery()->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1');
+		$params[] = $lib->getId();
+		if(($searchText = trim($searchText)) !== '')
+		{
+			$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
+			if($searchOption === '')
+			{
+				$criteria = '(pt.searchable = ?';
+				$params[] = 1;
+			}
+			else
+			{
+				$criteria = '(pt.code = ?';
+				$params[] = $searchOption;
+			}
+			$where[] = $criteria.' and pa.attribute like ?) or pro.title like ?';
+			$params[] = '%' . $searchText . '%';
+			$params[] = '%' . $searchText . '%';
+			$searchMode = true;
+		}
+		if($language instanceof Language)
+		{
+			$query->eagerLoad('Product.languages', DaoQuery::DEFAULT_JOIN_TYPE, 'lang');
+			$where[] = 'lang.id = ?';
+			$params[] = $language->getId();
+			$searchMode = true;
+		}
+		if($productType instanceof ProductType)
+		{
+			$where[] = 'pro.productTypeId = ?';
+			$params[] = $productType->getId();
+			$searchMode = true;
+		}
+	
+		if(count($categorIds = array_filter($categorIds)) > 0)
+		{
+			$query->eagerLoad('Product.categorys');
+			$where[] = '(pcat.id IN (' . implode(', ', array_fill(0, count($categorIds), '?')) . '))';
+			$params = array_merge($params, $categorIds);
+			$searchMode = true;
+		}
+	
+		if($searchMode === false)
+			return self::getAll($searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
+		return self::getAllByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
+	}
+	/**
+	 * Create a product
+	 *
+	 * @param string      $title      The title of the product
+	 * @param ProductType $type       The product type object
+	 * @param Supplier    $supplier   The supplier object
+	 * @param array       $categories The categories of the product
+	 * @param array       $langs      The array of language objects
+	 * @param array       $info       The array of product attributes array('typecode' => array('attribute value', 'attribute_value2'))
+	 * @param string      $title      The sku of the product
+	 *
+	 * @return Product
+	 */
+	public static function createProduct($title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array(), $sku = '')
+	{
+		return self::_editProduct(new Product(), $title, $type, $supplier, $categories, $langs, $info, $sku);
+	}
+	/**
+	 * update a product
+	 *
+	 * @param string      $title      The title of the product
+	 * @param ProductType $type       The product type object
+	 * @param Supplier    $supplier   The supplier object
+	 * @param array       $categories The categories of the product
+	 * @param array       $langs      The array of language objects
+	 * @param array       $info       The array of product attributes array('typecode' => array('attribute value', 'attribute_value2'))
+	 * @param string      $title      The sku of the product
+	 *
+	 * @return Product
+	 */
+	public static function updateProduct(Product $product, $title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array(), $sku = '')
+	{
+		return self::_editProduct($product, $title, $type, $supplier, $categories, $langs, $info, $sku);
+	}
+	/**
+	 * editing a product
+	 *
+	 * @param string      $title      The title of the product
+	 * @param ProductType $type       The product type object
+	 * @param Supplier    $supplier   The supplier object
+	 * @param array       $categories The categories of the product
+	 * @param array       $langs      The array of language objects
+	 * @param array       $info       The array of product attributes array('typecode' => array('attribute value', 'attribute_value2'))
+	 * @param string      $title      The sku of the product
+	 *
+	 * @return Product
+	 */
+	private static function _editProduct(Product &$product, $title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array(), $sku = '')
+	{
+		//setting up the product object
+		$product->setTitle($title)
+			->setProductType($type)
+			->setSupplier($supplier);
+		if(trim($sku) !== '')
+			$product->setSuk($sku);
+		$product->save();
+
+		//setup the languages
+		$langs = array_filter($langs, create_function('$a', 'return ($a instanceof Language);'));
+		if(count($langs) === 0 )
+			throw new CoreException('At least one lanugage needed!');
+		$product->updateLanguages($langs);
+
+		//add the attributes
+		if(count($info) > 0)
+		{
+			//TODO:: need to resize the thumbnail
+			$typeCodes = array_keys($info);
+			$types = ProductAttributeType::getTypesByCodes($typeCodes);
+			foreach($typeCodes as $typeCode)
+			{
+				if(!isset($types[$typeCode]) || !$types[$typeCode] instanceof ProductAttributeType)
+					throw new CoreException('Could find the typecode for: ' . $typeCode);
+				foreach($info[$typeCode] as $attr)
+				{
+					if(($attr = trim($attr)) === '')
+						continue;
+					ProductAttribute::updateAttributeForProduct($product, $types[$typeCode], $attr);
+				}
+			}
+		}
+
+		//add categories
+		foreach($categories as $category)
+		{
+			if(!$category instanceof Category)
+				continue;
+			self::addCategory($product, $category);
+		}
+		return $product;
+	}
+	/**
+	 * Update the product attributes from _editProduct() function
+	 *
+	 * @param Product              $product   The product
+	 * @param ProductAttributeType $type      The product type
+	 * @param string               $attribute The attribute content
+	 *
+	 * @return Product
+	 */
+	private static function _updateAttribute(Product &$product, ProductAttributeType $type = null, $attribute = "")
+	{
+		if($type instanceof ProductAttributeType || ($attribute = trim($attribute)) === "")
+			return $product;
+		return ProductAttribute::updateAttributeForProduct($product, $type, $attribute);
+	}
+	/**
+	 * Getting the Most popular products
+	 *
+	 * @param Library $lib   The library we are view now
+	 * @param int     $limit How many we are getting
+	 *
+	 * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+	 */
+	public static function getMostPopularProducts(Library $lib, Language $lang = null, ProductType $type = null, $pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array('pstats.value'=>'desc'), &$stats = array())
+	{
+		$query = Product::getQuery();
+		$query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1')->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
+		$where = 'pstatstype.code = ? or pstatstype.code is null';
+		$params = array($lib->getId(), 'no_of_clicks');
+		if($lang instanceof Language)
+		{
+			$query->eagerLoad('Product.languages');
+			$where .= ' AND lang.id = ?';
+			$params[] = trim($lang->getId());
+		}
+		if($type instanceof ProductType)
+		{
+			$where .= ' AND pro.productTypeId = ?';
+			$params[] = trim($type->getId());
+		}
+		$results = self::getAllByCriteria($where ,$params, true, $pageNo, $pageSize, $orderBy, $stats);
+		return $results;
+	}
+	/**
+	 * Getting the lastest products
+	 *
+	 * @param Library $lib   The library we are view now
+	 * @param int     $limit How many we are getting
+	 *
+	 * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+	 */
+	public static function getNewReleasedProducts(Library $lib, Language $lang = null, ProductType $type = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array('pro.id'=>'desc'), &$stats = array())
+	{
+		$query = self::getQuery();
+		$query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.productId = pro.id and lib_own.active = 1');
+		$where = 'lib_own.libraryId = ?';
+		$params = array($lib->getId());
+		if($lang instanceof Language)
+		{
+			$query->eagerLoad('Product.languages');
+			$where .= ' AND lang.id = ?';
+			$params[] = trim($lang->getId());
+		}
+		if($type instanceof ProductType)
+		{
+			$where .= ' AND pro.productTypeId = ?';
+			$params[] = trim($type->getId());
+		}
+		$results =  self::getAllByCriteria($where, $params, true, $pageNo, $pageSize, array('pro.id'=>'desc'), $stats);
+		return $results;
+	}
+	/**
+	 * Getting the products that on the bookshelf
+	 *
+	 * @param UserAccount $user     The owner of the bookshelf
+	 * @param int         $pageNo   The pageNumber
+	 * @param int         $pageSize The pageSize
+	 * @param array       $orderBy  The order by clause
+	 *
+	 * @return multitype:|Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+	 */
+	public static function getShelfProducts(UserAccount $user, Supplier $supplier = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+	{
+		$query = self::getQuery();
+		$where = 'shelf_item.ownerId = ? and shelf_item.active = ?';
+		$params = array($user->getId(), 1);
+		if($supplier instanceof Supplier)
+		{
+			$where .= ' AND pro.supplierId = ?';
+			$params[] = $supplier->getId();
+		}
+		$query->eagerLoad('Product.shelfItems', DaoQuery::DEFAULT_JOIN_TYPE, 'shelf_item');
+		$result = self::getAllByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy, $stats);
+		return $result;
+	}
 }
 
 ?>
