@@ -117,18 +117,6 @@ class AssetService extends BaseServiceAbastract
 	        return file_put_contents($newFile, $dataOrFile);
 	    return rename($dataOrFile, $newFile);
 	}
-	/**
-	 * Getting the Asset object
-	 * 
-	 * @param string $assetId The assetid of the content
-	 * 
-	 * @return Ambigous <unknown, array(HydraEntity), Ambigous, multitype:, string, multitype:Ambigous <multitype:, multitype:NULL boolean number string mixed > >
-	 */
-	public function getAsset($assetId)
-	{
-		$content = $this->findByCriteria('assetId = ?', array($assetId), false, 1, 1);
-		return count($content) === 0 ? null : $content[0];
-	}
 }
 
 ?>

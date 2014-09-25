@@ -135,6 +135,18 @@ class Asset extends BaseEntityAbstract
 		DaoMap::createUniqueIndex('assetId');
 		DaoMap::commit();
 	}
+	/**
+	 * Getting the Asset object
+	 *
+	 * @param string $assetId The assetid of the content
+	 *
+	 * @return Ambigous <unknown, array(HydraEntity), Ambigous, multitype:, string, multitype:Ambigous <multitype:, multitype:NULL boolean number string mixed > >
+	 */
+	public static function getAsset($assetId)
+	{
+		$content = self::getAllByCriteria('assetId = ?', array($assetId), false, 1, 1);
+		return count($content) === 0 ? null : $content[0];
+	}
 }
 
 ?>

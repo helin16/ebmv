@@ -44,7 +44,7 @@ class AssetController extends TService
     	{
     		if(!apc_exists($assetId))
     		{
-    			$asset = BaseServiceAbastract::getInstance('Asset')->getAsset($assetId);
+    			$asset = Asset::getAsset($assetId);
     			apc_add($assetId, $asset);
     		}
     		else
@@ -55,7 +55,7 @@ class AssetController extends TService
     	}
     	else
     	{
-    		$asset = BaseServiceAbastract::getInstance('Asset')->getAsset($assetId);
+    		$asset = Asset::getAsset($assetId);
     	}
     	
     	if(!$asset instanceof Asset)
