@@ -10,7 +10,6 @@ class Language extends BaseEntityAbstract
 {
 	const ID_SIMPLIFIED_CHINESE = 1;
 	const ID_TRADITIONAL_CHINESE = 2;
-	private static $_cache;
     /**
      * The name of the language
      * 
@@ -93,19 +92,6 @@ class Language extends BaseEntityAbstract
     {
         $this->codes = $value;
         return $this;
-    }
-    /**
-     * Getting the lanuage
-     * 
-     * @param int $id The id of the language
-     * 
-     * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
-     */
-    public static function getLanguage($id)
-    {
-    	if(!isset(self::$_cache[$lang->getId()]))
-    		self::$_cache[$lang->getId()] = EntityDao::getInstance(get_called_class())->findById($lang->getId());
-    	return self::$_cache[$lang->getId()];
     }
     /**
      * (non-PHPdoc)

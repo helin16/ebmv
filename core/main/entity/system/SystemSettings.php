@@ -50,7 +50,7 @@ class SystemSettings extends BaseEntityAbstract
 	{
 		if(!isset(self::$_cache[$type]))
 		{
-			$settings = EntityDao::getInstance(__CLASS__)->findByCriteria('type=?', array($type), 1, 1);
+			$settings = self::getAllByCriteria('type = ?', array($type), true, 1, 1);
 			self::$_cache[$type] = trim(count($settings) === 0 ? '' : $settings[0]->getValue());
 		}
 		return self::$_cache[$type];
@@ -63,12 +63,12 @@ class SystemSettings extends BaseEntityAbstract
 	public static function addSettings($type, $value)
 	{
 		$class = __CLASS__;
-		$settings = EntityDao::getInstance($class)->findByCriteria('type=?', array($type), 1, 1);
+		$settings = self::getAllByCriteria('type=?', array($type), true, 1, 1);
 		$setting = ((count($settings) === 0 ? new $class() : $settings[0]));
-		$setting->setType($type);
-		$setting->setValue($value);
-		$setting->setActive(true);
-		EntityDao::getInstance($class)->save($setting);
+		$setting->setType($type)
+			->setValue($value)
+			->setActive(true)
+			->save();
 		self::$_cache[$type] = $value;
 	}
 	/**
@@ -78,7 +78,12 @@ class SystemSettings extends BaseEntityAbstract
 	 */
 	public static function removeSettings($type)
 	{
-		EntityDao::getInstance(__CLASS__)->updateByCriteria('set active = 0', 'type = ?', array($type));
+		self::updateByCriteria('set active = 0', 'type = ?', array($type));
+		if(isset(self::$_cache[$type]))
+		{
+			self::$_cache[$type] = null;
+			array_filter(self::$_cache);
+		}
 	}
 	/**
 	 * Getter for value

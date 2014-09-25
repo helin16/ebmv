@@ -30,11 +30,11 @@ class ProductService extends BaseServiceAbastract
      */
     public function findProductWithAttrCode($code, $attribute, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
-        $query = EntityDao::getInstance('Product')->getQuery();
+        $query = Product::getQuery();
         $query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
         $where = array('pt.code = ? and pa.attribute = ?');
         $params = array($code, $attribute);
-        return $this->findByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
+        return Product::getAllByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy);
     }
     /**
      * Get the product with isbn and cno

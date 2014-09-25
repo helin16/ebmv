@@ -116,4 +116,54 @@ class ProductAttribute extends BaseEntityAbstract
         DaoMap::createIndex('attribute');
         DaoMap::commit();
     }
+    /**
+     * Enter description here...
+     *
+     * @param Product              $product
+     * @param ProductAttributeType $type
+     * @param unknown_type         $pageNumber
+     * @param unknown_type         $pageSize
+     * @param unknown_type         $orderByParams
+     * 
+     * @return unknown
+     */
+    public static function getAttributeForProductAndType(Product $product, ProductAttributeType $type, $activeOnly = true, $pageNumber = null, $pageSize = 30, $orderByParams = array(), &$stats = array())
+    {
+    	return self::getAllByCriteria("productId = ? AND typeId = ?", array($product->getId(), $type->getId()), $activeOnly, $pageNumber, $pageSize, $orderByParams, $stats);
+    }
+    /**
+     * update the product attribute, when exsits; otherwise create one
+     *
+     * @param Product              $product   The product
+     * @param ProductAttributeType $type      The product type
+     * @param string               $attribute The attribute content
+     * @return Ambigous <BaseEntity, BaseEntityAbstract>
+     */
+    public static function updateAttributeForProduct(Product $product, ProductAttributeType $type, $attribute)
+    {
+    	if(count($atts = self::getAttributeForProductAndType($product, $type, true, 1, 1)) === 0)
+    		$attr = new ProductAttribute();
+    	else
+    		$attr = $atts[0];
+    
+    	$attr->setType($type)
+	    	->setProduct($product)
+	    	->setAttribute($attribute)
+	    	->save();
+    	return $attr;
+    }
+    /**
+     * removing a product attributes by product and type code
+     *
+     * @param Product $product   The product we are trying to deleting the attributes from
+     * @param array   $typeCodes The code of the type
+     */
+    public static function removeAttrsForProduct(Product $product, array $typeCodes)
+    {
+    	$types = ProductAttribute::getTypesByCodes($typeCodes);
+    	if(count($types) === 0)
+    		return;
+    	$typeIds =  array_map(create_function('$a', 'return $a->getId();'), $types);
+    	self::updateByCriteria('active = 0', "productId = ? AND typeId in (" . implode(', ', array_fill(0, count($typeIds), '?')) . ")", array_merge(array($product->getId()), $typeIds));
+    }
 }

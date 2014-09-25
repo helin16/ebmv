@@ -57,7 +57,7 @@ class DaoQuery
      * selecting active record only
      * @var bool
      */
-    public static $selectActiveOnly = true;
+    private $_selectActiveOnly = true;
     /**
      * Creates a new DaoQuery, initialised to a focus object
      *
@@ -70,8 +70,20 @@ class DaoQuery
     {
         $this->_focus = $entityName;
         $this->getPage($pageNumber, $pageSize)
-        ->distinct($distinct);
+        	->distinct($distinct);
         DaoMap::loadMap($this->_focus);
+    }
+    /**
+     * Setter for selectActiveOnly
+     * 
+     * @param string $selectActiveOnly
+     * 
+     * @return DaoQuery
+     */
+    public function setSelectActiveOnly($selectActiveOnly = true)
+    {
+    	$this->_selectActiveOnly = $selectActiveOnly;
+    	return $this;
     }
     /**
      * Returns the class name used to instantiate this DaoQuery instance
@@ -188,12 +200,12 @@ class DaoQuery
         //get all fields
         $sql .= implode(', ', $this->_buildFieldsForSelect()) . ' ';
         //get from table
-        $sql .= sprintf('from %s %s', $focus, $fAlias) . ' ';
+        $sql .= sprintf('from `%s` `%s`', $focus, $fAlias) . ' ';
         //get all joins
-        $sql .= count($this->_joins) === 0 ? '' : implode(' ', array_map(create_function('$a', 'return $a["joinType"] . " " . $a["joinClass"] . " `" . $a["joinAlias"] . "` on (" . $a["joinCondition"] . ")";'), $this->_joins)) . ' ';
+        $sql .= count($this->_joins) === 0 ? '' : implode(' ', array_map(create_function('$a', 'return $a["joinType"] . " `" . $a["joinClass"] . "` `" . $a["joinAlias"] . "` on (" . $a["joinCondition"] . ")";'), $this->_joins)) . ' ';
         //get whereclause
-        if(self::$selectActiveOnly === true)
-        	$this->where($fAlias . '.active = 1');
+        if($this->_selectActiveOnly === true)
+        	$this->where('`' . $fAlias . '`.`active` = 1');
         $sql .= count($this->_whereClause) === 0 ? '' : 'where (' . implode(') AND (', $this->_whereClause) . ')';
         //get orderby
         $sql .= count($orders = $this->_buildOrderByForSelect()) === 0 ? '' : ' order by ' . implode(', ', $orders);
@@ -214,13 +226,14 @@ class DaoQuery
         $sql = 'select count(';
         //get distinct
         $sql .= $this->_distinct === true ? 'distinct ' : '';
-        $sql .= $fAlias  . '.id) `count` ';
+        $sql .= '`' . $fAlias  . '`.id) `count` ';
         //get from table
-        $sql .= sprintf('from %s %s', $focus, $fAlias) . ' ';
+        $sql .= sprintf('from `%s` `%s`', $focus, $fAlias) . ' ';
         //get all joins
         $sql .= count($this->_joins) === 0 ? '' : implode(' ', array_map(create_function('$a', 'return $a["joinType"] . " " . $a["joinClass"] . " " . $a["joinAlias"] . " on (" . $a["joinCondition"] . ")";'), $this->_joins)) . ' ';
         //get whereclause
-        $this->where($fAlias . '.active = 1');
+        if(!$this->_selectActiveOnly === true)
+        	$this->where('`' . $fAlias . '`.`active` = 1');
         $sql .= count($this->_whereClause) === 0 ? '' : 'where (' . implode(') AND (', $this->_whereClause) . ')';
         return $sql;
     }
@@ -237,7 +250,7 @@ class DaoQuery
         $focus = strtolower($this->_focus);
         $fAlias = DaoMap::$map[$focus]['_']['alias'];
         $fields = array();
-        $fields[] = $fAlias . '.`id`';
+        $fields[] = '`' . $fAlias . '`.`id`';
         foreach (DaoMap::$map[$focus] as $field => $properties)
         {
             //entity metadata
@@ -247,7 +260,7 @@ class DaoQuery
             //if this is not a relationship
             if (!isset($properties['rel']))
             {
-                $fields[] = $fAlias . '.`' . $field . '`';
+                $fields[] = '`' . $fAlias . '`.`' . $field . '`';
                 continue;
             }
              
@@ -262,7 +275,7 @@ class DaoQuery
                     }
                 default:
                     $field .= 'Id';
-                $fields[] = $fAlias . '.`' . $field . '`';
+                $fields[] = '`' . $fAlias . '`.`' . $field . '`';
                 break;
             }
         }
@@ -425,7 +438,7 @@ class DaoQuery
             }
             $fields[] = '`' . $field . '`= :' . $fieldName;
         }
-        $sql = 'update ' . $focus . ' set ';
+        $sql = 'update `' . $focus . '` set ';
         $sql .= implode(', ', $fields);
         $sql .= ' where id = :id';
         return $sql;
@@ -459,7 +472,7 @@ class DaoQuery
             $fields[] = '`' . $field . '`';
             $values[] = ':' . $fieldName;
         }
-        $sql = 'insert into ' . $focus;
+        $sql = 'insert into `' . $focus . '`';
         $sql .= ' (' . implode(', ', $fields) . ') values (' . implode(', ', $values) . ')';
         return $sql;
     }
@@ -472,7 +485,7 @@ class DaoQuery
     {
         DaoMap::loadMap($this->_focus);
         $focus = strtolower($this->_focus);
-        $sql = 'delete from ' . $focus . ' where id = :id';
+        $sql = 'delete from `' . $focus . '` where id = :id';
         return $sql;
     }
     /**
@@ -533,7 +546,7 @@ class DaoQuery
                 if(isset($properties['class']) && $properties['class'] == $rightClass)
                 {
                     if(isset($properties['side']) && $properties['side'] == DaoMap::RIGHT_SIDE)
-                    return strtolower($leftClass) . '_' . strtolower($rightClass);
+                    return '`' . strtolower($leftClass) . '_' . strtolower($rightClass) . '`';
                 }
             }
         }

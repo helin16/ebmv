@@ -264,10 +264,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public function updateLibrary(Library $lib, LibraryOwnsType $type, $avail = 0, $total = 0)
 	{
-		$original = DaoQuery::$selectActiveOnly;
-		DaoQuery::$selectActiveOnly = false;
 		$owns = $this->getLibraryOwn($lib, $type);
-		DaoQuery::$selectActiveOnly = $original;
 		if(count($owns) === 0)
 			$owns = new LibraryOwns();
 		else
@@ -275,13 +272,13 @@ class Product extends BaseEntityAbstract
 			$owns = $owns[0];
 			$this->removeLibrary($lib, $type);
 		}
-		$owns->setLibrary($lib);
-		$owns->setProduct($this);
-		$owns->setType($type);
-		$owns->setAvail($avail);
-		$owns->setTotal($total);
-		$owns->setActive(true);
-		EntityDao::getInstance('LibraryOwns')->save($owns);
+		$owns->setLibrary($lib)
+			->setProduct($this)
+			->setType($type)
+			->setAvail($avail)
+			->setTotal($total)
+			->setActive(true)
+			->save();
 		return $this;
 	}
 	/**
@@ -294,7 +291,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public function removeLibrary(Library $lib, LibraryOwnsType $type)
 	{
-		EntityDao::getInstance('LibraryOwns')->updateByCriteria('active = 0' , 'libraryId = ? and typeId = ? and productId = ?', array($lib->getId(), $type->getId(), $this->getId()));
+		LibraryOwns::updateByCriteria('active = 0' , 'libraryId = ? and typeId = ? and productId = ?', array($lib->getId(), $type->getId(), $this->getId()));
 		return $this;
 	}
 	/**
@@ -305,7 +302,7 @@ class Product extends BaseEntityAbstract
 	 * 
 	 * @return NULL|LibraryOwns
 	 */
-	public function getLibraryOwn(Library $lib, LibraryOwnsType $type = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+	public function getLibraryOwn(Library $lib, LibraryOwnsType $type = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), $activeOnly = true, &$stats = array())
 	{
 		$where = 'libraryId = ? and productId = ?';
 		$params =  array($lib->getId(), $this->getId());
@@ -314,7 +311,7 @@ class Product extends BaseEntityAbstract
 			$where .= ' and typeId = ?';
 			$params[] = $type->getId();
 		}
-		$owns = EntityDao::getInstance('LibraryOwns')->findByCriteria($where, $params, $pageNo, $pageSize, $orderBy);
+		$owns = LibraryOwns::getAllByCriteria($where, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 		return $owns;
 	}
 	/**
@@ -372,7 +369,7 @@ class Product extends BaseEntityAbstract
 	public function addStatic(Library $lib, ProductStaticsType $type, $increaseBy = 1)
 	{
 		if(trim($this->getId()) === '')
-			EntityDao::getInstance(get_class($this))->save($this);
+			$this->save();
 		ProductStatics::create($this, $type, $lib)->add($increaseBy);
 		return $this;
 	}

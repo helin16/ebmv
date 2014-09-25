@@ -269,16 +269,16 @@ class Log extends BaseEntityAbstract
 	{
 		$className = __CLASS__;
 		$log = new $className();
-		$log->setLibrary($lib);
-		$log->setTransId(self::getTransKey());
-		$log->setEntityId($entityId);
-		$log->setEntityName($entityName);
-		$log->setMsg($msg);
-		$log->setType($type);
-		$log->setComments($comments);
-		$log->setFuncName($funcName);
-		EntityDao::getInstance($className)->save($log);
-		return $log->getTransId();
+		$log->setLibrary($lib)
+			->setTransId(self::getTransKey())
+			->setEntityId($entityId)
+			->setEntityName($entityName)
+			->setMsg($msg)
+			->setType($type)
+			->setComments($comments)
+			->setFuncName($funcName)
+			->save();
+		return $log;
 	}
 	/**
 	 * Getting the lastest group of logs
@@ -289,9 +289,9 @@ class Log extends BaseEntityAbstract
 	 * 
 	 * @return multitype:Log
 	 */
-	public static function getLatestLogs($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+	public static function getLatestLogs($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), $activeOnly = true, &$stats = array())
 	{
-		return EntityDao::getInstance(__CLASS__)->findByCriteria('transId = ?', array(self::$_transId), $pageNo, $pageSize, $orderBy);
+		return self::getAllByCriteria('transId = ?', array(self::$_transId), $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 	}
 	/**
 	 * Getting the transid
@@ -319,7 +319,7 @@ class Log extends BaseEntityAbstract
 	 */
 	public static function LogEntity(Library $lib, BaseEntityAbstract $entity, $msg, $type, $comments = '', $funcName = '')
 	{
-		return self::logEntity($lib, $entity->getId(), get_class($entity), $msg, $type, $comments, $funcName);
+		return self::logging($lib, $entity->getId(), get_class($entity), $msg, $type, $comments, $funcName);
 	}
 	/**
 	 * (non-PHPdoc)

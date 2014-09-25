@@ -128,15 +128,14 @@ class ProductStatics extends BaseEntityAbstract
      */
     public static function create(Product $product, ProductStaticsType $type, Library $library)
     {
-    	$class = get_called_class();
-    	$objects = EntityDao::getInstance($class)->findByCriteria('productId = ? and typeId = ? and libraryId = ?', array($product->getId(), $type->getId(), $library->getId()),1, 1);
+    	$objects = self::getAllByCriteria('productId = ? and typeId = ? and libraryId = ?', array($product->getId(), $type->getId(), $library->getId()),true, 1, 1);
     	$obj = (count($objects) > 0 ? $objects[0] : new $class());
     	$obj->setProduct($product)
     		->setType($type)
     		->setLibrary($library);
     	if(trim($obj->getId()) === '')
     		$obj->setValue(0);
-    	return EntityDao::getInstance($class)->save($obj);
+    	return $obj->save();
     }
     /**
      * increasing the value of the statics
@@ -147,8 +146,8 @@ class ProductStatics extends BaseEntityAbstract
      */
     public function add($increase = 1)
     {
-    	$this->setValue($this->getValue() + $increase);
-    	return EntityDao::getInstance(get_class($this))->save($this);
+    	return $this->setValue($this->getValue() + $increase)
+    		->save();
     }
     /**
      * (non-PHPdoc)

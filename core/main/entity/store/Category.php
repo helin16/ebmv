@@ -34,18 +34,30 @@ class Category extends TreeEntityAbstract
      *
      * @param string $Name The name of the role
      *
-     * @return Role
+     * @return Category
      */
     public function setName($Name)
     {
         $this->name = $Name;
         return $this;
     }
+    /**
+     * Getting the products
+     * 
+     * @return multiple:Product
+     */
     public function getProducts()
     {
         $this->loadManyToMany('products');
         return $this->products;
     }
+    /**
+     * setter for products
+     *
+     * @param string $Name The name of the role
+     *
+     * @return Category
+     */
     public function setProducts($products)
     {
         $this->products = $products;

@@ -128,7 +128,7 @@ class Supplier extends BaseEntityAbstract
 	 * @param int   $pageSize    The page size
 	 * @param array $orderBy     The order by array
 	 */
-	public function getProducts(array $excludePids = array(), $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderBy = array())
+	public function getProducts(array $excludePids = array(), $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderBy = array(), $activeOnly = true, &$stats = array())
 	{
 		if(trim( $this->getId()) === '')
 			return array();
@@ -139,7 +139,7 @@ class Supplier extends BaseEntityAbstract
 			$where .= " AND pro.id not in (" . implode(',', array_fill(0, count($excludePids), '?')) . ')';
 			$params = array_merge($params, $excludePids);
 		}
-		return EntityDao::getInstance('Product')->findByCriteria($where, $params, $pageNo, $pageSize, $orderBy);
+		return Product::getAllByCriteria($where, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 	}
 	/**
 	 * (non-PHPdoc)

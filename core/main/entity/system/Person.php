@@ -45,7 +45,6 @@ class Person extends BaseEntityAbstract
         $this->userAccounts = $userAccounts;
         return $this;
     }
-     
     /**
      * getter FirstName
      *
@@ -97,9 +96,9 @@ class Person extends BaseEntityAbstract
     {
         $names = array();
         if(($firstName = trim($this->getFirstName())) !== '')
-        $names[] = $firstName;
+        	$names[] = $firstName;
         if(($lastName = trim($this->getLastName())) !== '')
-        $names[] = $lastName;
+        	$names[] = $lastName;
         return trim(implode(' ', $names));
     }
     /**
@@ -127,6 +126,22 @@ class Person extends BaseEntityAbstract
         DaoMap::createIndex('firstName');
         DaoMap::createIndex('lastName');
         DaoMap::commit();
+    }
+    /**
+     * Updating or creating a person
+     *
+     * @param string $firstName
+     * @param string $lastName
+     * @param Person $person    The existing person record
+     * 
+     * @return Person
+     */
+    public static function createNudpatePerson($firstName, $lastName, Person &$person = null)
+    {
+    	$person = ($person instanceof Person ? $person : new Person());
+    	return $person->setFirstName($firstName)
+    		->setLastName($lastName)
+    		->save();
     }
 }
 
