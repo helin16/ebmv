@@ -19,7 +19,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 		parent::__construct();
 		if(isset($this->Request['id']))
-			$this->_product = BaseServiceAbastract::getInstance('Product')->get($this->Request['id']);
+			$this->_product = Product::get($this->Request['id']);
 	}
 	
 	/**
@@ -92,7 +92,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	}
         	try
         	{
-        		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
+        		ProductShelfItem::borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
         		//increasing statics
         		$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_BORROW_RATE), 1);
         	} 
@@ -100,7 +100,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	{
         		$results['warning'] = 'Failed to borrow this item from supplier';
         	}
-        	BaseServiceAbastract::getInstance('ProductShelfItem')->addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
+        	ProductShelfItem::addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
         	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
         }
         catch(Exception $ex)
@@ -125,7 +125,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	
         	//get the user's actual borrowed count
         	if(!($user = Core::getUser()) instanceof UserAccount)
-        		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_GUEST_ACCOUNT));
+        		Core::setUser(UserAccount::get(UserAccount::ID_GUEST_ACCOUNT));
         	$totalBorrowedNo = intval(Core::getUser()->countBookShelfItem());
         	
         	//increasing statics

@@ -128,6 +128,7 @@ class ProductStatics extends BaseEntityAbstract
      */
     public static function create(Product $product, ProductStaticsType $type, Library $library)
     {
+    	$class = get_called_class();
     	$objects = self::getAllByCriteria('productId = ? and typeId = ? and libraryId = ?', array($product->getId(), $type->getId(), $library->getId()),true, 1, 1);
     	$obj = (count($objects) > 0 ? $objects[0] : new $class());
     	$obj->setProduct($product)
