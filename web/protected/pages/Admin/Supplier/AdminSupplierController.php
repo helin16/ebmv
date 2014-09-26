@@ -141,7 +141,7 @@ class AdminSupplierController extends CrudPageAbstract
     	$result = $errors = $supplierArray = array();
     	try
     	{
-    		Dao::beginTransaction()
+    		Dao::beginTransaction();
     		if(!isset($param->CallbackParameter->itemIds))
     			throw new Exception("System Error: No item ids passed in!");
     		$itemIds = $param->CallbackParameter->itemIds;
@@ -150,7 +150,7 @@ class AdminSupplierController extends CrudPageAbstract
     	}
     	catch(Exception $ex)
     	{
-    		Dao::rollbackTransaction()
+    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage() . $ex->getTraceAsString();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
