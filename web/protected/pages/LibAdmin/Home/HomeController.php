@@ -1,6 +1,6 @@
 <?php
 /**
- * This is the loginpage
+ * This is the Home page for library admin
  * 
  * @package    Web
  * @subpackage Controller

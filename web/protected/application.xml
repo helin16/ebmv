@@ -57,6 +57,9 @@
 			<!-- LibAdminPage:: home -->
 			<url ServiceParameter="LibAdmin.Home.HomeController" pattern="libadmin/" />
 			
+			<!-- LibAdminPage:: home -->
+			<url ServiceParameter="LibAdmin.Products.ListController" pattern="libadmin/items.html" />
+			
 			
 			<!-- *********************************************************************************************** -->
 			<!-- Admin Page                                                                                      -->
