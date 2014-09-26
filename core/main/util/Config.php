@@ -34,19 +34,19 @@ abstract class Config
 	/**
 	 * Getting the value from the config file
 	 * 
-	 * @param string $service The section name that we are trying to load
+	 * @param string $section The section name that we are trying to load
 	 * @param string $name    The item name that we are trying to load
 	 * 
 	 * @return Mixed
 	 * @throws Exception
 	 */
-	public static function get($service, $name)
+	public static function get($section, $name)
 	{
 	    if(self::$_values === null)
     		self::$_values = require_once(trim(self::$_conf_file) === '' ? self::_getConfDir('') : trim(self::$_conf_file));
-		if(isset(self::$_values[$service]) && isset(self::$_values[$service][$name]))
-			return self::$_values[$service][$name];
-		throw new Exception("Service($service)/Name($name) not defined in config.");
+		if(isset(self::$_values[$section]) && isset(self::$_values[$section][$name]))
+			return self::$_values[$section][$name];
+		throw new Exception("Section($section)/Name($name) not defined in config.");
 	}
 	/**
 	 * Getting the path of the config file

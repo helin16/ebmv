@@ -103,7 +103,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
     /**
      * Getting the next position for the new children of the provided parent
      *
-     * @throws ServiceException
+     * @throws EntityException
      * @return int
      */
     public function getNextPosition()
@@ -119,7 +119,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
         $unUsed = array_diff($expectedAccountNos, $usedAccountNos);
         sort($unUsed);
         if (count($unUsed) === 0)
-        	throw new ServiceException("Position over loaded (parentId = " . $this->getId() . ")!");
+        	throw new EntityException("Position over loaded (parentId = " . $this->getId() . ")!");
          
         return $unUsed[0];
     }
