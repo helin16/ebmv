@@ -47,7 +47,7 @@ class AdminLibraryController extends CrudPageAbstract
     private function _getInfoTypes()
     {
         $array = array();
-        foreach(BaseServiceAbastract::getInstance('LibraryInfoType')->findAll() as $type)
+        foreach(LibraryInfoType::getAll() as $type)
         	$array[] = $type->getJson();
         return $array;
     }
@@ -71,13 +71,13 @@ class AdminLibraryController extends CrudPageAbstract
     		$libraryId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
     		if($libraryId === '' || $libraryId === '0')
     		{
-    			$libraries = BaseServiceAbastract::getInstance('Library')->findAll(false, $pageNumber, $pageSize, array());
-    			$result['pagination'] = BaseServiceAbastract::getInstance('Library')->getPageStats();
+    			$stats = array();
+    			$libraries = Library::getAll(false, $pageNumber, $pageSize, array(), $stats);
+    			$result['pagination'] = $stats;
     		}
     		else
     		{
-    			$libraries[] = BaseServiceAbastract::getInstance('Library')->get($libraryId);
-    			$result['pagination'] = BaseServiceAbastract::getInstance('Library')->getPageStats();
+    			$libraries[] = Library::get($libraryId);
     		}
     		$items = array();
     		foreach($libraries as $library)
@@ -103,7 +103,7 @@ class AdminLibraryController extends CrudPageAbstract
     		if(!isset($param->CallbackParameter->id))
     			throw new Exception("System Error: No item id passed in!");
     		
-    		$item = ($item = BaseServiceAbastract::getInstance('Library')->get(trim($param->CallbackParameter->id))) instanceof Library ? $item : new Library();
+    		$item = ($item = Library::get(trim($param->CallbackParameter->id))) instanceof Library ? $item : new Library();
     		$item->setName(trim($param->CallbackParameter->name));
     		try
     		{
@@ -114,19 +114,18 @@ class AdminLibraryController extends CrudPageAbstract
     		{
     			throw new Exception("Connector Script: " . $connector . " does NOT exsit!" . $e->getMessage());
     		}
-    		$item->setConnector($connector);
-    		$item->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on');
-    		BaseServiceAbastract::getInstance('Library')->save($item);
+    		$item->setConnector($connector)
+    			->setActive(strtolower(trim($param->CallbackParameter->active)) === 'on')
+    			->save();
     		foreach($param->CallbackParameter->info as $info)
     		{
-    			$infoItem = (($infoItem = BaseServiceAbastract::getInstance('LibraryInfo')->get(trim($info->id))) instanceof LibraryInfo ? $infoItem : new LibraryInfo());
-    			$infoItem->setType(BaseServiceAbastract::getInstance('LibraryInfoType')->get(trim($info->typeId)));
-    			$infoItem->setValue(trim($info->value));
-    			$infoItem->setLibrary($item);
-    			$infoItem->setActive(trim($info->active) === '1');
-    			BaseServiceAbastract::getInstance('LibraryInfo')->save($infoItem);
+    			$infoItem = (($infoItem = LibraryInfo::get(trim($info->id))) instanceof LibraryInfo ? $infoItem : new LibraryInfo());
+    			$infoItem->setType(LibraryInfoType::get(trim($info->typeId)))
+    				->setValue(trim($info->value))
+    				->setLibrary($item)
+    				->setActive(trim($info->active) === '1')
+    				->save();
     		}
-    		
     		Dao::commitTransaction();
     		$result['items'] = array($item->getJson());
     	}
@@ -146,13 +145,16 @@ class AdminLibraryController extends CrudPageAbstract
     	$result = $errors = array();
     	try
     	{
+    		Dao::beginTransaction();
     		if(!isset($param->CallbackParameter->itemIds))
     			throw new Exception("System Error: No item ids passed in!");
     		$itemIds = $param->CallbackParameter->itemIds;
-    		BaseServiceAbastract::getInstance('Library')->updateByCriteria('active = 0', 'id in (' . implode(', ', array_fill(0, count($itemIds), '?')). ')', $itemIds);
+    		Library::updateByCriteria('active = 0', 'id in (' . implode(', ', array_fill(0, count($itemIds), '?')). ')', $itemIds);
+    		Dao::commitTransaction();
     	}
     	catch(Exception $ex)
     	{
+    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);

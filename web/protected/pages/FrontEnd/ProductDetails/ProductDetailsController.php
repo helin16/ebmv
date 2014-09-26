@@ -71,6 +71,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         {
         	if(!$this->_product->getSupplier() instanceof Supplier)
         		throw new Exception('System Error: no supplier found for this book!');
+        	Dao::beginTransaction();
         	$type = trim($params->CallbackParameter->type);
         	switch($type)
         	{
@@ -93,6 +94,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	try
         	{
         		ProductShelfItem::borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
+        		SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->borrowProduct($this->_product, Core::getUser());
         		//increasing statics
         		$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_BORROW_RATE), 1);
         	} 
@@ -101,10 +103,13 @@ class ProductDetailsController extends FrontEndPageAbstract
         		$results['warning'] = 'Failed to borrow this item from supplier';
         	}
         	ProductShelfItem::addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
+        	SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->addToBookShelfList(Core::getUser(), $this->_product);
         	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
+        	Dao::commitTransaction();
         }
         catch(Exception $ex)
         {
+        	Dao::rollbackTransaction();
         	$errors[] = $ex->getMessage();
         }
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);

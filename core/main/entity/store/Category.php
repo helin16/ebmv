@@ -132,7 +132,7 @@ class Category extends TreeEntityAbstract
 	 * @param Category $category The moving category
 	 * @param Caregory $parent   The target category
 	 *
-	 * @return CategoryService
+	 * @return Category
 	 */
 	public static function moveCategory(Category &$category, Category $parent = null)
 	{

@@ -199,7 +199,7 @@ class ProductShelfItem extends BaseEntityAbstract
      *
      * @param UserAccount $user The owner of the shelfitem
      *
-     * @return ProductShelfItemService
+     * @return bool
      */
     public static function cleanUpShelfItems(UserAccount $user = null)
     {
@@ -207,6 +207,7 @@ class ProductShelfItem extends BaseEntityAbstract
     		$user->deleteInactiveShelfItems();
     	else
     		ProductShelfItem::deleteByCriteria('active = 0');
+    	return true;
     }
     /**
      * Getting the shelf items
@@ -240,12 +241,12 @@ class ProductShelfItem extends BaseEntityAbstract
      * @param Library     $lib
      *
      * @throws Exception
-     * @return ProductShelfItemService
+     * @return bool
      */
     public static function addToShelf(UserAccount $user, Product $product, Library $lib)
     {
     	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $lib);
-    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->addToBookShelfList($user, $product);
+    	return true;
     }
     /**
      * Borrow an item / add to our self
@@ -256,13 +257,12 @@ class ProductShelfItem extends BaseEntityAbstract
      * @param Supplier    $supplier
      *
      * @throws Exception
-     * @return ProductShelfItemService
+     * @return bool
      */
     public static function borrowItem(UserAccount $user, Product $product, Library $lib)
     {
-    	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
-    	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->borrowProduct($product, $user);
     	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_BORROWED, $lib);
+    	return true;
     }
     /**
      * Removing the item from the bookshelf
@@ -272,13 +272,12 @@ class ProductShelfItem extends BaseEntityAbstract
      * @param Library     $lib
      *
      * @throws Exception
-     * @return ProductShelfItemService
+     * @return bool
      */
     public static function removeItem(UserAccount $user, Product $product, Library $lib)
     {
-    	$supplier = $product->getSupplier();
     	ProductShelfItem::updateByCriteria('`active` = 0', '`productId` = ? and `ownerId` = ?', array($product->getId(), $user->getId()));
-    	SupplierConnectorAbstract::getInstance($supplier, $lib)->removeBookShelfList($user, $product);
+    	return true;
     }
     /**
      * returnItem
@@ -288,14 +287,12 @@ class ProductShelfItem extends BaseEntityAbstract
      * @param Library     $lib
      *
      * @throws Exception
-     * @return ProductShelfItemService
+     * @return bool
      */
     public static function returnItem(UserAccount $user, Product $product, Library $lib)
     {
-    	$supplier = $product->getSupplier();
     	ProductShelfItem::updateByCriteria('`status` = ?', '`productId` = ? and `ownerId` = ?', array(ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $product->getId(), $user->getId()));
-    	SupplierConnectorAbstract::getInstance($supplier, $lib)->returnProduct($product, $user);
-    	SupplierConnectorAbstract::getInstance($supplier, $lib)->removeBookShelfList($user, $product);
+    	return true;
     }
     /**
      * synchronize shelf item with local database
@@ -305,7 +302,7 @@ class ProductShelfItem extends BaseEntityAbstract
      * @param string      $borrowTime
      * @param int         $status
      *
-     * @return SupplierConnectorAbstract
+     * @return bool
      */
     public static function syncShelfItem(UserAccount $user, Product $product, $borrowTime, $status, Library $lib)
     {
@@ -330,5 +327,6 @@ class ProductShelfItem extends BaseEntityAbstract
     	}
     	else
     		self::updateByCriteria('`status` = ?', $where, array_merge(array($status), $params));
+    	return true;
     }
 }

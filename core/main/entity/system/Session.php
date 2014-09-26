@@ -119,19 +119,19 @@ class Session extends BaseEntityAbstract
 	 *
 	 * @param string $sessionId The sesison ID
 	 *
-	 * @return SessionService
+	 * @return bool
 	 */
 	public static function delete($sessionId)
 	{
 		self::deleteByCriteria('`key` = ?', array($sessionId));
-		return $this;
+		return true;
 	}
 	/**
 	 * delete all sessions that has been timed out
 	 *
 	 * @param int $maxTimeOut The number of seconds for the session's life time
 	 *
-	 * @return SessionService
+	 * @return bool
 	 */
 	public static function cleanUp($maxTimeOut)
 	{

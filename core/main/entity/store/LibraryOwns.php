@@ -185,7 +185,7 @@ class LibraryOwns extends BaseEntityAbstract
      * @param int             $total
      * @param LibraryOwnsType $type
      *
-     * @return LibraryOwnsService
+     * @return bool
      */
     public static function updateLibOwns(Product $product, Library $lib, $avail, $total, LibraryOwnsType $type = null)
     {
@@ -197,5 +197,6 @@ class LibraryOwns extends BaseEntityAbstract
     		$params[] = $type->getId();
     	}
     	self::updateByCriteria('avail = ?, total = ?', $where, $params);
+    	return true;
     }
 }

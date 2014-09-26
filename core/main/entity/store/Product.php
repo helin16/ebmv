@@ -143,7 +143,7 @@ class Product extends BaseEntityAbstract
 	 *
 	 * @param Category $category The category
 	 *
-	 * @return ProductService
+	 * @return Product
 	 */
 	public function addCategory(Category $category)
 	{
@@ -155,7 +155,7 @@ class Product extends BaseEntityAbstract
 	 *
 	 * @param Category $category The category
 	 *
-	 * @return ProductService
+	 * @return Product
 	 */
 	public function removeCategory(Category $category)
 	{

@@ -10,7 +10,7 @@ class HomeController extends FrontEndPageAbstract
 {
 	private function _getLanguage($params)
 	{
-		if(!isset($params->CallbackParameter->languageId) || !($language = BaseServiceAbastract::getInstance('Language')->get(trim($params->CallbackParameter->languageId))) instanceof Language)
+		if(!isset($params->CallbackParameter->languageId) || !($language = Language::get(trim($params->CallbackParameter->languageId))) instanceof Language)
 			return null;
 		return $language;
 	}

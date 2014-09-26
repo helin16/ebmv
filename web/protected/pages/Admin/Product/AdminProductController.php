@@ -54,11 +54,12 @@ class AdminProductController extends CrudPageAbstract
     		}
 	    	$productId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
 	    	
+	    	$stats = array();
 	    	if($productId === '' || $productId === '0')
-	    		$productArray = BaseServiceAbastract::getInstance('Product')->findAll(false, $pageNumber, $pageSize, array());
+	    		$productArray = Product::getAll(false, $pageNumber, $pageSize, array(), $stats);
 	    	else
-	    		$productArray[] = BaseServiceAbastract::getInstance('Product')->get($productId);
-    		$result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
+	    		$productArray[] = Product::get($productId);
+    		$result['pagination'] = $stats;
 	    	foreach($productArray as $product)
 	    		$result['items'][] = $product->getJson();
     	}

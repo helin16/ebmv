@@ -9,26 +9,6 @@ abstract class FactoryAbastract
 {
 	// Define service holders
 	private static $_elements = array();
-	/**
-	 * Getting the singleton service object
-	 * 
-	 * @param string $entityClassName The entity class name of the service
-	 * @throws HydraDaoException
-	 * 
-	 * @return BaseServiceAbastract
-	 */
-	public static function service($entityClassName)
-	{
-		$entityClassName = trim($entityClassName).'Service';
-		if(!isset(self::$_elements[$entityClassName]))
-		{
-			if(!class_exists($entityClassName))
-				throw new HydraDaoException("Invalid class : ".$entityClassName);
-			
-			self::$_elements[$entityClassName] = new $entityClassName();
-		}
-		return self::$_elements[$entityClassName];
-	}
     /**
      * Getting the singleton dao object
      * 
