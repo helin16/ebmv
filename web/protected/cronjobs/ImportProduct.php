@@ -141,7 +141,7 @@ class ImportProduct
 			throw new Exception("System Error: lib has to be a array!");
 		if($libCodes === null || count($libCodes) === 0)
 			return Library::getAll();
-		return Library::getLibsFromCode($libCodes);
+		return Library::getLibsFromCodes($libCodes);
 	}
 	/**
 	 * Loging the messages

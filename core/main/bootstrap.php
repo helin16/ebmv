@@ -26,7 +26,6 @@ abstract class SystemCoreAbstract
 			$base . '/entity/store/',
 			$base . '/entity/system/',
 			$base . '/exception/',
-			$base . '/service/',
 			$base . '/util/',
 			$base . '/util/Connectors',
 			$base . '/util/Connectors/comms/',
