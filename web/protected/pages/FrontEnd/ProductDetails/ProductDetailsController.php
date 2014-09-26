@@ -93,8 +93,8 @@ class ProductDetailsController extends FrontEndPageAbstract
         	}
         	try
         	{
-        		ProductShelfItem::borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
         		SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->borrowProduct($this->_product, Core::getUser());
+        		ProductShelfItem::borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
         		//increasing statics
         		$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_BORROW_RATE), 1);
         	} 
@@ -102,8 +102,8 @@ class ProductDetailsController extends FrontEndPageAbstract
         	{
         		$results['warning'] = 'Failed to borrow this item from supplier';
         	}
-        	ProductShelfItem::addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
         	SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->addToBookShelfList(Core::getUser(), $this->_product);
+        	ProductShelfItem::addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
         	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
         	Dao::commitTransaction();
         }
