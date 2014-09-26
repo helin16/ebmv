@@ -184,7 +184,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($supplier->getId() !== $this->_supplier->getId())
 			throw new SupplierConnectorException('System Error: The wanted book/magazine/newspaper does NOT belong to this supplier!');
 		
-		$hasBorrowed = (ProductShelfItem::countByCriteria('productId = ? and ownerId = ? and status = ?', array($product->getId(), $user->getId(), ProductShelfItem::ITEM_STATUS_BORROWED)) > 0);
+		$hasBorrowed = (ProductShelfItem::countByCriteria('active = 1 and productId = ? and ownerId = ? and status = ?', array($product->getId(), $user->getId(), ProductShelfItem::ITEM_STATUS_BORROWED)) > 0);
 		if($hasBorrowed === true)
 		{
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'This product is already borrowed: pid=' . $product->getId() .', uid=' . $user->getId(), __FUNCTION__);
