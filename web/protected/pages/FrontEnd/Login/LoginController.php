@@ -21,8 +21,10 @@ class LoginController extends FrontEndPageAbstract
             $authManager=$this->getApplication()->getModule('auth');
             if(!$authManager->login($username, $password))
             	throw new Exception('Invalid username or password!');
-            if(Core::getRole() instanceof Role && trim(Core::getRole()->getId()) === trim(role::ID_ADMIN))
-            	$results['url'] = '/admin/';
+            if(Core::getRole() instanceof Role && in_array(trim(Core::getRole()->getId()), array(trim(role::ID_ADMIN), trim(Role::ID_LIB_ADMIN))) 
+            	&& isset($_REQUEST['return']) && ($returnUrl = trim($_REQUEST['return'])) !== '' 
+           	)
+            	$results['url'] = $returnUrl;
             else
             	$results['url'] = '/user.html';
         }

@@ -47,6 +47,21 @@
 			<!-- FrontEnd:: product borrow:reauth page -->
 			<url ServiceId="reauth" ServiceParameter="" pattern="reauth.html" />
 			
+			<!-- asset service -->
+			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
+			
+			<!-- *********************************************************************************************** -->
+			<!-- Library Admin Page                                                                              -->
+			<!-- *********************************************************************************************** -->
+			
+			<!-- LibAdminPage:: home -->
+			<url ServiceParameter="LibAdmin.Home.HomeController" pattern="libadmin/" />
+			
+			
+			<!-- *********************************************************************************************** -->
+			<!-- Admin Page                                                                                      -->
+			<!-- *********************************************************************************************** -->
+			
 			<!-- AdminPage:: home -->
 			<url ServiceParameter="Admin.Home.HomeController" pattern="admin/" />
 			
@@ -68,9 +83,6 @@
 			
 			<!-- AdminPage:: test sip -->
 			<url ServiceParameter="Admin.SIPTester.SIPTesterController" pattern="admin/testsip.html" />
-			
-			<!-- asset service -->
-			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
 		</module>
 
 		<module id="globalization" class="TGlobalization">

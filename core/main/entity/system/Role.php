@@ -21,6 +21,12 @@ class Role extends BaseEntityAbstract
      */
     const ID_READER = 2;
     /**
+     * ID the library admin role
+     * 
+     * @var int
+     */
+    const ID_LIB_ADMIN = 3;
+    /**
      * ID the sysadmin role
      * 
      * @var int
