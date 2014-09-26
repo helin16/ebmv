@@ -128,15 +128,6 @@ class Library extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getting the library connector script
-	 * 
-	 * @return LibraryConn
-	 */
-	public function getConnectorScript()
-	{
-		return LibraryConnectorAbstract::getScript($this);
-	}
-	/**
 	 * Getting the info
 	 *
 	 * @param string $typeCode  The code of the LibraryInfoType

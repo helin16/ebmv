@@ -92,11 +92,11 @@ class WebUserManager extends TModule implements IUserManager
 		if (! Core::getUser () instanceof UserAccount)
 			Core::setUser ( UserAccount::get ( UserAccount::ID_SYSTEM_ACCOUNT ) );
 		// check whether the library has the user or not
-		if (! $lib->getConnectorScript ()->chkUser ( $libCardNo, $password ))
+		if (! LibraryConnectorAbstract::getScript ($lib)->chkUser ( $libCardNo, $password ))
 			throw new CoreException ( 'Invalid login please contact your library!' );
 			
 		// get the information from the library system
-		$userInfo = $lib->getConnectorScript ()->getUserInfo ( $libCardNo, $password );
+		$userInfo = LibraryConnectorAbstract::getScript ($lib)->getUserInfo ( $libCardNo, $password );
 	
 		// check whether our local db has the record already
 		if (($userAccount = UserAccount::getUserByUsername ( $libCardNo, $lib )) instanceof UserAccount) {
