@@ -239,7 +239,7 @@ class Library extends BaseEntityAbstract
 	 *
 	 * @return Library|null
 	 */
-	public function getLibFromCode($code)
+	public static function getLibFromCode($code)
 	{
 		$result = self::getLibsFromCode($code, true, 1, 1);
 		return (count($result) === 0 ? null : $result[0]);

@@ -115,7 +115,7 @@ class WebAuth
 	 */
 	private function _getUser($libCode, $username, $password)
 	{
-		if (!($lib = Library::getLibsFromCode($libCode)) instanceof Library)
+		if (!($lib = Library::getLibFromCode($libCode)) instanceof Library)
 			throw new Exception('No Such a Site/Library!', self::RESULT_CODE_FAIL);
 		//getting the user
 		try
