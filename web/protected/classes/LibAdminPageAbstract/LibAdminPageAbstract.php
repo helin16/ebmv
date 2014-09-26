@@ -23,7 +23,7 @@ abstract class LibAdminPageAbstract extends FrontEndPageAbstract
 	    parent::__construct();
 	    if(!Core::getUser() instanceof UserAccount)
 	        $this->Response->redirect('/login.html?return= ' . $_SERVER['REQUEST_URI']);
-	    if(!Core::getRole() instanceof Role || trim(Core::getRole()->getId()) != Role::ID_LIB_ADMIN)
+	    if(!Core::getRole() instanceof Role || !in_array(trim(Core::getRole()->getId()), array(trim(role::ID_ADMIN), trim(Role::ID_LIB_ADMIN))))
 	    {
 	    	echo FrontEndPageAbstract::show404Page("404 Not Found", "The page that you have requested could not be found.");
 	    	exit();
@@ -46,7 +46,7 @@ abstract class LibAdminPageAbstract extends FrontEndPageAbstract
 	public function onPreInit($param)
 	{
 	    parent::onPreInit($param);
-	    $this->getPage()->setMasterClass("Application.layout.Admin.PageLayout");
+	    $this->getPage()->setMasterClass("Application.layout.LibAdmin.PageLayout");
 	}
 	
 	public function onInit($params)

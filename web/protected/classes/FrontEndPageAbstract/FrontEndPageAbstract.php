@@ -96,13 +96,15 @@ abstract class FrontEndPageAbstract extends TPage
 	public function onPreInit($param)
 	{
 	    parent::onPreInit($param);
-	    $this->getClientScript()->registerPradoScript('ajax');
+	    $clientScript = $this->getPage()->getCLientScript();
+	    
+	    $clientScript->registerPradoScript('ajax');
 	    $this->_loadPageJsClass();
         $cScripts = self::getLastestJS(get_class($this));
 	    if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
-	        $this->getPage()->getClientScript()->registerScriptFile('pageJs', $this->publishAsset($lastestJs));
+	        $clientScript->registerScriptFile('pageJs', $this->publishAsset($lastestJs));
 	    if (isset($cScripts['css']) && ($lastestCss = trim($cScripts['css'])) !== '')
-	        $this->getPage()->getClientScript()->registerStyleSheetFile('pageCss', $this->publishAsset($lastestCss));
+	        $clientScript->registerStyleSheetFile('pageCss', $this->publishAsset($lastestCss));
 	}
 	/**
 	 * loading the page js class files
