@@ -244,7 +244,7 @@ class ProductShelfItem extends BaseEntityAbstract
      */
     public static function addToShelf(UserAccount $user, Product $product, Library $lib)
     {
-    	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_NOT_BORROWED);
+    	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $lib);
     	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->addToBookShelfList($user, $product);
     }
     /**
@@ -258,11 +258,11 @@ class ProductShelfItem extends BaseEntityAbstract
      * @throws Exception
      * @return ProductShelfItemService
      */
-    public static function borrowItem(UserAccount $user, Product $product, Library $lib = null)
+    public static function borrowItem(UserAccount $user, Product $product, Library $lib)
     {
     	$lib = ($lib instanceof Library ? $lib : Core::getLibrary());
     	SupplierConnectorAbstract::getInstance($product->getSupplier(), $lib)->borrowProduct($product, $user);
-    	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_BORROWED);
+    	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_BORROWED, $lib);
     }
     /**
      * Removing the item from the bookshelf

@@ -124,7 +124,7 @@ class Category extends TreeEntityAbstract
 		$isNew = true;
 		$category = new Category();
 		$category->setName($categoryName);
-		return $this->moveCategory($category, $parent);
+		return self::moveCategory($category, $parent);
 	}
 	/**
 	 * move the category to another
@@ -134,7 +134,7 @@ class Category extends TreeEntityAbstract
 	 *
 	 * @return CategoryService
 	 */
-	public function moveCategory(Category &$category, Category $parent = null)
+	public static function moveCategory(Category &$category, Category $parent = null)
 	{
 		if(($pos = trim($category->getPosition())) === '' || $pos === '1')
 			$category->save();
@@ -166,7 +166,7 @@ class Category extends TreeEntityAbstract
 			);
 		}
 
-		$category = $this->get($category->getId());
+		$category = self::get($category->getId());
 		$category->setPosition($newPos)
 			->setParent($parent)
 			->setRoot($parent instanceof Category ? $parent->getRoot() : $category)

@@ -160,10 +160,12 @@ class ProductAttribute extends BaseEntityAbstract
      */
     public static function removeAttrsForProduct(Product $product, array $typeCodes)
     {
-    	$types = ProductAttribute::getTypesByCodes($typeCodes);
+    	$types = ProductAttributeType::getTypesByCodes($typeCodes);
     	if(count($types) === 0)
     		return;
-    	$typeIds =  array_map(create_function('$a', 'return $a->getId();'), $types);
+    	$typeIds = array();
+    	foreach($types as $type)
+    		$typeIds[] = $type->getId();
     	self::updateByCriteria('active = 0', "productId = ? AND typeId in (" . implode(', ', array_fill(0, count($typeIds), '?')) . ")", array_merge(array($product->getId()), $typeIds));
     }
 }

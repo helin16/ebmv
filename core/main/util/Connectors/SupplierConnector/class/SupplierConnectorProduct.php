@@ -82,7 +82,7 @@ class SupplierConnectorProduct
 	private static function _getCopies(SimpleXMLElement $productinfo)
 	{
 		$copies = array();
-		foreach(BaseServiceAbastract::getInstance('LibraryOwnsType')->findAll() as $type)
+		foreach(LibraryOwnsType::getAll() as $type)
 		{
 			$copyStats = array('avail' => 0,  'total' => 0);
 			$code = trim($type->getCode());

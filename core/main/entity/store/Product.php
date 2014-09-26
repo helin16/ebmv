@@ -147,7 +147,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public function addCategory(Category $category)
 	{
-		EntityDao::getInstance('Product')->saveManyToManyJoin($category, $this);
+		self::saveManyToManyJoin($category, $this);
 		return $this;
 	}
 	/**
@@ -159,7 +159,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public function removeCategory(Category $category)
 	{
-		EntityDao::getInstance('Product')->deleteManyToManyJoin($category, $this);
+		self::deleteManyToManyJoin($category, $this);
 		return $this;
 	}
 	/**
@@ -248,7 +248,7 @@ class Product extends BaseEntityAbstract
 		
 		foreach($languages as $lang)
 		{
-			EntityDao::getInstance('Product')->replaceInto('language_product', array('languageId', 'productId', 'createdById'), array('?', $this->getId(), Core::getUser()->getId()), array($lang->getId()));
+			Product::replaceInto('language_product', array('languageId', 'productId', 'createdById'), array('?', $this->getId(), Core::getUser()->getId()), array($lang->getId()));
 		}
 		return $this;
 	}
@@ -699,7 +699,7 @@ class Product extends BaseEntityAbstract
 		{
 			if(!$category instanceof Category)
 				continue;
-			self::addCategory($product, $category);
+			$product->addCategory($category);
 		}
 		return $product;
 	}

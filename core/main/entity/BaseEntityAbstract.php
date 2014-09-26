@@ -488,6 +488,20 @@ abstract class BaseEntityAbstract
     	return FactoryAbastract::dao(get_called_class())->countByCriteria($criteria, $params);
     }
     /**
+     * replace into
+     * 
+     * @param string $table   The table name
+     * @param array  $columns The name of the columns
+     * @param array  $values  The values that will match agains the column names
+     * @param array  $params  The params
+     * 
+     * @return PDOStatement
+     */
+    public function replaceInto($table, $columns, $values, $params = array())
+    {
+        return FactoryAbastract::dao(get_called_class())->replaceInto($table, $columns, $values, $params);
+    }
+    /**
      * Getting the DaoQuery
      * 
      * @return DaoQuery

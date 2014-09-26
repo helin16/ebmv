@@ -108,4 +108,18 @@ class Language extends BaseEntityAbstract
         DaoMap::createIndex('name');
         DaoMap::commit();
     }
+    /**
+     * Getting the language by code
+     *
+     * @param array $codes The codes we are searching on
+     *
+     * @return multiple:Language
+     */
+    public static function getLangsByCodes(array $codes, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+    {
+    	if(count($codes) === 0)
+    		return array();
+    	self::getQuery()->eagerLoad('Language.codes', DaoQuery::DEFAULT_JOIN_TYPE, 'lcode');
+    	return self::getAllByCriteria('lcode.code in (' . implode(', ', array_fill(0, count($codes), '?')) . ')', $codes, $searchActiveOnly, $pageNo, $pageSize);
+    }
 }

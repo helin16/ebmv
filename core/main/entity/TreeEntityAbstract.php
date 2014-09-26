@@ -129,14 +129,14 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
      */
     public function postSave()
     {
-        $class = get_class($this);
+    	$class = get_class($this);
         if(!$this->getRoot() instanceof $class)
         {
             $fakeParent = new $class();
             $fakeParent->setProxyMode(true);
             $fakeParent->setId($this->getId());
             $this->setRoot($fakeParent);
-            EntityDao::getInstance($class)->save($this);
+            Dao::save($this);
         }
     }
     /**

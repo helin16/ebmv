@@ -108,7 +108,7 @@ class SupplierConnectorAbstract
 	{
 		$defaultLangIds = explode(',', $this->_supplier->getInfo('default_lang_id'));
 		$defaultTypeIds = explode(',', $this->_supplier->getInfo('default_product_type_id'));
-		return array(BaseServiceAbastract::getInstance('Language')->get($defaultLangIds[0]), BaseServiceAbastract::getInstance('ProductType')->get($defaultTypeIds[0]));
+		return array(Language::get($defaultLangIds[0]), ProductType::get($defaultTypeIds[0]));
 	}
 	/**
 	 * @return multitype:ProductType
@@ -118,7 +118,7 @@ class SupplierConnectorAbstract
 		$importTypeIds = array_filter(explode(',', $this->_supplier->getInfo('stype_ids')));
 		if(count($importTypeIds) === 0)
 			return array();
-		return BaseServiceAbastract::getInstance('ProductType')->findByCriteria('id in (' . implode(', ', $importTypeIds) . ')', array());
+		return ProductType::getAllByCriteria('id in (' . implode(', ', $importTypeIds) . ')', array());
 	}
 	/**
 	 * resetting the imported product ids
@@ -151,8 +151,8 @@ class SupplierConnectorAbstract
 		$unImportedProducts = $this->_supplier->getProducts($this->_importedProductIds);
 		foreach($unImportedProducts as $product)
 		{
-			$product->setActive(false);
-			BaseServiceAbastract::getInstance('Product')->save($product);
+			$product->setActive(false)
+				->save();
 		}
 		if($resetImportedPids === true)
 			$this->resetImportedProductIds();
@@ -213,11 +213,11 @@ class SupplierConnectorAbstract
 		{
 			$infoArray = $productInfo->getArray();
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got product info:' . print_r($infoArray, true) , __FUNCTION__);
-			if(count($langs = BaseServiceAbastract::getInstance('Language')->getLangsByCodes($infoArray['languageCodes'])) === 0)
+			if(count($langs = Language::getLangsByCodes($infoArray['languageCodes'])) === 0)
 				throw new SupplierConnectorException("Invalid lanuage codes: " . implode(', ', $infoArray['languageCodes']));
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got languges' , __FUNCTION__);
 			
-			if(!($type = BaseServiceAbastract::getInstance('ProductType')->getByName($infoArray['productTypeName'])) instanceof ProductType)
+			if(!($type = ProductType::getByName($infoArray['productTypeName'])) instanceof ProductType)
 				throw new SupplierConnectorException("Invalid ProductType: " . $infoArray['productTypeName']);
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got product type (ID=' . $type->getId() . ')' , __FUNCTION__);
 			
@@ -234,7 +234,7 @@ class SupplierConnectorAbstract
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got (' . count($imgs) . ') images.' , __FUNCTION__);
 			
 			//updating the product
-			if(($product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0], $this->_supplier)) instanceof Product)
+			if(($product = Product::findProductWithISBNnCno($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0], $this->_supplier)) instanceof Product)
 			{
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updating product:' , __FUNCTION__);
 				//remove all categoies
@@ -243,32 +243,32 @@ class SupplierConnectorAbstract
 				
 				//delete the thumb
 				if(!($thumbs = explode(',', $product->getAttribute('image_thumb'))) !== false)
-					BaseServiceAbastract::getInstance('Asset')->removeAssets($thumbs);
+					Asset::removeAssets($thumbs);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed asset file for thumb_images:' , __FUNCTION__);
 				
 				//delete the img
 				if(!($imgs = explode(',', $product->getAttribute('image'))) !== false)
-					BaseServiceAbastract::getInstance('Asset')->removeAssets($imgs);
+					Asset::removeAssets($imgs);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed asset file for images:' , __FUNCTION__);
 				
 				//deleting the thumb and image for the product
-				BaseServiceAbastract::getInstance('ProductAttribute')->removeAttrsForProduct($product, array('image_thumb', 'image'));
+				ProductAttribute::removeAttrsForProduct($product, array('image_thumb', 'image'));
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed images and thumb images from DB' , __FUNCTION__);
 				
-				$product = BaseServiceAbastract::getInstance('Product')->updateProduct($product, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']); 
+				$product = Product::updateProduct($product, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']); 
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::Updated product(ID=' . $product->getId() . ')' , __FUNCTION__);
 			}
 			//creating new product
 			else
 			{
-				$product = BaseServiceAbastract::getInstance('Product')->createProduct($infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
+				$product = Product::createProduct($infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::Created product(ID=' . $product->getId() . ')' , __FUNCTION__);
 			}
 			
 			//added the library
 			foreach($infoArray['copies'] as $typeId => $info)
 			{
-				$product->updateLibrary($this->_lib, BaseServiceAbastract::getInstance('LibraryOwnsType')->get($typeId), $info['avail'], $info['total']);
+				$product->updateLibrary($this->_lib, LibraryOwnsType::get($typeId), $info['avail'], $info['total']);
 			}
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updated library(PID=' . $product->getId() . ', LibID = ' . $this->_lib->getId() . '): ' . print_r($infoArray['copies'], true) , __FUNCTION__);
 			
@@ -306,7 +306,7 @@ class SupplierConnectorAbstract
 			$cateogories = array();
 			foreach($categoryNames as $index => $name)
 			{
-				$cateogories[$index] = BaseServiceAbastract::getInstance('Category')->updateCategory($name, (isset($cateogories[$index - 1]) && $cateogories[$index - 1] instanceof Category) ? $cateogories[$index - 1] : null);
+				$cateogories[$index] = Category::updateCategory($name, (isset($cateogories[$index - 1]) && $cateogories[$index - 1] instanceof Category) ? $cateogories[$index - 1] : null);
 			}
 			if($transStarted === false)
 				Dao::commitTransaction();
@@ -355,7 +355,7 @@ class SupplierConnectorAbstract
 			}
 			catch(Exception $e) {return null;}
 			
-			$assetId = BaseServiceAbastract::getInstance('Asset')->setRootPath($tmpDir)->registerAsset(end($paths), $tmpFile);
+			$assetId = Asset::registerAsset(end($paths), $tmpFile, $tmpDir);
 			if($transStarted === false)
 				Dao::commitTransaction();
 			return $assetId;
