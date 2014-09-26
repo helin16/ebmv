@@ -50,7 +50,7 @@ class WebUserManager extends TModule implements IUserManager
 	{
 		if(!Core::getUser() instanceof UserAccount)
 		{
-			if(!($userAccount = UserAccount::login(Core::getLibrary(), $username, $password)) instanceof UserAccount)
+			if(!($userAccount = $this->login(Core::getLibrary(), $username, $password)) instanceof UserAccount)
 				return false;
 		}
 		return true;
@@ -78,6 +78,43 @@ class WebUserManager extends TModule implements IUserManager
 		// TODO: do nothing at this moment,
 		//since we don't support cookie-based auth
 		return null;
+	}
+	/**
+	 * login for the library reader
+	 *
+	 * @param Library $lib
+	 * @param unknown $username
+	 * @param unknown $password
+	 */
+	public function login(Library $lib, $libCardNo, $password)
+	{
+	
+		if (! Core::getUser () instanceof UserAccount)
+			Core::setUser ( UserAccount::get ( UserAccount::ID_SYSTEM_ACCOUNT ) );
+		// check whether the library has the user or not
+		if (! $lib->getConnectorScript ()->chkUser ( $libCardNo, $password ))
+			throw new CoreException ( 'Invalid login please contact your library!' );
+			
+		// get the information from the library system
+		$userInfo = $lib->getConnectorScript ()->getUserInfo ( $libCardNo, $password );
+	
+		// check whether our local db has the record already
+		if (($userAccount = UserAccount::getUserByUsername ( $libCardNo, $lib )) instanceof UserAccount) {
+			$person = $userAccount->getPerson();
+			$userAccount = UserAccount::updateUser ( $userAccount, $lib, $userInfo->getUsername (), $userInfo->getPassword (), null, Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName(), $person ) );
+		} else 		// we need to create a user account from blank
+		{
+			$userAccount = UserAccount::createUser ( $lib, $userInfo->getUsername (), $userInfo->getPassword (), Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName() ) );
+		}
+	
+		$role = null;
+		if (! Core::getRole () instanceof Role)
+		{
+			if (count ( $roles = $userAccount->getRoles () ) > 0)
+				$role = $roles [0];
+		}
+		Core::setUser($userAccount, $role);
+		return $userAccount;
 	}
 }
 ?>

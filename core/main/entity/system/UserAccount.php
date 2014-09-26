@@ -257,7 +257,7 @@ class UserAccount extends BaseEntityAbstract
      * @throws Exception
      * @return Ambigous <BaseEntityAbstract>|NULL
      */
-    public function getUserByUsername($username, Library $library)
+    public static function getUserByUsername($username, Library $library)
     {
     	$query = self::getQuery();
     	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
@@ -280,7 +280,7 @@ class UserAccount extends BaseEntityAbstract
      *
      * @return UserAccount
      */
-    public function createUser(Library $lib, $username, $password, Role $role, Person $person)
+    public static function createUser(Library $lib, $username, $password, Role $role, Person $person)
     {
     	if($this->getUserByUsername($username, $lib) instanceof UserAccount)
     		throw new EntityException('System Error: trying to create a username with the same id:' . $username . '!');
@@ -304,7 +304,7 @@ class UserAccount extends BaseEntityAbstract
      *
      * @return Ambigous <BaseEntity, BaseEntityAbstract>
      */
-    public function updateUser(UserAccount &$userAccount, Library $lib, $username, $password, array $allRoles = null, Person $newPerson = null)
+    public static function updateUser(UserAccount &$userAccount, Library $lib, $username, $password, array $allRoles = null, Person $newPerson = null)
     {
     	$person = $userAccount->getPerson();
     	//user wants to update the person
@@ -330,44 +330,6 @@ class UserAccount extends BaseEntityAbstract
     		}
     	}
     	return ($userAccount = self::get($userAccount->getId())); //refersh the object
-    }
-    /**
-     * login for the library reader
-     *
-     * @param Library $lib
-     * @param unknown $username
-     * @param unknown $password
-     */
-    public static function login(Library $lib, $libCardNo, $password)
-    {
-    
-    	if (! Core::getUser () instanceof UserAccount)
-			Core::setUser ( self::get ( UserAccount::ID_SYSTEM_ACCOUNT ) );
-			
-			// check whether the library has the user or not
-		if (! $lib->getConnectorScript ()->chkUser ( $libCardNo, $password ))
-			throw new CoreException ( 'Invalid login please contact your library!' );
-			
-			// get the information from the library system
-		$userInfo = $lib->getConnectorScript ()->getUserInfo ( $libCardNo, $password );
-		
-		// check whether our local db has the record already
-		if (($userAccount = self::getUserByUsername ( $libCardNo, $lib )) instanceof UserAccount) {
-			$person = $userAccount->getPerson();
-			$userAccount = self::updateUser ( $userAccount, $lib, $userInfo->getUsername (), $userInfo->getPassword (), null, Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName(), $person ) );
-		} else 		// we need to create a user account from blank
-		{
-			$userAccount = self::createUser ( $lib, $userInfo->getUsername (), $userInfo->getPassword (), Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName() ) );
-		}
-		
-		$role = null;
-		if (! Core::getRole () instanceof Role) 
-		{
-			if (count ( $roles = $userAccount->getRoles () ) > 0)
-				$role = $roles [0];
-		}
-		Core::setUser($userAccount, $role);
-		return $userAccount;
     }
 }
 
