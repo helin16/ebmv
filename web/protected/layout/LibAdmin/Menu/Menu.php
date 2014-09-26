@@ -24,7 +24,6 @@ class Menu extends TTemplateControl
 		$array = array(
 				array('name' => 'Home', 'code' => 'home', 'href' => '/libadmin/')
 				,array('name' => 'Products', 'code' => 'products', 'href' => '/libadmin/product')
-				,array('name' => ' Logout ', 'code' => 'logout ', 'href' => '/logout.html?url=/libadmin/')
 			);
 		return $array;
 	}

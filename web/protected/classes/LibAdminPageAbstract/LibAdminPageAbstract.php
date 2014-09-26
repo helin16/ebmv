@@ -14,7 +14,7 @@ abstract class LibAdminPageAbstract extends FrontEndPageAbstract
      * 
      * @var string
      */
-	public $menuItemCode;
+	public $menuItemCode = 'home';
 	/**
 	 * constructor
 	 */
