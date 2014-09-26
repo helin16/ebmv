@@ -1,17 +1,15 @@
 <com:TContent ID="MainContent">
 <div class="pagewrapper libadminpage homepage">
-	<div class="jumbotron">
-		<h1>Navbar example</h1>
-		<p>This example is a quick exercise to illustrate how the
-			default, static and fixed to top navbar work. It includes the
-			responsive CSS and HTML, so it also adapts to your viewport and
-			device.</p>
-		<p>To see the difference between static and fixed top navbars,
-			just scroll.</p>
-		<p>
-			<a role="button" href="../../components/#navbar"
-				class="btn btn-lg btn-primary">View navbar docs >></a>
-		</p>
+	<div class="jumbotron" style="padding: 20px">
+		<strong>Welcome to the library admin dashboard, <%= Core::getUser()->getPerson() %>,</strong><br />
+		<small>
+			This page will give you an over all view of your libary, as well as some functions to manage your library. Here you can :<br />
+			<ul>
+				<li><a href="/libadmin/items.html"><strong>Manage your books/magzines/newspapers</strong></a></li>
+				<li><a href="/libadmin/items.html"><strong>Order new books/magzines/newspapers</strong></a></li>
+				<li><a href="/libadmin/statics.html"><strong>View the statics</strong></a></li>
+			</ul>
+		</small>
 	</div>
 </div>
 </com:TContent>

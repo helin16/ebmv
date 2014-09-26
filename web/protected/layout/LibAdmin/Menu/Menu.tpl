@@ -14,6 +14,7 @@
         <%=$this->getMenu() %>
       </ul>
       <ul class="nav navbar-nav navbar-right">
+         <li><a href="/logout.html?url=/libadmin/me.html">Welcome, <%= Core::getUser()->getPerson() %></a></li>
          <li><a href="/logout.html?url=/libadmin/">Logout</a></li>
       </ul>
     </div><!--/.nav-collapse -->
