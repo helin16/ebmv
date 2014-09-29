@@ -26,10 +26,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onComplete': function (sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					if(!tmp.result.items)
+					if(!tmp.result.item)
 						return;
+					tmp.me.order.items.push(tmp.result.item);
+					tmp.me._displayOrderSummary(tmp.me.order);
 				} catch (e) {
-					alert(e);
+					tmp.me.showModalBox('ERROR', e, true);
 				}
 			}
 		})
@@ -50,7 +52,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				.insert({'bottom': new Element('span', {'class': 'btn btn-success'})
 					.update(new Element('span', {'class': 'glyphicon glyphicon-plus'})) 
 					.observe('click', function(){
-						tmp.me._orderProduct(tmp.btn);
+						tmp.me._orderProduct(this);
 					})
 				}) 
 			});
@@ -117,7 +119,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				if(tmp.reset === true)
 				{
 					tmp.me.pagination.pageNo = 1;
-					$(tmp.me.htmlIDs.listingDiv).update(tmp.me._getLoadingDiv());
+					$(tmp.me.htmlIDs.listingDiv).update(tmp.me.getLoadingImg());
 				}
 			}
 			,'onComplete': function (sender, param) {
@@ -134,7 +136,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						$(tmp.me.htmlIDs.totalCountDiv).update(tmp.result.pagination.totalRows);
 					}
 					tmp.result.items.each(function(item) {
-						tmp.item = {'title': item.title, 
+						tmp.item = {
+								'id': item.id,
+								'title': item.title, 
 								'isbn': item.attributes.isbn ? item.attributes.isbn[0].attribute : '', 
 								'img': tmp.me._getProductImgDiv(item.attributes.image_thumb || null, {'style': 'height: 50px; width:auto;'}),
 								'author': item.attributes.author ? item.attributes.author[0].attribute : '',
@@ -161,7 +165,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		var tmp = {}
 		tmp.me = this;
 		tmp.totalCount = 0;
-		tmp.me.order.items.each(function(item){
+		order.items.each(function(item){
 			tmp.totalCount = (tmp.totalCount * 1) + (item.qty * 1)
 		});
 		$(tmp.me.htmlIDs.orderSummaryDiv).update(tmp.totalCount);
@@ -184,7 +188,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					tmp.me.order = tmp.result.order;
 					tmp.me._displayOrderSummary(tmp.me.order);
 				} catch (e) {
-					alert(e);
+					tmp.me.showModalBox('ERROR', e, true);
 				}
 			}
 		})

@@ -166,8 +166,8 @@ class OrderItem extends BaseEntityAbstract
     public function __loadDaoMap()
     {
         DaoMap::begin($this, 'ord_item');
-        DaoMap::setOneToMany("order", "Order", 'ord_item_order');
-        DaoMap::setOneToMany("product", "Product", 'ord_item_product');
+        DaoMap::setManyToOne("order", "Order", 'ord_item_order');
+        DaoMap::setManyToOne("product", "Product", 'ord_item_product');
         DaoMap::setIntType('unitPrice', 'double', '10,4', false, '0.0000');
         DaoMap::setIntType('qty');
         DaoMap::setIntType('totalPrice', 'double', '10,4', false, '0.0000');
@@ -185,14 +185,19 @@ class OrderItem extends BaseEntityAbstract
      * 
      * @return Ambigous <NULL, unknown>
      */
-    public static function create(Order $order, Product $product, $unitPrice = '0.0000', $qty = 0 , $totalPrice = '0.0000')
+    public static function create(Order $order, Product $product, $qty = 0 , $unitPrice = '0.0000', $totalPrice = '0.0000')
     {
-    	$item = new OrderItem();
-    	$item->setOrder($value)
+    	$items = self::getAllByCriteria('orderId = ? and productId = ?', array($order->getId(), $product->getId()), true, 1, 1);
+    	if(count($items) === 0)
+    		$item = new OrderItem();
+    	else
+    		$item = $items[0];
+    	$item->setOrder($order)
     		->setProduct($product)
-    		->setUnitPrice($unitPrice)
-    		->setQty($qty)
-    		->setTotalPrice($totalPrice);
+    		->setUnitPrice($item->getUnitPrice() + $unitPrice)
+    		->setQty($item->getQty() + $qty)
+    		->setTotalPrice($item->getTotalPrice() + $totalPrice)
+    		->save();
     	return $item;
     }
 }

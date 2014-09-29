@@ -68,7 +68,7 @@ class ListController extends LibAdminPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+			$errors[] = $ex->getMessage();
 		}
 		 
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
@@ -76,7 +76,7 @@ class ListController extends LibAdminPageAbstract
 	
 	public function getOrderSummary($sender, $param)
 	{
-		$result = $errors = $productArray = array();
+		$result = $errors = array();
 		try
 		{
 			$order = Order::getOpenOrder(Core::getLibrary());
@@ -86,7 +86,28 @@ class ListController extends LibAdminPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+			$errors[] = $ex->getMessage();
+		}
+		 
+		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	public function orderProduct($sender, $param)
+	{
+		$result = $errors = array();
+		try
+		{
+			if(!isset($param->CallbackParameter->orderId) || !($order = Order::get($param->CallbackParameter->orderId)) instanceof Order)
+				throw new Exception('Invalid order id passed in!');
+			if(!isset($param->CallbackParameter->productId) || !($product = Product::get($param->CallbackParameter->productId)) instanceof Product)
+				throw new Exception('Invalid product id passed in!');
+			if(!isset($param->CallbackParameter->qty) || !is_numeric($qty = trim($param->CallbackParameter->qty)))
+				throw new Exception('Invalid qty passed in!');
+			
+			$result['item'] = OrderItem::create($order, $product, $qty)->getJson();
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
 		}
 		 
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);

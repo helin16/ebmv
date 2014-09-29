@@ -3,7 +3,8 @@
  */
 var FrontPageJs = new Class.create();
 FrontPageJs.prototype = {
-	productDetailsUrl: '/product/{id}' 
+	modalId: 'page_modal_box_id'
+	,productDetailsUrl: '/product/{id}' 
 		
 	,_currentLib: null //the id of current library
 	
