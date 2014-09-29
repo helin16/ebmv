@@ -25,7 +25,7 @@ class ListController extends LibAdminPageAbstract
 		$productId = 0;
 		 
 		$js = parent::_getEndJs();
-		$js .= 'pageJs.setHTMLIDs("item-list")';
+		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list")';
 		$js .= '.setCallbackId("getItems", "' . $this->getItemsBtn->getUniqueID() . '")';
 		$js .= '.getResult(true);';
 		return $js;
@@ -47,12 +47,21 @@ class ListController extends LibAdminPageAbstract
 	
 			$stats = array();
 			if($productId === '' || $productId === '0')
-				$productArray = Product::getAll(false, $pageNumber, $pageSize, array(), $stats);
+				$productArray = Product::getAllByCriteria('productTypeId = ?', array(ProductType::ID_BOOK), false, $pageNumber, $pageSize, array(), $stats);
 			else
 				$productArray[] = Product::get($productId);
 			$result['pagination'] = $stats;
 			foreach($productArray as $product)
-				$result['items'][] = $product->getJson();
+			{
+				$array =  $product->getJson();
+				$totalOrderedQty = 0;
+				foreach(LibraryOwns::getAllByCriteria('libraryId = ? and productId = ? and typeId = ?', array(Core::getLibrary()->getId(), $product->getId(), LibraryOwnsType::ID_ONLINE_VIEW_COPIES)) as $libOwn)
+				{
+					$totalOrderedQty += $libOwn->getTotal();
+				}
+				$array['orderedQty'] = $totalOrderedQty; 
+				$result['items'][] = $array;
+			}
 		}
 		catch(Exception $ex)
 		{

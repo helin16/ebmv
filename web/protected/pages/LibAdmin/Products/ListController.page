@@ -12,7 +12,7 @@
 			</div>
 		</div>
 		<div class="col-sm-9">
-			<h4>Found (<span id="item-total-count">0</span>) items: </h4>
+			<h4>Found (<span id="item-total-count">0</span>) books: </h4>
 			<div id="item-list"></div>
 		</div>
 	</div>
