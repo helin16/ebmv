@@ -1,11 +1,13 @@
 <com:TContent ID="MainContent">
 
 <com:TCallback ID="getItemsBtn" OnCallback="Page.getItems" />
+<com:TCallback ID="getOrderSummaryBtn" OnCallback="Page.getOrderSummary" />
+<com:TCallback ID="orderProductBtn" OnCallback="Page.orderProduct" />
 <div class="pagewrapper libadminpage products">
 	<div class="row">
 		<div class="col-sm-3">
 			<div class="panel panel-default">
-				<div class="panel-heading">My Order</div>
+				<div class="panel-heading">My Order: <strong id="current-order-summary" class="pull-right"></strong></div>
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-body">search more</div>

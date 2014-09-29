@@ -69,6 +69,7 @@ class Order extends BaseEntityAbstract
      */
     public function getLibrary() 
     {
+    	$this->loadManyToOne('library');
         return $this->library;
     }
     /**
@@ -90,6 +91,7 @@ class Order extends BaseEntityAbstract
      */
     public function getItems() 
     {
+    	$this->loadOneToMany('items');
         return $this->items;
     }
     /**
@@ -161,6 +163,21 @@ class Order extends BaseEntityAbstract
         $this->comments = $value;
         return $this;
     }
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+	    $array = array();
+	    if(!$this->isJsonLoaded($reset))
+	    {
+	    	$array['items'] = array();
+		    foreach($this->getItems() as $item)
+		        $array['items'][] = $item->getJson();
+	    }
+	    return parent::getJson($array, $reset);
+	}
     /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()

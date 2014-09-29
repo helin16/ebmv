@@ -25,8 +25,11 @@ class ListController extends LibAdminPageAbstract
 		$productId = 0;
 		 
 		$js = parent::_getEndJs();
-		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list")';
+		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list", "current-order-summary")';
 		$js .= '.setCallbackId("getItems", "' . $this->getItemsBtn->getUniqueID() . '")';
+		$js .= '.setCallbackId("getOrderSummary", "' . $this->getOrderSummaryBtn->getUniqueID() . '")';
+		$js .= '.setCallbackId("orderProduct", "' . $this->orderProductBtn->getUniqueID() . '")';
+		$js .= '.getOrderSummary()';
 		$js .= '.getResult(true);';
 		return $js;
 	}
@@ -62,6 +65,24 @@ class ListController extends LibAdminPageAbstract
 				$array['orderedQty'] = $totalOrderedQty; 
 				$result['items'][] = $array;
 			}
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
+		}
+		 
+		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	
+	public function getOrderSummary($sender, $param)
+	{
+		$result = $errors = $productArray = array();
+		try
+		{
+			$order = Order::getOpenOrder(Core::getLibrary());
+			if(!$order instanceof Order)
+				$order = Order::create(Core::getLibrary());
+			$result['order'] = $order->getJson();
 		}
 		catch(Exception $ex)
 		{

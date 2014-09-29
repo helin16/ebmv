@@ -45,6 +45,7 @@ class OrderItem extends BaseEntityAbstract
      */
     public function getOrder() 
     {
+    	$this->loadManyToOne('order');
         return $this->order;
     }
     /**
@@ -66,6 +67,7 @@ class OrderItem extends BaseEntityAbstract
      */
     public function getProduct() 
     {
+    	$this->loadManyToOne('product');
         return $this->product;
     }
     /**
@@ -142,6 +144,20 @@ class OrderItem extends BaseEntityAbstract
     {
         $this->totalPrice = $value;
         return $this;
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::getJson()
+     */
+    public function getJson($extra = array(), $reset = false)
+    {
+    	$array = array();
+    	if(!$this->isJsonLoaded($reset))
+    	{
+    		$array['order'] = array('id' => $this->getOrder()->getId());
+    		$array['product'] = array('id' => $this->getProduct()->getId());
+    	}
+    	return parent::getJson($array, $reset);
     }
     /**
      * (non-PHPdoc)

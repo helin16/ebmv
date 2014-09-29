@@ -5,13 +5,39 @@ var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new FrontPageJs(), {
 	htmlIDs: {'totalCountDiv': '', 'listingDiv': ''}
 	,pagination: {'pageNo': 1, 'pageSize': 30}
-
-	,setHTMLIDs: function(totalCountDiv, listingDiv) {
+	,order: {} //the order object
+	/**
+	 * Getting the HTML IDs
+	 */
+	,setHTMLIDs: function(totalCountDiv, listingDiv, orderSummaryDiv) {
 		this.htmlIDs.totalCountDiv = totalCountDiv;
 		this.htmlIDs.listingDiv = listingDiv;
+		this.htmlIDs.orderSummaryDiv = orderSummaryDiv;
 		return this;
 	}
-	
+	,_orderProduct: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.btn = btn;
+		tmp.product = tmp.btn.up('.prodcut-row').retrieve('data');
+		tmp.qty = $F(tmp.btn.up('.prodcut-row').down('.order-qty'));
+		tmp.me.postAjax(tmp.me.getCallbackId('orderProduct'), {'orderId': tmp.me.order.id, 'productId': tmp.product.id, 'qty': tmp.qty}, {
+			'onLoading': function () {}
+			,'onComplete': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.items)
+						return;
+				} catch (e) {
+					alert(e);
+				}
+			}
+		})
+		return tmp.me;
+	}
+	/**
+	 * Getting a row for displaying the result
+	 */
 	,_getResultTableRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
@@ -19,12 +45,17 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.img = (tmp.isTitle === true ? '' : new Element('a').update(row.img.addClassName('list-thumbnail'))	);
 		tmp.orderBtns = new Element('div', {'class': 'input-group input-group-sm'})
-			.insert({'bottom': new Element('input', {'class': 'form-control', 'type': 'text', 'value': '1', 'style': 'padding: 4px;'}) })
+			.insert({'bottom': new Element('input', {'class': 'form-control order-qty', 'type': 'text', 'value': '1', 'style': 'padding: 4px;'}) })
 			.insert({'bottom': new Element('span', {'class': 'input-group-btn'}) 
-				.insert({'bottom': new Element('span', {'class': 'btn btn-success'}).update(new Element('span', {'class': 'glyphicon glyphicon-plus'})) }) 
+				.insert({'bottom': new Element('span', {'class': 'btn btn-success'})
+					.update(new Element('span', {'class': 'glyphicon glyphicon-plus'})) 
+					.observe('click', function(){
+						tmp.me._orderProduct(tmp.btn);
+					})
+				}) 
 			});
 		tmp.Qty = tmp.Qty;
-		tmp.row = new Element('tr')
+		tmp.row = new Element('tr', {'class': 'prodcut-row'}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.img) })
 			.insert({'bottom': new Element(tmp.tag).update(row.title) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(row.isbn) })
@@ -40,7 +71,6 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			.insert({'bottom': new Element('img', {'src': '/images/loading.gif'})})
 			.insert({'bottom': 'Loading ...'});
 	}
-	
 	//get pagination div
 	,_getPaginationDiv: function(pagination) {
 		var tmp = {};
@@ -50,7 +80,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		return new Element('div', {'class': 'pagination_wrapper pull-right'}).insert({'bottom': tmp.me._getPaginationBtn('查看更多 / 查看更多<br />Get more', pagination.pageNumber + 1) });
 	}
-	
+	/**
+	 * Getting the next page
+	 */
 	,changePage: function (btn, pageNo, pageSize) {
 		var tmp = {};
 		this.pagination.pageNo = pageNo;
@@ -60,7 +92,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			$(btn).up('.pagination_wrapper').remove();
 		});
 	}
-	
+	/**
+	 * getting the pagination button
+	 */
 	,_getPaginationBtn: function (txt, pageNo) {
 		var tmp = {};
 		tmp.me = this;
@@ -71,7 +105,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			})
 		;
 	}
-	
+	/**
+	 * Getting the list of the products
+	 */
 	,getResult: function(reset, afterFunc) {
 		var tmp = {};
 		tmp.me = this;
@@ -114,6 +150,42 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				
 				if(typeof(afterFunc) === 'function')
 					afterFunc();
+			}
+		})
+		return tmp.me;
+	}
+	/**
+	 * display the order summary
+	 */
+	,_displayOrderSummary: function(order) {
+		var tmp = {}
+		tmp.me = this;
+		tmp.totalCount = 0;
+		tmp.me.order.items.each(function(item){
+			tmp.totalCount = (tmp.totalCount * 1) + (item.qty * 1)
+		});
+		$(tmp.me.htmlIDs.orderSummaryDiv).update(tmp.totalCount);
+		return tmp.me;
+	}
+	/**
+	 * Getting the order object
+	 */
+	,getOrderSummary: function() {
+		var tmp = {}
+		tmp.me = this;
+		tmp.me.postAjax(tmp.me.getCallbackId('getOrderSummary'), {}, {
+			'onLoading': function () {}
+			,'onComplete': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.order)
+						return;
+					
+					tmp.me.order = tmp.result.order;
+					tmp.me._displayOrderSummary(tmp.me.order);
+				} catch (e) {
+					alert(e);
+				}
 			}
 		})
 		return tmp.me;
