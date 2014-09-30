@@ -138,26 +138,18 @@
                     </a>
                     <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
                         <li role="presentation">
-                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/short-phrase-i" role="menuitem" class="iconbtn fancyboxmenuitem">
+                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/chinese-crash-course" role="menuitem" class="iconbtn fancyboxmenuitem">
                               <div class="row">
-                                  <div class="col-xs-6">课程 I/課程 I</div>
-                                  <div class="col-xs-6 en">Chinese Crash Course I</div>
+                                  <div class="col-xs-6">汉语速成/漢語速成</div>
+                                  <div class="col-xs-6 en">Chinese Crash Course</div>
                               </div>
                           </a>
                         </li>
                         <li role="presentation">
-                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/short-phrase-ii" role="menuitem" class="iconbtn fancyboxmenuitem">
+                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/chinese-900" role="menuitem" class="iconbtn fancyboxmenuitem">
                               <div class="row">
-                                  <div class="col-xs-6">课程 II/課程 II</div>
-                                  <div class="col-xs-6 en">Chinese Crash Course II</div>
-                              </div>
-                          </a>
-                        </li>
-                        <li role="presentation">
-                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/short-phrase-iii" role="menuitem" class="iconbtn fancyboxmenuitem">
-                              <div class="row">
-                                 <div class="col-xs-6">课程 III/課程 III</div>
-                                  <div class="col-xs-6 en">Chinese Crash Course III</div>
+                                  <div class="col-xs-8">汉语900句/漢語900句</div>
+                                  <div class="col-xs-4 en">Chinese 900</div>
                               </div>
                           </a>
                         </li>
