@@ -26,10 +26,16 @@ class ItemController extends LibAdminPageAbstract
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.setOrder(' . json_encode($order->getJson()) . ')';
 		$js .= '.setCallbackId("delItem", "' . $this->delItemBtn->getUniqueID() . '")';
+		$js .= '.setCallbackId("saveOrder", "' . $this->saveOrderBtn->getUniqueID() . '")';
 		$js .= '.setHTMLIds("item-details")';
 		$js .= '.displayOrder()';
 		$js .= ';';
 		return $js;
+	}
+	public function onInit($params)
+	{
+		parent::onInit($params);
+		$this->getPage()->setTheme($this->_getThemeByName('default'));
 	}
 	public function delItem($sender, $param)
 	{
@@ -41,6 +47,36 @@ class ItemController extends LibAdminPageAbstract
 			$item->setActive(false)
 				->save();
 			$result['item'] = $item->getJson();
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+			
+		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	public function saveOrder($sender, $param)
+	{
+		$result = $errors = $productArray = array();
+		try
+		{
+			if(!isset($param->CallbackParameter->id) || !($order = Order::get($param->CallbackParameter->id)) instanceof Order)
+				throw new Exception('Invalid orderitem id!');
+			if(!isset($param->CallbackParameter->items) || count($items = $param->CallbackParameter->items) === 0)
+				throw new Exception('At least one item needed!');
+			$comments = "";
+			if(!isset($param->CallbackParameter->comments) || ($comments = trim($param->CallbackParameter->comments)) !== '')
+				$comments = $comments;
+			
+			foreach($items as $itemXml)
+			{
+				OrderItem::get($itemXml->id)
+					->setQty($itemXml->qty)
+					->save();
+			}
+			$order->setComments($comments)
+				->setStatus(Order::STATUS_CLOSED)
+				->save();
 		}
 		catch(Exception $ex)
 		{

@@ -7,7 +7,7 @@
 		<thead>
 			<th>Order No.</th>
 			<th>Status</th>
-			<th>Qty</th>
+			<th>Items</th>
 			<th>Date</th>
 			<th>By</th>
 			<th>Comments</th>
