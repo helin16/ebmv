@@ -560,14 +560,18 @@ class Product extends BaseEntityAbstract
 	 *
 	 * @return array
 	 */
-	public static function findProductsInCategory(Library $lib, $searchText = '', $categorIds = array(), $searchOption = '', Language $language = null, ProductType $productType = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+	public static function findProductsInCategory(Library $lib = null, $searchText = '', $categorIds = array(), $searchOption = '', Language $language = null, ProductType $productType = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
 	{
 		$searchMode = false;
 		$where = $params = array();
 		$searchOption = trim($searchOption);
 	
-		$query = Product::getQuery()->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1');
-		$params[] = $lib->getId();
+		$query = Product::getQuery();
+		if($lib instanceof Library)
+		{
+			$query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1');
+			$params[] = $lib->getId();
+		}
 		if(($searchText = trim($searchText)) !== '')
 		{
 			$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');

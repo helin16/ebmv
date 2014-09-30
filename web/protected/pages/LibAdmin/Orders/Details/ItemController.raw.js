@@ -82,9 +82,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onSuccess': function(sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					if(!tmp.result.order)
-						return;
-					tmp.me.showModalbox('Success', "Order Saved Successfully!", true);
+					tmp.me.showModalBox('Success', "Order Saved Successfully!", true);
 					window.location = document.URL;
 				} catch(e) {
 					tmp.me.showModalbox('ERROR', e, true);

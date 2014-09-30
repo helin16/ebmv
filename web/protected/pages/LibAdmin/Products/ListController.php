@@ -25,7 +25,7 @@ class ListController extends LibAdminPageAbstract
 		$productId = 0;
 		 
 		$js = parent::_getEndJs();
-		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list", "current-order-summary")';
+		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list", "current-order-summary", "order-btn", "my-cart")';
 		$js .= '.setCallbackId("getItems", "' . $this->getItemsBtn->getUniqueID() . '")';
 		$js .= '.setCallbackId("getOrderSummary", "' . $this->getOrderSummaryBtn->getUniqueID() . '")';
 		$js .= '.setCallbackId("orderProduct", "' . $this->orderProductBtn->getUniqueID() . '")';
@@ -46,23 +46,28 @@ class ListController extends LibAdminPageAbstract
 				$pageNumber = (isset($pagination->pageNo) && trim($pagination->pageNo) !== '' && is_numeric($pagination->pageNo)) ? trim($pagination->pageNo) : $pageNumber;
 				$pageSize = (isset($pagination->pageSize) && trim($pagination->pageSize) !== '' && is_numeric($pagination->pageSize)) ? trim($pagination->pageSize) : $pageSize;
 			}
-			$productId = (isset($param->CallbackParameter->itemId) && trim($param->CallbackParameter->itemId) !== '' && is_numeric($param->CallbackParameter->itemId)) ? trim($param->CallbackParameter->itemId) : '0';
 	
+			$searchCriteria = json_decode(json_encode($param->CallbackParameter->searchCriteria), true);
 			$stats = array();
-			if($productId === '' || $productId === '0')
-				$productArray = Product::getAllByCriteria('productTypeId = ?', array(ProductType::ID_BOOK), false, $pageNumber, $pageSize, array(), $stats);
+			if(count($searchCriteria) > 0)
+				$productArray = Product::findProductsInCategory(null, trim($searchCriteria['searchTxt']), array(), '', null, ProductType::get(ProductType::ID_BOOK), true, $pageNumber, $pageSize, array('pro.id' => 'desc'), $stats);
 			else
-				$productArray[] = Product::get($productId);
+				$productArray = Product::getAllByCriteria('productTypeId = ?', array(ProductType::ID_BOOK), true, $pageNumber, $pageSize, array('pro.id' => 'desc'), $stats);
 			$result['pagination'] = $stats;
 			foreach($productArray as $product)
 			{
 				$array =  $product->getJson();
 				$totalOrderedQty = 0;
-				foreach(LibraryOwns::getAllByCriteria('libraryId = ? and productId = ? and typeId = ?', array(Core::getLibrary()->getId(), $product->getId(), LibraryOwnsType::ID_ONLINE_VIEW_COPIES)) as $libOwn)
+				$orderedLibs = array();
+				foreach(LibraryOwns::getAllByCriteria('productId = ? and typeId = ?', array($product->getId(), LibraryOwnsType::ID_ONLINE_VIEW_COPIES)) as $libOwn)
 				{
-					$totalOrderedQty += $libOwn->getTotal();
+					if($libOwn->getLibrary()->getId() === Core::getLibrary()->getId())
+						$totalOrderedQty += $libOwn->getTotal();
+					else
+						$orderedLibs[] = $libOwn->getLibrary()->getJson();
 				}
-				$array['orderedQty'] = $totalOrderedQty; 
+				$array['orderedQty'] = $totalOrderedQty;
+				$array['orderedLibs'] = $orderedLibs;
 				$result['items'][] = $array;
 			}
 		}
