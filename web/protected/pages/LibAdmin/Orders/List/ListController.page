@@ -1,5 +1,5 @@
 <com:TContent ID="MainContent">
-
+<com:Application.controls.FancyBox.FancyBox />
 <com:TCallback ID="getItemsBtn" OnCallback="Page.getItems" />
 <div class="pagewrapper libadminpage orders">
 	<h4>Found (<span id="item-total-count">0</span>) orders: </h4>

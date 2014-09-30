@@ -14,6 +14,28 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		this.htmlIDs.listingDiv = listingDiv;
 		return this;
 	}
+	/**
+	 * Open the order details page
+	 */
+	,_openDetailsPage: function(row) {
+		var tmp = {};
+		tmp.me = this;
+		jQuery.fancybox({
+			'width'			: '95%',
+			'height'		: '95%',
+			'autoScale'     : false,
+			'autoDimensions': false,
+			'fitToView'     : false,
+			'autoSize'      : false,
+			'type'			: 'iframe',
+			'href'			: '/libadmin/order/' + row.id + '.html',
+			'beforeClose'	    : function() {
+				if($(tmp.me.htmlIDs.listingDiv).down('.item-row[item-id=' + row.id + ']'))
+					$(tmp.me.htmlIDs.listingDiv).down('.item-row[item-id=' + row.id + ']').replace(tmp.me._getResultTableRow($$('iframe.fancybox-iframe').first().contentWindow.pageJs._order, false));
+			}
+ 		});
+		return tmp.me;
+	}
 	//get pagination div
 	,_getPaginationDiv: function(pagination) {
 		var tmp = {};
@@ -56,7 +78,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
-		tmp.row = new Element('tr', {'class': 'item-row'}).store('data', row)
+		tmp.row = new Element('tr', {'class': 'item-row', 'item-id': row.id}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.orderNo) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.status) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.items.size()) })
@@ -66,6 +88,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'})
 				.insert({'bottom': new Element('a', {'title': 'Click to View the Details', 'href': 'javascript: void(0);'})
 					.insert({'bottom': new Element('span', {'class': row.status === 'OPEN' ? 'glyphicon glyphicon-pencil' : 'glyphicon glyphicon-eye-open'}) })
+					.observe('click', function() {
+						tmp.me._openDetailsPage(row);
+					})
 				})
 			})
 			;
