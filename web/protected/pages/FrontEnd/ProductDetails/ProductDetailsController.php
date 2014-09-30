@@ -28,14 +28,6 @@ class ProductDetailsController extends FrontEndPageAbstract
      */
 	public function onLoad($param)
 	{
-		if(!$this->IsPostBack)
-		{
-		    if(count($this->_product->getLibraryOwn(Core::getLibrary())) === 0)
-		    {
-		    	FrontEndPageAbstract::show404Page('Product NOT Exsits!', 'Requested book/magazine/newspaper is not viewable for this library!');
-		    	die;
-		    }
-		}
 	    parent::onLoad($param);
 	}
 	/**
