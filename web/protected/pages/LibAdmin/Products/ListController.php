@@ -103,7 +103,8 @@ class ListController extends LibAdminPageAbstract
 			if(!isset($param->CallbackParameter->qty) || !is_numeric($qty = trim($param->CallbackParameter->qty)))
 				throw new Exception('Invalid qty passed in!');
 			
-			$result['item'] = OrderItem::create($order, $product, $qty)->getJson();
+			OrderItem::create($order, $product, $qty);
+			$result['order'] = Order::get($order->getId())->getJson();
 		}
 		catch(Exception $ex)
 		{

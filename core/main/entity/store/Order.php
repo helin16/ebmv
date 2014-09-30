@@ -175,6 +175,8 @@ class Order extends BaseEntityAbstract
 	    	$array['items'] = array();
 		    foreach($this->getItems() as $item)
 		        $array['items'][] = $item->getJson();
+		    $array['createdBy'] = $this->getCreatedBy()->getJson();
+		    $array['updatedBy'] = $this->getUpdatedBy()->getJson();
 	    }
 	    return parent::getJson($array, $reset);
 	}

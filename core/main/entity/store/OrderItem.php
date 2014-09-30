@@ -155,7 +155,15 @@ class OrderItem extends BaseEntityAbstract
     	if(!$this->isJsonLoaded($reset))
     	{
     		$array['order'] = array('id' => $this->getOrder()->getId());
-    		$array['product'] = array('id' => $this->getProduct()->getId());
+    		$attributes = array();
+    		foreach($this->getProduct()->getAttributes() as $attr)
+    		{
+    			$typeId = $attr->getType()->getCode();
+    			if(!isset($attributes[$typeId]))
+    				$attributes[$typeId] = array();
+    			$attributes[$typeId][] = $attr->getJson();
+    		}
+    		$array['product'] = array('id' => $this->getProduct()->getId(), 'title' => $this->getProduct()->getTitle(), 'attributes' => $attributes);
     	}
     	return parent::getJson($array, $reset);
     }

@@ -26,9 +26,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onComplete': function (sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					if(!tmp.result.item)
+					if(!tmp.result.order)
 						return;
-					tmp.me.order.items.push(tmp.result.item);
+					tmp.me.order = tmp.result.order;
 					tmp.me._displayOrderSummary(tmp.me.order);
 				} catch (e) {
 					tmp.me.showModalBox('ERROR', e, true);
@@ -155,7 +155,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				if(typeof(afterFunc) === 'function')
 					afterFunc();
 			}
-		})
+		});
 		return tmp.me;
 	}
 	/**
@@ -164,11 +164,14 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,_displayOrderSummary: function(order) {
 		var tmp = {}
 		tmp.me = this;
-		tmp.totalCount = 0;
-		order.items.each(function(item){
-			tmp.totalCount = (tmp.totalCount * 1) + (item.qty * 1)
+		$(tmp.me.htmlIDs.orderSummaryDiv).update('');
+		order.items.reverse().each(function(item){
+			$(tmp.me.htmlIDs.orderSummaryDiv).insert({'bottom':
+				new Element('a', {'class': 'list-group-item'})
+					.insert({'bottom': item.product.title })
+					.insert({'bottom': new Element('span', {'class': 'badge'}).update(item.qty) })
+			});
 		});
-		$(tmp.me.htmlIDs.orderSummaryDiv).update(tmp.totalCount);
 		return tmp.me;
 	}
 	/**

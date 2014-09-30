@@ -23,7 +23,8 @@ class Menu extends TTemplateControl
 	{
 		$array = array(
 				array('name' => 'Home', 'code' => 'home', 'href' => '/libadmin/')
-				,array('name' => 'Products', 'code' => 'products', 'href' => '/libadmin/items.html')
+				,array('name' => 'Order Books', 'code' => 'products', 'href' => '/libadmin/items.html')
+				,array('name' => 'Order History', 'code' => 'orders', 'href' => '/libadmin/orders.html')
 			);
 		return $array;
 	}

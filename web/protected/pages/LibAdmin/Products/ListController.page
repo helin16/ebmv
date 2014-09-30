@@ -5,17 +5,18 @@
 <com:TCallback ID="orderProductBtn" OnCallback="Page.orderProduct" />
 <div class="pagewrapper libadminpage products">
 	<div class="row">
-		<div class="col-sm-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">My Order: <strong id="current-order-summary" class="pull-right"></strong></div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-body">search more</div>
-			</div>
-		</div>
 		<div class="col-sm-9">
+			<div class="well">
+				search more
+			</div>
 			<h4>Found (<span id="item-total-count">0</span>) books: </h4>
 			<div id="item-list"></div>
+		</div>
+		<div class="col-sm-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">My Cart: </div>
+				<div class="list-group" id="current-order-summary"></div>
+			</div>
 		</div>
 	</div>
 </div>
