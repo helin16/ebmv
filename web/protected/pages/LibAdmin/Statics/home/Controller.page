@@ -12,7 +12,9 @@
 		<div class="col-lg-4">
 			<div class="panel panel-default">
 				<div class="panel-heading">Top viewed items</div>
-				<div class="list-group" id="top-viewed"></div>
+				<div class="panel-body" id="top-viewed">
+					This is under construction, will be available soon.
+				</div>
 			</div>
 		</div>
 	</div>
