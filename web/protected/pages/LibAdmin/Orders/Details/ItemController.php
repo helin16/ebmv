@@ -153,7 +153,7 @@ class ItemController extends LibAdminPageAbstract
 		$objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowNo, 'Order No.:');
 		$objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowNo, $order->getOrderNo());
 		$objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowNo, 'Library:');
-		$objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowNo, '');
+		$objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowNo, Core::getLibrary()->getName());
 		$objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowNo, 'Created By:');
 		$objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowNo, $order->getUpdatedBy()->getPerson()->getFullName());
 		$objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowNo, 'Created @:');
