@@ -78,12 +78,12 @@ class StaticsController extends StaticsPageAbstract
 	{
 		$names = array();
 		$_12mthAgo = new UDate();
-		$_12mthAgo->modify('-12 month');
+		$_12mthAgo->modify('-11 month');
 		for($i = 0; $i<12; $i++)
 		{
-		$from = new UDate(trim($_12mthAgo->format('Y-m-01 00:00:00')));
-		$to = new UDate(trim($_12mthAgo->modify('+1 month')->format('Y-m-01 00:00:00')));
-		$names[trim($from->format('M/Y'))] = array('from' => trim($from), 'to' => trim($to));
+			$from = new UDate(trim($_12mthAgo->format('Y-m-01 00:00:00')));
+			$to = new UDate(trim($_12mthAgo->modify('+1 month')->format('Y-m-01 00:00:00')));
+			$names[trim($from->format('M/Y'))] = array('from' => trim($from), 'to' => trim($to));
 		}
 		return $names;
 	}
