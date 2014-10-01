@@ -25,6 +25,7 @@ class Menu extends TTemplateControl
 				array('name' => 'Home', 'code' => 'home', 'href' => '/libadmin/')
 				,array('name' => 'Order Books', 'code' => 'products', 'href' => '/libadmin/items.html')
 				,array('name' => 'Order History', 'code' => 'orders', 'href' => '/libadmin/orders.html')
+				,array('name' => 'Statics', 'code' => 'statics', 'href' => '/libadmin/statics.html')
 			);
 		return $array;
 	}

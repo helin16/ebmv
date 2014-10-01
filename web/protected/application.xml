@@ -66,6 +66,12 @@
 			<!-- LibAdminPage:: orders details page -->
 			<url ServiceParameter="LibAdmin.Orders.Details.ItemController" pattern="libadmin/order/{id}.html"  parameters.id="\d+" />
 			
+			<!-- LibAdminPage:: statics page -->
+			<url ServiceParameter="LibAdmin.Statics.Home.Controller" pattern="libadmin/statics.html"/>
+			
+			<!-- LibAdminPage:: statics page -->
+			<url ServiceParameter="LibAdmin.Statics.LibraryViews.StaticsController" pattern="libadmin/statics/libraryviews.html"/>
+			
 			<!-- *********************************************************************************************** -->
 			<!-- Admin Page                                                                                      -->
 			<!-- *********************************************************************************************** -->
