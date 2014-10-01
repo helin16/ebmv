@@ -32,11 +32,23 @@ class ItemController extends LibAdminPageAbstract
 		$js .= ';';
 		return $js;
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see LibAdminPageAbstract::onInit()
+	 */
 	public function onInit($params)
 	{
 		parent::onInit($params);
 		$this->getPage()->setTheme($this->_getThemeByName('default'));
 	}
+	/**
+	 * deleting an orderitem
+	 * 
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * 
+	 * @throws Exception
+	 */
 	public function delItem($sender, $param)
 	{
 		$result = $errors = $productArray = array();
@@ -55,6 +67,14 @@ class ItemController extends LibAdminPageAbstract
 			
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
+	/**
+	 * Saving the order
+	 * 
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * 
+	 * @throws Exception
+	 */
 	public function saveOrder($sender, $param)
 	{
 		$result = $errors = $productArray = array();
@@ -77,6 +97,7 @@ class ItemController extends LibAdminPageAbstract
 			$order->setComments($comments)
 				->setStatus(Order::STATUS_CLOSED)
 				->save();
+			$this->_notifyAdmin($order);
 		}
 		catch(Exception $ex)
 		{
@@ -84,5 +105,42 @@ class ItemController extends LibAdminPageAbstract
 		}
 			
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	/**
+	 * Generating a new order to admin
+	 * 
+	 * @param Order $order
+	 * 
+	 * @throws Exception
+	 */
+	private function _notifyAdmin(Order $order)
+	{
+		$mail = new PHPMailer();
+
+		$mail->isSMTP();                                      // Set mailer to use SMTP
+		$mail->Host = 'mail.websiteforyou.com.au';  // Specify main and backup SMTP servers
+		$mail->SMTPAuth = true;                               // Enable SMTP authentication
+		$mail->Username = 'test@websiteforyou.com.au';                 // SMTP username
+		$mail->Password = 'TEST@websiteforyou.com.au';                           // SMTP password
+		$mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+		$mail->Port = 465;                                    // TCP port to connect to
+		
+		$mail->From = 'noreplay@ebmv.com.au';
+		$mail->FromName = 'New Order Generator';
+		$mail->addAddress('dchen_oz@hotmail.com', 'Douglas');     // Add a recipient
+		$mail->addCC('helin16@gmail.com');
+		
+		$mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+		$mail->isHTML(true);                                  // Set email format to HTML
+		
+		$mail->Subject = 'New Order from: ' . Core::getLibrary()->getName();
+		$mail->Body    = 'There is new order submited by <b>' . $order->getUpdatedBy()->getPerson()->getFullName() . '</b> @' . $order->getUpdated() . '(UTC)';
+		$mail->AltBody = 'There is new order submited by ' . $order->getUpdatedBy()->getPerson()->getFullName() . '@' . $order->getUpdated() . '(UTC)';
+		
+		if(!$mail->send()) {
+		    $msg = 'Message could not be sent.';
+		    $msg .= 'Mailer Error: ' . $mail->ErrorInfo;
+		    throw new Exception('Error: ' . $msg);
+		} 
 	}
 }
