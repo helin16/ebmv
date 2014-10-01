@@ -131,9 +131,10 @@ class ItemController extends LibAdminPageAbstract
 		$mail->addCC('helin16@gmail.com');
 		
 		$mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+		$mail->addAttachment($this->_getOrderExcel($order));    // Optional name
 		$mail->isHTML(true);                                  // Set email format to HTML
 		
-		$mail->Subject = 'New Order from: ' . Core::getLibrary()->getName();
+		$mail->Subject = 'EBMV: New Order(No.:' . $order->getOrderNo() . ') from: ' . Core::getLibrary()->getName();
 		$mail->Body    = 'There is new order submited by <b>' . $order->getUpdatedBy()->getPerson()->getFullName() . '</b> @' . $order->getUpdated() . '(UTC)';
 		$mail->AltBody = 'There is new order submited by ' . $order->getUpdatedBy()->getPerson()->getFullName() . '@' . $order->getUpdated() . '(UTC)';
 		
@@ -142,5 +143,65 @@ class ItemController extends LibAdminPageAbstract
 		    $msg .= 'Mailer Error: ' . $mail->ErrorInfo;
 		    throw new Exception('Error: ' . $msg);
 		} 
+	}
+	
+	private function _getOrderExcel(Order $order)
+	{
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->setActiveSheetIndex(0);
+		$rowNo = 1;
+		$objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowNo, 'Order No.:');
+		$objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowNo, $order->getOrderNo());
+		$objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowNo, 'Library:');
+		$objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowNo, '');
+		$objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowNo, 'Created By:');
+		$objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowNo, $order->getUpdatedBy()->getPerson()->getFullName());
+		$objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowNo, 'Created @:');
+		$objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowNo, $order->getUpdated() . '(UTC)');
+		
+		$rowNo++;
+		$rowNo++;
+		$this->_getTableRow($objPHPExcel->getActiveSheet(), $rowNo, 'TITLE', 'ISBN', 'CNO', 'AUTHOR', 'PUBLISHER', 'PUBLISH DATE', 'LENGTH', 'CIP','DESCRIPTION', 'QTY');
+		foreach(OrderItem::getAllByCriteria('orderId = ?', array($order->getId())) as $item)
+		{
+			$rowNo++;
+			$product = $item->getProduct();
+			$this->_getTableRow($objPHPExcel->getActiveSheet(), $rowNo,
+				$product->getTitle(),
+				$product->getAttribute('ISBN'),
+				$product->getAttribute('Cno'),
+				$product->getAttribute('Author'),
+				$product->getAttribute('Publisher'),
+				$product->getAttribute('PublishDate'),
+				$product->getAttribute('Number Of Words'),
+				$product->getAttribute('Cip'),
+				$product->getAttribute('Description'),
+				$item->getQty());
+		}
+		
+		$rowNo++;
+		$rowNo++;
+		$objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowNo, 'Comments:');
+		$rowNo++;
+		$objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowNo, $order->getComments());
+		$objPHPExcel->getActiveSheet()->setTitle('Order Details');
+		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+		$filePath = '/tmp/' . $order->getOrderNo() . '.xlsx';
+		$objWriter->save($filePath);
+		return $filePath;
+	}
+	
+	private function _getTableRow(&$sheet, $rowNo,  $title, $isbn, $cno, $author, $publisher, $publishDate, $length, $cip, $description, $qty)
+	{
+		$sheet->SetCellValue('A' . $rowNo, $title);
+		$sheet->SetCellValue('B' . $rowNo, $isbn);
+		$sheet->SetCellValue('C' . $rowNo, $cno);
+		$sheet->SetCellValue('D' . $rowNo, $author);
+		$sheet->SetCellValue('E' . $rowNo, $publisher);
+		$sheet->SetCellValue('F' . $rowNo, $publishDate);
+		$sheet->SetCellValue('G' . $rowNo, $length);
+		$sheet->SetCellValue('H' . $rowNo, $cip);
+		$sheet->SetCellValue('I' . $rowNo, $description);
+		$sheet->SetCellValue('J' . $rowNo, $qty);
 	}
 }
