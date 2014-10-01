@@ -39,9 +39,9 @@ class StaticsController extends StaticsPageAbstract
 			$names = array_keys($timeRange);
 			$series = array();
 			$series[] = array('name' => 'All', 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to']));
-			foreach(OrderStatus::getAll() as $status)
+			foreach(ProductStaticsType::getAll() as $type)
 			{
-				$series[] = array('name' => $status->getName(), 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to'], array($status->getId())));
+				$series[] = array('name' => $type->getName(), 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to'], $type->getId()));
 			}
 	
 			$results = array(
@@ -53,7 +53,7 @@ class StaticsController extends StaticsPageAbstract
 							'x'    => -20
 					),
 					'subtitle' => array(
-							'text' => 'This is just statics from last 12 month',
+							'text' => 'Total counts of all product in each month',
 							'x'    => -20
 					),
 					'xAxis' => array(
@@ -61,7 +61,7 @@ class StaticsController extends StaticsPageAbstract
 					),
 					'yAxis' => array(
 							'title' => array(
-									'text' => 'No of visits'
+									'text' => 'No of all products'
 							)
 					),
 					'series' => $series
@@ -88,19 +88,19 @@ class StaticsController extends StaticsPageAbstract
 		return $names;
 	}
 	
-	private function _getSeries($groupFrame, $from, $to, $statusId = array())
+	private function _getSeries($groupFrame, $from, $to, $typeId = '')
 	{
-	$select = array();
-	foreach($groupFrame as $index => $time)
-			$select[] = 'sum(if((created >= "' . $time['from'] . '" && created < "' . $time['to'] . '"), 1 , 0)) `' . $index . '`';
-					$where = array('active = 1');
-					if(count($statusId) > 0)
-			$where[] = 'statusId in (' . implode(', ', $statusId) . ')';
-			$sql = "select " . implode(', ', $select) . ' from `librarystatics` where ' . implode(' AND ', $where) . ' and created >=? and created < ?';
-		$row = Dao::getSingleResultNative($sql, array(trim($from), trim($to)), PDO::FETCH_NUM);
-			$return = array();
-			foreach($row as $col)
-			{
+		$select = array();
+		foreach($groupFrame as $index => $time)
+			$select[] = 'sum(if((created >= "' . $time['from'] . '" && created < "' . $time['to'] . '"), value , 0)) `' . $index . '`';
+		$where = array('active = 1');
+		if(trim($typeId) !== '')
+			$where[] = 'typeId = ' . trim($typeId);
+		$sql = "select " . implode(', ', $select) . ' from `productstaticslog` where ' . implode(' AND ', $where) . ' and libraryId = ? and created >=? and created < ?';
+		$row = Dao::getSingleResultNative($sql, array(Core::getLibrary()->getId(), trim($from), trim($to)), PDO::FETCH_NUM);
+		$return = array();
+		foreach($row as $col)
+		{
 			$return[] = intval($col);
 		}
 		return $return;

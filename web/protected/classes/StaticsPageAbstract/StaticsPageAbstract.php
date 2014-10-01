@@ -38,6 +38,8 @@ abstract class StaticsPageAbstract extends LibAdminPageAbstract
 		$this->_getDataBtn->ID = 'getDataBtn';
 		$this->_getDataBtn->OnCallback = 'Page.getData';
 		$this->getControls()->add($this->_getDataBtn);
+		
+		$this->getPage()->setTheme($this->_getThemeByName('default'));
 	}
 	/**
 	 * Getting The end javascript
