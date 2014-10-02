@@ -39,6 +39,13 @@ class OrderItem extends BaseEntityAbstract
      */
     private $totalPrice;
     /**
+     * Whether need MARC record for this item
+     * 
+     * @var bool
+     */
+    private $needMARCRecord = false;
+    
+    /**
      * Getter for order
      *
      * @return Order
@@ -146,6 +153,27 @@ class OrderItem extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Getter for needMARCRecord
+     * 
+     * @return needMARCRecord
+     */
+    public function getNeedMARCRecord()
+    {
+    	return $this->needMARCRecord;
+    }
+    /**
+     * Setter for the needMARCRecord
+     * 
+     * @param mixed $value
+     * 
+     * @return OrderItem
+     */
+    public function setNeedMARCRecord($value)
+    {
+    	$this->needMARCRecord = $value;
+    	return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntityAbstract::getJson()
      */
@@ -179,11 +207,13 @@ class OrderItem extends BaseEntityAbstract
         DaoMap::setIntType('unitPrice', 'double', '10,4', false, '0.0000');
         DaoMap::setIntType('qty');
         DaoMap::setIntType('totalPrice', 'double', '10,4', false, '0.0000');
+        DaoMap::setBoolType('needMARCRecord');
         parent::__loadDaoMap();
     
         DaoMap::createIndex('qty');
         DaoMap::createIndex('unitPrice');
         DaoMap::createIndex('totalPrice');
+        DaoMap::createIndex('needMARCRecord');
         DaoMap::commit();
     }
     /**
@@ -193,7 +223,7 @@ class OrderItem extends BaseEntityAbstract
      * 
      * @return Ambigous <NULL, unknown>
      */
-    public static function create(Order $order, Product $product, $qty = 0 , $unitPrice = '0.0000', $totalPrice = '0.0000')
+    public static function create(Order $order, Product $product, $qty = 0 , $needMARCRecord = false, $unitPrice = '0.0000', $totalPrice = '0.0000')
     {
     	$items = self::getAllByCriteria('orderId = ? and productId = ?', array($order->getId(), $product->getId()), true, 1, 1);
     	if(count($items) === 0)
@@ -205,6 +235,7 @@ class OrderItem extends BaseEntityAbstract
     		->setUnitPrice($item->getUnitPrice() + $unitPrice)
     		->setQty($item->getQty() + $qty)
     		->setTotalPrice($item->getTotalPrice() + $totalPrice)
+    		->setNeedMARCRecord($needMARCRecord)
     		->save();
     	return $item;
     }

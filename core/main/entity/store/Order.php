@@ -11,6 +11,7 @@ class Order extends BaseEntityAbstract
 	const STATUS_OPEN = 'OPEN';
 	const STATUS_CACNELLED = 'CANCELLED';
 	const STATUS_CLOSED = 'CLOSED';
+	const STATUS_SUBMITTED = 'SUBMITTED';
 	/**
 	 * The status of the order
 	 * 
@@ -41,6 +42,61 @@ class Order extends BaseEntityAbstract
      * @var string
      */
     private $comments = '';
+    /**
+     * when this order is submitted
+     * 
+     * @var UDate
+     */
+    private $submitDate = null;
+    /**
+     * Who submitted this order
+     * 
+     * @var UserAccount
+     */
+    protected $submitBy = null;
+    /**
+     * Getter for submitDate
+     * 
+     * @return UDate
+     */
+    public function getSubmitDate()
+    {
+    	return new UDate(trim($this->submitDate));
+    }
+    /**
+     * Setter for the submitDate
+     * 
+     * @param mixed $value
+     * 
+     * @return Order
+     */
+    public function setSubmitDate($value)
+    {
+    	$this->submitDate = $value;
+    	return $this;
+    }
+    /**
+     * Getter for submitBy
+     * 
+     * @return UserAccount
+     */
+    public function getSubmitBy()
+    {
+    	$this->loadManyToOne('submitBy');
+    	return $this->submitBy;
+    }
+    /**
+     * Setter for the submitBy
+     * 
+     * @param mixed $value
+     * 
+     * @return Order
+     */
+    public function setSubmitBy($value)
+    {
+    	$this->submitBy = $value;
+    	return $this;
+    }
     /**
      * Getter for orderNo
      *
@@ -175,29 +231,10 @@ class Order extends BaseEntityAbstract
 	    	$array['items'] = array();
 		    foreach($this->getItems() as $item)
 		        $array['items'][] = $item->getJson();
-		    $array['createdBy'] = $this->getCreatedBy()->getJson();
-		    $array['updatedBy'] = $this->getUpdatedBy()->getJson();
+		    $array['submitBy'] = $this->getSubmitBy() instanceof UserAccount ? $this->getSubmitBy()->getJson() : array();
 	    }
 	    return parent::getJson($array, $reset);
 	}
-    /**
-     * (non-PHPdoc)
-     * @see BaseEntity::__loadDaoMap()
-     */
-    public function __loadDaoMap()
-    {
-        DaoMap::begin($this, 'ord');
-        DaoMap::setStringType('orderNo','varchar', 50);
-        DaoMap::setStringType('status','varchar', 10);
-        DaoMap::setManyToOne("library", "Library", 'ord_lib');
-        DaoMap::setOneToMany("items", "OrderItem", 'ord_items');
-        DaoMap::setStringType('comments','varchar', 255);
-        parent::__loadDaoMap();
-    
-        DaoMap::createIndex('orderNo');
-        DaoMap::createIndex('status');
-        DaoMap::commit();
-    }
     /**
      * (non-PHPdoc)
      * @see BaseEntityAbstract::postSave()
@@ -210,6 +247,41 @@ class Order extends BaseEntityAbstract
     		$this->setOrderNo($codes[0] . str_pad($this->getId(), 6, '0', STR_PAD_LEFT))
     			->save();
     	}
+    }
+    /**
+     * Submit this order
+     * 
+     * @param UserAccount $user
+     * 
+     * @return Ambigous <BaseEntityAbstract, GenericDAO>
+     */
+    public function submit(UserAccount $user)
+    {
+    	return $this->setSubmitBy($user)
+    		->setSubmitDate(new UDate())
+    		->setStatus(Order::STATUS_SUBMITTED)
+    		->save();
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntity::__loadDaoMap()
+     */
+    public function __loadDaoMap()
+    {
+        DaoMap::begin($this, 'ord');
+        DaoMap::setStringType('orderNo','varchar', 50);
+        DaoMap::setStringType('status','varchar', 10);
+        DaoMap::setManyToOne("library", "Library", 'ord_lib');
+        DaoMap::setDateType('submitDate', 'datetime', true);
+        DaoMap::setManyToOne("submitBy", "UserAccount", 'ord_ua', true);
+        DaoMap::setOneToMany("items", "OrderItem", 'ord_items');
+        DaoMap::setStringType('comments','varchar', 255);
+        parent::__loadDaoMap();
+    
+        DaoMap::createIndex('orderNo');
+        DaoMap::createIndex('status');
+        DaoMap::createIndex('submitDate');
+        DaoMap::commit();
     }
     /**
      * Getting the open order by library

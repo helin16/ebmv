@@ -92,10 +92,11 @@ class ItemController extends LibAdminPageAbstract
 			{
 				OrderItem::get($itemXml->id)
 					->setQty($itemXml->qty)
+					->setNeedMARCRecord(trim($itemXml->needMARC) === '1')
 					->save();
 			}
 			$order->setComments($comments)
-				->setStatus(Order::STATUS_CLOSED)
+				->submit(Core::getUser())
 				->save();
 			$this->_notifyAdmin($order);
 		}
@@ -161,7 +162,7 @@ class ItemController extends LibAdminPageAbstract
 		
 		$rowNo++;
 		$rowNo++;
-		$this->_getTableRow($objPHPExcel->getActiveSheet(), $rowNo, 'TITLE', 'ISBN', 'CNO', 'AUTHOR', 'PUBLISHER', 'PUBLISH DATE', 'LENGTH', 'CIP','DESCRIPTION', 'QTY');
+		$this->_getTableRow($objPHPExcel->getActiveSheet(), $rowNo, 'TITLE', 'ISBN', 'CNO', 'AUTHOR', 'PUBLISHER', 'PUBLISH DATE', 'LENGTH', 'CIP','DESCRIPTION', 'QTY', 'NEED MARC?');
 		foreach(OrderItem::getAllByCriteria('orderId = ?', array($order->getId())) as $item)
 		{
 			$rowNo++;
@@ -176,7 +177,9 @@ class ItemController extends LibAdminPageAbstract
 				$product->getAttribute('Number Of Words'),
 				$product->getAttribute('Cip'),
 				$product->getAttribute('Description'),
-				$item->getQty());
+				$item->getQty(),
+				trim($item->getNeedMARCRecord()) === '1'
+			);
 		}
 		
 		$rowNo++;
@@ -191,7 +194,7 @@ class ItemController extends LibAdminPageAbstract
 		return $filePath;
 	}
 	
-	private function _getTableRow(&$sheet, $rowNo,  $title, $isbn, $cno, $author, $publisher, $publishDate, $length, $cip, $description, $qty)
+	private function _getTableRow(&$sheet, $rowNo,  $title, $isbn, $cno, $author, $publisher, $publishDate, $length, $cip, $description, $qty, $needMARC)
 	{
 		$sheet->SetCellValue('A' . $rowNo, $title);
 		$sheet->SetCellValue('B' . $rowNo, $isbn);
@@ -203,5 +206,6 @@ class ItemController extends LibAdminPageAbstract
 		$sheet->SetCellValue('H' . $rowNo, $cip);
 		$sheet->SetCellValue('I' . $rowNo, $description);
 		$sheet->SetCellValue('J' . $rowNo, $qty);
+		$sheet->SetCellValue('H' . $rowNo, $needMARC);
 	}
 }

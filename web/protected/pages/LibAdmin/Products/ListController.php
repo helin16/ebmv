@@ -91,7 +91,7 @@ class ListController extends LibAdminPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage();
+			$errors[] = $ex->getMessage(). $ex->getTraceAsString();
 		}
 		 
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
@@ -113,7 +113,7 @@ class ListController extends LibAdminPageAbstract
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage();
+			$errors[] = $ex->getMessage(). $ex->getTraceAsString();
 		}
 		 
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);

@@ -58,6 +58,18 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			})
 		);
 		tmp.newDiv = new Element('tr', {'class': 'item-row'}).store('data', row)
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? new Element('span') 
+					.insert({'bottom': new Element('input', {'type': 'checkbox', 'id': 'mark-all-marc'}) 
+						.observe('click', function(){
+							tmp.checked = this.checked;
+							$$('[save-order=need-marc]').each(function(chkbox) {
+								chkbox.checked = tmp.checked;
+							})
+						})
+					})
+					.insert({'bottom': new Element('label', {'for': 'mark-all-marc'}).update(' <small>MARC?</small>') })	
+				: new Element('input', {'type': 'checkbox', 'save-order': 'need-marc'})
+			) })
 			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Title' : row.product.title) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'ISBN' : (!row.product.attributes.isbn ? '' : row.product.attributes.isbn[0].attribute)) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'Author' : (!row.product.attributes.author ? '' : row.product.attributes.author[0].attribute)) })
@@ -73,7 +85,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me._signRandID(btn);
 		tmp.data = {'id': tmp.me._order.id, 'comments': $F($$('[save-order=comments]').first()), 'items': []};
 		$$('[save-order=item-qty]').each(function(item){
-			tmp.data.items.push({'id': item.readAttribute('item-id'), 'qty': $F(item)});
+			tmp.data.items.push({'id': item.readAttribute('item-id'), 'qty': $F(item), 'needMARC': $(item).up('.item-row').down('[save-order=need-marc]').checked});
 		});
 		tmp.me.postAjax(tmp.me.getCallbackId('saveOrder'), tmp.data, {
 			'onLoading': function() {
@@ -117,13 +129,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})
 					.insert({'bottom': new Element('dl')
 						.insert({'bottom': new Element('dt').update('Order Date.:') })
-						.insert({'bottom': new Element('dd').update(tmp.me._order.updated) })
+						.insert({'bottom': new Element('dd').update(tmp.me._order.submitDate.strip() === '0001-01-01 00:00:00' ? '' : tmp.me._order.submitDate) })
 					})
 				})
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})
 					.insert({'bottom': new Element('dl')
 						.insert({'bottom': new Element('dt').update('Order By.:') })
-						.insert({'bottom': new Element('dd').update(tmp.me._order.updatedBy.person.fullname) })
+						.insert({'bottom': new Element('dd').update(tmp.me._order.submitBy & tmp.me._order.submitBy.person ? tmp.me._order.submitBy.person.fullname : '') })
 					})
 				})
 			})
