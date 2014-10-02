@@ -135,7 +135,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})
 					.insert({'bottom': new Element('dl')
 						.insert({'bottom': new Element('dt').update('Order By.:') })
-						.insert({'bottom': new Element('dd').update(tmp.me._order.submitBy & tmp.me._order.submitBy.person ? tmp.me._order.submitBy.person.fullname : '') })
+						.insert({'bottom': new Element('dd').update(tmp.me._order.submitBy && tmp.me._order.submitBy.person ? tmp.me._order.submitBy.person.fullname : '') })
 					})
 				})
 			})

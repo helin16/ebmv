@@ -84,13 +84,16 @@ class ListController extends LibAdminPageAbstract
 		$result = $errors = array();
 		try
 		{
+			Dao::beginTransaction();
 			$order = Order::getOpenOrder(Core::getLibrary());
 			if(!$order instanceof Order)
 				$order = Order::create(Core::getLibrary());
 			$result['order'] = $order->getJson();
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage(). $ex->getTraceAsString();
 		}
 		 
@@ -101,6 +104,7 @@ class ListController extends LibAdminPageAbstract
 		$result = $errors = array();
 		try
 		{
+			Dao::beginTransaction();
 			if(!isset($param->CallbackParameter->orderId) || !($order = Order::get($param->CallbackParameter->orderId)) instanceof Order)
 				throw new Exception('Invalid order id passed in!');
 			if(!isset($param->CallbackParameter->productId) || !($product = Product::get($param->CallbackParameter->productId)) instanceof Product)
@@ -110,9 +114,11 @@ class ListController extends LibAdminPageAbstract
 			
 			OrderItem::create($order, $product, $qty);
 			$result['order'] = Order::get($order->getId())->getJson();
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage(). $ex->getTraceAsString();
 		}
 		 
