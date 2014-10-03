@@ -105,7 +105,7 @@ class ItemController extends LibAdminPageAbstract
 			$order->setComments($comments)
 				->submit(Core::getUser())
 				->save();
-// 			$this->_notifyAdmin($order);
+			$this->_notifyAdmin($order);
 			
 			$result['order'] = $order->getJson();
 			Dao::commitTransaction();
