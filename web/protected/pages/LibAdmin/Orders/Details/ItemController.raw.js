@@ -100,7 +100,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			}
 			,'onSuccess': function(sender, param) {
 				try {
-					tmp.result = tmp.me.getResp(param, false, true);
+					tmp.result = tmp.me.getResp(param, false, false);
+					if(!tmp.result.order)
+						return;
 					tmp.me.showModalBox('Success', "Order Saved Successfully!", true);
 					window.location = document.URL;
 				} catch(e) {
@@ -136,7 +138,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})
 					.insert({'bottom': new Element('dl')
 						.insert({'bottom': new Element('dt').update('Order Date.:') })
-						.insert({'bottom': new Element('dd').update(tmp.me._order.submitDate.strip() === '0001-01-01 00:00:00' ? '' : tmp.me._order.submitDate) })
+						.insert({'bottom': new Element('dd').update(tmp.me._order.submitDate.strip() === '0001-01-01 00:00:00' || tmp.me._order.submitDate.blank() ? '' : tmp.me.loadUTCTime(tmp.me._order.submitDate).toLocaleFormat('%c') ) })
 					})
 				})
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})

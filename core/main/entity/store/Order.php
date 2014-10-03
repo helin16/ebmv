@@ -61,6 +61,8 @@ class Order extends BaseEntityAbstract
      */
     public function getSubmitDate()
     {
+    	if(trim($this->submitDate) === '')
+    		return null;
     	return new UDate(trim($this->submitDate));
     }
     /**

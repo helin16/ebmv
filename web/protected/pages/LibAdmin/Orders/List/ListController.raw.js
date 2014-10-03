@@ -76,14 +76,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,_getResultTableRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
-		console.debug(row);
 		tmp.isTitle = (isTitle || false);
-		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
+		tmp.tag = (tmp.isTitle === true ? 'th' : 'td'); 
 		tmp.row = new Element('tr', {'class': 'item-row', 'item-id': row.id}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.orderNo) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.status) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.items.size()) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(row.submitDate === '0001-01-01 00:00:00' ? '' : row.submitDate) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(row.submitDate === '0001-01-01 00:00:00' || row.submitDate.blank() ? '' : tmp.me.loadUTCTime(row.submitDate).toLocaleFormat('%c') ) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(row.submitBy && row.submitBy.person ? row.submitBy.person.fullname : '') })
 			.insert({'bottom': new Element(tmp.tag).update(row.comments) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'})
