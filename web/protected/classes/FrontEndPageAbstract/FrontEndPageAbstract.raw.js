@@ -377,9 +377,9 @@ FrontPageJs.prototype = {
 	 */
 	,loadUTCTime: function (utcString) {
 		var tmp = {}
-		tmp.timeStrings = utcString.strip().split(' ');
-		tmp.dateStrings = tmp.timeStrings[0].split('-');
-		tmp.timeStrings = tmp.timeStrings[1].split(':');
+		tmp.strings = utcString.strip().split(' ');
+		tmp.dateStrings = tmp.strings[0].split('-');
+		tmp.timeStrings = tmp.strings[1].split(':');
 		return new Date(Date.UTC(tmp.dateStrings[0], (tmp.dateStrings[1] * 1 - 1), tmp.dateStrings[2], tmp.timeStrings[0], tmp.timeStrings[1], tmp.timeStrings[2]));
 		
 	}
