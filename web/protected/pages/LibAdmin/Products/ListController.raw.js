@@ -224,6 +224,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				tmp.order = $$('iframe.fancybox-iframe').first().contentWindow.pageJs._order;
 				if(tmp.order && tmp.order.status !== 'OPEN') {
 					window.location = document.URL;
+				} else {
+					tmp.me.order = tmp.order;
+					tmp.me._displayOrderSummary(tmp.me.order);
 				}
 			}
  		});

@@ -112,7 +112,9 @@ class ListController extends LibAdminPageAbstract
 			if(!isset($param->CallbackParameter->qty) || !is_numeric($qty = trim($param->CallbackParameter->qty)))
 				throw new Exception('Invalid qty passed in!');
 			
-			OrderItem::create($order, $product, $qty);
+			$price = explode(',', $product->getAttribute('price', ','));
+			$price = (count($price) === 0 ? '0.0000' : trim($price[0]));
+			OrderItem::create($order, $product, $qty, false, $price, (($price * 1) * ($qty * 1)));
 			$result['order'] = Order::get($order->getId())->getJson();
 			Dao::commitTransaction();
 		}

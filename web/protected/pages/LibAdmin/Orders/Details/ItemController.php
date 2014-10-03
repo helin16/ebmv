@@ -94,9 +94,12 @@ class ItemController extends LibAdminPageAbstract
 			
 			foreach($items as $itemXml)
 			{
-				OrderItem::get($itemXml->id)
-					->setQty($itemXml->qty)
+				$qty = trim($itemXml->qty);
+				if(!($item = OrderItem::get($itemXml->id)) instanceof OrderItem)
+					continue;
+				$item->setQty($qty)
 					->setNeedMARCRecord(trim($itemXml->needMARC) === '1')
+					->setTotalPrice((trim($item->getUnitPrice()) * 1) * ($qty * 1))
 					->save();
 			}
 			$order->setComments($comments)
@@ -176,7 +179,7 @@ class ItemController extends LibAdminPageAbstract
 		$rowNo++;
 		$tableRowStart = $rowNo;
 		$this->_getTableRow($sheet, $rowNo, 'TITLE', 'ISBN', 'CNO', 'AUTHOR', 'PUBLISHER', 'PUBLISH DATE', 'LENGTH', 'CIP','DESCRIPTION', 'QTY', 'TOTAL PRICE', 'NEED MARC?');
-		foreach(OrderItem::getAllByCriteria('orderId = ?', array($order->getId())) as $item)
+		foreach($order->getOrderItems() as $item)
 		{
 			$rowNo++;
 			$product = $item->getProduct();

@@ -31,6 +31,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result.item)
 						return
+					tmp.items = [];
+					tmp.me._order.items.each(function(item){
+						if(item.id !== tmp.result.item.id) {
+							tmp.items.push(item);
+						}
+					});
+					tmp.me._order.items = tmp.items;
 					tmp.row.remove();
 				} catch (e) {
 					tmp.me.showModalbox('ERROR', e, true);
