@@ -13,7 +13,7 @@ class AutoReturnExpiredShelfItems
 	{
 		$logKey = (($logKey = trim($logKey)) === '' ? self::getLogTransId() : $logKey);
 		$where = 'transId = ?';
-		$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria($where, array($logKey));
+		$logs = Log::getAllByCriteria($where, array($logKey));
 		foreach($logs as $log)
 		{
 			echo $log . $lineBreaker;
@@ -26,8 +26,6 @@ class AutoReturnExpiredShelfItems
 	 */
 	public static function run()
 	{
-		$lib = LibraryService::getInstance('Library')->get(1);
-		
 		$now = new UDate();
 		$sql = 'select * from Structureproductshelfitem where expiryTime < ?';
 		foreach(Dao::getResultsNative($sql, array(trim($now))) as $shelfItemId)
@@ -35,14 +33,15 @@ class AutoReturnExpiredShelfItems
 			try
 			{
 				Dao::beginTransaction();
-				$shelfItem = ProductShelfItemService::getInstance('ProductShelfItem')->get($shelfItemId);
+				$shelfItem = ProductShelfItem::get($shelfItemId);
 				if(!$shelfItem instanceof ProductShelfItem)
 					throw new Exception('Invalid ProductShelfItem(ID=' . $shelfItemId . ')');
 				$user = $shelfItem->getOwner();
 				$lib = $user->getLibrary();
-				ProductShelfItemService::getInstance('ProductShelfItem')
-					->cleanUpShelfItems()
-					->returnItem($user, $shelfItem->getProduct(), $lib);
+				ProductShelfItem::cleanUpShelfItems($user);
+				ProductShelfItem::returnItem($user, $shelfItem->getProduct(), $lib);
+				SupplierConnectorAbstract::getInstance($shelfItem->getProduct()->getSupplier(), $lib)->returnProduct($shelfItem->getProduct(), $user)
+					->removeBookShelfList($user, $shelfItem->getProduct());
 				Log::LogEntity($lib, $shelfItemId, 'ProductShelfItem', 'Auto Returned ShelfItem(ID' . $shelfItemId . ', ProductID=' . $shelfItem->getProduct()->getId(), ', OwnerID=' . $user->getId() . ')' , Log::TYPE_AUTO_EXPIRY);
 				Dao::commitTransaction();
 			}

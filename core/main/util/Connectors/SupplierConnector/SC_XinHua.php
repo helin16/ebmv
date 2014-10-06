@@ -148,9 +148,9 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function syncShelfItem(UserAccount $user, $isbn, $no, $borrowTime, $status)
 	{
-		$product = BaseServiceAbastract::getInstance('Product')->findProductWithISBNnCno($isbn, $no, $this->_supplier);
+		$product = Product::findProductWithISBNnCno($isbn, $no, $this->_supplier);
 		if($product instanceof Product)
-			BaseServiceAbastract::getInstance('ProductShelfItem')->syncShelfItem($user, $product, $borrowTime, $status);
+			ProductShelfItem::syncShelfItem($user, $product, $borrowTime, $status, $this->_lib);
 		return $this;
 	}
 	/**

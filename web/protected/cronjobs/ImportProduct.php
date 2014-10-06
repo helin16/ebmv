@@ -27,7 +27,7 @@ class ImportProduct
 	{
 		ini_set('max_execution_time', 0);
 		if(!Core::getUser() instanceof UserAccount)
-			Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
+			Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 		try
 		{
 			$startScript = new UDate();
@@ -55,7 +55,7 @@ class ImportProduct
 		$scriptRunningtime = $finishScript->diff($startScript);
 		self::log( "== Finished import script @ " . $finishScript . "(Used: " . $scriptRunningtime->format("%H hours, %I minutes, %S seconds") . ")=============================", __FUNCTION__, self::FLAG_END);
 		$transId = self::getLogTransId();
-		echo self::showLogs($transId);
+// 		echo self::showLogs($transId);
 		return $transId;
 	}
 	
@@ -125,8 +125,8 @@ class ImportProduct
 		if(!is_array($supplierIds))
 			throw new Exception("System Error: supplids has to be a array!");
 		if($supplierIds === null || count($supplierIds) === 0)
-			return BaseServiceAbastract::getInstance('Supplier')->findAll();
-		return BaseServiceAbastract::getInstance('Supplier')->findByCriteria('id in (' . implode(', ', array_fill(0, count($supplierIds), '?')) . ')', $supplierIds);
+			return Supplier::getAll();
+		return Supplier::getAllByCriteria('id in (' . implode(', ', array_fill(0, count($supplierIds), '?')) . ')', $supplierIds);
 	}
 	/**
 	 * getting the libraries
@@ -140,8 +140,8 @@ class ImportProduct
 		if(!is_array($libCodes))
 			throw new Exception("System Error: lib has to be a array!");
 		if($libCodes === null || count($libCodes) === 0)
-			return BaseServiceAbastract::getInstance('Library')->findAll();
-		return BaseServiceAbastract::getInstance('Library')->getLibsFromCodes($libCodes);
+			return Library::getAll();
+		return Library::getLibsFromCodes($libCodes);
 	}
 	/**
 	 * Loging the messages
@@ -152,7 +152,8 @@ class ImportProduct
 	 */
 	public static function log($msg, $funcName, $comments = '')
 	{
-		Log::logging(BaseServiceAbastract::getInstance('Library')->get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
+		echo $msg . "\r\n";
+		Log::logging(Library::get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
 	}
 	/**
 	 * Getting the logs
@@ -164,7 +165,7 @@ class ImportProduct
 	{
 		$logKey = (($logKey = trim($logKey)) === '' ? self::getLogTransId() : $logKey);
 		$where = 'transId = ?';
-		$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria($where, array($logKey));
+		$logs = Log::getAllByCriteria($where, array($logKey));
 		foreach($logs as $log)
 		{
 			echo $log . $lineBreaker;

@@ -48,7 +48,7 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 			self::$_cache ['libType'] = array ();
 	
 		if (! isset ( self::$_cache ['libType'] [$typeId] ))
-			self::$_cache ['libType'] [$typeId] = BaseServiceAbastract::getInstance ( 'LibraryOwnsType' )->get ( $typeId );
+			self::$_cache ['libType'] [$typeId] = LibraryOwnsType::get ( $typeId );
 	
 		return self::$_cache ['libType'] [$typeId];
 	}

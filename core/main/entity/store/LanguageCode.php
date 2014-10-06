@@ -74,7 +74,7 @@ class LanguageCode extends BaseEntityAbstract
     public static function getLanguageCodes(Language $lang)
     {
     	if(!isset(self::$_cache[$lang->getId()]))
-    		self::$_cache[$lang->getId()] = EntityDao::getInstance(get_called_class())->findByCriteria('languageId = ?', array($lang->getId()));
+    		self::$_cache[$lang->getId()] = self::getAllByCriteria('languageId = ?', array($lang->getId()));
     	return self::$_cache[$lang->getId()];
     }
     /**

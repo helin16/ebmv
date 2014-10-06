@@ -52,4 +52,16 @@ class ProductType extends BaseEntityAbstract
         DaoMap::createIndex('name');
         DaoMap::commit();
     }
+    /**
+     * Getting the name of the producttype
+     *
+     * @param string $name The name we are searching on
+     *
+     * @return NULL|ProductType
+     */
+    public static function getByName($name)
+    {
+    	$types = self::getAllByCriteria('name = ?', array($name), true, 1, 1);
+    	return count($types) > 0 ? $types[0] : null;
+    }
 }

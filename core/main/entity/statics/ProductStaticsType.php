@@ -64,15 +64,17 @@ class ProductStaticsType extends BaseEntityAbstract
         $this->code = $code;
         return $this;
     }
+    /**
+     * Getting the static type by code
+     * 
+     * @param string $code
+     * 
+     * @return Ambigous <NULL, unknown>
+     */
     public static function getByCode($code)
     {
-    	$class = get_called_class();
-    	$objects = EntityDao::getInstance($class)->findByCriteria('code = ?', array(trim($code)),1, 1);
+    	$objects = self::getAllByCriteria('code = ?', array(trim($code)), true, 1, 1);
     	return (count($objects) > 0 ? $objects[0] : null);
-    }
-    public static function get($id)
-    {
-    	return EntityDao::getInstance(get_called_class())->findById($id);
     }
     /**
      * (non-PHPdoc)

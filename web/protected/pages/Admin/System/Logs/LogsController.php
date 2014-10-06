@@ -47,8 +47,9 @@ class LogsController extends CrudPageAbstract
 				$pageSize = (isset($pagination->pageSize) && trim($pagination->pageSize) !== '' && is_numeric($pagination->pageSize)) ? trim($pagination->pageSize) : $pageSize;
 			}
 			
-			$itemsArray = BaseServiceAbastract::getInstance('Log')->findAll(false, $pageNumber, $pageSize, array());LogService::
-			$result['pagination'] = BaseServiceAbastract::getInstance('Library')->getPageStats();
+			$stats = array();
+			$itemsArray = Log::getAll(false, $pageNumber, $pageSize, array(), $stats);
+			$result['pagination'] = $stats;
 			$items = array();
 			foreach($itemsArray as $item)
 				$items[] = $item->getJson();

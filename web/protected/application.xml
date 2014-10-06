@@ -47,6 +47,35 @@
 			<!-- FrontEnd:: product borrow:reauth page -->
 			<url ServiceId="reauth" ServiceParameter="" pattern="reauth.html" />
 			
+			<!-- asset service -->
+			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
+			
+			<!-- *********************************************************************************************** -->
+			<!-- Library Admin Page                                                                              -->
+			<!-- *********************************************************************************************** -->
+			
+			<!-- LibAdminPage:: home -->
+			<url ServiceParameter="LibAdmin.Home.HomeController" pattern="libadmin/" />
+			
+			<!-- LibAdminPage:: items / products -->
+			<url ServiceParameter="LibAdmin.Products.ListController" pattern="libadmin/items.html" />
+			
+			<!-- LibAdminPage:: orders -->
+			<url ServiceParameter="LibAdmin.Orders.List.ListController" pattern="libadmin/orders.html" />
+			
+			<!-- LibAdminPage:: orders details page -->
+			<url ServiceParameter="LibAdmin.Orders.Details.ItemController" pattern="libadmin/order/{id}.html"  parameters.id="\d+" />
+			
+			<!-- LibAdminPage:: statics page -->
+			<url ServiceParameter="LibAdmin.Statics.Home.Controller" pattern="libadmin/statics.html"/>
+			
+			<!-- LibAdminPage:: statics page -->
+			<url ServiceParameter="LibAdmin.Statics.LibraryViews.StaticsController" pattern="libadmin/statics/libraryviews.html"/>
+			
+			<!-- *********************************************************************************************** -->
+			<!-- Admin Page                                                                                      -->
+			<!-- *********************************************************************************************** -->
+			
 			<!-- AdminPage:: home -->
 			<url ServiceParameter="Admin.Home.HomeController" pattern="admin/" />
 			
@@ -68,9 +97,6 @@
 			
 			<!-- AdminPage:: test sip -->
 			<url ServiceParameter="Admin.SIPTester.SIPTesterController" pattern="admin/testsip.html" />
-			
-			<!-- asset service -->
-			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
 		</module>
 
 		<module id="globalization" class="TGlobalization">

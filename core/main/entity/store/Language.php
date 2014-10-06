@@ -10,7 +10,6 @@ class Language extends BaseEntityAbstract
 {
 	const ID_SIMPLIFIED_CHINESE = 1;
 	const ID_TRADITIONAL_CHINESE = 2;
-	private static $_cache;
     /**
      * The name of the language
      * 
@@ -95,19 +94,6 @@ class Language extends BaseEntityAbstract
         return $this;
     }
     /**
-     * Getting the lanuage
-     * 
-     * @param int $id The id of the language
-     * 
-     * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
-     */
-    public static function getLanguage($id)
-    {
-    	if(!isset(self::$_cache[$lang->getId()]))
-    		self::$_cache[$lang->getId()] = EntityDao::getInstance(get_called_class())->findById($lang->getId());
-    	return self::$_cache[$lang->getId()];
-    }
-    /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
      */
@@ -121,5 +107,19 @@ class Language extends BaseEntityAbstract
     
         DaoMap::createIndex('name');
         DaoMap::commit();
+    }
+    /**
+     * Getting the language by code
+     *
+     * @param array $codes The codes we are searching on
+     *
+     * @return multiple:Language
+     */
+    public static function getLangsByCodes(array $codes, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+    {
+    	if(count($codes) === 0)
+    		return array();
+    	self::getQuery()->eagerLoad('Language.codes', DaoQuery::DEFAULT_JOIN_TYPE, 'lcode');
+    	return self::getAllByCriteria('lcode.code in (' . implode(', ', array_fill(0, count($codes), '?')) . ')', $codes, $searchActiveOnly, $pageNo, $pageSize);
     }
 }

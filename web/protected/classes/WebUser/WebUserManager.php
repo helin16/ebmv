@@ -7,6 +7,7 @@ Prado::using('Application.classes.WebUser.WebUser');
  */
 class WebUserManager extends TModule implements IUserManager
 {
+	public static $fromLocalDB = false;
 	/**
 	 * get the Guest Name
 	 *
@@ -28,7 +29,7 @@ class WebUserManager extends TModule implements IUserManager
 		if($username === null)
 			return new WebUser($this);
 		
-		if(!($userAccount = (Core::getUser() instanceof UserAccount ? Core::getUser(): BaseServiceAbastract::getInstance('UserAccount')->getUserByUsername($username, Core::getLibrary()))) instanceof UserAccount)
+		if(!($userAccount = (Core::getUser() instanceof UserAccount ? Core::getUser(): UserAccount::getUserByUsername($username, Core::getLibrary()))) instanceof UserAccount)
 			return null;
 		
 		$user = new WebUser($this);
@@ -50,7 +51,7 @@ class WebUserManager extends TModule implements IUserManager
 	{
 		if(!Core::getUser() instanceof UserAccount)
 		{
-			if(!($userAccount = BaseServiceAbastract::getInstance('UserAccount')->login(Core::getLibrary(), $username, $password)) instanceof UserAccount)
+			if(!($userAccount = self::login(Core::getLibrary(), $username, $password)) instanceof UserAccount)
 				return false;
 		}
 		return true;
@@ -78,6 +79,52 @@ class WebUserManager extends TModule implements IUserManager
 		// TODO: do nothing at this moment,
 		//since we don't support cookie-based auth
 		return null;
+	}
+	/**
+	 * login for the library reader
+	 *
+	 * @param Library $lib
+	 * @param unknown $username
+	 * @param unknown $password
+	 */
+	public static function login(Library $lib, $libCardNo, $password)
+	{
+	
+		if (! Core::getUser () instanceof UserAccount)
+			Core::setUser ( UserAccount::get ( UserAccount::ID_SYSTEM_ACCOUNT ) );
+		if(self::$fromLocalDB === true)
+		{
+			$userAccount = UserAccount::getUserByUsernameAndPassword($libCardNo, $password, $lib);
+			// check whether the library has the user or not
+			if (! $userAccount instanceof UserAccount)
+				throw new CoreException ( 'Invalid login please contact ebmv admin!' );
+		}
+		else
+		{
+			// check whether the library has the user or not
+			if (! LibraryConnectorAbstract::getScript ($lib)->chkUser ( $libCardNo, $password ))
+				throw new CoreException ( 'Invalid login please contact your library!' );
+				
+			// get the information from the library system
+			$userInfo = LibraryConnectorAbstract::getScript ($lib)->getUserInfo ( $libCardNo, $password );
+			// check whether our local db has the record already
+			if (($userAccount = UserAccount::getUserByUsername ( $libCardNo, $lib )) instanceof UserAccount) {
+				$person = $userAccount->getPerson();
+				$userAccount = UserAccount::updateUser ( $userAccount, $lib, $userInfo->getUsername (), $userInfo->getPassword (), null, Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName(), $person ) );
+			} else 		// we need to create a user account from blank
+			{
+				$userAccount = UserAccount::createUser ( $lib, $userInfo->getUsername (), $userInfo->getPassword (), Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName() ) );
+			}
+		}
+	
+		$role = null;
+		if (! Core::getRole () instanceof Role)
+		{
+			if (count ( $roles = $userAccount->getRoles () ) > 0)
+				$role = $roles [0];
+		}
+		Core::setUser($userAccount, $role);
+		return $userAccount;
 	}
 }
 ?>

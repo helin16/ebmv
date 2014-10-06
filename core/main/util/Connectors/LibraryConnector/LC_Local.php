@@ -18,7 +18,7 @@ class LC_Local extends LibraryConnectorAbstract
 				$this->_log('starting: ' . __FUNCTION__ . ' with params:' , __FUNCTION__);
 				$this->_log(print_r(func_get_args(), true) , __FUNCTION__);
 			}
-			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $this->getLibrary());
+			$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, $this->getLibrary());
 			$result = LibraryConnectorUser::getUser($this->getLibrary(), $userAccount->getUserName(), $userAccount->getPassword(), $userAccount->getPerson()->getFirstName(), $userAccount->getPerson()->getLastName());
 			
 			if($this->_isDebugMode === true)
@@ -53,7 +53,7 @@ class LC_Local extends LibraryConnectorAbstract
 				$this->_log('starting: ' . __FUNCTION__ . ' with params:' , __FUNCTION__);
 				$this->_log(print_r(func_get_args(), true) , __FUNCTION__);
 			}
-			$result = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $this->getLibrary()) instanceof UserAccount;
+			$result = UserAccount::getUserByUsernameAndPassword($username, $password, $this->getLibrary()) instanceof UserAccount;
 			if($this->_isDebugMode === true)
 				$this->_log('Result for ' . __FUNCTION__ . 'is now:' . ($result === true ? 'true' : 'false') , __FUNCTION__);
 			return $result;

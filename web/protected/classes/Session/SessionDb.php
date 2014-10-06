@@ -44,7 +44,7 @@ class SessionDb extends THttpSession
      */
     public function _read($id)
     {
-        return BaseServiceAbastract::getInstance('Session')->read($id);
+        return Session::read($id);
     }
     /**
      * Session write handler.
@@ -55,7 +55,7 @@ class SessionDb extends THttpSession
      */
     public function _write($id,$data)
     {
-        $session = BaseServiceAbastract::getInstance('Session')->write($id, $data);
+        $session = Session::write($id, $data);
         return ($session instanceof Session);
     }
     
@@ -67,7 +67,7 @@ class SessionDb extends THttpSession
      */
     public function _destroy($id)
     {
-        BaseServiceAbastract::getInstance('Session')->delete($id);
+        Session::delete($id);
         return true;
     }
     
@@ -79,7 +79,7 @@ class SessionDb extends THttpSession
      */
     public function _gc($maxLifetime)
     {
-        BaseServiceAbastract::getInstance('Session')->cleanUp($maxLifetime);
+        Session::cleanUp($maxLifetime);
         return true;
     }
 }

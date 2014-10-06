@@ -31,20 +31,20 @@ class ProductsController extends FrontEndPageAbstract
     
     public function getProductType()
     {
-        if(!isset($this->Request['productTypeId']) || !($type = BaseServiceAbastract::getInstance('ProductType')->get(trim($this->Request['productTypeId']))) instanceof ProductType)
+        if(!isset($this->Request['productTypeId']) || !($type = ProductType::get(trim($this->Request['productTypeId']))) instanceof ProductType)
             return;
         return $type;
     }
     
     public function getLanguage()
     {
-        if(!isset($this->Request['languageId']) || !($language = BaseServiceAbastract::getInstance('Language')->get(trim($this->Request['languageId']))) instanceof Language)
+        if(!isset($this->Request['languageId']) || !($language = Language::get(trim($this->Request['languageId']))) instanceof Language)
             return;
         return $language;
     }
     public function getCategory()
     {
-        if(!isset($this->Request['cateid']) || !($category = BaseServiceAbastract::getInstance('Category')->get(trim($this->Request['cateid']))) instanceof Category)
+        if(!isset($this->Request['cateid']) || !($category = Category::get(trim($this->Request['cateid']))) instanceof Category)
             return;
         return $category;
     }
@@ -124,10 +124,10 @@ class ProductsController extends FrontEndPageAbstract
 	    {
 	    	if(($searchTxt = trim($this->Request['searchtext'])) === '')
 	    		return $flatArray();
-	    	$categories = BaseServiceAbastract::getInstance('Category')->searchCategoryByProduct($searchTxt, Core::getLibrary(), true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('pcat.name' => 'asc'));
+	    	$categories = Category::searchCategoryByProduct($searchTxt, Core::getLibrary(), true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('pcat.name' => 'asc'));
 	    }
 	    else
-	    	$categories = ($this->category instanceof Category ? $this->category->getChildren() : BaseServiceAbastract::getInstance('Category')->getCategories($this->type, Core::getLibrary(), $this->language, true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('pcat.name' => 'asc')));
+	    	$categories = ($this->category instanceof Category ? $this->category->getChildren() : Category::getCategories($this->type, Core::getLibrary(), $this->language, true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('pcat.name' => 'asc')));
 	    foreach($categories as $cate)
 	    {
 	        $flatArray[$cate->getId()] = $cate;
@@ -172,15 +172,16 @@ class ProductsController extends FrontEndPageAbstract
 	            $searchCategory = (isset($searchCriteria['searchCat']) && trim($searchCriteria['searchCat']) !== '' && trim($searchCriteria['searchCat']) !== '0') ? $searchCriteria['searchCat'] : '';
 	            $languageId = (isset($searchCriteria['language']) && trim($searchCriteria['language']) !== '') ? trim($searchCriteria['language']) : '';
 	            $productTypeId = (isset($searchCriteria['productType']) && trim($searchCriteria['productType']) !== '') ? trim($searchCriteria['productType']) : '';
-	            $language = BaseServiceAbastract::getInstance('Language')->get($languageId);
-	            $productType = BaseServiceAbastract::getInstance('ProductType')->get($productTypeId);
+	            $language = Language::get($languageId);
+	            $productType = ProductType::get($productTypeId);
 	            
 	            if($searchCategory !== '')
 	            	$categoryIds[] = $searchCategory;
 	        }
 	        
-	        $products = BaseServiceAbastract::getInstance('Product')->findProductsInCategory(Core::getLibrary(), $searchText, $categoryIds, $searchOption, $language, $productType, true, $pageNo, $pageSize, array('pro.id' => 'desc'));
-	        $result['pagination'] = BaseServiceAbastract::getInstance('Product')->getPageStats();
+	        $stats = array();
+	        $products = Product::findProductsInCategory(Core::getLibrary(), $searchText, $categoryIds, $searchOption, $language, $productType, true, $pageNo, $pageSize, array('pro.id' => 'desc'), $stats);
+	        $result['pagination'] = $stats;
 	        $result['products'] = array();
 	        foreach($products as $product)
 	        {

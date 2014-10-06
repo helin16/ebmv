@@ -176,4 +176,27 @@ class LibraryOwns extends BaseEntityAbstract
         DaoMap::createIndex('total');
         DaoMap::commit();
     }
+    /**
+     * Updating the libraryowns
+     *
+     * @param Product         $product
+     * @param Library         $lib
+     * @param int             $avail
+     * @param int             $total
+     * @param LibraryOwnsType $type
+     *
+     * @return bool
+     */
+    public static function updateLibOwns(Product $product, Library $lib, $avail, $total, LibraryOwnsType $type = null)
+    {
+    	$where = 'productId = ? and libraryId = ?';
+    	$params = array($product->getId(), $lib->getId());
+    	if($type instanceof LibraryOwnsType)
+    	{
+    		$where .= ' AND typeId = ?';
+    		$params[] = $type->getId();
+    	}
+    	self::updateByCriteria('avail = ?, total = ?', $where, $params);
+    	return true;
+    }
 }

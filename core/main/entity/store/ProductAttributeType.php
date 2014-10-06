@@ -115,4 +115,35 @@ class ProductAttributeType extends BaseEntityAbstract
         DaoMap::createIndex('searchable');
         DaoMap::commit();
     }
+    /**
+     * Getting the product type by code
+     *
+     * @param string $code The code we are searching on
+     *
+     * @return NULL|ProductAttributeType
+     */
+    public static function getTypeByCode($code)
+    {
+    	$types = self::getAllByCriteria('code = ?', array($code), true, 1, 1);
+    	return count($types) > 0 ? $types[0] : null;
+    }
+    /**
+     * Getting the product type by code
+     *
+     * @param array $code The code we are searching on
+     *
+     * @return array
+     */
+    public static function getTypesByCodes(array $codes)
+    {
+    	if(count($codes) === 0)
+    		return array();
+    	$results = array();
+    	$types = self::getAllByCriteria('code in (' . implode(', ', array_fill(0, count($codes), '?')) . ')', $codes);
+    	foreach($types as $type)
+    	{
+    		$results[$type->getCode()] = $type;
+    	}
+    	return $results;
+    }
 }

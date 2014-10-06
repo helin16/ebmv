@@ -6,7 +6,7 @@ if ($argc != 4)
 		die("Usage: ImportProduct siteCode(37,werew,121fd|all) supplierids(1,2,3|all) totalrecords(30|all)\r\n");
 
 if (!Core::getUser() instanceof UserAccount)
-	Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_SYSTEM_ACCOUNT));
+	Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
 echo "== Cleanup Assets ===================================================\n\r";
 CleanupAssets::run();

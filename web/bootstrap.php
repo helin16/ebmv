@@ -15,6 +15,8 @@ class Web
 			dirname(__FILE__) . '/protected/classes/AdminPageAbstract/',
 			dirname(__FILE__) . '/protected/classes/CrudPageAbstract/',
 			dirname(__FILE__) . '/protected/classes/FrontEndPageAbstract/',
+			dirname(__FILE__) . '/protected/classes/LibAdminPageAbstract/',
+			dirname(__FILE__) . '/protected/classes/StaticsPageAbstract/',
 			dirname(__FILE__) . '/protected/classes/Soap/',
 			dirname(__FILE__) . '/protected/cronjobs/',
 			dirname(__FILE__) . '/protected/pages/ContentLoader/'

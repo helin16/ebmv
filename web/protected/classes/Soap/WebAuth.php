@@ -89,7 +89,7 @@ class WebAuth
 	private function _getSupplier($CDKey, $Uid, $SiteID)
 	{
 		//getting the supplier
-		$suppliers = BaseServiceAbastract::getInstance('Supplier')->findAll();
+		$suppliers = Supplier::getAll();
 		foreach($suppliers as $supplier)
 		{
 			//getting the supplier's key
@@ -115,13 +115,12 @@ class WebAuth
 	 */
 	private function _getUser($libCode, $username, $password)
 	{
-		$lib = BaseServiceAbastract::getInstance('Library')->getLibFromCode($libCode);
-		if (!$lib instanceof Library)
+		if (!($lib = Library::getLibFromCode($libCode)) instanceof Library)
 			throw new Exception('No Such a Site/Library!', self::RESULT_CODE_FAIL);
 		//getting the user
 		try
 		{
-			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $lib, true);
+			$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, $lib, true);
 			return $userAccount;
 		}
 		catch(Exception $ex)
@@ -141,8 +140,7 @@ class WebAuth
 	 */
 	public function getUserLocalInfo($libCode, $username, $password)
 	{
-		$lib = BaseServiceAbastract::getInstance('Library')->getLibFromCode($libCode);
-		if (!$lib instanceof Library)
+		if (!($lib = Library::getLibFromCode($libCode)) instanceof Library)
 			throw new Exception('No Such a Site/Library!', self::RESULT_CODE_FAIL);
 		//getting the user
 		try
@@ -152,7 +150,7 @@ class WebAuth
 			$response->addAttribute('Time', trim($now));
 			$response->addAttribute('TimeZone',trim($now->getTimeZone()->getName()));
 			
-			$userAccount = BaseServiceAbastract::getInstance('UserAccount')->getUserByUsernameAndPassword($username, $password, $lib, true);
+			$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, $lib, true);
 			$user = $response->addChild('User');
 			$user->addAttribute('libraryId', $libCode);
 			$user->addAttribute('LoginName', $username);

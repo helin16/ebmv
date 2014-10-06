@@ -194,4 +194,139 @@ class ProductShelfItem extends BaseEntityAbstract
         DaoMap::createIndex('expiryTime');
         DaoMap::commit();
     }
+    /**
+     * cleanup unused shelfitems
+     *
+     * @param UserAccount $user The owner of the shelfitem
+     *
+     * @return bool
+     */
+    public static function cleanUpShelfItems(UserAccount $user = null)
+    {
+    	if($user instanceof UserAccount)
+    		$user->deleteInactiveShelfItems();
+    	else
+    		ProductShelfItem::deleteByCriteria('active = 0');
+    	return true;
+    }
+    /**
+     * Getting the shelf items
+     *
+     * @param UserAccount $user
+     * @param Supplier    $supplier
+     * @param number      $pageNo
+     * @param number      $pageSize
+     * @param array       $orderBy
+     *
+     * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
+    public static function getShelfItems(UserAccount $user, Supplier $supplier = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+    {
+    	$where = 'psitem.ownerId = ?';
+    	$params = array($user->getId());
+    	if($supplier instanceof Supplier)
+    	{
+    		$query = self::getQuery();
+    		$query->eagerLoad("ProductShelfItem.product", DaoQuery::DEFAULT_JOIN_TYPE, 'p');
+    		$where .= ' AND p.SupplierId = ?';
+    		$params[] = $supplier->getId();
+    	}
+    	return self::getAllByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy, $stats);
+    }
+    /**
+     * Adding a product onto shelf
+     *
+     * @param UserAccount $user
+     * @param Product     $product
+     * @param Library     $lib
+     *
+     * @throws Exception
+     * @return bool
+     */
+    public static function addToShelf(UserAccount $user, Product $product, Library $lib)
+    {
+    	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $lib);
+    	return true;
+    }
+    /**
+     * Borrow an item / add to our self
+     *
+     * @param UserAccount $user
+     * @param Product     $product
+     * @param Library     $lib
+     * @param Supplier    $supplier
+     *
+     * @throws Exception
+     * @return bool
+     */
+    public static function borrowItem(UserAccount $user, Product $product, Library $lib)
+    {
+    	self::syncShelfItem($user, $product, new UDate(), ProductShelfItem::ITEM_STATUS_BORROWED, $lib);
+    	return true;
+    }
+    /**
+     * Removing the item from the bookshelf
+     *
+     * @param UserAccount $user
+     * @param Product     $product
+     * @param Library     $lib
+     *
+     * @throws Exception
+     * @return bool
+     */
+    public static function removeItem(UserAccount $user, Product $product, Library $lib)
+    {
+    	ProductShelfItem::updateByCriteria('`active` = 0', '`productId` = ? and `ownerId` = ?', array($product->getId(), $user->getId()));
+    	return true;
+    }
+    /**
+     * returnItem
+     *
+     * @param UserAccount $user
+     * @param Product     $product
+     * @param Library     $lib
+     *
+     * @throws Exception
+     * @return bool
+     */
+    public static function returnItem(UserAccount $user, Product $product, Library $lib)
+    {
+    	ProductShelfItem::updateByCriteria('`status` = ?', '`productId` = ? and `ownerId` = ?', array(ProductShelfItem::ITEM_STATUS_NOT_BORROWED, $product->getId(), $user->getId()));
+    	return true;
+    }
+    /**
+     * synchronize shelf item with local database
+     *
+     * @param UserAccount $user
+     * @param Product     $product
+     * @param string      $borrowTime
+     * @param int         $status
+     *
+     * @return bool
+     */
+    public static function syncShelfItem(UserAccount $user, Product $product, $borrowTime, $status, Library $lib)
+    {
+    	$where = '`productId` = ? and `ownerId` = ?';
+    	$params = array($product->getId(), $user->getId());
+    	$count = ProductShelfItem::countByCriteria($where, $params);
+    	if($count == 0 )
+    	{
+    		$expiryTime = new UDate(trim($borrowTime));
+    		$libraryLoanTime = $lib->getInfo('max_loan_time');
+    		if(trim($libraryLoanTime) === '')
+    			$libraryLoanTime = SystemSettings::getSettings(SystemSettings::TYPE_DEFAULT_MAX_LOAN_TIME);
+    		$expiryTime->modify($libraryLoanTime);
+    
+    		$item = new ProductShelfItem();
+    		$item->setOwner($user)
+    			->setProduct($product)
+    			->setBorrowTime(trim($borrowTime))
+    			->setExpiryTime(trim($expiryTime))
+    			->setStatus($status)
+    			->save();
+    	}
+    	else
+    		self::updateByCriteria('`status` = ?', $where, array_merge(array($status), $params));
+    	return true;
+    }
 }

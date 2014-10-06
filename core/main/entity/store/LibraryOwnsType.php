@@ -17,24 +17,6 @@ class LibraryOwnsType extends BaseEntityAbstract
 	 * @var Multiple::LibraryOwnsType
 	 */
 	private static $_types = array();
-	/**
-	 * Getting the type by code
-	 * 
-	 * @param string $code The unique code for the type
-	 * 
-	 * @return NULL|LibraryOwnsType
-	 */
-	public static function getTypeByCode($code)
-	{
-		if(!isset(self::$_types[$code]))
-		{
-			$results = EntityDao::getInstance('LibraryOwnsType')->findByCriteria('code = ?', array(trim($code)), 1, 1);
-			if(count($results) === 0)
-				return null;
-			self::$_types[$code] = $results[0];
-		}
-		return self::$_types[$code];
-	}
     /**
      * The array of LibraryOwns
      * 
@@ -117,5 +99,23 @@ class LibraryOwnsType extends BaseEntityAbstract
         DaoMap::createUniqueIndex('code');
         DaoMap::createIndex('name');
         DaoMap::commit();
+    }
+    /**
+     * Getting the type by code
+     *
+     * @param string $code The unique code for the type
+     *
+     * @return NULL|LibraryOwnsType
+     */
+    public static function getTypeByCode($code)
+    {
+    	if(!isset(self::$_types[$code]))
+    	{
+    		$results = self::getAllByCriteria('code = ?', array(trim($code)), true, 1, 1);
+    		if(count($results) === 0)
+    			return null;
+    		self::$_types[$code] = $results[0];
+    	}
+    	return self::$_types[$code];
     }
 }

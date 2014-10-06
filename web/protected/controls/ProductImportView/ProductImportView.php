@@ -41,13 +41,13 @@ class ProductImportView extends TTemplateControl
 			$result['suppliers'] = $result['libraries'] = array();
 			if (($getSuppliers = (isset($param->CallbackParameter->suppliers) && $param->CallbackParameter->suppliers === true)) === true)
 			{
-				foreach(BaseServiceAbastract::getInstance('Supplier')->findAll() as $sup)
+				foreach(Supplier::getAll() as $sup)
 					$result['suppliers'][] = $sup->getJson();
 			}
 			
 			if (($getLibraries = (isset($param->CallbackParameter->libraries) && $param->CallbackParameter->libraries === true)) === true)
 			{
-				foreach(BaseServiceAbastract::getInstance('Library')->findAll() as $lib)
+				foreach(Library::getAll() as $lib)
 					$result['libraries'][] = $lib->getJson();
 			}
 		}
@@ -77,7 +77,7 @@ class ProductImportView extends TTemplateControl
 			$now = new UDate();
 			if($result['isImporting'] === true)
 			{
-				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
+				$logs = Log::getAllByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 				if(count($logs) === 0)
 					throw new Exception('System Error Occurred: no logs found!');
 				$result['transId'] = trim($logs[0]->getTransId());
@@ -110,7 +110,7 @@ class ProductImportView extends TTemplateControl
 				throw new Exception('System Error: invalid maxQty provided: ' . $maxQty . '!');
 			
 			$libCodes = array();
-			foreach(BaseServiceAbastract::getInstance('Library')->findByCriteria('id in (' . implode(', ', $libraryIds) . ')', array()) as $lib)
+			foreach(Library::getAllByCriteria('id in (' . implode(', ', $libraryIds) . ')') as $lib)
 			{
 				$libCodes = array_merge($libCodes, explode(',', $lib->getInfo('aus_code')));
 			}
@@ -126,7 +126,7 @@ class ProductImportView extends TTemplateControl
 			$now = new UDate();
 			$output = $this->_execInBackground($script);
 			sleep(1);
-			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
+			$logs = Log::getAllByCriteria('type = ?', array('ProductImportScript'), true, 1, 1, array("log.id" => 'desc'));
 			if(count($logs) === 0)
 				throw new Exception('System Error Occurred: no logs found!');
 			$result['transId'] = trim($logs[0]->getTransId());
@@ -168,7 +168,7 @@ class ProductImportView extends TTemplateControl
 			
 			$result['hasMore'] = true;
 			$result['logs'] = array();
-			$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ? and created >= ?', array($transId, $nowUTC));
+			$logs = Log::getAllByCriteria('transId = ? and created >= ?', array($transId, $nowUTC));
 			foreach ($logs as $log)
 			{
 				if(trim($log->getComments()) === ImportProduct::FLAG_END)
@@ -180,7 +180,7 @@ class ProductImportView extends TTemplateControl
 			$now = new UDate();
 			if(count($logs) === 0)
 			{
-				$logs = BaseServiceAbastract::getInstance('Log')->findByCriteria('transId = ?', array($transId), true, 1, 1, array("log.id" => 'desc'));
+				$logs = Log::getAllByCriteria('transId = ?', array($transId), true, 1, 1, array("log.id" => 'desc'));
 				if(count($logs) === 0 || $now->modify('-10 minute')->after($logs[0]->getCreated()))
 					$result['hasMore'] = false;
 			}

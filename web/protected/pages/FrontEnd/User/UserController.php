@@ -54,6 +54,7 @@ class UserController extends FrontEndPageAbstract
 		$errors = $result = array();
 		try
 		{
+			Dao::beginTransaction();
 			$pageNo = 1;
 			$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
 			 
@@ -62,10 +63,11 @@ class UserController extends FrontEndPageAbstract
 				$pageNo = trim(isset($params->CallbackParameter->pagination->pageNo) ? $params->CallbackParameter->pagination->pageNo : $pageNo);
 				$pageSize = trim(isset($params->CallbackParameter->pagination->pageSize) ? $params->CallbackParameter->pagination->pageSize : $pageSize);
 			}
-			$items = BaseServiceAbastract::getInstance('ProductShelfItem')
-				->cleanUpShelfItems(Core::getUser())
-				->getShelfItems(Core::getUser(), null, $pageNo, $pageSize, array('psitem.updated' => 'desc'));
-			$result['pagination'] = BaseServiceAbastract::getInstance('ProductShelfItem')->getPageStats();
+			
+			ProductShelfItem::cleanUpShelfItems(Core::getUser());
+			$stats = array();
+			$items = ProductShelfItem::getShelfItems(Core::getUser(), null, $pageNo, $pageSize, array('psitem.updated' => 'desc'), $stats);
+			$result['pagination'] = $stats;
 			$result['items'] = array();
 			foreach($items as $item)
 			{
@@ -78,9 +80,11 @@ class UserController extends FrontEndPageAbstract
 				$array['expiryTime'] = trim($expiryTime);
 				$result['items'][] = $array;
 			}
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage() . $ex->getTraceAsString();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
@@ -97,24 +101,27 @@ class UserController extends FrontEndPageAbstract
 		$errors = $result = array();
 		try
 		{
-			if(!isset($params->CallbackParameter->itemId) || !($item = BaseServiceAbastract::getInstance('ProductShelfItem')->get(trim($params->CallbackParameter->itemId))) instanceof ProductShelfItem)
+			Dao::beginTransaction();
+			if(!isset($params->CallbackParameter->itemId) || !($item = ProductShelfItem::get(trim($params->CallbackParameter->itemId))) instanceof ProductShelfItem)
 				throw new Exception("System Error: invalid shelfitem!");
-			BaseServiceAbastract::getInstance('ProductShelfItem')
-				->returnItem(Core::getUser(), $item->getProduct(), Core::getLibrary())
-				->removeItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
+			
+			ProductShelfItem::returnItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
+			ProductShelfItem::removeItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
+			SupplierConnectorAbstract::getInstance($item->getProduct()->getSupplier(), Core::getLibrary())->removeBookShelfList(Core::getUser(), $item->getProduct());
 			$result['delItem'] = $item->getJson();
 			
 			if(isset($params->CallbackParameter->pagination) && isset($params->CallbackParameter->pagination->pageNo) )
 			{
 				$pageNo = trim($params->CallbackParameter->pagination->pageNo);
-				$items = BaseServiceAbastract::getInstance('ProductShelfItem')
-					->getShelfItems(Core::getUser(), null, $pageNo + 1, 1, array('psitem.updated' => 'desc'));
+				$items = ProductShelfItem::getShelfItems(Core::getUser(), null, $pageNo + 1, 1, array('psitem.updated' => 'desc'));
 				if(count($items) > 0)
 					$result['nextItem'] = $items[0]->getJson();
 			}
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
@@ -132,15 +139,19 @@ class UserController extends FrontEndPageAbstract
 		$errors = $result = array();
 		try
 		{
-			if(!isset($params->CallbackParameter->itemId) || !($item = BaseServiceAbastract::getInstance('ProductShelfItem')->get(trim($params->CallbackParameter->itemId))) instanceof ProductShelfItem)
+			Dao::beginTransaction();
+			if(!isset($params->CallbackParameter->itemId) || !($item = ProductShelfItem::get(trim($params->CallbackParameter->itemId))) instanceof ProductShelfItem)
 				throw new Exception("System Error: invalid shelfitem!");
-			$item = BaseServiceAbastract::getInstance('ProductShelfItem')
-				->returnItem(Core::getUser(), $item->getProduct(), Core::getLibrary())
-				->get($item->getId());
-			$result['item'] = $item->getJson();
+			ProductShelfItem::returnItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
+			SupplierConnectorAbstract::getInstance($item->getProduct()->getSupplier(), $lib)->returnProduct($item->getProduct(), $user)
+				->removeBookShelfList($user, $item->getProduct());
+			
+			$result['item'] = ProductShelfItem::get($item->getId())->getJson();
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);
@@ -158,16 +169,17 @@ class UserController extends FrontEndPageAbstract
 		$errors = $result = array();
 		try
 		{
-			if(!isset($params->CallbackParameter->itemId) || !($item = BaseServiceAbastract::getInstance('ProductShelfItem')->get(trim($params->CallbackParameter->itemId))) instanceof ProductShelfItem)
+			Dao::beginTransaction();
+			if(!isset($params->CallbackParameter->itemId) || !($item = ProductShelfItem::get(trim($params->CallbackParameter->itemId))) instanceof ProductShelfItem)
 				throw new Exception("System Error: invalid shelfitem!");
-			$item = BaseServiceAbastract::getInstance('ProductShelfItem')
-				->borrowItem(Core::getUser(), $item->getProduct(), Core::getLibrary())
-				->resetQuery()
-				->get($item->getId());
-			$result['item'] = $item->getJson();
+			ProductShelfItem::borrowItem(Core::getUser(), $item->getProduct(), Core::getLibrary());
+			SupplierConnectorAbstract::getInstance($item->getProduct()->getSupplier(), Core::getLibrary())->borrowProduct($item->getProduct(), Core::getUser());
+			$result['item'] = ProductShelfItem::get($item->getId())->getJson();
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($result, $errors);

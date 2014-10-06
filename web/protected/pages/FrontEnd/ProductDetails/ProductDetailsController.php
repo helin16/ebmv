@@ -19,7 +19,7 @@ class ProductDetailsController extends FrontEndPageAbstract
 	{
 		parent::__construct();
 		if(isset($this->Request['id']))
-			$this->_product = BaseServiceAbastract::getInstance('Product')->get($this->Request['id']);
+			$this->_product = Product::get($this->Request['id']);
 	}
 	
 	/**
@@ -28,14 +28,6 @@ class ProductDetailsController extends FrontEndPageAbstract
      */
 	public function onLoad($param)
 	{
-		if(!$this->IsPostBack)
-		{
-		    if(count($this->_product->getLibraryOwn(Core::getLibrary())) === 0)
-		    {
-		    	FrontEndPageAbstract::show404Page('Product NOT Exsits!', 'Requested book/magazine/newspaper is not viewable for this library!');
-		    	die;
-		    }
-		}
 	    parent::onLoad($param);
 	}
 	/**
@@ -71,6 +63,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         {
         	if(!$this->_product->getSupplier() instanceof Supplier)
         		throw new Exception('System Error: no supplier found for this book!');
+        	Dao::beginTransaction();
         	$type = trim($params->CallbackParameter->type);
         	switch($type)
         	{
@@ -92,7 +85,8 @@ class ProductDetailsController extends FrontEndPageAbstract
         	}
         	try
         	{
-        		BaseServiceAbastract::getInstance('ProductShelfItem')->borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
+        		SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->borrowProduct($this->_product, Core::getUser());
+        		ProductShelfItem::borrowItem(Core::getUser(), $this->_product, Core::getLibrary()); 
         		//increasing statics
         		$this->_product->addStatic(Core::getLibrary(), ProductStaticsType::get(ProductStaticsType::ID_BORROW_RATE), 1);
         	} 
@@ -100,11 +94,14 @@ class ProductDetailsController extends FrontEndPageAbstract
         	{
         		$results['warning'] = 'Failed to borrow this item from supplier';
         	}
-        	BaseServiceAbastract::getInstance('ProductShelfItem')->addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
+        	SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->addToBookShelfList(Core::getUser(), $this->_product);
+        	ProductShelfItem::addToShelf(Core::getUser(), $this->_product, Core::getLibrary());
         	$results['url'] = SupplierConnectorAbstract::getInstance($this->_product->getSupplier(), Core::getLibrary())->$method($this->_product, Core::getUser());
+        	Dao::commitTransaction();
         }
         catch(Exception $ex)
         {
+        	Dao::rollbackTransaction();
         	$errors[] = $ex->getMessage();
         }
         $params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
@@ -125,7 +122,7 @@ class ProductDetailsController extends FrontEndPageAbstract
         	
         	//get the user's actual borrowed count
         	if(!($user = Core::getUser()) instanceof UserAccount)
-        		Core::setUser(BaseServiceAbastract::getInstance('UserAccount')->get(UserAccount::ID_GUEST_ACCOUNT));
+        		Core::setUser(UserAccount::get(UserAccount::ID_GUEST_ACCOUNT));
         	$totalBorrowedNo = intval(Core::getUser()->countBookShelfItem());
         	
         	//increasing statics

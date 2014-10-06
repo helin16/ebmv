@@ -39,31 +39,12 @@ class EntityDao
      */
     private $_pageStats = array('totalPages' => null, 'totalRows' => null, 'pageNumber' => null, 'pageSize' => DaoQuery::DEFAUTL_PAGE_SIZE);
     /**
-     * The registery of the entity daos
-     *
-     * @var array
-     */
-    private static $_entityDaos = array();
-    /**
      * @param string $namespace
      */
     public function __construct($entityClassName)
     {
         $this->_tmpQuery = new DaoQuery($entityClassName);
         $this->resetQuery();
-    }
-    /**
-     * Singleton Design of the entity Dao
-     *
-     * @param string $entityName The name of the entity
-     *
-     * @return EntityDao
-     */
-    public static function getInstance($entityName)
-    {
-        if(!array_key_exists($entityName, self::$_entityDaos))
-        self::$_entityDaos[$entityName] = new EntityDao($entityName);
-        return self::$_entityDaos[$entityName];
     }
     /**
      * set a new query to the dao
@@ -121,7 +102,7 @@ class EntityDao
      */
     public function findById($id)
     {
-        $results = Dao::findById($this->_query, $id);
+        $results = Dao::findById($this->_query->setSelectActiveOnly(false), $id);
         $this->resetQuery();
         return $results;
     }
@@ -134,9 +115,9 @@ class EntityDao
      *
      * @return array
      */
-    public function findByCriteria($criteria, array $params = array(), $pageNumber = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderByParams = array())
+    public function findByCriteria($criteria, array $params = array(), $searchActiveOnly = true, $pageNumber = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderByParams = array())
     {
-        $results = Dao::findByCriteria($this->_query, $criteria, $params, $pageNumber, $pageSize, $orderByParams);
+        $results = Dao::findByCriteria($this->_query->setSelectActiveOnly($searchActiveOnly), $criteria, $params, $pageNumber, $pageSize, $orderByParams);
         $this->_pageStats = Dao::getPageStats();
         $this->resetQuery();
         return $results;
@@ -202,9 +183,9 @@ class EntityDao
      *
      * @return array An array of BaseEntityAbstract
      */
-    public function findAll($pageNumber = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    public function findAll($searchActiveOnly = true, $pageNumber = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
     {
-        $results = Dao::findAll($this->_query, $pageNumber, $pageSize, $orderBy);
+        $results = Dao::findAll($this->_query->setSelectActiveOnly($searchActiveOnly), $pageNumber, $pageSize, $orderBy);
         $this->_pageStats = Dao::getPageStats();
         $this->resetQuery();
         return $results;
@@ -232,7 +213,7 @@ class EntityDao
      *
      * @return GenericDAO
      */
-    public function resetQuery()
+    protected function resetQuery()
     {
         $this->_query = clone $this->_tmpQuery;
         return $this;

@@ -170,9 +170,9 @@ abstract class Dao
         DaoMap::loadMap($qry->getFocusClass());
         $results = self::findByCriteria($qry, '`' . DaoMap::$map[strtolower($qry->getFocusClass())]['_']['alias'] . '`.`id`=?', array($id), null, DaoQuery::DEFAUTL_PAGE_SIZE, array(), $outputFormat);
         if (is_array($results) && sizeof($results) > 0)
-        return $results[0];
+        	return $results[0];
         if ($results instanceof SimpleXMLElement)
-        return $results;
+        	return $results;
         return null;
     }
     /**
@@ -551,7 +551,7 @@ abstract class Dao
     public static function updateByCriteria(DaoQuery $qry, $setClause, $criteria, $params = array())
     {
         self::connect();
-        return Dao::_execSql('update ' . strtolower($qry->getFocusClass()) . ' set ' . $setClause . ' , updatedById = ' . Core::getUser()->getId() . ' where ' . $criteria, $params);
+        return Dao::_execSql('update `' . strtolower($qry->getFocusClass()) . '` set ' . $setClause . ' , updatedById = ' . Core::getUser()->getId() . ' where ' . $criteria, $params);
     }
     /**
      * delete a table for the search criteria
@@ -565,7 +565,7 @@ abstract class Dao
     public static function deleteByCriteria($qry, $criteria, $params = array())
     {
         self::connect();
-        return Dao::_execSql('delete from ' . strtolower($qry instanceof DaoQuery ? $qry->getFocusClass() :  trim($qry)) . ' where (' . $criteria . ')', $params);
+        return Dao::_execSql('delete from `' . strtolower($qry instanceof DaoQuery ? $qry->getFocusClass() :  trim($qry)) . '` where (' . $criteria . ')', $params);
     }
     /**
      * replace into
@@ -580,7 +580,7 @@ abstract class Dao
     public static function replaceInto($table, $columns, $values, $params = array())
     {
         self::connect();
-        return Dao::_execSql('REPLACE INTO ' . $table . ' (`' . implode('`, `', $columns) . '`) values (' . implode(', ', $values) . ')', $params);
+        return Dao::_execSql('REPLACE INTO `' . $table . '` (`' . implode('`, `', $columns) . '`) values (' . implode(', ', $values) . ')', $params);
     }
     /**
      * Add a join table record for many to many relationship
@@ -595,7 +595,7 @@ abstract class Dao
     public static function saveManyToManyJoin(DaoQuery $qry, $rightClass, $leftId, $rightId)
     {
         if(self::existsManyToManyJoin($qry, $rightClass, $leftId, $rightId) === true)
-        return 0;
+        	return 0;
         return Dao::_execSql($qry->generateInsertForMTM($rightClass), array($leftId, $rightId, Core::getUser()->getId()));
     }
     /**

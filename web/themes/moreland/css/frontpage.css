@@ -1,0 +1,60 @@
+.header .navbar {
+	background: transparent url('../images/banner-home-8.jpg') no-repeat 0 0;
+	background-size: 100% auto;
+}
+#catelist .list-group-item {
+    background: #F1F9E2;
+    color: #384D08;
+    filter: none;
+}
+#catelist .list-group-item:hover,
+.header .navbar-default .navbar-nav > li > a:hover,
+.panel.nodefault > .panel-heading,
+.panel.nodefault > .panel-heading .btn.dropdown-toggle {
+	background: #008485;
+	color: #fff;
+    filter: none;
+}
+.header .navbar-default .navbar-nav > li > a {
+    color: #fff;
+}
+
+.nodefault.prolistshowcase .langlist .langitem a {
+	color: #fff;
+}
+.nodefault.prolistshowcase .langlist .langitem.active a,
+.nodefault.prolistshowcase .langlist .langitem a:hover {
+	background: #fff;
+	color: #008485;
+}
+
+.header #topmenulist {
+	background: #008485;
+}
+.header #topmenulist .navbar-nav > .active > a, 
+.header #topmenulist .navbar-nav > .active > a:focus,
+.header #topmenulist .navbar-nav > li > a:focus {
+    color: #B85000;
+}
+
+.header #topmenulist .navbar-nav > .active > a:hover, 
+.header #topmenulist .navbar-nav > li > a:hover {
+	background: #EC7F3A;
+}
+
+.logo {
+	margin: 10px 0 0 0;
+	height: 93px;
+	vertical-align: bottom;
+}
+.logo .media-object {
+	width: auto;
+	height: 80px;
+}
+.header .media-body.title{
+	display:none;
+}
+
+.topmenu {
+	margin: 10px 0 0 0;
+}

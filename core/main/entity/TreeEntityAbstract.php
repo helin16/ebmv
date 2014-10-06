@@ -103,7 +103,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
     /**
      * Getting the next position for the new children of the provided parent
      *
-     * @throws ServiceException
+     * @throws EntityException
      * @return int
      */
     public function getNextPosition()
@@ -119,20 +119,24 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
         $unUsed = array_diff($expectedAccountNos, $usedAccountNos);
         sort($unUsed);
         if (count($unUsed) === 0)
-        throw new ServiceException("Position over loaded (parentId = " . $this->getId() . ")!");
+        	throw new EntityException("Position over loaded (parentId = " . $this->getId() . ")!");
          
         return $unUsed[0];
     }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::postSave()
+     */
     public function postSave()
     {
-        $class = get_class($this);
+    	$class = get_class($this);
         if(!$this->getRoot() instanceof $class)
         {
             $fakeParent = new $class();
             $fakeParent->setProxyMode(true);
             $fakeParent->setId($this->getId());
             $this->setRoot($fakeParent);
-            EntityDao::getInstance($class)->save($this);
+            Dao::save($this);
         }
     }
     /**
@@ -144,9 +148,9 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
      * 
      * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
      */
-    public function getChildren($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+    public function getChildren($activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
     {
-    	return EntityDao::getInstance(get_class($this))->findByCriteria('position like ? and rootId = ?', array($this->getPosition() . '%', $this->getRoot()->getId()), $pageNo, $pageSize, $orderBy);
+    	return self::getAllByCriteria('position like ? and rootId = ?', array($this->getPosition() . '%', $this->getRoot()->getId()), $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
     }
 	/**
 	 * load the default elments of the base entity

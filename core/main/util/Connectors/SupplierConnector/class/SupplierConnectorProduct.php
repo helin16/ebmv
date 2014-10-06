@@ -23,6 +23,7 @@ class SupplierConnectorProduct
 	private $_languageCodes;
 	private $_categoryNames;
 	private $_productTypeName;
+	private $_price;
 	private $_copies = array('onlineRead' => array ('avail' => 0, 'total' => 0), 'download' => array ('avail' => 0, 'total' => 0));
 	/**
 	 * Getting the SupplierConnectorProduct
@@ -51,7 +52,8 @@ class SupplierConnectorProduct
 				preg_split('/[+\/]/', trim(self::_getAttribute($productinfo, 'Language'))), 
 				explode('/', self::_getAttribute($productinfo, 'BookType')), 
 				strtolower(trim($productinfo->getName())), 
-				self::_getCopies($productinfo)
+				self::_getCopies($productinfo),
+				trim(self::_getAttribute($productinfo, 'Price')) 
 			);
 		return self::$_products[$key];
 	}
@@ -82,7 +84,7 @@ class SupplierConnectorProduct
 	private static function _getCopies(SimpleXMLElement $productinfo)
 	{
 		$copies = array();
-		foreach(BaseServiceAbastract::getInstance('LibraryOwnsType')->findAll() as $type)
+		foreach(LibraryOwnsType::getAll() as $type)
 		{
 			$copyStats = array('avail' => 0,  'total' => 0);
 			$code = trim($type->getCode());
@@ -115,7 +117,7 @@ class SupplierConnectorProduct
 	 * @param string $productTypeName
 	 * @param array  $copies
 	 */
-	public function __construct($title, $isbn, $cno, $author, $publisher, $publish_date, $no_of_words, $image_thumb, $description, $cip, $libCode, $languageCodes, $categoryNames, $productTypeName, array $copies)
+	public function __construct($title, $isbn, $cno, $author, $publisher, $publish_date, $no_of_words, $image_thumb, $description, $cip, $libCode, $languageCodes, $categoryNames, $productTypeName, array $copies, $price = '0.0000')
 	{
 		if(trim($isbn) === '')
 			throw new SupplierConnectorException('No ISBN provided!');
@@ -136,6 +138,7 @@ class SupplierConnectorProduct
 		$this->_categoryNames = $categoryNames;
 		$this->_productTypeName = $productTypeName;
 		$this->_copies = $copies;
+		$this->_price = $price;
 	}
 	/**
 	 * Getting the value of the attribute
@@ -168,6 +171,7 @@ class SupplierConnectorProduct
 					, 'no_of_words' => array($this->_no_of_words)
 					, 'image_thumb' => array(trim($this->_image_thumb))
 					, 'description' => array(trim($this->_description))
+					, 'price' =>  array(trim($this->_price))
 			)
 			, 'libCode' => $this->_libCode
 			, 'languageCodes' => $this->_languageCodes

@@ -167,8 +167,8 @@ class UserAccount extends BaseEntityAbstract
     	$sql = "select p.productId from productshelfitem p left join product pro on (pro.id = p.productId and pro.active = 1) where pro.id is null;";
     	$productIds = array_map(create_function('$a', 'return trim($a[0]);'), Dao::getResultsNative($sql, array(), PDO::FETCH_NUM));
     	if(count($productIds) > 0)
-    		Dao::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'productId in (' . implode(', ', $productIds) . ')  AND ownerId = ' . $this->getId());
-    	Dao::deleteByCriteria(new DaoQuery('ProductShelfItem'), 'active = 0 AND ownerId = ' . $this->getId());
+    		ProductShelfItem::deleteByCriteria('productId in (' . implode(', ', $productIds) . ')  AND ownerId = ' . $this->getId());
+    	ProductShelfItem::deleteByCriteria('active = 0 AND ownerId = ' . $this->getId());
     	return $this;
     }
     /**
@@ -180,12 +180,12 @@ class UserAccount extends BaseEntityAbstract
      * 
      * @return array
      */
-    public function getBookShelfItem($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderby = array())
+    public function getBookShelfItem($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderby = array(), $activeOnly = true, &$stats = array())
     {
     	if(intval($this->getId()) === self::ID_GUEST_ACCOUNT)
     		return array();
     	$this->deleteInactiveShelfItems();
-    	return EntityDao::getInstance('ProductShelfItem')->findByCriteria('ownerId = ?', array($this->getId()), $pageNo, $pageSize, $orderby);
+    	return ProductShelfItem::getAllByCriteria('ownerId = ?', array($this->getId()), $activeOnly, $pageNo, $pageSize, $orderby, $stats);
     }
     /**
      * Getting the count of bookshelfitem for this user
@@ -197,7 +197,7 @@ class UserAccount extends BaseEntityAbstract
     	if(intval($this->getId()) === self::ID_GUEST_ACCOUNT)
     		return 0;
     	$this->deleteInactiveShelfItems();
-    	return EntityDao::getInstance('ProductShelfItem')->countByCriteria('ownerId = ? and active = ? ', array($this->getId(), 1));
+    	return ProductShelfItem::countByCriteria('ownerId = ? and active = ? ', array($this->getId(), 1));
     }
     /**
      * (non-PHPdoc)
@@ -206,6 +206,22 @@ class UserAccount extends BaseEntityAbstract
     public function __toString()
     {
         return $this->getUserName();
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::getJson()
+     */
+    public function getJson($extra = '', $reset = false)
+    {
+    	$array = array();
+    	if(!$this->isJsonLoaded($reset))
+    	{
+    		$array['person'] = $this->getPerson()->getJson();
+    		$array['roles'] = array();
+    		foreach($this->getRoles() as $role)
+    			$array['roles'][] = $role->getJson();
+    	}
+    	return parent::getJson($array, $reset);
     }
     /**
      * (non-PHPdoc)
@@ -225,7 +241,112 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::createIndex('password');
         DaoMap::commit();
     }
-     
+    /**
+     * Getting UserAccount
+     *
+     * @param string  $username The username string
+     * @param string  $password The password string
+     * @param Library $library  The library the user belongs to
+     *
+     * @throws AuthenticationException
+     * @throws Exception
+     * @return Ambigous <BaseEntityAbstract>|NULL
+     */
+    public static function getUserByUsernameAndPassword($username, $password, Library $library, $noHashPass = false)
+    {
+    	$query = self::getQuery();
+    	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
+    	$query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username AND `Password` = :password AND r.id != :roleId and lib.id = :libId", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password)), 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
+    	if(count($userAccounts) === 1)
+    		return $userAccounts[0];
+    	if(count($userAccounts) > 1)
+    		throw new AuthenticationException("Multiple Users Found!Contact you administrator!");
+    	return null;
+    }
+    /**
+     * Getting UserAccount by username
+     *
+     * @param string $username    The username string
+     *
+     * @throws AuthenticationException
+     * @throws Exception
+     * @return Ambigous <BaseEntityAbstract>|NULL
+     */
+    public static function getUserByUsername($username, Library $library)
+    {
+    	$query = self::getQuery();
+    	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
+    	$query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username  AND r.id != :roleId and lib.id = :libId", array('username' => $username, 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
+    	if(count($userAccounts) === 1)
+    		return $userAccounts[0];
+    	else if(count($userAccounts) > 1)
+    		throw new AuthenticationException("Multiple Users Found!Contact you administrator!");
+    	else
+    		return null;
+    }
+    /**
+     * Creating a new useraccount
+     *
+     * @param string $username
+     * @param string $password
+     * @param Role   $role
+     * @param Person $person
+     *
+     * @return UserAccount
+     */
+    public static function createUser(Library $lib, $username, $password, Role $role, Person $person)
+    {
+    	if($this->getUserByUsername($username, $lib) instanceof UserAccount)
+    		throw new EntityException('System Error: trying to create a username with the same id:' . $username . '!');
+    	$userAccount = new UserAccount();
+    	$userAccount->setUserName($username)
+    		->setPassword($password)
+    		->setPerson($person)
+    		->setLibrary($lib)
+    		->save();
+    	self::saveManyToMany($role, $userAccount);
+    	return self::get($userAccount->getId());
+    }
+    /**
+     * Updating an useraccount
+     *
+     * @param UserAccount $userAccount
+     * @param string      $username
+     * @param string      $password
+     * @param Role        $role
+     * @param Person      $person
+     *
+     * @return Ambigous <BaseEntity, BaseEntityAbstract>
+     */
+    public static function updateUser(UserAccount &$userAccount, Library $lib, $username, $password, array $allRoles = null, Person $newPerson = null)
+    {
+    	$person = $userAccount->getPerson();
+    	//user wants to update the person
+    	if($newPerson instanceof Person)
+    	{
+    		$person = $newPerson->setId($person->getId())
+    			->save();//update the old person with all the information from newPerson
+    	}
+    	$userAccount->setUserName($username)
+    		->setPassword($password)
+    		->setPerson($person)
+    		->setLibrary($lib)
+    		->save();
+    	 
+    	//if we are trying to update the roles too!
+    	if(count($allRoles) > 0)
+    	{
+    		Dao::deleteByCriteria('role_useraccount', 'userAccountId = ?', array($userAccount->getId()));
+    		//need to create whatever has left after the loop
+    		foreach($allRoles as $role)
+    		{
+    			self::saveManyToMany($role, $userAccount);
+    		}
+    	}
+    	return ($userAccount = self::get($userAccount->getId())); //refersh the object
+    }
 }
 
 ?>
