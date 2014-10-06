@@ -816,7 +816,7 @@ class SIP2
         /* test the recieved message's CRC by generating our own CRC from the message */
         $test = preg_split('/(.{4})$/',trim($message),2,PREG_SPLIT_DELIM_CAPTURE);
 
-        if ($this->_crc($test[0]) == $test[1]) {
+        if (count($test) > 2 && $this->_crc($test[0]) == $test[1]) {
             return true;
         } else {
             return false;
