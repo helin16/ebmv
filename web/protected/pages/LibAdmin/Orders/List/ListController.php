@@ -45,7 +45,7 @@ class ListController extends LibAdminPageAbstract
 			}
 			$stats = array();
 			$orders = array();
-			foreach(Order::getAll(true, $pageNumber, $pageSize, array('ord.id' => 'desc'), $stats) as $order)
+			foreach(Order::getAllByCriteria('libraryId = ?', array(Core::getLibrary()->getId()), true, $pageNumber, $pageSize, array('ord.id' => 'desc'), $stats) as $order)
 				$orders[] = $order->getJson();
 			$result['items'] = $orders;
 			$result['pagination'] = $stats;
