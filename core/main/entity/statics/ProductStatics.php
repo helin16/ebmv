@@ -129,14 +129,26 @@ class ProductStatics extends BaseEntityAbstract
     public static function create(Product $product, ProductStaticsType $type, Library $library, $value = 0)
     {
     	$class = get_called_class();
-    	$objects = self::getAllByCriteria('productId = ? and typeId = ? and libraryId = ?', array($product->getId(), $type->getId(), $library->getId()),true, 1, 1);
-    	$obj = (count($objects) > 0 ? $objects[0] : new $class());
+    	$obj = (($obj = self::getStats($product, $type, $library)) instanceof $class ? $obj : new $class());
     	$obj->setProduct($product)
     		->setType($type)
     		->setLibrary($library);
     	if(trim($obj->getId()) === '')
     		$obj->setValue($value);
     	return $obj->save();
+    }
+    /**
+     * geting the stats
+     * 
+     * @param Product            $product
+     * @param ProductStaticsType $type
+     * @param Library            $library
+     * @return Ambigous <GenericDAO, BaseEntityAbstract>
+     */
+    public static function getStats(Product $product, ProductStaticsType $type, Library $library)
+    {
+    	$objects = self::getAllByCriteria('productId = ? and typeId = ? and libraryId = ?', array($product->getId(), $type->getId(), $library->getId()),true, 1, 1);
+    	return (count($objects) > 0 ? $objects[0] : null);
     }
     /**
      * increasing the value of the statics
