@@ -374,6 +374,18 @@ class Product extends BaseEntityAbstract
 		return $this;
 	}
 	/**
+	 * get statics to a product
+	 * 
+	 * @param Library            $lib
+	 * @param ProductStaticsType $type
+	 * 
+	 * @return ProductStatics
+	 */
+	public function getStatic(Library $lib, ProductStaticsType $type)
+	{
+		return ProductStatics::getStats($this, $type, $lib);
+	}
+	/**
 	 * Getting the suppliers for this product
 	 * 
 	 * @return multitype:|Ambigous <multitype:, multitype:BaseEntityAbstract >

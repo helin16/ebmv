@@ -48,7 +48,10 @@ abstract class LibAdminPageAbstract extends FrontEndPageAbstract
 	    parent::onPreInit($param);
 	    $this->getPage()->setMasterClass("Application.layout.LibAdmin.PageLayout");
 	}
-	
+	/**
+	 * (non-PHPdoc)
+	 * @see FrontEndPageAbstract::onInit()
+	 */
 	public function onInit($params)
 	{
 		parent::onInit($params);

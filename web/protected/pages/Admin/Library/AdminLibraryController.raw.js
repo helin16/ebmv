@@ -3,37 +3,47 @@
  */
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new CrudPageJs(), {
-	
 	types: null //the information types
-	
+	/**
+	 * Getting the description list
+	 */
 	,_geDl: function(dt, dd) {
 		return new Element('dl')
 			.insert({'bottom': new Element('dt').update(dt) })
 			.insert({'bottom': new Element('dd').update(dd) });
 	}
-	
+	/**
+	 * Getting the input group div
+	 */
+	,_getInputGroup: function(title, text) {
+		return new Element('div', {'class': 'input-group input-group-sm'})
+			.insert({'bottom': new Element('span', {'class': 'input-group-addon'}).update(title) })
+			.insert({'bottom': new Element('span', {'class': 'form-control'}).update(text) });
+	}
+	/**
+	 * Getting the item row
+	 */
 	,_getItemRow: function (item, option) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.div = new Element('div', {'class' : 'panel panel-primary item', 'item_id': item.id}).store('item', item)
 			.insert({'bottom' : new Element('div', {'class' : 'panel-heading'})
 				.insert({'bottom' : new Element('div', {'class': "panel-title"})
-					.insert({'bottom' : item.name })
-					.insert({'bottom' : option.addClassName('pull-right') })
+					.insert({'bottom' : new Element('div', {'class' : 'row'})
+						.insert({'bottom' : new Element('div', {'class' : 'col-sm-1'}).update( item.id)  })	
+						.insert({'bottom' : new Element('div', {'class' : 'col-sm-4'}).update( item.name)  })	
+						.insert({'bottom' : new Element('div', {'class' : 'col-sm-3'}).update( item.connector ) })	
+						.insert({'bottom' : new Element('div', {'class' : 'col-sm-1'}).update( new Element('input', {'type': 'checkbox', 'checked': item.active, 'disabled': true}) ) })	
+						.insert({'bottom' : new Element('div', {'class' : 'col-sm-3'}).update( option.addClassName('pull-right') ) })	
+					})
 				})
 			})
-			.insert({'bottom' : new Element('div', {'class' : 'panel-body'})
-				.insert({'bottom' : new Element('div', {'class' : 'row'})
-					.insert({'bottom' : new Element('div', {'class' : 'col-xs-1'}).update(tmp.me._geDl('id:', item.id) ) })	
-					.insert({'bottom' : new Element('div', {'class' : 'col-xs-6'}).update(tmp.me._geDl('Name:', item.name) ) })	
-					.insert({'bottom' : new Element('div', {'class' : 'col-xs-4'}).update(tmp.me._geDl('Connector:', item.connector) ) })	
-					.insert({'bottom' : new Element('div', {'class' : 'col-xs-1'}).update(tmp.me._geDl('Active?', item.istitle === true ? item.active : new Element('input', {'type': 'checkbox', 'checked': item.active, 'disabled': true})) ) })	
-				})
-			})
-			.insert({'bottom' : tmp.me._getInfoDiv(item) });
+			.insert({'bottom' : tmp.me._getInfoDiv(item) })
 		return tmp.div;
 	}
-
+	/**
+	 * Getting the edit btn
+	 */
 	,_getItemRowEditBtn: function(item) {
 		var tmp = {};
 		tmp.me = this;
@@ -65,7 +75,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 				})
 			});
 	}
-	
+	/**
+	 * hide and show the edit btn
+	 */
 	,_hideShowAllEditPens: function () {
 		var tmp = {};
 		tmp.savePanel = $(this.resultDivId).down('.savePanel');
@@ -73,7 +85,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 			tmp.savePanel.down('.cancelBtn').click();
 		return this;
 	}
-
+	/**
+	 * Showing the edit panel
+	 */
 	,showEditPanel: function (btn, isNEW) {
 		var tmp = {};
 		tmp.me = this;
@@ -85,12 +99,13 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		}
 		return this;
 	}
-	
+	/**
+	 * Getting the result div
+	 */
 	,_getResultDiv: function(items, includetitlerow, itemrowindex) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.includetitlerow = (includetitlerow === false ? false : true);
-		
 		tmp.resultDiv = new Element('div');
 		if(tmp.includetitlerow === true) {
 			tmp.resultDiv.insert({'bottom': new Element('p', {'class': 'item titleRow'})
@@ -103,43 +118,87 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		}
 		tmp.i = (itemrowindex || 0);
 		items.each(function(item) {
-			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item, tmp.me._getItemRowEditBtn(item))
-				
-			});
+			tmp.resultDiv.insert({'bottom':  tmp.me._getItemRow(item, tmp.me._getItemRowEditBtn(item)) });
 			tmp.i++;
 		});
 		return tmp.resultDiv;
 	}
-	
+	,_getUserEditBtn: function(libId, user) {
+		var tmp = {};
+		tmp.me = this;
+		return new Element('span', {'class': 'btn btn-default btn-xs lib-admin-user-btn', 'user-id': user.id, 'style': 'display: inline-block; margin: 0 10px 0px 0', 'title': 'Edit user'})
+			.update(user.person.fullname)
+			.observe('click', function(){
+				tmp.me._openUserEditPage(libId, user.id);
+			});
+	}
+	,_openUserEditPage: function (libId, userId) {
+		var tmp = {};
+		tmp.me = this;
+		jQuery.fancybox({
+			'autoScale'     : true,
+			'autoDimensions': true,
+			'fitToView'     : true,
+			'autoSize'      : true,
+			'type'			: 'iframe',
+			'href'			: '/admin/libadminuser/' + libId + '/' + userId + '.html',
+			'beforeClose'	    : function() {
+				tmp.user = $$('iframe.fancybox-iframe').first().contentWindow.pageJs._user;
+				tmp.userBtn = tmp.me._getUserEditBtn(libId, tmp.user);
+				if(userId === 'new') {
+					$(tmp.me.resultDivId).down('.item[item_id=' + libId + '] .user-list-div').insert({'top': tmp.userBtn});
+				} else {
+					tmp.rowBtn = $(tmp.me.resultDivId).down('.item[item_id=' + libId + '] .user-list-div .lib-admin-user-btn[user-id=' + tmp.user.id + ']');
+					if(tmp.rowBtn)
+						tmp.rowBtn.replace( tmp.userBtn );
+				}
+			}
+ 		});
+		return tmp.me;
+	}
+	/**
+	 * Getting the info div
+	 */
 	,_getInfoDiv: function (item) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.div = new Element('div', {'class': 'list-group'});
+		tmp.div = new Element('small', {'class': 'list-group'});
 		tmp.code = '';
 		$H(item.info).each(function(itemArr) {
 			tmp.attrCode = itemArr.key;
 			if(typeof(itemArr.value) === 'object') {
 				tmp.attrDiv = new Element('dl', {'class': 'list-group-item dl-horizontal'}); 
-				
 				//getting the title div
 				tmp.attrDiv.insert({'bottom': new Element('dt').update(itemArr.value[0].type.name) });
 				if(tmp.attrCode !== tmp.code) {
 					tmp.code = tmp.attrCode;
 				} 
-				
 				//getting the value div
 				tmp.attrValeusDiv = new Element('dd'); 
 				itemArr.value.each(function(attr) {
-					tmp.attrValeusDiv.insert({'bottom': new Element('div', {'class': 'attr_value'}).update(attr.value) });
-						
+					tmp.attrValeusDiv.insert({'bottom': new Element('span', {'class': 'attr_value', 'style': 'display: inline-block; margin: 0 15px 0px 0'}).update(attr.value) });
 				});
 				tmp.attrDiv.insert({'bottom': tmp.attrValeusDiv });
 				tmp.div.insert({'bottom': tmp.attrDiv });
 			};
 		});
+		tmp.div.insert({'bottom': new Element('dl', {'class': 'list-group-item dl-horizontal'})
+			.insert({'bottom': new Element('dt').update('Admin Users:') })
+			.insert({'bottom': tmp.userList = new Element('dd', {'class': 'user-list-div'}).update(new Element('span', {"class": 'btn btn-primary btn-xs', 'title': 'Add a new library admin user'})
+				.update(new Element('span', {'class': 'glyphicon glyphicon-plus'}))
+				.observe('click', function(){
+					tmp.me._openUserEditPage(item.id, 'new');
+				})
+			)  })
+		});
+		item.adminusers.each(function(user){
+			tmp.userList.insert({'top': tmp.me._getUserEditBtn(item.id, user) })
+		});
 		return tmp.div;
 	}
-	
+	/**
+	 * Cancelling the editing
+	 */
 	,cancelEdit: function(btn) {
 		var tmp = {};
 		tmp.me = this;
@@ -152,7 +211,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		}
 		return this;
 	}
-	
+	/**
+	 * Collecting the data of the save panel
+	 */
 	,_collectSavePanel: function (saveBtn) {
 		var tmp = {};
 		tmp.me = this;
@@ -199,15 +260,18 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		}
 		return tmp.data;
 	}
-	
-	//after saving the items
+	/**
+	 * after saving the items
+	 */
 	,_afterSaveItems: function (saveBtn, result) {
 		var tmp = {};
 		tmp.item = result.items[0];
 		$(saveBtn).up('.savePanel').replace(this._getItemRow(tmp.item, this._getItemRowEditBtn(tmp.item)));
 		return this;
 	}
-	//getting the field div for savePanel
+	/**
+	 * getting the field div for savePanel
+	 */
 	,_getSaveFieldDiv: function (fieldName, field, showDelBtn) {
 		var tmp = {};
 		tmp.me = this;
@@ -241,17 +305,16 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		tmp.newDiv = new Element('div', {'class': 'panel panel-default savePanel'}).addClassName(cssClass).store('item', item)
 			.insert({'bottom':  new Element('div', {'class': 'panel-heading'})
 				.insert({'bottom':  new Element('div', {'class': 'panel-title'})
-					.insert({'bottom':  'Creating a new Library:' })
+					.insert({'bottom': (tmp.isNew === true ? 'Creating a new Library:' : 'Editing the Library: ' + item.name) })
 					.insert({'bottom': new Element('span', {'class': 'btn-group btn-group-xs pull-right'})
 						.insert({'bottom': new Element('span', {'class': 'btn btn-primary saveBtn'})
 							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-ok-circle'}) })
-							.insert({'bottom': ' Save' })
+							.insert({'bottom': ' Save'})
 							.observe('click', function() { tmp.me.saveEditedItem(this); }) 
-						
 						})
 						.insert({'bottom': new Element('span', {'class': 'btn btn-default cancelBtn'})
 							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove-circle'}) })
-							.insert({'bottom':' Cancel' })
+							.insert({'bottom':' Cancel'})
 							.observe('click', function() { tmp.me.cancelEdit(this); }) 
 						})
 					})
@@ -274,7 +337,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 			.insert({'bottom':  tmp.me._getSaveAttrPanel(item.info) });
 		return tmp.newDiv;
 	}
-	
+	/**
+	 * Getting the new attribute div
+	 */
 	,_getNewAttrDiv: function() {
 		var tmp = {};
 		tmp.me = this;
@@ -291,7 +356,9 @@ PageJs.prototype = Object.extend(new CrudPageJs(), {
 		});
 		return tmp.me._getSaveFieldDiv('Please Select a type: ',  tmp.typeSelection, true);
 	}
-	
+	/**
+	 * Getting the save attribute panel
+	 */
 	,_getSaveAttrPanel: function(attrs) {
 		var tmp = {};
 		tmp.me = this;
