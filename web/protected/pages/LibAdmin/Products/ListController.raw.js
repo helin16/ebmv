@@ -81,10 +81,11 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						if(row.orderedLibs.size() === 0)
 							return;
 						tmp.div = new Element('div')
-							.insert({'bottom': tmp.list = new Element('h4').update('Libraries that order this:' + row.title) })
-							.insert({'bottom': tmp.list = new Element('div', {'class': 'list-group'}) });
+							.insert({'bottom': tmp.list = new Element('div',{'class': 'list-group', 'style': 'min-width: 400px;'})
+								.insert({'bottom': new Element('div', {'class': 'list-group-item active'}).update('Libraries that order this:' + row.title) })
+							})
 						row.orderedLibs.each(function(lib){
-							tmp.list.insert({'bottom': new Element('div', 'list-group-item').update(lib.name)});
+							tmp.list.insert({'bottom': new Element('div', {'class': 'list-group-item'}).update(lib.name)});
 						});
 						jQuery.fancybox({'type': 'html', 'content': tmp.div.innerHTML});
 					})
