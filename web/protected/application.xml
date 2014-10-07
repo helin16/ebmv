@@ -97,6 +97,9 @@
 			
 			<!-- AdminPage:: test sip -->
 			<url ServiceParameter="Admin.SIPTester.SIPTesterController" pattern="admin/testsip.html" />
+			
+			<!-- AdminPage:: useraccount -->
+			<url ServiceParameter="Admin.System.Users.Edit.Controller" pattern="admin/libadminuser/{libraryId}/{userId}.html" parameters.libraryId="\d+"  parameters.userId="new|\d+"/>
 		</module>
 
 		<module id="globalization" class="TGlobalization">

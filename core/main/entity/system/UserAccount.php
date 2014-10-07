@@ -265,6 +265,25 @@ class UserAccount extends BaseEntityAbstract
     	return null;
     }
     /**
+     * Getting all the libadmin users for a library
+     * 
+     * @param Library $library    The library the user belongs to
+     * @param bool    $activeOnly
+     * @param string  $pageNo
+     * @param unknown $pageSize
+     * @param unknown $orderBy
+     * @param unknown $stats
+     * 
+     * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
+    public static function getLibAdminUsers(Library $library, $activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+    {
+    	$query = self::getQuery();
+    	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
+    	$query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
+    	return self::getAllByCriteria("r.id = :roleId and lib.id = :libId", array('roleId' => Role::ID_LIB_ADMIN, 'libId' => $library->getId()), $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
+    }
+    /**
      * Getting UserAccount by username
      *
      * @param string $username    The username string
@@ -298,7 +317,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public static function createUser(Library $lib, $username, $password, Role $role, Person $person)
     {
-    	if($this->getUserByUsername($username, $lib) instanceof UserAccount)
+    	if(self::getUserByUsername($username, $lib) instanceof UserAccount)
     		throw new EntityException('System Error: trying to create a username with the same id:' . $username . '!');
     	$userAccount = new UserAccount();
     	$userAccount->setUserName($username)
@@ -306,7 +325,7 @@ class UserAccount extends BaseEntityAbstract
     		->setPerson($person)
     		->setLibrary($lib)
     		->save();
-    	self::saveManyToMany($role, $userAccount);
+    	self::saveManyToManyJoin($role, $userAccount);
     	return self::get($userAccount->getId());
     }
     /**
@@ -342,7 +361,7 @@ class UserAccount extends BaseEntityAbstract
     		//need to create whatever has left after the loop
     		foreach($allRoles as $role)
     		{
-    			self::saveManyToMany($role, $userAccount);
+    			self::saveManyToManyJoin($role, $userAccount);
     		}
     	}
     	return ($userAccount = self::get($userAccount->getId())); //refersh the object
