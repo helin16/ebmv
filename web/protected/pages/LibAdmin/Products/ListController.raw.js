@@ -75,7 +75,20 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			})
 			.insert({'bottom': new Element('div', {'class': 'row', 'title': (row.orderedLibs ? row.orderedLibs.size() : '') + ' libraries ordered this item'})
 				.insert({'bottom': new Element('strong', {'class': 'col-xs-5'}).update('Libs:') })
-				.insert({'bottom': new Element('div', {'class': 'col-xs-3'}).update(row.orderedLibs ? row.orderedLibs.size() : '') })
+				.insert({'bottom': new Element('a', {'class': 'col-xs-3', 'href': 'javascript: void(0);'})
+					.update(row.orderedLibs ? row.orderedLibs.size() : '') 
+					.observe('click', function(){
+						if(row.orderedLibs.size() === 0)
+							return;
+						tmp.div = new Element('div')
+							.insert({'bottom': tmp.list = new Element('h4').update('Libraries that order this:' + row.title) })
+							.insert({'bottom': tmp.list = new Element('div', {'class': 'list-group'}) });
+						row.orderedLibs.each(function(lib){
+							tmp.list.insert({'bottom': new Element('div', 'list-group-item').update(lib.name)});
+						});
+						jQuery.fancybox({'type': 'html', 'content': tmp.div.innerHTML});
+					})
+				})
 			});
 		tmp.row = new Element('tr', {'class': 'prodcut-row'}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.img) })
