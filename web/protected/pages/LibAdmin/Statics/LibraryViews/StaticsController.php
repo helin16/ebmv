@@ -38,7 +38,6 @@ class StaticsController extends StaticsPageAbstract
 			$timeRange = $this->_getXnames();
 			$names = array_keys($timeRange);
 			$series = array();
-			$series[] = array('name' => 'All', 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to']));
 			foreach(ProductStaticsType::getAll() as $type)
 			{
 				$series[] = array('name' => $type->getName(), 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to'], $type->getId()));
