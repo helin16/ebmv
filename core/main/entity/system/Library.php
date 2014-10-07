@@ -219,7 +219,7 @@ class Library extends BaseEntityAbstract
 	 *
 	 * @return Ambigous <multiple:Library, Ambigous, multitype:, multitype:BaseEntityAbstract >
 	 */
-	public function getLibsFromCodes(array $codes, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
+	public static function getLibsFromCodes(array $codes, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array())
 	{
 		return self::_getLibsFromInfo($codes, 'aus_code', $searchActiveOnly, $pageNo, $pageSize, $orderBy);
 	}
