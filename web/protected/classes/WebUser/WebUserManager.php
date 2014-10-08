@@ -113,7 +113,7 @@ class WebUserManager extends TModule implements IUserManager
 				$userAccount = UserAccount::updateUser ( $userAccount, $lib, $userInfo->getUsername (), $userInfo->getPassword (), null, Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName(), $person ) );
 			} else 		// we need to create a user account from blank
 			{
-				$userAccount = UserAccount::createUser ( $lib, $userInfo->getUsername (), $userInfo->getPassword (), Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName() ) );
+				$userAccount = UserAccount::createUser ( $lib, $userInfo->getUsername (), $userInfo->getPassword (), Role::get(Role::ID_READER), Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName() ) );
 			}
 		}
 	
