@@ -84,9 +84,7 @@ class AdminLibraryController extends CrudPageAbstract
     		{
     			$array = $library->getJson();
     			$array['adminusers'] = array();
-    			Dao::$debug = true;
     			$users = UserAccount::getLibAdminUsers($library);
-    			Dao::$debug = false;
     			foreach($users as $user)
     				$array['adminusers'][] = $user->getJson();
     			$items[] = $array;
