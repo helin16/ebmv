@@ -31,7 +31,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				tmp.loadingMsg.remove();
 				$(btn).show();
 			}
-		});
+		}, 60000);
 	}
 
 	,_preSubmit: function (usernamebox, passwordbox) {
