@@ -88,11 +88,12 @@ class SC_XinDongFang extends SupplierConnectorAbstract implements SupplierConn
 		if($url === false || count($url) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
 		$query_data = array(
-			'_method' => 'ebmv',
-			'siteId'  => trim($this->_lib->getInfo('aus_code')),
+			'_method'  => 'ebmv',
+			'siteId'   => trim($this->_lib->getInfo('aus_code')),
 			'userName' => trim($user->getUserName()),
 			'nextPage' => trim($url . '/' . $product->getAttribute('cno')),
-			'enc'	   => StringUtilsAbstract::getCDKey(trim($this->_supplier->getInfo('skey')), trim($user->getUserName()), trim($this->_lib->getInfo('aus_code')))
+			'enc'	   => StringUtilsAbstract::getCDKey(trim($this->_supplier->getInfo('skey')), trim($user->getUserName()), trim($this->_lib->getInfo('aus_code'))),
+			'Pwd'      => $user->getPassword()
 		);
 		$readurl = $url . '?' . http_build_query($query_data);
 		return $readurl;
