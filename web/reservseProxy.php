@@ -95,6 +95,14 @@ class ReservseProxy
 				header("Content-Disposition: attachment;filename='" . $fileName . "'");
 				break;
 			}
+			case 'swf':
+			{
+				header("Content-Type: application/x-shockwave-flash",true);
+				header("Content-Disposition: inline;filename='" . $fileName . "'");
+				header("Accept-Ranges: bytes",true);
+				header("Connection: keep-alive",true);
+				break;
+			}
 			default:
 			{
 				$isHTML = true;
