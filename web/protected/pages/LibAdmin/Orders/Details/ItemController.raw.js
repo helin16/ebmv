@@ -121,6 +121,11 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,displayOrder: function() {
 		var tmp = {};
 		tmp.me = this;
+		tmp.dateString = '';
+		if(tmp.me._order.submitDate !== '0001-01-01 00:00:00' && !tmp.me._order.submitDate.blank()) {
+			tmp.date = tmp.me.loadUTCTime(tmp.me._order.submitDate);
+			tmp.dateString = tmp.date.getDate() + '/' + (tmp.date.getMonth() * 1 + 1) + '/' + tmp.date.getFullYear();
+		}
 		tmp.newDiv = new Element('div')
 			.insert({'bottom': new Element('div', {'class': 'row'})
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})
@@ -138,7 +143,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})
 					.insert({'bottom': new Element('dl')
 						.insert({'bottom': new Element('dt').update('Order Date.:') })
-						.insert({'bottom': new Element('dd').update(tmp.me._order.submitDate.strip() === '0001-01-01 00:00:00' || tmp.me._order.submitDate.blank() ? '' : tmp.me.loadUTCTime(tmp.me._order.submitDate).toLocaleFormat('%c') ) })
+						.insert({'bottom': new Element('dd').update(tmp.dateString ) })
 					})
 				})
 				.insert({'bottom': new Element('div', {'class': 'col-sm-3'})
