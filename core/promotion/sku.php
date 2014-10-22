@@ -18,7 +18,7 @@ class Fix
 		{
 			$productId = $row['productId'];
 			if(!isset($array[$productId]))
-				$array[$productId] = array('sku' => '', 'isbn' => '', 'cno' => '', 'ids' => array());
+				$array[$productId] = array('isbn' => '', 'cno' => '', 'ids' => array());
 			if(intval($row['typeId']) === ProductAttributeType::ID_ISBN)
 				$array[$productId]['isbn'] = trim($row['attribute']);
 			else if(intval($row['typeId']) === ProductAttributeType::ID_CNO)
