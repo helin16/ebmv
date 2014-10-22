@@ -667,8 +667,8 @@ class Product extends BaseEntityAbstract
 	 */
 	public static function createProduct($sku, $title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array())
 	{
-		$product = self::getProductBySKU($sku);
-		return self::_editProduct($product instanceof Product ? $product : new Product(), $title, $type, $supplier, $categories, $langs, $info, $sku);
+		$product = ($product = self::getProductBySKU($sku)) instanceof Product ? $product : new Product();
+		return self::_editProduct($product, $title, $type, $supplier, $categories, $langs, $info, $sku);
 	}
 	/**
 	 * update a product
