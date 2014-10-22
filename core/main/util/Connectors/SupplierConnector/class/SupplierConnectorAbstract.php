@@ -233,8 +233,9 @@ class SupplierConnectorAbstract
 			$infoArray['attributes']['image_thumb'] = $imgs;
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got (' . count($imgs) . ') images.' , __FUNCTION__);
 			
+			$sku = Product::formatSKU($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0]);
 			//updating the product
-			if(($product = Product::findProductWithISBNnCno($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0], $this->_supplier)) instanceof Product)
+			if(($product = Product::getProductBySKU($sku)) instanceof Product)
 			{
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updating product:' , __FUNCTION__);
 				//remove all categoies
@@ -261,7 +262,7 @@ class SupplierConnectorAbstract
 			//creating new product
 			else
 			{
-				$product = Product::createProduct($infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
+				$product = Product::createProduct($sku, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::Created product(ID=' . $product->getId() . ')' , __FUNCTION__);
 			}
 			

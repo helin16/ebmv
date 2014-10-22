@@ -485,12 +485,12 @@ class Product extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see BaseEntityAbstract::preSave()
+	 * @see BaseEntityAbstract::postSave()
 	 */
-	public function preSave()
+	public function postSave()
 	{
 	    if(trim($this->getSuk()) === '')
-	        $this->setSuk(md5($this->getTitle()));
+	        $this->setSuk(self::formatSKU($this->getAttribute(ProductAttributeType::ID_ISBN), $this->getAttribute(ProductAttributeType::ID_CNO)));
 	}
 	/**
 	 * (non-PHPdoc)
@@ -514,6 +514,18 @@ class Product extends BaseEntityAbstract
 		DaoMap::createIndex('title');
 		DaoMap::createIndex('suk');
 		DaoMap::commit();
+	}
+	/**
+	 * format the isbn + cno, as it's unique for a product
+	 * 
+	 * @param string $isbn The ISBN string
+	 * @param string $cno  The CNO string
+	 * 
+	 * @return string
+	 */
+	public static function formatSKU($isbn, $cno)
+	{
+		return md5($isbn . '|' . $cno);
 	}
 	/**
 	 * Searching any product which has that attributetype code and same attribute content
@@ -629,21 +641,34 @@ class Product extends BaseEntityAbstract
 		return self::getAllByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
 	}
 	/**
+	 * Getting the product by SKU
+	 * 
+	 * @param string $sku The sku of the product
+	 * 
+	 * @return NULL|Product
+	 */
+	public static function getProductBySKU($sku)
+	{
+		$products = self::getAllByCriteria('sku=?', array(trim($sku)), true, 1, 1);
+		return (count($products) > 0 ? $products[0] : null);
+	}
+	/**
 	 * Create a product
 	 *
+	 * @param string      $sku        The sku of the product
 	 * @param string      $title      The title of the product
 	 * @param ProductType $type       The product type object
 	 * @param Supplier    $supplier   The supplier object
 	 * @param array       $categories The categories of the product
 	 * @param array       $langs      The array of language objects
 	 * @param array       $info       The array of product attributes array('typecode' => array('attribute value', 'attribute_value2'))
-	 * @param string      $title      The sku of the product
 	 *
 	 * @return Product
 	 */
-	public static function createProduct($title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array(), $sku = '')
+	public static function createProduct($sku, $title, ProductType $type, Supplier $supplier, array $categories, array $langs, array $info = array())
 	{
-		return self::_editProduct(new Product(), $title, $type, $supplier, $categories, $langs, $info, $sku);
+		$product = self::getProductBySKU($sku);
+		return self::_editProduct($product instanceof Product ? $product : new Product(), $title, $type, $supplier, $categories, $langs, $info, $sku);
 	}
 	/**
 	 * update a product

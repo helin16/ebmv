@@ -55,7 +55,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _getFakeXml($productType, $productName, $isbn, $cno, $issueDate, $coverImg) {
 		$xml = new SimpleXMLElement ( '<' . $productType . '/>' );
-		$xml->BookName = $productName;
+		$xml->BookName = $productName . ':' . trim($issueDate);
 		$xml->Isbn = $isbn;
 		$xml->NO = $cno;
 		$xml->Author = '';

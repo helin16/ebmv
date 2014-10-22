@@ -11,7 +11,7 @@ class Fix
 			try{
 				Dao::beginTransaction();
 				
-				//Product::updateByCriteria('sku=?', 'id = ?', array(Product::formatSKU($info['isbn'], $info['cno']), $productId));
+				Product::updateByCriteria('sku=?', 'id = ?', array(Product::formatSKU($info['isbn'], $info['cno']), $productId));
 				$ids = array_unique($info['ids']);
 				if(count($ids) > 1)
 				{
