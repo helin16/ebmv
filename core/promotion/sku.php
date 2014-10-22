@@ -55,5 +55,5 @@ class Fix
 		return $array;
 	}
 }
-
+Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 Fix::run();
