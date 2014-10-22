@@ -12,17 +12,17 @@ class Fix
 				Dao::beginTransaction();
 				
 				//Product::updateByCriteria('sku=?', 'id = ?', array(Product::formatSKU($info['isbn'], $info['cno']), $productId));
-				
-				if(count($info['ids']) > 1)
+				$ids = array_unique($info['ids']);
+				if(count($ids) > 1)
 				{
-					echo 'update product_category set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
-					echo 'update language_product set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
-					echo 'update libraryowns set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
-					echo 'update productstatics set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
-					echo 'update productstaticslog set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
+					echo 'update product_category set productId = ' . $productId . ' where productId in (' . implode(', ', $ids) . ");\n";
+					echo 'update language_product set productId = ' . $productId . ' where productId in (' . implode(', ', $ids) . ");\n";
+					echo 'update libraryowns set productId = ' . $productId . ' where productId in (' . implode(', ', $ids) . ");\n";
+					echo 'update productstatics set productId = ' . $productId . ' where productId in (' . implode(', ', $ids) . ");\n";
+					echo 'update productstaticslog set productId = ' . $productId . ' where productId in (' . implode(', ', $ids) . ");\n";
 					
-					echo 'delete from productattribute where productId in (' . implode(', ', $info['ids']) . ");\n";
-					echo 'delete from product where id in (' . implode(', ', $info['ids']) . ");\n";
+					echo 'delete from productattribute where productId in (' . implode(', ', $ids) . ");\n";
+					echo 'delete from product where id in (' . implode(', ', $ids) . ");\n";
 					
 				}
 				
@@ -51,7 +51,6 @@ class Fix
 				$array[$productId]['cno'] = trim($row['attribute']);
 			
 			$array[$productId]['ids'][] = $productId;
-			$array[$productId]['ids'] = array_unique($array[$productId]['ids']);
 		}
 		return $array;
 	}
