@@ -8,8 +8,10 @@
  */
 class ProductAttributeType extends BaseEntityAbstract
 {
+	const ID_ISBN = 2;
 	const ID_IMAGE = 6;
 	const ID_IMAGE_THUMB = 7;
+	const ID_CNO = 9;
     /**
      * The attribute of the product
      * 
