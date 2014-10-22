@@ -6,7 +6,33 @@ class Fix
 	public static function run()
 	{
 		$array = self::_getProducts();
-		var_dump($array);
+		foreach($array as $productId => $info)
+		{
+			try{
+				Dao::beginTransaction();
+				
+				//Product::updateByCriteria('sku=?', 'id = ?', array(Product::formatSKU($info['isbn'], $info['cno']), $productId));
+				
+				if(count($info['ids']) > 1)
+				{
+					echo 'update product_category set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
+					echo 'update language_product set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
+					echo 'update libraryowns set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
+					echo 'update productstatics set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
+					echo 'update productstaticslog set productId = ' . $productId . ' where productId in (' . implode(', ', $info['ids']) . ");\n";
+					
+					echo 'delete from productattribute where productId in (' . implode(', ', $info['ids']) . ");\n";
+					echo 'delete from product where id in (' . implode(', ', $info['ids']) . ");\n";
+					
+				}
+				
+				Dao::commitTransaction();
+			} catch (Exception $ex) {
+				Dao::rollbackTransaction();
+				echo $ex->getMessage() . "\n";
+				echo $ex->getTraceAsString() . "\n";
+			}
+		}
 	}
 	
 	private static function _getProducts()
