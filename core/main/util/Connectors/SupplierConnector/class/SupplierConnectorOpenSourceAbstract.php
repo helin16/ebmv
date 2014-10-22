@@ -67,6 +67,27 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 		return $array;
 	}
 	/**
+	 * Fetching html from URL
+	 * 
+	 * @param string $url The url
+	 * 
+	 * @return mixed
+	 */
+	private function _getHTMLFromCache($url)
+	{
+		$key = md5($url);
+		//try to use apc
+		if(extension_loaded('apc') && ini_get('apc.enabled'))
+		{
+			if(apc_exists($key))
+				return apc_fetch($key);
+			$html = BmvComScriptCURL::readUrl ( $url );
+			apc_add($key, $html);
+			return $html;
+		}
+		return BmvComScriptCURL::readUrl ( $url );
+	}
+	/**
 	 * Getting the HTML from the url
 	 *
 	 * @param string $url
@@ -82,7 +103,7 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 		if ($url === false || count ( $url ) === 0)
 			throw new SupplierConnectorException ( 'Invalid view url for supplier: ' . $this->_supplier->getName () );
 		$url = $this->_formatURL ( $url[0], $productKey );
-		$html = BmvComScriptCURL::readUrl ( $url );
+		$html = self::_getHTMLFromCache( $url );
 		// checking whether we've got some html
 		if (trim ( $html ) === '') {
 			if ($this->_debugMode === true)
