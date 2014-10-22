@@ -29,24 +29,24 @@
 	</script>
 </com:THead>
 <body role="document">
-    <com:TForm>
-	    <div id="frontend" >
-	        <div class="framewrapper header">
-	            <div class="contentwrapper">
-		            <com:Application.layout.FrontEnd.Header.Header ID="FrontEndHeader" />
-	            </div>
-	        </div>
-	        <div class="framewrapper container mainbody">
-	            <div class="contentwrapper">
-	               <com:TContentPlaceHolder ID="MainContent" />
-	            </div>
-	        </div>
-	        <div class="framewrapper footer">
-	            <div class="contentwrapper">
-	                <com:Application.layout.FrontEnd.Footer.Footer ID="FrontEndFooter" />
-	            </div>
-	        </div>
-	    </div>
-    </com:TForm>
+    <div id="frontend">
+	    <com:TForm>
+	       <div class="framewrapper header">
+	           <div class="contentwrapper">
+	            <com:Application.layout.FrontEnd.Header.Header ID="FrontEndHeader" />
+	           </div>
+	       </div>
+	       <div class="framewrapper container mainbody">
+	           <div class="contentwrapper">
+	              <com:TContentPlaceHolder ID="MainContent" />
+	           </div>
+	       </div>
+	    </com:TForm>
+    </div>
+    <div class="framewrapper footer">
+        <div class="contentwrapper">
+            <com:Application.layout.FrontEnd.Footer.Footer ID="FrontEndFooter" />
+        </div>
+    </div>
 </body>
 </html>
