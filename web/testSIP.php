@@ -36,26 +36,27 @@
 require_once dirname(__FILE__) . '/bootstrap.php';
 try
 {
-	if(!isset($_REQUEST['hostName']) || ($hostname = trim($_REQUEST['hostName'])) === '')
-		throw new Exception('hostName needed!');
-	if(!isset($_REQUEST['port']) || ($port = trim($_REQUEST['port'])) === '')
-		throw new Exception('port needed!');
-	if(!isset($_REQUEST['patron']) || ($patron = trim($_REQUEST['patron'])) === '')
-		throw new Exception('patron needed!');
-	if(!isset($_REQUEST['patronpwd']) || ($patronpwd = trim($_REQUEST['patronpwd'])) === '')
-		throw new Exception('patronpwd needed!');
+// 	if(!isset($_REQUEST['hostName']) || ($hostname = trim($_REQUEST['hostName'])) === '')
+// 		throw new Exception('hostName needed!');
+// 	if(!isset($_REQUEST['port']) || ($port = trim($_REQUEST['port'])) === '')
+// 		throw new Exception('port needed!');
+// 	if(!isset($_REQUEST['patron']) || ($patron = trim($_REQUEST['patron'])) === '')
+// 		throw new Exception('patron needed!');
+// 	if(!isset($_REQUEST['patronpwd']) || ($patronpwd = trim($_REQUEST['patronpwd'])) === '')
+// 		throw new Exception('patronpwd needed!');
 	
 	$siplocation = !isset($_REQUEST['siplocation']) ? '' : trim($_REQUEST['siplocation']);
 	
 	$mysip = new SIP2();
 	// Set host name
-	$mysip->hostname = $hostname;
-	$mysip->port = $port;
+	$mysip->hostname = '203.26.235.56';
+	$mysip->port = '6050';
+	$mysip->AC = 'b00k';
 	
 	// Identify a patron
-	$mysip->patron = $patron;
-	$mysip->patronpwd = $patronpwd;
-	$mysip->scLocation = $siplocation;
+	$mysip->patron = '20021001169830';
+	$mysip->patronpwd = '0830';
+	$mysip->scLocation = 'VCML';
 	
 	// asgining all params
 	$refClass = new ReflectionClass($mysip);
