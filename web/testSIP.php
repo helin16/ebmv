@@ -45,7 +45,7 @@ try
 // 	if(!isset($_REQUEST['patronpwd']) || ($patronpwd = trim($_REQUEST['patronpwd'])) === '')
 // 		throw new Exception('patronpwd needed!');
 	
-	$siplocation = !isset($_REQUEST['siplocation']) ? '' : trim($_REQUEST['siplocation']);
+// 	$siplocation = !isset($_REQUEST['siplocation']) ? '' : trim($_REQUEST['siplocation']);
 	
 	$mysip = new SIP2();
 	// Set host name
