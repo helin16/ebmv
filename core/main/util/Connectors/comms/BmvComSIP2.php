@@ -56,7 +56,7 @@ class BmvComSIP2
 	 * @throws CoreException
 	 * @throws Exception
 	 */
-	public function getPatronInfo($username, $password)
+	public function getPatronInfo($username, $password, $doSelfChk = true, $AO = '', $AC = '')
 	{
 		$connected = false;
 		try 
@@ -76,17 +76,25 @@ class BmvComSIP2
 				//throw new CoreException('Invalid username and password, please contact your library!');
 			
 			//send selfcheck status message
-			$in = $this->_sip2->msgSCStatus();
-			$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
+			if($doSelfChk === true)
+			{
+				$in = $this->_sip2->msgSCStatus();
+				$result = $this->_sip2->parseACSStatusResponse($this->_sip2->get_message($in));
+			}
 			
 			/*  Use result to populate SIP2 setings
 			 *   (In the real world, you should check for an actual value
 			 		*   before trying to use it... but this is a simple example)
 			*/
-			if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0]))
+			if($AO !== '')
+				$this->_sip2->AO = trim($AO);
+			else if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0]))
 				$this->_sip2->AO = $result['variable']['AO'][0]; /* set AO to value returned */
 			if(isset($result['variable']['AN']) && isset($result['variable']['AN'][0]))
 				$this->_sip2->AN = $result['variable']['AN'][0]; /* set AN to value returned */
+			
+			if($AC !== '')
+				$this->_sip2->AC = trim($AC);
 			
 			// Get Charged Items Raw response
 			$in = $this->_sip2->msgPatronInformation('none');
