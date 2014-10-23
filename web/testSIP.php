@@ -56,7 +56,7 @@ try
 	// Identify a patron
 	$mysip->patron = '20021001169830';
 	$mysip->patronpwd = '0830';
-	$mysip->scLocation = 'VCML';
+	$mysip->AO = 'VCML';
 	
 	// asgining all params
 	$refClass = new ReflectionClass($mysip);
@@ -96,7 +96,6 @@ try
 // 		$mysip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
 // 	if(isset($result['variable']['AN']) && isset($result['variable']['AN'][0]))
 // 		$mysip->AN = $result['variable']['AN'][0]; /* set AN to value returned */
-	$mysip->debug = true;
 	// Get Charged Items Raw response
 	$in = $mysip->msgPatronInformation('none');
 	echo '<div class="testDiv">';
