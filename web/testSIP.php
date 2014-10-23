@@ -73,29 +73,29 @@ try
 		echo '<div class="response">Result: ' . print_r($result, true) . '</div>';
 	echo '</div>';
 	
-	// login into SIP server
-	$in = $mysip->msgLogin($mysip->patron, $mysip->patronpwd);
-	echo '<div class="testDiv">';
-		echo '<h3 class="request">Self check <span class="smltxt rawMsg">' . $in . '</span></h3>';
-		$rawResp = $mysip->get_message($in);
-		$result = $mysip->parseLoginResponse($rawResp);
-		echo '<div class="response">Result <span class="smltxt">Raw response: <span class="rawMsg">' . $rawResp . '</span></span>:<div class="blockView">' . print_r($result, true). '</div></div>';
-	echo '</div>';
+// 	// login into SIP server
+// 	$in = $mysip->msgLogin($mysip->patron, $mysip->patronpwd);
+// 	echo '<div class="testDiv">';
+// 		echo '<h3 class="request">Self check <span class="smltxt rawMsg">' . $in . '</span></h3>';
+// 		$rawResp = $mysip->get_message($in);
+// 		$result = $mysip->parseLoginResponse($rawResp);
+// 		echo '<div class="response">Result <span class="smltxt">Raw response: <span class="rawMsg">' . $rawResp . '</span></span>:<div class="blockView">' . print_r($result, true). '</div></div>';
+// 	echo '</div>';
 	
-	// selfcheck status mesage
-	$in = $mysip->msgSCStatus();
-	echo '<div class="testDiv">';
-		echo '<h3 class="request">Self check <span class="smltxt rawMsg">' . $in . '</span></h3>';
-		$rawResp = $mysip->get_message($in);
-		$result = $mysip->parseACSStatusResponse($rawResp);
-		echo '<div class="response">Result <span class="smltxt">Raw response: <span class="rawMsg">' . $rawResp . '</span></span>:<div class="blockView">' . print_r($result, true). '</div></div>';
-	echo '</div>';
+// 	// selfcheck status mesage
+// 	$in = $mysip->msgSCStatus();
+// 	echo '<div class="testDiv">';
+// 		echo '<h3 class="request">Self check <span class="smltxt rawMsg">' . $in . '</span></h3>';
+// 		$rawResp = $mysip->get_message($in);
+// 		$result = $mysip->parseACSStatusResponse($rawResp);
+// 		echo '<div class="response">Result <span class="smltxt">Raw response: <span class="rawMsg">' . $rawResp . '</span></span>:<div class="blockView">' . print_r($result, true). '</div></div>';
+// 	echo '</div>';
 	
-	if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0]))
-		$mysip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
-	if(isset($result['variable']['AN']) && isset($result['variable']['AN'][0]))
-		$mysip->AN = $result['variable']['AN'][0]; /* set AN to value returned */
-	
+// 	if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0]))
+// 		$mysip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
+// 	if(isset($result['variable']['AN']) && isset($result['variable']['AN'][0]))
+// 		$mysip->AN = $result['variable']['AN'][0]; /* set AN to value returned */
+	$mysip->debug = true;
 	// Get Charged Items Raw response
 	$in = $mysip->msgPatronInformation('none');
 	echo '<div class="testDiv">';
