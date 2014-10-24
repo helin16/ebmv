@@ -1,45 +1,51 @@
-.header .navbar {
-	background: transparent url('../images/banner-home-8.jpg') no-repeat 0 0;
-	background-size: 100% auto;
+.iconbtn .btnname small {
+	margin: 4px 0 0 0;
+	font-size: 11pt;
 }
+.header .navbar .container:first-child {
+	background: transparent url('../images/banner-home-8.jpg') no-repeat 0 0;
+	background-size: 100% 137px;
+	height: 137px;
+}
+.logo {display: none;}
 #catelist .list-group-item {
-    background: #F1F9E2;
-    color: #384D08;
+    background: #fcd106;
+    filter: none;
+}
+.panel.nodefault > .panel-heading,
+.panel.nodefault > .panel-heading .btn.dropdown-toggle {
+	background: #fcd106;
     filter: none;
 }
 #catelist .list-group-item:hover,
-.header .navbar-default .navbar-nav > li > a:hover,
-.panel.nodefault > .panel-heading,
-.panel.nodefault > .panel-heading .btn.dropdown-toggle {
-	background: #008485;
-	color: #fff;
-    filter: none;
+.header .navbar-default .navbar-nav > li > a:hover{
+	background: #EEE8AA;
 }
 .header .navbar-default .navbar-nav > li > a {
-    color: #fff;
+    color: #000;
 }
 
 .nodefault.prolistshowcase .langlist .langitem a {
-	color: #fff;
+	color: #000;
 }
 .nodefault.prolistshowcase .langlist .langitem.active a,
 .nodefault.prolistshowcase .langlist .langitem a:hover {
 	background: #fff;
-	color: #008485;
 }
 
 .header #topmenulist {
-	background: #008485;
+	background: #fcd106;
 }
 .header #topmenulist .navbar-nav > .active > a, 
 .header #topmenulist .navbar-nav > .active > a:focus,
 .header #topmenulist .navbar-nav > li > a:focus {
-    color: #B85000;
 }
 
 .header #topmenulist .navbar-nav > .active > a:hover, 
-.header #topmenulist .navbar-nav > li > a:hover {
-	background: #EC7F3A;
+.header #topmenulist .navbar-nav > li > a:hover,
+.header #topmenulist .navbar-nav > .active > a:focus, 
+.header #topmenulist .navbar-nav > li > a:focus {
+	background: #EEE8AA;
 }
 
 .logo {
@@ -56,5 +62,13 @@
 }
 
 .topmenu {
-	margin: 10px 0 0 0;
+	padding: 10px 0 0 0;
+}
+.header .navbar-default .topmenu .navbar-nav > li > a {
+	color: #fff;
+	border-radius: 15px;
+}
+.header .navbar-default .topmenu .navbar-nav > li > a:hover {
+	background: #EEE8AA;
+	color: #000;
 }
