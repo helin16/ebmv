@@ -2,6 +2,11 @@
 	margin: 4px 0 0 0;
 	font-size: 11pt;
 }
+.header .navbar {
+	border: none;
+	box-shadow: none;
+	background: #fff;
+}
 .header .navbar .container:first-child {
 	background: transparent url('../images/banner-home-8.jpg') no-repeat 0 0;
 	background-size: 100% 137px;
