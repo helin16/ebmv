@@ -58,30 +58,30 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 	 *
 	 * @param ProductType $type
 	 *        	The type of these magazines
-	 * @param UDate $date
-	 *        	The issue date
 	 *
 	 * @return SimpleXMLElement
 	 */
-	private function _fakeProduct(ProductType $type) {
+	private function _fakeProduct(ProductType $type, $index, Product $product = null) {
+		$date = new UDate();
+		$names = array_keys($this->urls);
 		$readOnlineCopy = 0;
 		// check whether the magazine still there from supplier
-		if (($coverImg = $this->_getCoverImage ( $productKey )) !== '')
+		if (($coverImg = $this->_getCoverImage ( $index )) !== '')
 			$readOnlineCopy = 1;
 	
 		$xml = new SimpleXMLElement ( '<' . $type->getName () . '/>' );
-		$xml->BookName = $product instanceof Product ? $product->getTitle () : $this->_supplier->getName () . ': ' . $date->format ( 'd/F/Y' );
-		$xml->Isbn = $product instanceof Product ? $product->getAttribute ( 'isbn' ) : '9789629964245';
-		$xml->NO = $productKey;
-		$xml->Author = $product instanceof Product ? $product->getAttribute ( 'author' ) : $this->_supplier->getName ();
-		$xml->Press = $product instanceof Product ? $product->getAttribute ( 'publisher' ) : $this->_supplier->getName ();
+		$xml->BookName = $product instanceof Product ? $product->getTitle () : $names[$index];
+		$xml->Isbn = $product instanceof Product ? $product->getAttribute ( 'isbn' ) : $names[$index];
+		$xml->NO = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $index;
+		$xml->Author = $product instanceof Product ? $product->getAttribute ( 'author' ) : 'CIO';
+		$xml->Press = $product instanceof Product ? $product->getAttribute ( 'publisher' ) : 'CIO';
 		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute ( 'publish_date' ) : $date->format ( 'Y-F-d' );
 		$xml->Words = '';
 		$xml->FrontCover = $coverImg;
 		$xml->Introduction = $product instanceof Product ? $product->getAttribute ( 'description' ) : $this->_supplier->getName () . ': ' . $date->format ( 'd F Y' );
 		$xml->Cip = '';
 		$xml->SiteID = trim ( $this->_lib->getInfo ( 'aus_code' ) );
-		$xml->Language = trim($this->_getLanguageCode());
+		$xml->Language = 'en_us+zh_CN';
 	
 		$publishDate = new UDate ( $xml->PublicationDate );
 		$xml->BookType = ($bookName = trim($this->_supplier->getName())) . '/' . ($bookName . $publishDate->format ('Y')) . '/' . ($bookName . $publishDate->format('m'));
@@ -116,21 +116,25 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 		return BmvComScriptCURL::readUrl ( $url );
 	}
 	/**
-	 * Getting the HTML from the url
-	 *
-	 * @param string $url
-	 *        	The url
+	 * Getting the HTML CoverImage from the url
 	 *
 	 * @throws SupplierConnectorException
 	 * @return NULL DOMDocument
 	 */
-	private function _getHTML($productKey) {
+	private function _getCoverImage($index) {
 		if ($this->_debugMode === true)
 			SupplierConnectorAbstract::log ( $this, 'Getting HTML for productKey: ' . $productKey, __FUNCTION__ );
-		$url = explode ( ',', $this->_supplier->getInfo ( 'view_url' ) );
-		if ($url === false || count ( $url ) === 0)
+		$names = array_keys($this->urls);
+		$index = intval($product->getAttribute ('cno'));
+		if (!isset($names[$index]) || trim($names[$index]) === '')
 			throw new SupplierConnectorException ( 'Invalid view url for supplier: ' . $this->_supplier->getName () );
-		$url = $this->_formatURL ( $url[0], $productKey );
+		$url = trim($this->urls[$names[$index]]);
+		if($url === '') {
+			if ($this->_debugMode === true)
+				SupplierConnectorAbstract::log ( $this, 'Got empty url for:' . $names[$index], __FUNCTION__ );
+			return null;
+		}
+		
 		$html = self::_getHTMLFromCache( $url );
 		// checking whether we've got some html
 		if (trim ( $html ) === '') {
@@ -139,13 +143,9 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 			return null;
 		}
 		// load this into DOMDocument
-		$doc = new DOMDocument ();
-		if (($loaded = @$doc->loadHTML ( $html )) !== true) {
-			if ($this->_debugMode === true)
-				SupplierConnectorAbstract::log ( $this, 'Failed to load html into DOMDocument!', __FUNCTION__ );
-			return null;
-		}
-		return $doc;
+		Simple_HTML_DOM_Abstract::str_get_html($html);
+		//TODO!!!!
+		return '';
 	}
 	/**
 	 * (non-PHPdoc)
@@ -181,11 +181,7 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 	 * @see SupplierConn::getDownloadUrl()
 	 */
 	public function getDownloadUrl(Product $product, UserAccount $user) {
-		$url = explode ( ',', $this->_supplier->getInfo ( 'download_url' ) );
-		if ($url === false || count ( $url ) === 0)
-			throw new SupplierConnectorException ( 'Invalid download url for supplier: ' . $this->_supplier->getName () );
-		$url = $this->_formatURL ($url[0], $product->getAttribute ('cno') );
-		return $url;
+		return '';
 	}
 	/**
 	 * (non-PHPdoc)
@@ -193,11 +189,11 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 	 * @see SupplierConn::getOnlineReadUrl()
 	 */
 	public function getOnlineReadUrl(Product $product, UserAccount $user) {
-		$url = explode ( ',', $this->_supplier->getInfo ( 'view_url' ) );
-		if ($url === false || count ( $url ) === 0)
-			throw new SupplierConnectorException ( 'Invalid view url for supplier: ' . $this->_supplier->getName () );
-		$url = $this->_formatURL ($url[0], $product->getAttribute ( 'cno' ) );
-		return $url;
+		$names = array_keys($this->urls);
+		$index = intval($product->getAttribute ('cno'));
+		if (!isset($names[$index]) || trim($names[$index]) === '')
+			throw new SupplierConnectorException ( 'Invalid online url for supplier: ' . $this->_supplier->getName () );
+		return $this->urls[$names[$index]];
 	}
 	/**
 	 * (non-PHPdoc)
@@ -219,7 +215,7 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 	 * @see SupplierConn::getProduct()
 	 */
 	public function getProduct(Product $product) {
-		$pro = SupplierConnectorProduct::getProduct ( $this->_fakeProduct ( $product->getProductType()) );
+		$pro = SupplierConnectorProduct::getProduct ( $this->_fakeProduct ( $product->getProductType(), $product->getAttribute ('cno'), $product) );
 		return $pro;
 	}
 }
