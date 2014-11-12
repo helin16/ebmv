@@ -96,6 +96,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onComplete': function(sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
+					console.debug(tmp.result);
 					tmp.readCopies = tmp.downloadCopies = 'N/A';
 					tmp.readBtn = new Element('span', {'class': 'btn btn-success iconbtn disabled popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'preadonlinebtn', 'data-loading-text': "处理中/處理中/Processing ..."})
 						.insert({'bottom': new Element('div', {'class': 'btnname'})
@@ -137,7 +138,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					}
 					if(tmp.result.stopMsg) {
 						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Error:</h4>', new Element('small').update(
-								tmp.result.warningMsg.zh_CN + ' / ' + tmp.result.warningMsg.zh_TW + '<br />' + tmp.result.warningMsg.en)
+								tmp.result.stopMsg.zh_CN + ' / ' + tmp.result.stopMsg.zh_TW + '<br />' + tmp.result.stopMsg.en)
 						).addClassName('alert-danger') 
 						});
 					}

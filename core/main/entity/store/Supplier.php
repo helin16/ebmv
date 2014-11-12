@@ -8,6 +8,7 @@
  */
 class Supplier extends BaseEntityAbstract
 {
+	const ID_CIO = 10;
 	/**
 	 * The informaction cacher
 	 * 
@@ -123,17 +124,23 @@ class Supplier extends BaseEntityAbstract
 	/**
 	 * Getting the supplier's products
 	 * 
-	 * @param array $excludePids
-	 * @param int   $pageNo      The page number
-	 * @param int   $pageSize    The page size
-	 * @param array $orderBy     The order by array
+	 * @param array       $excludePids
+	 * @param array       $typeIds
+	 * @param int         $pageNo      The page number
+	 * @param int         $pageSize    The page size
+	 * @param array       $orderBy     The order by array
 	 */
-	public function getProducts(array $excludePids = array(), $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderBy = array(), $activeOnly = true, &$stats = array())
+	public function getProducts(array $excludePids = array(), array $typeIds = array(), $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, array $orderBy = array(), $activeOnly = true, &$stats = array())
 	{
 		if(trim( $this->getId()) === '')
 			return array();
 		$where = 'pro.supplierId = ?';
 		$params = array($this->getId());
+		if(count($typeIds) > 0)
+		{
+			$where .= ' AND pro.productTypeId in (' . implode(',', array_fill(0, count($typeIds), '?')) . ')';
+			$params = array_merge($params, $typeIds);
+		}
 		if(count($excludePids) >0)
 		{
 			$where .= " AND pro.id not in (" . implode(',', array_fill(0, count($excludePids), '?')) . ')';

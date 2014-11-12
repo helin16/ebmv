@@ -20,23 +20,18 @@ class Header extends TTemplateControl
 			$this->getPage()->getClientScript()->registerScriptFile('headerJs', $this->publishAsset($lastestJs));
 		if (isset($cScripts['css']) && ($lastestCss = trim($cScripts['css'])) !== '')
 			$this->getPage()->getClientScript()->registerStyleSheetFile('headerCss', $this->publishAsset($lastestCss));
-		$this->getPage()->getClientScript()->registerEndScript('headerEndJs', $this->_getJs());
+		if(!$this->getPage()->IsPostBack && !$this->getPage()->IsCallBack)
+			$this->getPage()->getClientScript()->registerEndScript('headerEndJs', $this->_getJs());
 	}
 	
 	private function _getJs()
 	{
-		$js = 'jQuery(".mainmenu .fancyboxmenuitem").fancybox({
-				type	    : "iframe",
-				fitToView	: true,
-				maxWidth    : "1100",
-				maxHeight   : "700",
-				width		: "94%",
-				height		: "94%",
-				autoSize	: false,
-				closeClick	: false,
-				openEffect	: "none",
-				closeEffect	: "none"
-			  });';
+		$products = Supplier::get(Supplier::ID_CIO)->getProducts(array(), array(ProductType::ID_COURSE));
+		$array = array();
+		foreach($products as $product)
+			$array[] = array('id' => $product->getId(), 'title' => $product->getTitle());
+		$js = 'var headerJs = new HeaderJs();';
+		$js .= 'headerJs.load(' . json_encode($array) . ');';
 		return $js;
 	}
 }

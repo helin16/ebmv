@@ -135,24 +135,11 @@
                     <a href="#" class="iconbtn" data-toggle="dropdown" id="lch-dropdown-btn">
                         <div class="btnname">学汉语<small>Learn Chinese</small></div>
                         <b class="caret"></b>
+                        <ul class="dropdown-menu extra-long" role="menu" aria-labelledby="lch-dropdown-btn">
+                        
+                        </ul>
                     </a>
-                    <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
-                        <li role="presentation">
-                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/chinese-crash-course" role="menuitem" class="iconbtn fancyboxmenuitem">
-                              <div class="row">
-                                  <div class="col-xs-6">汉语速成/漢語速成</div>
-                                  <div class="col-xs-6 en">Chinese Crash Course</div>
-                              </div>
-                          </a>
-                        </li>
-                        <li role="presentation">
-                          <a href="/reservseProxy.php?url=http://www.chinesecio.com/cms/en/course_iframe/course/chinese-900" role="menuitem" class="iconbtn fancyboxmenuitem">
-                              <div class="row">
-                                  <div class="col-xs-8">汉语900句/漢語900句</div>
-                                  <div class="col-xs-4 en">Chinese 900</div>
-                              </div>
-                          </a>
-                        </li>
+                    <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn" id="learn-chinese-menu">
                     </ul>
                 </li>
 				<li class="visible-xs"><a href="/" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
