@@ -67,7 +67,8 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 		$names = array_keys($this->urls);
 		$readOnlineCopy = 0;
 		// check whether the magazine still there from supplier
-		if (($coverImg = $this->_getCoverImage ( $index )) !== '')
+		$coverImg = trim($this->_getCoverImage ( $index ));
+		if ($coverImg !== '')
 			$readOnlineCopy = 1;
 	
 		$xml = new SimpleXMLElement ( '<' . $type->getName () . '/>' );
