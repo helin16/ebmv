@@ -1,6 +1,7 @@
 <?php
 class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 {
+	private static $_cache = array();
 	private $urls = array(
 		'Happy Chinese' => 'http://www.chinesecio.com/cms/zh-hans/courseware/happy-chinese',
 		'Chinese Crash Course' => 'http://www.chinesecio.com/cms/en/course/chinese-crash-course',
@@ -123,9 +124,8 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _getCoverImage($index) {
 		if ($this->_debugMode === true)
-			SupplierConnectorAbstract::log ( $this, 'Getting HTML for productKey: ' . $productKey, __FUNCTION__ );
+			SupplierConnectorAbstract::log ( $this, 'Getting HTML for index: ' . $index, __FUNCTION__ );
 		$names = array_keys($this->urls);
-		$index = intval($product->getAttribute ('cno'));
 		if (!isset($names[$index]) || trim($names[$index]) === '')
 			throw new SupplierConnectorException ( 'Invalid view url for supplier: ' . $this->_supplier->getName () );
 		$url = trim($this->urls[$names[$index]]);
@@ -143,9 +143,20 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 			return null;
 		}
 		// load this into DOMDocument
-		Simple_HTML_DOM_Abstract::str_get_html($html);
-		//TODO!!!!
-		return '';
+		$dom = Simple_HTML_DOM_Abstract::str_get_html($html);
+		$result = $dom->find('.Detail-Image > img');
+		if(count($result) === 0)
+			$result = $dom->find('.Detail-imgge > img');
+		if(count($result) === 0)
+			return '';
+		$url_components = parse_url(trim($result[0]->attr['src']));
+		if(isset($url_components['host']) && trim($url_components['host']) !=='')
+			return trim($result[0]->attr['src']);
+		
+		$hostUrl = parse_url($url);
+		if(!isset($hostUrl['host']))
+			return '';
+		return (isset($hostUrl['scheme']) ? $hostUrl['scheme'] : 'http') . '://' . $hostUrl['host'] . $url_components['path'];
 	}
 	/**
 	 * (non-PHPdoc)
