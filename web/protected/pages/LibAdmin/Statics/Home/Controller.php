@@ -48,6 +48,8 @@ class Controller extends LibAdminPageAbstract
 				$pageSize = (isset($pagination->pageSize) && trim($pagination->pageSize) !== '' && is_numeric($pagination->pageSize)) ? trim($pagination->pageSize) : $pageSize;
 			}
 			$stats = array();
+// 			Product::getQuery()->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1')->eagerLoad('Product.productStatics', 'left join', 'pstats')->eagerLoad('ProductStatics.type', 'left join', 'pstatstype');
+			
 			$products = Product::getMostPopularProducts(Core::getLibrary(), null, null, $pageNumber, $pageSize, array('pstats.value'=>'desc'), $stats);
 			$result['items'] = array();
 			foreach($products as $product)

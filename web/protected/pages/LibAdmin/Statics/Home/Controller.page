@@ -1,4 +1,6 @@
 <com:TContent ID="MainContent">
+<com:Application.controls.ExcellentExport.ExcellentExport />
+<com:TDatePicker Attributes.style="display:none;"/>
 <com:TCallback ID="getStatsBtn" onCallback="getStats" />
 <div class="pagewrapper libadminpage homepage">
 	<h4>Statics Dashboard for: <%= Core::getLibrary()->getName() %></h4>
@@ -12,7 +14,10 @@
 		</div>
 		<div class="col-lg-12">
 			<div class="panel panel-default">
-				<div class="panel-heading"><strong id="total-count">0</strong> Items statics</div>
+				<div class="panel-heading">
+					<strong id="total-count">0</strong> Items statics
+					<a class="btn btn-primary btn-xs pull-right" href="javascript: void(0);" onclick="return pageJs.exportAll(this, 'top-viewed');" title="Export"><span class="glyphicon glyphicon-export"></span><span class="hidden-sm"> Export</span></a>
+				</div>
 				<div class="table-responsive">
 					<table class="table table-hover table-striped" id="top-viewed"></table>
 				</div>

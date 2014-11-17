@@ -1,1 +1,129 @@
-var PageJs=new Class.create();PageJs.prototype=Object.extend(new FrontPageJs(),{pagination:{pageNo:1,pageSize:30},_htmlIds:{resultListId:"",totalCountDivId:""},setHTMLIDs:function(a,b){this._htmlIds.resultListId=a;this._htmlIds.totalCountDivId=b;return this},_getPaginBtns:function(a){if(a.pageNumber>=a.totalPages){return}var b={};b.me=this;b.paginDiv=new Element("tfoot",{"class":"paginDiv"}).insert({bottom:new Element("tr").insert({bottom:new Element("td",{colspan:6}).insert({bottom:new Element("span",{"class":"btn btn-primary","data-loading-text":"Getting more ..."}).update("Get more").observe("click",function(){b.btn=this;b.me._signRandID(b.btn);jQuery("#"+b.btn.id).button("loading");b.me.load(b.me.pagination.pageNo+1,b.me.pagination.pageSize,false,function(){$(b.btn).up(".paginDiv").remove()})})})})});return b.paginDiv},_getResultRow:function(c,a){var b={};b.me=this;b.isTitle=(a||false);b.tag=(b.isTitle===true?"th":"td");b.newRow=new Element("tr").insert({bottom:new Element(b.tag).update(b.isTitle===true?"Views":c.statics[1]&&c.statics[1].value&&!c.statics[1].value.blank()?c.statics[1].value:"0")}).insert({bottom:new Element(b.tag).update(b.isTitle===true?"Borrows":c.statics[2]&&c.statics[2].value&&!c.statics[2].value.blank()?c.statics[2].value:"0")}).insert({bottom:new Element(b.tag).update(c.title)}).insert({bottom:new Element(b.tag).update(b.isTitle===true?"ISBN":c.attributes.isbn?c.attributes.isbn[0].attribute:"")}).insert({bottom:new Element(b.tag).update(b.isTitle===true?"Author":c.attributes.author?c.attributes.author[0].attribute:"")}).insert({bottom:new Element(b.tag).update(b.isTitle===true?"Publisher":c.attributes.publisher?c.attributes.publisher[0].attribute:"")}).insert({bottom:new Element(b.tag).update(b.isTitle===true?"Publish Date":c.attributes.publish_date?c.attributes.publish_date[0].attribute:"")});return b.newRow},load:function(c,b,a,e){var d={};d.me=this;d.me.pagination.pageNo=(c||d.me.pagination.pageNo);d.me.pagination.pageSize=(b||d.me.pagination.pageSize);d.resetResult=(a===false?false:true);d.me.postAjax(d.me.getCallbackId("getStats"),{pagination:d.me.pagination},{onLoading:function(f,g){},onComplete:function(f,h){try{d.result=d.me.getResp(h,false,true);if(!d.result.items||d.result.items===undefined||d.result.items===null){throw"No item found/generated"}if(d.resetResult===true){$(d.me._htmlIds.resultListId).update("").insert({bottom:d.me._getResultRow({title:"TITLE"},true).wrap(new Element("thead"))});if($(d.me._htmlIds.totalCountDivId)){$(d.me._htmlIds.totalCountDivId).update(d.result.pagination.totalRows)}}d.tbody=$(d.me._htmlIds.resultListId).down("tbody");if(!d.tbody){$(d.me._htmlIds.resultListId).insert({bottom:d.tbody=new Element("tbody")})}d.result.items.each(function(i){d.tbody.insert({bottom:d.me._getResultRow(i)})});if(typeof(e)==="function"){e()}$(d.me._htmlIds.resultListId).insert({bottom:d.me._getPaginBtns(d.result.pagination)})}catch(g){$(d.me._htmlIds.resultListId).update(d.me.getAlertBox("ERROR",g).addClassName("alert-danger"))}}});return d.me}});
+/**
+ * The page Js file
+ */
+var PageJs = new Class.create();
+PageJs.prototype = Object.extend(new FrontPageJs(), {
+	pagination: {pageNo: 1, pageSize: 30} //this is the pagination for the crud page
+	,_htmlIds: {'resultListId': '', 'totalCountDivId': ''}
+	/**
+	 * Setting the HTML IDs
+	 */
+	,setHTMLIDs: function(resultListId, totalCountDivId) {
+		this._htmlIds.resultListId = resultListId;
+		this._htmlIds.totalCountDivId = totalCountDivId;
+		return this;
+	}
+	//getting the pagination buttons
+	,_getPaginBtns: function(pagination) {
+		if(pagination.pageNumber >= pagination.totalPages)
+			return;
+		var tmp = {};
+		tmp.me = this;
+		tmp.paginDiv = new Element('tfoot', {'class': 'paginDiv'})
+			.insert({'bottom': new Element('tr')
+				.insert({'bottom': new Element('td', {'colspan': 6})
+					.insert({'bottom': new Element('span', {'class': 'btn btn-primary', 'data-loading-text': 'Getting more ...'}).update('Get more')
+						.observe('click', function() {
+							tmp.btn = this;
+							tmp.me._signRandID(tmp.btn);
+							jQuery('#' + tmp.btn.id).button('loading');
+							tmp.me.load(tmp.me.pagination.pageNo + 1, tmp.me.pagination.pageSize, false, function(){
+								$(tmp.btn).up('.paginDiv').remove();
+							});
+						})
+					})
+				})
+			});
+		return tmp.paginDiv;
+	}
+	,_getResultRow: function(row, isTitle) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.isTitle = (isTitle || false);
+		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
+		tmp.newRow = new Element('tr')
+			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Views' : row.statics[1] && row.statics[1].value && !row.statics[1].value.blank() ? row.statics[1].value : '0') })
+			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Borrows' : row.statics[2] && row.statics[2].value && !row.statics[2].value.blank() ? row.statics[2].value : '0') })
+			.insert({'bottom': new Element(tmp.tag).update(row.title) })
+			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'ISBN' : row.attributes.isbn ? row.attributes.isbn[0].attribute : '') })
+			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Author' : row.attributes.author ? row.attributes.author[0].attribute : '') })
+			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Publisher' : row.attributes.publisher ? row.attributes.publisher[0].attribute : '') })
+			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Publish Date' : row.attributes.publish_date ? row.attributes.publish_date[0].attribute : '') })
+			;
+		return tmp.newRow;
+	}
+	/**
+	 * load of list
+	 */
+	,load: function(pageNo, pageSize, resetResult, loadedFunc) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.pagination.pageNo = (pageNo || tmp.me.pagination.pageNo);
+		tmp.me.pagination.pageSize = (pageSize || tmp.me.pagination.pageSize);
+		tmp.resetResult = (resetResult === false ? false : true);
+		tmp.me.postAjax(tmp.me.getCallbackId('getStats'), {'pagination': tmp.me.pagination}, {
+			'onLoading': function (sender, param) {},
+			'onComplete': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.items || tmp.result.items === undefined || tmp.result.items === null)
+						throw 'No item found/generated'; 
+					if(tmp.resetResult === true) {
+						$(tmp.me._htmlIds.resultListId).update('')
+							.insert({'bottom': tmp.me._getResultRow({'title': 'TITLE'}, true).wrap(new Element('thead')) });
+						if($(tmp.me._htmlIds.totalCountDivId))
+							$(tmp.me._htmlIds.totalCountDivId).update(tmp.result.pagination.totalRows);
+					}
+					tmp.tbody = $(tmp.me._htmlIds.resultListId).down('tbody');
+					if(!tmp.tbody) {
+						$(tmp.me._htmlIds.resultListId).insert({'bottom': tmp.tbody = new Element('tbody') });
+					}
+					tmp.result.items.each(function(item) {
+						tmp.tbody.insert({'bottom': tmp.me._getResultRow(item) });
+					});
+					if(typeof(loadedFunc) === 'function') {
+						loadedFunc();
+					}
+					
+					$(tmp.me._htmlIds.resultListId).insert({'bottom': tmp.me._getPaginBtns(tmp.result.pagination)});
+				} catch(e) {
+					$(tmp.me._htmlIds.resultListId).update(tmp.me.getAlertBox('ERROR', e).addClassName('alert-danger'));
+				}
+			}
+		});
+		return tmp.me;
+	}
+	/**
+	 * exporting data
+	 */
+	,exportAll: function(btn, tableId) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.newDiv = new Element('div')
+			.insert({'bottom': new Element('div', {'class': 'form-horizontal'})
+				.insert({'bottom': new Element('div', {'class': 'form-group'})
+					.insert({'bottom': new Element('label', {'class': 'col-sm-2 control-label'}).update('From:') })
+					.insert({'bottom': new Element('div', {'class': 'col-sm-10'})
+						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'From Date', 'export-crieria': 'date-from'}) }) 
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'form-group'})
+					.insert({'bottom': new Element('label', {'class': 'col-sm-2 control-label'}).update('To:') })
+						.insert({'bottom': new Element('div', {'class': 'col-sm-10'})
+						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'To Date', 'export-crieria': 'date-to'}) }) 
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'form-group'})
+					.insert({'bottom': new Element('label', {'class': 'col-sm-offset-2 col-sm-10'})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-primary'}).update('Export Now') }) 
+					})
+				})
+			});
+		pageJs.showModalBox('Please provide a date rage to export:', tmp.newDiv, false);
+		$$('.date-picker[export-crieria]').each(function(item){
+			tmp.me._signRandID(item);
+			item.store('date-picker',new Prado.WebUI.TDatePicker({'ID': item.id, 'InputMode':"TextBox", 'PositionMode':"Bottom", 'Format':"yyyy-MM-dd"}) );
+		})
+//		return ExcellentExport.excel(btn, tableId, 'export_data');
+	}
+});
