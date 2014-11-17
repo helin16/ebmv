@@ -11,7 +11,6 @@ HeaderJs.prototype = {
 		tmp.me = this;
 		tmp.menuList = $$('ul#learn-chinese-menu').first();
 		if(tmp.menuList) {
-			console.debug(chineseCourses);
 			chineseCourses.each(function(course){
 				tmp.menuList.insert({'bottom': new Element('li', {'role': 'presentation'})
 					.insert({'bottom': new Element('a', {'href': '/product/' + course.id})
