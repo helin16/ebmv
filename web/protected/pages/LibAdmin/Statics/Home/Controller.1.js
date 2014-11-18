@@ -107,8 +107,24 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result.items || tmp.result.items === undefined || tmp.result.items === null)
-						throw 'No item found/generated'; 
-					console.debug(tmp.result);
+						throw 'No item found/generated';
+					
+					$('export-table').update('');
+					tmp.i = 0;
+					tmp.result.items.each(function(item){
+						tmp.newTR = new Element('tr')
+							.insert({'bottom': new Element('td').update('Log Count') })
+							.insert({'bottom': new Element('td').update('Log Time') })
+							.insert({'bottom': new Element('td').update('Log Type') })
+							.insert({'bottom': new Element('td').update('ISBN') })
+							.insert({'bottom': new Element('td').update('title') })
+							.insert({'bottom': new Element('td').update('Author') })
+							.insert({'bottom': new Element('td').update('Publisher') })
+							.insert({'bottom': new Element('td').update('Publish Date') });
+						$('export-table').insert({'bottom': tmp.newTR });
+						tmp.i = tmp.i * 1 + 1;
+					});
+					return ExcellentExport.excel(btn, 'export-table', 'export_data');
 				} catch(e) {
 					tmp.me.showModalBox('ERROR', '<h4 class="text-danger">' + e + '</h4>');
 				}
@@ -142,7 +158,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				})
 				.insert({'bottom': new Element('div', {'class': 'form-group'})
 					.insert({'bottom': new Element('label', {'class': 'col-sm-offset-2 col-sm-10'})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-primary', 'data-loading-text': 'Exporting ... Please do NOT close this, while processing!'}).update('Export Now')
+						.insert({'bottom': new Element('a', {'class': 'btn btn-primary', 'href': "javascript: void(0);", 'data-loading-text': 'Exporting ... Please do NOT close this, while processing!'}).update('Export Now')
 							.observe('click', function() {
 								tmp.me._submitExport(this);
 							})
@@ -155,6 +171,5 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			tmp.me._signRandID(item);
 			item.store('date-picker',new Prado.WebUI.TDatePicker({'ID': item.id, 'InputMode':"TextBox", 'PositionMode':"Bottom", 'Format':"yyyy-MM-dd"}) );
 		});
-//		return ExcellentExport.excel(btn, tableId, 'export_data');
 	}
 });

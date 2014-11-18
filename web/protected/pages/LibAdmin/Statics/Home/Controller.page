@@ -30,6 +30,6 @@
 			</div>
 		</div>
 	</div>
-	<div id="export-table"></div>
+	<table id="export-table" style="display: none;"></table>
 </div>
 </com:TContent>

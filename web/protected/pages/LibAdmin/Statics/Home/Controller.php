@@ -90,7 +90,15 @@ class Controller extends LibAdminPageAbstract
 			if($dateTo === '')
 				throw new Exception('To Date is required!');
 			
-			$sql = "select stat.* from productstaticslog stat where stat.libraryId = ? and created >= ? and created <= ?";
+			$sql = "select stat.value `Log count`, stat_type.name `Log Type`, stat.created `Log Time`, pro.title, pi_isbn.attribute `ISBN`, pi_author.attribute `Author`, pi_publisher.attribute `Publisher`, pi_publishdate.attribute `Publish Date`
+					from productstaticslog stat
+					inner join product pro on (pro.id = stat.productId and pro.active = 1)
+					inner join productstaticstype stat_type on (stat_type.id = stat.typeId) 
+					left join productattribute pi_isbn on (pi_isbn.productId = pro.id and pi_isbn.typeId = 2 and pi_isbn.active = 1) 
+					left join productattribute pi_author on (pi_author.productId = pro.id and pi_author.typeId = 1 and pi_author.active = 1)
+					left join productattribute pi_publisher on (pi_publisher.productId = pro.id and pi_publisher.active = 1 and pi_publisher.typeId = 3)
+					left join productattribute pi_publishdate on (pi_publishdate.productId = pro.id and pi_publishdate.active = 1 and pi_publishdate.typeId = 4)
+					where stat.libraryId = ? and stat.created >= ? and stat.created <= ?";
 			$result['items'] = Dao::getResultsNative($sql, array(Core::getLibrary()->getId(), $dateFrom, $dateTo), PDO::FETCH_ASSOC);
 		}
 		catch (Exception $e)
