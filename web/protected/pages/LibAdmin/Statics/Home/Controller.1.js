@@ -63,7 +63,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.resetResult = (resetResult === false ? false : true);
 		tmp.me.postAjax(tmp.me.getCallbackId('getStats'), {'pagination': tmp.me.pagination}, {
 			'onLoading': function (sender, param) {},
-			'onComplete': function (sender, param) {
+			'onSuccess': function (sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result.items || tmp.result.items === undefined || tmp.result.items === null)
@@ -93,29 +93,60 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		});
 		return tmp.me;
 	}
+	,_submitExport: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.fromDate = $F($$('.date-picker[export-crieria=date-from]').first());
+		tmp.toDate = $F($$('.date-picker[export-crieria=date-to]').first());
+		tmp.me.postAjax(tmp.me.getCallbackId('exportSats'), {'fromDate': tmp.fromDate, 'toDate': tmp.toDate}, {
+			'onLoading': function() {
+				tmp.me._signRandID(btn);
+				jQuery('#' + btn.id).button('loading');
+			}
+			,'onSuccess': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.items || tmp.result.items === undefined || tmp.result.items === null)
+						throw 'No item found/generated'; 
+					console.debug(tmp.result);
+				} catch(e) {
+					tmp.me.showModalBox('ERROR', '<h4 class="text-danger">' + e + '</h4>');
+				}
+			}
+			,'onComplete': function() {
+				jQuery('#' + btn.id).button('reset');
+			}
+		});
+		return tmp.me;
+	}
 	/**
 	 * exporting data
 	 */
 	,exportAll: function(btn, tableId) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.now = new Date();
 		tmp.newDiv = new Element('div')
 			.insert({'bottom': new Element('div', {'class': 'form-horizontal'})
 				.insert({'bottom': new Element('div', {'class': 'form-group'})
 					.insert({'bottom': new Element('label', {'class': 'col-sm-2 control-label'}).update('From:') })
 					.insert({'bottom': new Element('div', {'class': 'col-sm-10'})
-						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'From Date', 'export-crieria': 'date-from'}) }) 
+						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'From Date', 'export-crieria': 'date-from', 'value': tmp.now.getFullYear() + '-' + ("00" + (tmp.now.getMonth() * 1 + 1)).slice(2) + '-01'}) }) 
 					})
 				})
 				.insert({'bottom': new Element('div', {'class': 'form-group'})
 					.insert({'bottom': new Element('label', {'class': 'col-sm-2 control-label'}).update('To:') })
 						.insert({'bottom': new Element('div', {'class': 'col-sm-10'})
-						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'To Date', 'export-crieria': 'date-to'}) }) 
+						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'To Date', 'export-crieria': 'date-to', 'value': tmp.now.getFullYear() + '-' + ("00" + (tmp.now.getMonth() * 1 + 1)).slice(2) + '-' + ("00" + (tmp.now.getDate() * 1 + 1)).slice(2)}) }) 
 					})
 				})
 				.insert({'bottom': new Element('div', {'class': 'form-group'})
 					.insert({'bottom': new Element('label', {'class': 'col-sm-offset-2 col-sm-10'})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-primary'}).update('Export Now') }) 
+						.insert({'bottom': new Element('span', {'class': 'btn btn-primary', 'data-loading-text': 'Exporting ... Please do NOT close this, while processing!'}).update('Export Now')
+							.observe('click', function() {
+								tmp.me._submitExport(this);
+							})
+						}) 
 					})
 				})
 			});
@@ -123,7 +154,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		$$('.date-picker[export-crieria]').each(function(item){
 			tmp.me._signRandID(item);
 			item.store('date-picker',new Prado.WebUI.TDatePicker({'ID': item.id, 'InputMode':"TextBox", 'PositionMode':"Bottom", 'Format':"yyyy-MM-dd"}) );
-		})
+		});
 //		return ExcellentExport.excel(btn, tableId, 'export_data');
 	}
 });

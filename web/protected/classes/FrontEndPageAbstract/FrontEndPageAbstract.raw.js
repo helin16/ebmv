@@ -358,12 +358,28 @@ FrontPageJs.prototype = {
 				})
 			});
 		
-		if($(tmp.me.modalId)) {
-			$(tmp.me.modalId).remove();
+		if(!$(tmp.me.modalId)) {
+			$$('body')[0].insert({'bottom': tmp.newBox.writeAttribute('id',  tmp.me.modalId)});
+			jQuery('#' + tmp.me.modalId).modal({'show': true, 'target': '#' + tmp.me.modalId});
+		} else {
+			$(tmp.me.modalId).down('.modal-title').update(title);
+			$(tmp.me.modalId).down('.modal-body').update(content);
+			tmp.modalFooter = $(tmp.me.modalId).down('.modal-footer');
+			if(!tmp.modalFooter) {
+				$(tmp.me.modalId).insert({'bottom': tmp.footer === null ? '' : new Element('div', {'class': 'modal-footer' }).update(tmp.footer) })
+			} else {
+				tmp.modalFooter.update(tmp.footer);
+			}
+			if(!$(tmp.me.modalId).hasClassName('in')) {
+				jQuery('#' + tmp.me.modalId).modal('show');
+			}
 		}
-		
-		$$('body')[0].insert({'bottom': tmp.newBox.writeAttribute('id',  tmp.me.modalId)});
-		jQuery('#' + tmp.me.modalId).modal({'show': true, 'target': '#' + tmp.me.modalId});
+		return tmp.me;
+	}
+	,hideModalBox: function() {
+		var tmp = {};
+		tmp.me = this;
+		jQuery('#' + tmp.me.modalId).modal('hide');
 		return tmp.me;
 	}
 	/**

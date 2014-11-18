@@ -23,6 +23,7 @@ class Controller extends LibAdminPageAbstract
 	{
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.setCallbackId("getStats", "' . $this->getStatsBtn->getUniqueID() . '")';
+		$js .= '.setCallbackId("exportSats", "' . $this->exportSatsBtn->getUniqueID() . '")';
 		$js .= '.setHTMLIDs("top-viewed", "total-count")';
 		$js .= '.load()';
 		$js .= ';';
@@ -64,6 +65,33 @@ class Controller extends LibAdminPageAbstract
 				$result['items'][] = $array;
 			}
 			$result['pagination'] =  $stats;
+		}
+		catch (Exception $e)
+		{
+			$errors[] = $e->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	/**
+	 * Getting the statics
+	 * 
+	 * @param unknown $sender
+	 * @param unknown $param
+	 */
+	public function exportSats($sender, $param)
+	{
+		$result = $errors = array();
+		try 
+		{
+			$dateFrom = (isset($param->CallbackParameter->fromDate) && trim($param->CallbackParameter->fromDate) !== '') ? trim($param->CallbackParameter->fromDate) : '';
+			$dateTo = (isset($param->CallbackParameter->toDate) && trim($param->CallbackParameter->toDate) !== '') ? trim($param->CallbackParameter->toDate) : '';
+			if($dateFrom === '')
+				throw new Exception('From Date is required!');
+			if($dateTo === '')
+				throw new Exception('To Date is required!');
+			
+			$sql = "select stat.* from productstaticslog stat where stat.libraryId = ? and created >= ? and created <= ?";
+			$result['items'] = Dao::getResultsNative($sql, array(Core::getLibrary()->getId(), $dateFrom, $dateTo), PDO::FETCH_ASSOC);
 		}
 		catch (Exception $e)
 		{
