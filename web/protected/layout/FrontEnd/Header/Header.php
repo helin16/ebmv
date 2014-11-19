@@ -26,7 +26,8 @@ class Header extends TTemplateControl
 	
 	private function _getJs()
 	{
-		$products = ($supplier = Supplier::get(Supplier::ID_CIO) instanceof Supplier) ? $supplier->getProducts(array(), array(ProductType::ID_COURSE)) : array();
+		//$products = ($supplier = Supplier::get(Supplier::ID_CIO) instanceof Supplier) ? $supplier->getProducts(array(), array(ProductType::ID_COURSE)) : array();
+		$products = array();
 		$array = array();
 		foreach($products as $product)
 			$array[] = array('id' => $product->getId(), 'title' => $product->getTitle());
