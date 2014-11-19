@@ -1,5 +1,4 @@
 <com:TContent ID="MainContent">
-<com:Application.controls.ExcellentExport.ExcellentExport />
 <com:TDatePicker Attributes.style="display:none;"/>
 <com:TCallback ID="getStatsBtn" onCallback="getStats" />
 <com:TCallback ID="exportSatsBtn" onCallback="exportSats" />
@@ -30,6 +29,5 @@
 			</div>
 		</div>
 	</div>
-	<table id="export-table" style="display: none;"></table>
 </div>
 </com:TContent>

@@ -89,6 +89,11 @@ class Controller extends LibAdminPageAbstract
 				throw new Exception('From Date is required!');
 			if($dateTo === '')
 				throw new Exception('To Date is required!');
+			$libTimeZone = trim(Core::getLibrary()->getInfo('lib_timezone'));
+			$dateFrom = new UDate($dateFrom . ' 00:00:00', $libTimeZone);
+			$dateFrom->setTimeZone('UTC');
+			$dateTo = new UDate($dateTo . ' 23:59:59', $libTimeZone);
+			$dateTo->setTimeZone('UTC');
 			
 			$sql = "select stat.value `Log count`, stat_type.name `Log Type`, stat.created `Log Time`, pro.title, pi_isbn.attribute `ISBN`, pi_author.attribute `Author`, pi_publisher.attribute `Publisher`, pi_publishdate.attribute `Publish Date`
 					from productstaticslog stat
@@ -99,7 +104,15 @@ class Controller extends LibAdminPageAbstract
 					left join productattribute pi_publisher on (pi_publisher.productId = pro.id and pi_publisher.active = 1 and pi_publisher.typeId = 3)
 					left join productattribute pi_publishdate on (pi_publishdate.productId = pro.id and pi_publishdate.active = 1 and pi_publishdate.typeId = 4)
 					where stat.libraryId = ? and stat.created >= ? and stat.created <= ?";
-			$result['items'] = Dao::getResultsNative($sql, array(Core::getLibrary()->getId(), $dateFrom, $dateTo), PDO::FETCH_ASSOC);
+			$results = array();
+			foreach(Dao::getResultsNative($sql, array(Core::getLibrary()->getId(), trim($dateFrom), trim($dateTo)), PDO::FETCH_ASSOC) as $row)
+			{
+				$logTime = new UDate(trim($row['Log Time']), 'UTC');
+				$logTime->setTimeZone($libTimeZone);
+				$row['Log Time'] = trim($logTime);
+				$results[] = $row;
+			}
+			$result['items'] = $results;
 		}
 		catch (Exception $e)
 		{

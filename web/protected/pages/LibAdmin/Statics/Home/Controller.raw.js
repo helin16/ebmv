@@ -63,7 +63,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.resetResult = (resetResult === false ? false : true);
 		tmp.me.postAjax(tmp.me.getCallbackId('getStats'), {'pagination': tmp.me.pagination}, {
 			'onLoading': function (sender, param) {},
-			'onComplete': function (sender, param) {
+			'onSuccess': function (sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result.items || tmp.result.items === undefined || tmp.result.items === null)
@@ -92,5 +92,89 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			}
 		});
 		return tmp.me;
+	}
+	,_submitExport: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.fromDate = $F($$('.date-picker[export-crieria=date-from]').first());
+		tmp.toDate = $F($$('.date-picker[export-crieria=date-to]').first());
+		tmp.me.postAjax(tmp.me.getCallbackId('exportSats'), {'fromDate': tmp.fromDate, 'toDate': tmp.toDate}, {
+			'onLoading': function() {
+				tmp.me._signRandID(btn);
+				jQuery('#' + btn.id).button('loading');
+			}
+			,'onSuccess': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.items || tmp.result.items === undefined || tmp.result.items === null)
+						throw 'No item found/generated';
+					tmp.i=0;
+					tmp.resultArray = [];
+					tmp.result.items.each(function(item){
+						tmp.title = [];
+						tmp.row = [];
+						$H(item).each(function(value){
+							tmp.title.push('' + value.key + '');
+							tmp.row.push('' + value.value + '');
+						});
+						if(tmp.i === 0)
+							tmp.resultArray.push( tmp.title.join(', '));
+						tmp.resultArray.push(tmp.row.join(', '));
+						tmp.i = (tmp.i * 1 +1);
+					});
+					tmp.me.hideModalBox();
+					tmp.csvContent = "data:text/csv;charset=utf-8," + tmp.resultArray.join('\n');
+					$$('body')[0].insert({'bottom': tmp.newBtn = new Element('a', {"href": encodeURI(tmp.csvContent), "download": "my_data.csv"})  });
+					tmp.newBtn.click();
+					tmp.newBtn.remove();
+				} catch(e) {
+					tmp.me.showModalBox('ERROR', '<h4 class="text-danger">' + e + '</h4>');
+				}
+			}
+			,'onComplete': function() {
+				jQuery('#' + btn.id).button('reset');
+			}
+		});
+		return tmp.me;
+	}
+	/**
+	 * exporting data
+	 */
+	,exportAll: function(btn, tableId) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.usingIE = (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf("Trident/") > 0);
+		tmp.now = new Date();
+		tmp.newDiv = new Element('div')
+			.insert({'bottom': new Element('div', {'class': 'form-horizontal'})
+				.insert({'bottom': new Element('div', {'class': 'form-group'})
+					.insert({'bottom': new Element('label', {'class': 'col-sm-2 control-label'}).update('From:') })
+					.insert({'bottom': new Element('div', {'class': 'col-sm-10'})
+						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'From Date', 'export-crieria': 'date-from', 'value': tmp.now.getFullYear() + '-' + ("00" + (tmp.now.getMonth() * 1 + 1)).slice(2) + '-01'}) }) 
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'form-group'})
+					.insert({'bottom': new Element('label', {'class': 'col-sm-2 control-label'}).update('To:') })
+						.insert({'bottom': new Element('div', {'class': 'col-sm-10'})
+						.insert({'bottom': new Element('input', {'type': 'text', 'class': 'form-control date-picker', 'placeholder': 'To Date', 'export-crieria': 'date-to', 'value': tmp.now.getFullYear() + '-' + ("00" + (tmp.now.getMonth() * 1 + 1)).slice(2) + '-' + ("00" + (tmp.now.getDate() * 1 + 1)).slice(2)}) }) 
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'form-group'})
+					.insert({'bottom': new Element('label', {'class': 'col-sm-offset-2 col-sm-10'})
+						.insert({'bottom': tmp.exportBtn = new Element('a', {'class': 'btn ' + (tmp.usingIE === true ? 'btn-warning' : 'btn-primary'), 'href': "javascript: void(0);", 'data-loading-text': 'Exporting ... Please do NOT close this, while processing!'}).update((tmp.usingIE === true ? 'You can ONLY export this in NON IE browser, sorry!' : 'Export Now'))
+							.observe('click', function() {
+								tmp.me._submitExport(this);
+							})
+						}) 
+					})
+				})
+			});
+		if(tmp.usingIE === true)
+			tmp.exportBtn.writeAttribute('disabled', true);
+		pageJs.showModalBox('Please provide a date rage to export:', tmp.newDiv, false);
+		$$('.date-picker[export-crieria]').each(function(item){
+			tmp.me._signRandID(item);
+			item.store('date-picker',new Prado.WebUI.TDatePicker({'ID': item.id, 'InputMode':"TextBox", 'PositionMode':"Bottom", 'Format':"yyyy-MM-dd"}) );
+		});
 	}
 });
