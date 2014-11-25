@@ -118,15 +118,14 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 							tmp.row.push('' + value.value + '');
 						});
 						if(tmp.i === 0)
-							tmp.resultArray.push( tmp.title.join(', '));
-						tmp.resultArray.push(tmp.row.join(', '));
+							tmp.resultArray.push( tmp.title.join(', ') + '\n');
+						tmp.resultArray.push(tmp.row.join(', ') + '\n');
 						tmp.i = (tmp.i * 1 +1);
 					});
 					tmp.me.hideModalBox();
-					tmp.csvContent = "data:text/csv;charset=utf-8," + tmp.resultArray.join('\n');
-					$$('body')[0].insert({'bottom': tmp.newBtn = new Element('a', {"href": encodeURI(tmp.csvContent), "download": "my_data.csv"})  });
-					tmp.newBtn.click();
-					tmp.newBtn.remove();
+					
+					tmp.blob = new Blob(tmp.resultArray, {type: "text/csv;charset=utf-8"});
+					saveAs(tmp.blob, "my_data.csv");
 				} catch(e) {
 					tmp.me.showModalBox('ERROR', '<h4 class="text-danger">' + e + '</h4>');
 				}
@@ -143,7 +142,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,exportAll: function(btn, tableId) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.usingIE = (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf("Trident/") > 0);
+		tmp.supported = false;
+		if (window.File && window.FileReader && window.FileList && window.Blob) { //the browser supports file reading api
+			tmp.supported = true;
+		}
 		tmp.now = new Date();
 		tmp.newDiv = new Element('div')
 			.insert({'bottom': new Element('div', {'class': 'form-horizontal'})
@@ -161,7 +163,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				})
 				.insert({'bottom': new Element('div', {'class': 'form-group'})
 					.insert({'bottom': new Element('label', {'class': 'col-sm-offset-2 col-sm-10'})
-						.insert({'bottom': tmp.exportBtn = new Element('a', {'class': 'btn ' + (tmp.usingIE === true ? 'btn-warning' : 'btn-primary'), 'href': "javascript: void(0);", 'data-loading-text': 'Exporting ... Please do NOT close this, while processing!'}).update((tmp.usingIE === true ? 'You can ONLY export this in NON IE browser, sorry!' : 'Export Now'))
+						.insert({'bottom': tmp.exportBtn = new Element('a', {'class': 'btn ' + (tmp.usingIE === true ? 'btn-warning' : 'btn-primary'), 'href': "javascript: void(0);", 'data-loading-text': 'Exporting ... Please do NOT close this, while processing!'}).update((tmp.supported !== true ? 'Your browser is NOT supported, pls change to anther and try again!' : 'Export Now'))
 							.observe('click', function() {
 								tmp.me._submitExport(this);
 							})
@@ -169,7 +171,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					})
 				})
 			});
-		if(tmp.usingIE === true)
+		if(tmp.supported !== true)
 			tmp.exportBtn.writeAttribute('disabled', true);
 		pageJs.showModalBox('Please provide a date rage to export:', tmp.newDiv, false);
 		$$('.date-picker[export-crieria]').each(function(item){
