@@ -2,7 +2,6 @@
 <com:TDatePicker Attributes.style="display:none;"/>
 <com:TCallback ID="getStatsBtn" onCallback="getStats" />
 <com:TCallback ID="exportSatsBtn" onCallback="exportSats" />
-<com:Application.controls.jsSaveAs.jsSaveAs />
 <style>
 .TDatePicker_default {
 	z-index: 9999;

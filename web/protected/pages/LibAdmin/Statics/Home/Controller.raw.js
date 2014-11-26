@@ -106,26 +106,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onSuccess': function (sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					if(!tmp.result.items || tmp.result.items === undefined || tmp.result.items === null)
+					if(!tmp.result || !tmp.result.url || tmp.result.url.blank())
 						throw 'No item found/generated';
-					tmp.i=0;
-					tmp.resultArray = [];
-					tmp.result.items.each(function(item){
-						tmp.title = [];
-						tmp.row = [];
-						$H(item).each(function(value){
-							tmp.title.push('' + value.key + '');
-							tmp.row.push('' + value.value + '');
-						});
-						if(tmp.i === 0)
-							tmp.resultArray.push( tmp.title.join(', ') + '\n');
-						tmp.resultArray.push(tmp.row.join(', ') + '\n');
-						tmp.i = (tmp.i * 1 +1);
-					});
+					window.open(tmp.result.url);
 					tmp.me.hideModalBox();
-					
-					tmp.blob = new Blob(tmp.resultArray, {type: "text/csv;charset=utf-8"});
-					saveAs(tmp.blob, "my_data.csv");
 				} catch(e) {
 					tmp.me.showModalBox('ERROR', '<h4 class="text-danger">' + e + '</h4>');
 				}

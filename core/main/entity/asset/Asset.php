@@ -116,7 +116,7 @@ class Asset extends BaseEntityAbstract
 	 */
 	public function __toString()
 	{
-	    return '/assets/get/?id=' . $assetId;
+	    return '/asset/get/?id=' . trim($this->getAssetId());
 	}
 	/**
 	 * (non-PHPdoc)

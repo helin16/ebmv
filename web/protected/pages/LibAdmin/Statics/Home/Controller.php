@@ -112,13 +112,44 @@ class Controller extends LibAdminPageAbstract
 				$row['Log Time'] = trim($logTime);
 				$results[] = $row;
 			}
-			$result['items'] = $results;
+			$filePath = $this->_getExcel($results);
+			$assetId = Asset::registerAsset('statics_export.xlsx', $filePath);
+			if(!($asset = Asset::getAsset($assetId)) instanceof Asset)
+				throw new Exception('System Error: can NOT generate excel file');
+			$result['url'] = trim($asset);
 		}
 		catch (Exception $e)
 		{
 			$errors[] = $e->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
+	}
+	private function _getExcel($data)
+	{
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->setActiveSheetIndex(0);
+		$sheet = $objPHPExcel->getActiveSheet();
+		$rowIndex = 1;
+		foreach($data as $i => $row)
+		{
+			if($rowIndex === 1)
+			{
+				foreach(array_keys($row) as $index => $title)
+					$sheet->getCellByColumnAndRow($index, $rowIndex)->setValue($title);
+				$rowIndex++;
+			}
+			
+			foreach(array_values($row) as $index => $title)
+				$sheet->getCellByColumnAndRow($index, $rowIndex)->setValue($title);
+			$rowIndex++;
+		}
+	
+		$sheet->setTitle('Statics_export');
+		//write to a file
+		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+		$filePath = '/tmp/Statics_export_' . Core::getLibrary()->getId() . '.xlsx';
+		$objWriter->save($filePath);
+		return $filePath;
 	}
 }
 ?>
