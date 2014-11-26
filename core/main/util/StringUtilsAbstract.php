@@ -124,6 +124,7 @@ abstract class StringUtilsAbstract
 				return "application/msword";
 	
 			case "xls" :
+			case "xlsx" :
 			case "xlt" :
 			case "xlm" :
 			case "xld" :
