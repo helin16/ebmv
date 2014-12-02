@@ -24,15 +24,32 @@ class ListController extends LibAdminPageAbstract
 		$pageSize = 10;
 		$productId = 0;
 		 
+		$cates  = array();
+		foreach(Category::getAll() as $cate)
+		{
+			if($cate->getNoOfProducts(ProductType::get(ProductType::ID_BOOK)) > 0)
+				$cates[] = $cate->getJson();
+		}
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list", "current-order-summary", "order-btn", "my-cart")';
 		$js .= '.setCallbackId("getItems", "' . $this->getItemsBtn->getUniqueID() . '")';
 		$js .= '.setCallbackId("getOrderSummary", "' . $this->getOrderSummaryBtn->getUniqueID() . '")';
 		$js .= '.setCallbackId("orderProduct", "' . $this->orderProductBtn->getUniqueID() . '")';
+		$js .= '.setLanguages("lang-sel", ' . json_encode(array_map(create_function('$a', 'return $a->getJson();'), Language::getAll())) . ')';
+		$js .= '.setCategories("cate-sel", ' . json_encode($cates) . ')';
+		$js .= '.bindChosen()';
 		$js .= '.getOrderSummary()';
 		$js .= '.getResult(true);';
 		return $js;
 	}
+	/**
+	 * Getting items
+	 * 
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * 
+	 * 
+	 */
 	public function getItems($sender, $param)
 	{
 		$result = $errors = $productArray = array();
@@ -48,12 +65,18 @@ class ListController extends LibAdminPageAbstract
 			}
 	
 			$searchCriteria = json_decode(json_encode($param->CallbackParameter->searchCriteria), true);
+			var_dump($searchCriteria);
+			$searchTxt = trim(isset($searchCriteria['searchTxt']) ? $searchCriteria['searchTxt'] : '');
+			$categoryIds = (isset($searchCriteria['categoryIds']) && is_array($searchCriteria['categoryIds']) ? $searchCriteria['categoryIds'] : array());
+			$language = (isset($searchCriteria['languageId']) && ($language = Language::get($searchCriteria['languageId'])) ? $language : null);
+			
 			$stats = array();
-			if(count($searchCriteria) > 0)
-				$productArray = Product::findProductsInCategory(null, trim($searchCriteria['searchTxt']), array(), '', null, ProductType::get(ProductType::ID_BOOK), true, $pageNumber, $pageSize, array('pro.id' => 'desc'), $stats);
-			else
-				$productArray = Product::getAllByCriteria('productTypeId = ?', array(ProductType::ID_BOOK), true, $pageNumber, $pageSize, array('pro.id' => 'desc'), $stats);
+			Dao::$debug = true;
+			$productArray = Product::findProductsInCategory(null, $searchTxt, $categoryIds, '', $language, ProductType::get(ProductType::ID_BOOK), true, $pageNumber, $pageSize, array('pro.id' => 'desc'), $stats);
+			Dao::$debug = false;
+			
 			$result['pagination'] = $stats;
+			$result['items'] = array();
 			foreach($productArray as $product)
 			{
 				$array =  $product->getJson();

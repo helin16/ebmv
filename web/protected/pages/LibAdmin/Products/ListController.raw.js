@@ -144,10 +144,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	/**
 	 * Searching the product
 	 */
-	,searchProducts: function(searchTxt) {
+	,searchProducts: function(btn) {
 		 var tmp = {};
 		 tmp.me = this;
-		 tmp.me.searchCriteria.searchTxt = searchTxt;
+		 tmp.searchPanel = $(btn).up('.search-panel').getElementsBySelector('[search-panel]').each(function(item){
+			 tmp.me.searchCriteria[item.readAttribute('search-panel')] = $F(item);
+		 })
 		 tmp.me.getResult(true);
 		 return tmp.me;
 	}
@@ -244,6 +246,37 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				}
 			}
  		});
+		return tmp.me;
+	}
+	,setLanguages: function (selbox, langs) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.langs = langs;
+		$(selbox).insert({'bottom': new Element('option', {'value': ''}).update('ALL') });
+		tmp.me.langs.each(function(lang){
+			$(selbox).insert({'bottom': new Element('option', {'value': lang.id}).update(lang.name) });
+		})
+		return tmp.me;
+	}
+	,setCategories: function (selbox, cates) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.cates = cates;
+		if(!tmp.me.cates || tmp.me.cates.size() === 0)
+			return tmp.me;
+		tmp.me.cates.each(function(cate){
+			$(selbox).insert({'bottom': new Element('option', {'value': cate.id}).update(cate.path) });
+		})
+		return tmp.me;
+	}
+	,bindChosen: function() {
+		var tmp = {};
+		tmp.me = this;
+		jQuery('.chosen').chosen({
+			disable_search_threshold: 10,
+			no_results_text: "Oops, nothing found!",
+			'class': "form-control"
+		});
 		return tmp.me;
 	}
 	/**

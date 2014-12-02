@@ -73,13 +73,13 @@ class ProductsController extends FrontEndPageAbstract
 		
 		if(($searchtext = trim($this->getSearchText())) !== '')
 		{
+			$js .= 'pageJs.searchCriteria.searchString = "' . $searchtext . '";';
 			if (($searchInfo = json_decode($searchtext, true)) !== null)
 			{
 				$searchtext = trim($searchInfo['searchText']);
 				$js .= 'pageJs.searchCriteria.searchCat = "'.trim($searchInfo['searchCat']).'";';
 				$js .= 'pageJs.searchCriteria.searchOpt = "' . trim($searchInfo['searchOpt']) . '";';
 			}
-			$js .= 'pageJs.searchCriteria.searchString = "' . $searchtext . '";';
 		}
 		$js .= 'pageJs.showProducts(true);';
 	   return $js;

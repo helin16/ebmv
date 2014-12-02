@@ -63,6 +63,16 @@ class Category extends TreeEntityAbstract
         $this->products = $products;
         return $this;
     }
+    /**
+     * Getting the no of product that belongs to this category
+     * 
+     * @return number
+     */
+    public function getNoOfProducts(ProductType $type = null)
+    {
+    	$result = Dao::getSingleResultNative('select count(distinct x.productid) `count` from category_product x inner join product pro on (pro.id = x.productId and pro.active = 1 ' . ($type instanceof ProductType ? 'and pro.productTypeId = ' . $type->getId() : '') . ') where x.categoryId = ? ', array($this->getId()));
+    	return intval($result['count']);
+    }
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::loadDaoMap()

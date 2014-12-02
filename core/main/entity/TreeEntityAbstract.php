@@ -101,6 +101,34 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
         return $this;
     }
     /**
+     * Getting the parents including itself
+     * 
+     * @return multitype:TreeEntityAbstract |Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
+    public function getParents()
+    {
+    	$currentPos = trim($this->getPosition());
+    	if($currentPos === '' || $currentPos === '1')
+    		return array($this);
+    	
+    	$posArray = array();
+    	$length = strlen($currentPos);
+    	for($i = 0; $i < ($length - 1) / self::POS_LENGTH_PER_LEVEL ; $i++)
+    	{
+    		$posArray[] = trim(substr($currentPos, 0, ($i * self::POS_LENGTH_PER_LEVEL) + 1));
+    	}
+    	return self::getAllByCriteria('rootId = ? and position in (' . implode(',', array_fill(0, count($posArray), '?')) . ')', array_merge(array($this->getRoot()->getId()), $posArray), false, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('position' => 'asc'));
+    }
+    /**
+     * Getting  the path of the node
+     * 
+     * @return string
+     */
+    public function getPath()
+    {
+    	return implode(' / ', array_map(create_function('$a', 'return trim($a->getName());'), $this->getParents()));
+    }
+    /**
      * Getting the next position for the new children of the provided parent
      *
      * @throws EntityException
@@ -151,6 +179,19 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
     public function getChildren($activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
     {
     	return self::getAllByCriteria('position like ? and rootId = ?', array($this->getPosition() . '%', $this->getRoot()->getId()), $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::getJson()
+     */
+    public function getJson($extra = array(), $reset = false)
+    {
+    	$array = array();
+    	if(!$this->isJsonLoaded($reset))
+    	{
+    		$array['path'] = trim($this->getPath());
+    	}
+    	return parent::getJson($array, $reset);
     }
 	/**
 	 * load the default elments of the base entity

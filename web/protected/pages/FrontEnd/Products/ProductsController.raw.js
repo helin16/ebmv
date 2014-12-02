@@ -183,7 +183,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		if($F(searchBox).blank()){
-			tmp.me.markFormGroupError($(searchBox), '没什么可搜索 / 沒什麼可搜索<br />Nothing to Search.');
+			tmp.me.showModalBox('ERROR', '没什么可搜索 / 沒什麼可搜索<br />Nothing to Search.', true);
 		} else {
 			window.location= tmp.me.searchProductUrl.replace('{searchTxt}', $F(searchBox));
 		}

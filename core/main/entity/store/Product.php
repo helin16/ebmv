@@ -589,56 +589,60 @@ class Product extends BaseEntityAbstract
 		$searchMode = false;
 		$where = $params = array();
 		$searchOption = trim($searchOption);
-	
 		$query = Product::getQuery();
 		if($lib instanceof Library)
 		{
-			$query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = ? and lib_own.productId = pro.id and lib_own.active = 1');
-			$params[] = $lib->getId();
+			$query->eagerLoad('Product.libOwns', DaoQuery::DEFAULT_JOIN_TYPE, 'lib_own', 'lib_own.libraryId = :libId and lib_own.productId = pro.id and lib_own.active = 1');
+			$params['libId'] = $lib->getId();
 		}
 		if(($searchText = trim($searchText)) !== '')
 		{
 			$query->eagerLoad('Product.attributes', DaoQuery::DEFAULT_JOIN_TYPE, 'pa')->eagerLoad('ProductAttribute.type', DaoQuery::DEFAULT_JOIN_TYPE, 'pt');
 			if($searchOption === '')
 			{
-				$criteria = '(pt.searchable = ?';
-				$params[] = 1;
+				$criteria = '(pt.searchable = 1';
 			}
 			else
 			{
-				$criteria = '(pt.code = ?';
-				$params[] = $searchOption;
+				$criteria = '(pt.code = :ptcode';
+				$params['ptcode'] = $searchOption;
 			}
-			$where[] = $criteria.' and pa.attribute like ?) or pro.title like ?';
-			$params[] = '%' . $searchText . '%';
-			$params[] = '%' . $searchText . '%';
+			$where[] = '(' . $criteria.' and pa.attribute like :searchTxt) or pro.title like :searchTxt)';
+			$params['searchTxt'] = '%' . $searchText . '%';
 			$searchMode = true;
 		}
 		if($language instanceof Language)
 		{
 			$query->eagerLoad('Product.languages', DaoQuery::DEFAULT_JOIN_TYPE, 'lang');
-			$where[] = 'lang.id = ?';
-			$params[] = $language->getId();
+			$where[] = 'lang.id = :langId';
+			$params['langId'] = $language->getId();
 			$searchMode = true;
 		}
 		if($productType instanceof ProductType)
 		{
-			$where[] = 'pro.productTypeId = ?';
-			$params[] = $productType->getId();
+			$where[] = 'pro.productTypeId = :pTypeId';
+			$params['pTypeId'] = $productType->getId();
 			$searchMode = true;
 		}
 	
 		if(count($categorIds = array_filter($categorIds)) > 0)
 		{
 			$query->eagerLoad('Product.categorys');
-			$where[] = '(pcat.id IN (' . implode(', ', array_fill(0, count($categorIds), '?')) . '))';
-			$params = array_merge($params, $categorIds);
+			$ids = array();
+			foreach($categorIds as $index => $id)
+			{
+				$ids[] = ':cateId' . $index;
+				$params['cateId' . $index] = $id;
+			}
+			$where[] = '(pcat.id IN (' . implode(', ', $ids) . '))';
 			$searchMode = true;
 		}
 	
+		$params['active'] = 1;
 		if($searchMode === false)
-			return self::getAll($searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
-		return self::getAllByCriteria(implode(' AND ', $where), $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
+			return self::getAllByCriteria('pro.active = :active', $params, false, $pageNo, $pageSize, $orderBy, $stats);
+		$where[] = 'pro.active = :active'; 
+		return self::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, $orderBy, $stats);
 	}
 	/**
 	 * Getting the product by SKU
