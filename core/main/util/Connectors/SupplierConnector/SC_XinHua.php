@@ -75,7 +75,6 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting from soap: ' . $wsdl, __FUNCTION__);
 		$result = BmvComScriptSoap::getScript($wsdl)->$funcName($params);
-		
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got results: ' . print_r($result, true), __FUNCTION__);
 		$resultTagName = (trim($resultTagName) === '' ? $funcName . 'Result' : $resultTagName);
 		if(!isset($result->$resultTagName) || !isset($result->$resultTagName->any) || trim($result->$resultTagName->any) === '')
@@ -267,15 +266,71 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::borrowProduct()
 	 */
-	public function borrowProduct(Product &$product, UserAccount $user)
-	{
-		
-	}
+	public function borrowProduct(Product &$product, UserAccount $user){}
 	/**
 	 * (non-PHPdoc)
 	 * @see SupplierConn::returnProduct()
 	 */
-	public function returnProduct(Product &$product, UserAccount $user)
-	{
+	public function returnProduct(Product &$product, UserAccount $user){}
+	
+	/**
+	 * Downloading Catalog for library to shop
+	 */
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE) {
+		$this->_debugMode = true;
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting NOW TIME from supplier:', __FUNCTION__);
+		$lastRunTime = trim($this->_supplier->getInfo('last_succ_cata_download'));
+		if($lastRunTime === '') {
+			$lastRunTime = new UDate();
+			$lastRunTime->modify('-1 year')->setTimeZone('Asia/Hong_Kong');
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Can NOT find last run time, back dates to 1 yr ago: ' . trim($lastRunTime), __FUNCTION__);
+		}
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got LAST RUN TIME' . trim($lastRunTime), __FUNCTION__);
+		
+		$this->_importCatalogList($lastRunTime, 1, $pageSize);
+		
+		$result = BmvComScriptSoap::getScript(trim($this->_supplier->getInfo('import_url')))->GetNowDateTime();
+		if(isset($result->GetNowDateTimeResult))
+			$this->_supplier->addInfo(SupplierInfoType::getByCode('last_succ_cata_download'), trim($result->GetNowDateTimeResult));
+		else {
+			$now = new UDate();
+			$now->setTimeZone('Asia/Hong_Kong');
+			$this->_supplier->addInfo(SupplierInfoType::getByCode('last_succ_cata_download'), trim($now));
+		}
+		return $this;
+	}
+	/**
+	 * importing the product based on the last updated date
+	 * 
+	 * @param unknown $lastUpdateDate
+	 * @param number $index
+	 * @param unknown $pageSize
+	 */
+	private function _importCatalogList($lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE) {
+		//download the current page list
+		$params = array(
+			"Size" => $pageSize,
+			'Index' => $index,
+			'LastUpdateDate' => trim($lastUpdateDate)
+		);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending request to supplier (GetIncrementalList) with params:', __FUNCTION__);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, print_r($params, true), __FUNCTION__);
+		$bookList = $this->_getFromSoap(trim($this->_supplier->getInfo('import_url')), "GetIncrementalList", $params);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'GOT response from supplier:', __FUNCTION__);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList->asXML(), __FUNCTION__);
+		
+		//processing the current list
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through' . count($bookList->children()) . ' product(s):', __FUNCTION__);
+		foreach($bookList->children() as $bookXml) {
+			$this->_importProduct(SupplierConnectorProduct::getProduct($bookXml));
+		}
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Finished looping through' . count($bookList->children()) . ' product(s).', __FUNCTION__);
+		
+		//check whether we need to download more
+		$attributes = $bookList->attributes();
+		if($index < $attributes['totalPages']) {
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got more products to download: current page=' . $index . ', total pages=' . $attributes['totalPages'], __FUNCTION__);
+			$this->_importCatalogList($lastUpdateDate, $index + 1, $pageSize);
+		}
 	}
 }

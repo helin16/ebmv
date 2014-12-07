@@ -104,4 +104,22 @@ class SupplierInfo extends BaseEntityAbstract
         parent::__loadDaoMap();
         DaoMap::commit();
     }
+    /**
+     * creating a supplier info
+     * 
+     * @param Supplier         $supplier
+     * @param SupplierInfoType $type
+     * @param unknown          $value
+     * 
+     * @return SupplierInfo
+     */
+    public static function create(Supplier $supplier, SupplierInfoType $type, $value)
+    {
+    	$infos = self::getAllByCriteria('supplierId = ? and typeId = ?', array($supplier->getId(), $type->getId()), true, 1, 1);
+    	$entity = count($infos) === 0 ? new SupplierInfo() : $infos[0];
+    	return $entity->setType($type)
+    		->setSupplier($supplier)
+    		->setValue($value)
+    		->save();
+    }
 }

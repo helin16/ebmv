@@ -171,7 +171,7 @@ class SupplierConnectorAbstract
 		{
 			if($this->_debugMode === true)
 				SupplierConnectorAbstract::log($this, print_r($productList[$index], true) , __FUNCTION__);
-			$product = $this->_importProduct(SupplierConnectorProduct::getProduct($productList[$index]));
+			$product = $this->_importProduct(SupplierConnectorProduct::getProduct($productList[$index]), $this->_lib);
 			$products[] = $product;
 			$this->_importedProductIds[] = $product->getId();
 		}
@@ -181,7 +181,7 @@ class SupplierConnectorAbstract
 			{
 				if($this->_debugMode === true)
 					SupplierConnectorAbstract::log($this, print_r($child, true) , __FUNCTION__);
-				$product = $this->_importProduct(SupplierConnectorProduct::getProduct($child));
+				$product = $this->_importProduct(SupplierConnectorProduct::getProduct($child), $this->_lib);
 				$products[] = $product;
 				$this->_importedProductIds[] = $product->getId();
 			}
@@ -189,15 +189,18 @@ class SupplierConnectorAbstract
 		return $products;
 	}
 	/**
+	 * /**
 	 * 
 	 * Importing the product
 	 *
 	 * @param SupplierConnectorProduct $productInfo The SupplierConnectorProduct object
+	 * @param Library                  $lib         The library this product is belonging to
 	 * 
 	 * @throws SupplierConnectorException
-	 * @return unknown
+	 * @throws Exception
+	 * @return Ambigous <Product, NULL, BaseEntityAbstract>
 	 */
-	protected function _importProduct(SupplierConnectorProduct $productInfo)
+	protected function _importProduct(SupplierConnectorProduct $productInfo, Library $lib = null)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Importing product:' , __FUNCTION__);
 		$transStarted = false;
@@ -265,13 +268,22 @@ class SupplierConnectorAbstract
 				$product = Product::createProduct($sku, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::Created product(ID=' . $product->getId() . ')' , __FUNCTION__);
 			}
-			
-			//added the library
-			foreach($infoArray['copies'] as $typeId => $info)
+			//link it to a library
+			if($lib instanceof Library)
 			{
-				$product->updateLibrary($this->_lib, LibraryOwnsType::get($typeId), $info['avail'], $info['total']);
+				//added the library
+				foreach($infoArray['copies'] as $typeId => $info)
+				{
+					$product->updateLibrary($lib, LibraryOwnsType::get($typeId), $info['avail'], $info['total']);
+				}
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updated library(PID=' . $product->getId() . ', LibID = ' . $this->_lib->getId() . '): ' . print_r($infoArray['copies'], true) , __FUNCTION__);
 			}
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::updated library(PID=' . $product->getId() . ', LibID = ' . $this->_lib->getId() . '): ' . print_r($infoArray['copies'], true) , __FUNCTION__);
+			//deactive the product when supplier wants it to
+			if(isset($infoArray['state']) && ($state = trim($infoArray['state'])) === SupplierConnectorProduct::STATE_REMOVE)
+			{
+				$product->setActive(false)
+					->save();
+			}
 			
 			if($transStarted === false)
 			{
@@ -430,7 +442,7 @@ class SupplierConnectorAbstract
 		}
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got product info from supplier:' . print_r($pro->getArray(), true) , __FUNCTION__);
 		
-		$product = $this->_importProduct($pro);
+		$product = $this->_importProduct($pro, $this->_lib);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Updated product with id:' . $product->getId() , __FUNCTION__);
 		return $product;
 	}

@@ -8,6 +8,10 @@
  */
 class SupplierConnectorProduct
 {
+	const STATE_NEW = 'new';
+	const STATE_UPDATE = 'update';
+	const STATE_REMOVE = 'deactivate';
+	
 	private static $_products = array();
 	private $_title;
 	private $_isbn;
@@ -25,6 +29,7 @@ class SupplierConnectorProduct
 	private $_productTypeName;
 	private $_price;
 	private $_copies = array('onlineRead' => array ('avail' => 0, 'total' => 0), 'download' => array ('avail' => 0, 'total' => 0));
+	private $_state; //indentify whether we need to new , update, Remove this product
 	/**
 	 * Getting the SupplierConnectorProduct
 	 * 
@@ -53,9 +58,43 @@ class SupplierConnectorProduct
 				explode('/', self::_getAttribute($productinfo, 'BookType')), 
 				strtolower(trim($productinfo->getName())), 
 				self::_getCopies($productinfo),
-				trim(self::_getAttribute($productinfo, 'Price')) 
+				trim(self::_getAttribute($productinfo, 'Price')), 
+				trim(self::_getFormattedProductState(self::_getAttribute($productinfo, 'State')))
 			);
 		return self::$_products[$key];
+	}
+	/**
+	 * translate all the suppliers' keywords for state into our own standard
+	 * 
+	 * @param string $state
+	 * 
+	 * @return string
+	 */
+	private static function _getFormattedProductState($state)
+	{
+		$state = strtolower(trim($state));
+		if($state === '')
+			return '';
+		switch($state)
+		{
+			case 'add':
+			case 'new':
+			case 'create':
+			{
+				return self::STATE_NEW;
+			}
+			case 'modify':
+			case 'update':
+			case 'change':
+			{
+				return self::STATE_UPDATE;
+			}
+			case 'remove':
+			case 'delete':
+			{
+				return self::STATE_REMOVE;
+			}
+		}
 	}
 	/**
 	 * Getting the initial pagination details for function SupplierConn::getProductListInfo()
@@ -116,8 +155,9 @@ class SupplierConnectorProduct
 	 * @param string $categoryNames
 	 * @param string $productTypeName
 	 * @param array  $copies
+	 * @param string $state
 	 */
-	public function __construct($title, $isbn, $cno, $author, $publisher, $publish_date, $no_of_words, $image_thumb, $description, $cip, $libCode, $languageCodes, $categoryNames, $productTypeName, array $copies, $price = '0.0000')
+	public function __construct($title, $isbn, $cno, $author, $publisher, $publish_date, $no_of_words, $image_thumb, $description, $cip, $libCode, $languageCodes, $categoryNames, $productTypeName, array $copies, $price = '0.0000', $state = '')
 	{
 		if(trim($isbn) === '')
 			throw new SupplierConnectorException('No ISBN provided!');
@@ -139,6 +179,7 @@ class SupplierConnectorProduct
 		$this->_productTypeName = $productTypeName;
 		$this->_copies = $copies;
 		$this->_price = $price;
+		$this->_state = $state;
 	}
 	/**
 	 * Getting the value of the attribute
@@ -178,6 +219,7 @@ class SupplierConnectorProduct
 			, 'categories' => $this->_categoryNames
 			, 'productTypeName' => $this->_productTypeName
 			, 'copies' => $this->_copies
+			, 'state' => $this->_state
 		);
 	}
 }

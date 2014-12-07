@@ -335,4 +335,12 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		
 		return SupplierConnectorProduct::getProduct(new SimpleXMLElement($results));
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::downloadCatalog()
+	 */
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE){}
+	{
+		
+	}
 }

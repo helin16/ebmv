@@ -653,7 +653,7 @@ class Product extends BaseEntityAbstract
 	 */
 	public static function getProductBySKU($sku)
 	{
-		$products = self::getAllByCriteria('suk=?', array(trim($sku)), true, 1, 1);
+		$products = self::getAllByCriteria('suk=?', array(trim($sku)), false, 1, 1);
 		return (count($products) > 0 ? $products[0] : null);
 	}
 	/**

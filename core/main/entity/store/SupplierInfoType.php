@@ -85,4 +85,16 @@ class SupplierInfoType extends BaseEntityAbstract
         DaoMap::createUniqueIndex('code');
         DaoMap::commit();
     }
+    /**
+     * Getting the supplier info type by code
+     * 
+     * @param string $code The code for the type
+     * 
+     * @return NULL|SupplierInfoType
+     */
+    public static function getByCode($code)
+    {
+    	$types = self::getAllByCriteria('code = ? ', array(trim($code)), true, 1, 1);
+    	return count($types) === 0 ? null : $types[0];
+    }
 }

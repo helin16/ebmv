@@ -230,4 +230,9 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 		$pro = SupplierConnectorProduct::getProduct ( $this->_fakeProduct ( $product->getProductType(), $product->getAttribute ('cno'), $product) );
 		return $pro;
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::downloadCatalog()
+	 */
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE){}
 }

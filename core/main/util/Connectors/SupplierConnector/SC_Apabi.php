@@ -224,4 +224,9 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getDownloadUrl(Product $product, UserAccount $user) {
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::downloadCatalog()
+	 */
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE){}
 }

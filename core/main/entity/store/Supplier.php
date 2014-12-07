@@ -149,6 +149,19 @@ class Supplier extends BaseEntityAbstract
 		return Product::getAllByCriteria($where, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 	}
 	/**
+	 * Adding a supplier information to this supplier
+	 * 
+	 * @param SupplierInfoType $type
+	 * @param string           $info
+	 * 
+	 * @return Supplier
+	 */
+	public function addInfo(SupplierInfoType $type, $info)
+	{
+		SupplierInfo::create($this, $type, $info);
+		return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */

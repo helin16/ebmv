@@ -128,4 +128,13 @@ interface SupplierConn
 	 * @return SupplierConnectorProduct
 	 */
 	public function getProduct(Product $product);
+	/**
+	 * Downloading Catalog for library to shop
+	 * 
+	 * @param ProductType $type
+	 * @param int         $pageSize The number of products that system will download at each time
+	 * 
+	 * @return SupplierConn
+	 */
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE);
 }

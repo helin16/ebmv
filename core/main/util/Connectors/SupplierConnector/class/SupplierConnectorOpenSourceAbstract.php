@@ -295,4 +295,9 @@ class SupplierConnectorOpenSourceAbstract extends SupplierConnectorAbstract
 		$pro = SupplierConnectorProduct::getProduct ( $this->_fakeProduct ( $product->getProductType(), null, $product ) );
 		return $pro;
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::downloadCatalog()
+	 */
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE){}
 }

@@ -116,48 +116,46 @@ class SC_ZCOM extends SupplierConnectorAbstract implements SupplierConn
 	 *
 	 * @see SupplierConn::getBookShelfList()
 	 */
-	public function getBookShelfList(UserAccount $user) {
-	}
+	public function getBookShelfList(UserAccount $user) {}
 	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see SupplierConn::syncUserBookShelf()
 	 */
-	public function syncUserBookShelf(UserAccount $user, array $shelfItems) {
-	}
+	public function syncUserBookShelf(UserAccount $user, array $shelfItems) {}
 	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see SupplierConn::addToBookShelfList()
 	 */
-	public function addToBookShelfList(UserAccount $user, Product $product) {
-	}
+	public function addToBookShelfList(UserAccount $user, Product $product) {}
 	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see SupplierConn::removeBookShelfList()
 	 */
-	public function removeBookShelfList(UserAccount $user, Product $product) {
-	}
+	public function removeBookShelfList(UserAccount $user, Product $product) {}
 	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see SupplierConn::borrowProduct()
 	 */
-	public function borrowProduct(Product &$product, UserAccount $user) {
-	}
+	public function borrowProduct(Product &$product, UserAccount $user) {}
 	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see SupplierConn::returnProduct()
 	 */
-	public function returnProduct(Product &$product, UserAccount $user) {
-	}
+	public function returnProduct(Product &$product, UserAccount $user) {}
 	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see SupplierConn::getDownloadUrl()
 	 */
-	public function getDownloadUrl(Product $product, UserAccount $user) {
-	}
+	public function getDownloadUrl(Product $product, UserAccount $user) {}
+	/**
+	 * (non-PHPdoc)
+	 * @see SupplierConn::downloadCatalog()
+	 */
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE){}
 }
