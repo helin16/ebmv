@@ -65,7 +65,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			})
 		);
 		tmp.newDiv = new Element('tr', {'class': 'item-row'}).store('data', row)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? new Element('span') 
+			.insert({'bottom': new Element(tmp.tag, {'class': ''}).update(tmp.isTitle === true ? new Element('span') 
 					.insert({'bottom': new Element('input', {'type': 'checkbox', 'id': 'mark-all-marc'}) 
 						.observe('click', function(){
 							tmp.checked = this.checked;
@@ -80,9 +80,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Title' : row.product.title) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'ISBN' : (!row.product.attributes.isbn ? '' : row.product.attributes.isbn[0].attribute)) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'Author' : (!row.product.attributes.author ? '' : row.product.attributes.author[0].attribute)) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'Publisher' : (!row.product.attributes.publisher ? '' : row.product.attributes.publisher[0].attribute)) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'PublishDate' : (!row.product.attributes.publish_date ? '' : row.product.attributes.publish_date[0].attribute)) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? 'Qty' : tmp.qty ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'Publish' : (!row.product.attributes.publisher ? '' : row.product.attributes.publisher[0].attribute) + '<div><em> @ ' + (!row.product.attributes.publish_date ? '' : row.product.attributes.publish_date[0].attribute) + '</em></div>') })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1 text-right'}).update(tmp.isTitle === true ? 'Unit Price' : tmp.me.getCurrency(row.unitPrice) ) })
+			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Qty' : tmp.qty ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1 text-right'}).update(tmp.isTitle === true ? 'Total Price' : tmp.me.getCurrency(row.totalPrice) ) })
 		;
 		return tmp.newDiv;
 	}
