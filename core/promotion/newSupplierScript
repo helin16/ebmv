@@ -1,0 +1,15 @@
+#new supplier info
+insert into supplierinfotype (`name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
+	('Last Successfull Catalog Download Time', 'last_succ_cata_download', 1, NOW(), 100, NOW(), 100);
+	
+#new product attribute type
+insert into productattributetype (`name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) values
+	('Cost Price', 'cost_price', 1, NOW(), 100, NOW(), 100);
+	
+#default sales margin
+INSERT INTO `bmv`.`systemsettings` (`id`, `type`, `value`, `description`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES 
+	(NULL, 'def_sales_margin', '0.1', 'Default sales margin for all product', '1', NOW(), '100', NOW(), '100');
+
+#library sales margin
+INSERT INTO `bmv`.`libraryinfotype` (`id`, `name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES 
+	(NULL, 'Sales Margin', 'sales_margin', '1', CURRENT_TIMESTAMP, '100', CURRENT_TIMESTAMP, '100');
