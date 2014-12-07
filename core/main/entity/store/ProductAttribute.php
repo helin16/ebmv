@@ -116,8 +116,21 @@ class ProductAttribute extends BaseEntityAbstract
         DaoMap::createIndex('attribute');
         DaoMap::commit();
     }
+   /**
+     * update the product attribute, when exsits; otherwise create one
+     *
+     * @param Product              $product   The product
+     * @param ProductAttributeType $type      The product type
+     * @param string               $attribute The attribute content
+     * 
+     * @return Ambigous <BaseEntity, BaseEntityAbstract>
+     */
+    public static function create(Product $product, ProductAttributeType $type, $attribute)
+    {
+    	return self::updateAttributeForProduct($product, $type, $attribute);
+    }
     /**
-     * Enter description here...
+     * Getting all attributes for a product
      *
      * @param Product              $product
      * @param ProductAttributeType $type

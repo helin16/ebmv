@@ -6,7 +6,7 @@
 <com:TCallback ID="orderProductBtn" OnCallback="Page.orderProduct" />
 <div class="pagewrapper libadminpage products">
 	<div class="row">
-		<div class="col-sm-9 search-panel">
+		<div class="col-sm-8 search-panel">
 			<div class="well well-sm">
 				<div class="row">
 	            	<div class="col-sm-3">
@@ -31,13 +31,19 @@
 			<h4>Found (<span id="item-total-count">0</span>) books: </h4>
 			<div id="item-list"></div>
 		</div>
-		<div class="col-sm-3">
-			<div class="panel panel-default">
+		<div class="col-sm-4">
+			<div class="panel panel-default order-summary-wrapper">
 				<div class="panel-heading">
 					<a href="javascript: void(0);" class="panel-title" id="my-cart">My Cart: </a>
 					<span class="pull-right" id="order-btn"></span>
 				</div>
 				<div class="list-group" id="current-order-summary"></div>
+				<div class="panel-footer">
+					<div class="">
+						<strong>Total: </strong>
+						<strong class="totalAmount pull-right">$0.00</strong>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

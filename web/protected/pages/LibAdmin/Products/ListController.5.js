@@ -1,1 +1,327 @@
-var PageJs=new Class.create;PageJs.prototype=Object.extend(new FrontPageJs,{htmlIDs:{totalCountDiv:"",listingDiv:"",showOrderBtn:"",orderSummaryDiv:"",showCartLink:""},pagination:{pageNo:1,pageSize:30},order:{},searchCriteria:{},setHTMLIDs:function(e,t,n,r,i){return this.htmlIDs.totalCountDiv=e,this.htmlIDs.listingDiv=t,this.htmlIDs.orderSummaryDiv=n,this.htmlIDs.showOrderBtn=r,this.htmlIDs.showCartLink=i,this},_orderProduct:function(e){var t={};return t.me=this,t.btn=e,t.product=t.btn.up(".prodcut-row").retrieve("data"),t.qty=$F(t.btn.up(".prodcut-row").down(".order-qty")),t.me.postAjax(t.me.getCallbackId("orderProduct"),{orderId:t.me.order.id,productId:t.product.id,qty:t.qty},{onLoading:function(){},onComplete:function(e,n){try{if(t.result=t.me.getResp(n,!1,!0),!t.result.order)return;t.me.order=t.result.order,t.me._displayOrderSummary(t.me.order)}catch(r){t.me.showModalBox("ERROR",r,!0)}}}),t.me},_getResultTableRow:function(e,t){var n={};return n.me=this,n.isTitle=t||!1,n.tag=n.isTitle===!0?"th":"td",n.img=n.isTitle===!0?"":new Element("a",{href:"javascript: void(0);"}).update(e.img).observe("click",function(){n.src=$(this).down("img").readAttribute("src"),jQuery.fancybox({type:"image",href:n.src,title:e.title})}),n.orderBtns=new Element("div",{"class":"input-group input-group-sm"}).insert({bottom:new Element("input",{"class":"form-control order-qty",type:"text",value:"1",style:"padding: 4px;"})}).insert({bottom:new Element("span",{"class":"input-group-btn"}).insert({bottom:new Element("span",{"class":"btn btn-success"}).update(new Element("span",{"class":"glyphicon glyphicon-plus"})).observe("click",function(){n.me._orderProduct(this)})})}),n.Qty=new Element("div").insert({bottom:new Element("div",{"class":"row"}).insert({bottom:new Element("strong",{"class":"col-xs-5"}).update("Has:")}).insert({bottom:new Element("div",{"class":"col-xs-3"}).update(e.qty)})}).insert({bottom:new Element("div",{"class":"row",title:(e.orderedLibs?e.orderedLibs.size():"")+" libraries ordered this item"}).insert({bottom:new Element("strong",{"class":"col-xs-5"}).update("Libs:")}).insert({bottom:new Element("a",{"class":"col-xs-3",href:"javascript: void(0);"}).update(e.orderedLibs?e.orderedLibs.size():"").observe("click",function(){0!==e.orderedLibs.size()&&(n.div=new Element("div").insert({bottom:n.list=new Element("div",{"class":"list-group",style:"min-width: 400px;"}).insert({bottom:new Element("div",{"class":"list-group-item active"}).update("Libraries that order this:"+e.title)})}),e.orderedLibs.each(function(e){n.list.insert({bottom:new Element("div",{"class":"list-group-item"}).update(e.name)})}),jQuery.fancybox({type:"html",content:n.div.innerHTML}))})})}),n.row=new Element("tr",{"class":"prodcut-row"}).store("data",e).insert({bottom:new Element(n.tag,{"class":"col-sm-1"}).update(n.img)}).insert({bottom:new Element(n.tag).update(e.title)}).insert({bottom:new Element(n.tag,{"class":"col-sm-2"}).update(e.isbn)}).insert({bottom:new Element(n.tag,{"class":"col-sm-1"}).update(e.author)}).insert({bottom:new Element(n.tag,{"class":"col-sm-1"}).update(e.publishDate)}).insert({bottom:new Element(n.tag,{"class":"col-sm-1"}).update(n.isTitle===!0?e.qty:n.Qty)}).insert({bottom:new Element(n.tag,{"class":"col-sm-1"}).update(n.isTitle===!0?"":n.orderBtns)}),n.row},_getLoadingDiv:function(){return new Element("span",{"class":"loading"}).insert({bottom:new Element("img",{src:"/images/loading.gif"})}).insert({bottom:"Loading ..."})},_getPaginationDiv:function(e){var t={};if(!(e.pageNumber>=e.totalPages))return t.me=this,new Element("div",{"class":"pagination_wrapper pull-right"}).insert({bottom:t.me._getPaginationBtn("查看更多 / 查看更多<br />Get more",e.pageNumber+1)})},changePage:function(e,t,n){this.pagination.pageNo=t,this.pagination.pageSize=n,$(e).update("Getting more ....").writeAttribute("disabled",!0),this.getResult(!1,function(){$(e).up(".pagination_wrapper").remove()})},_getPaginationBtn:function(e,t){var n={};return n.me=this,new Element("button",{"class":"btn btn-primary",type:"button"}).update(e).observe("click",function(){n.me.changePage(this,t,n.me.pagination.pageSize)})},searchProducts:function(e){var t={};return t.me=this,t.searchPanel=$(e).up(".search-panel").getElementsBySelector("[search-panel]").each(function(e){t.me.searchCriteria[e.readAttribute("search-panel")]=$F(e)}),t.me.getResult(!0),t.me},getResult:function(e,t){var n={};return n.me=this,n.reset=e||!1,n.me.postAjax(n.me.getCallbackId("getItems"),{pagination:n.me.pagination,searchCriteria:n.me.searchCriteria},{onLoading:function(){n.reset===!0&&(n.me.pagination.pageNo=1,$(n.me.htmlIDs.listingDiv).update(n.me.getLoadingImg()))},onComplete:function(e,r){try{if(n.result=n.me.getResp(r,!1,!0),!n.result.items)return;n.reset===!0&&($(n.me.htmlIDs.listingDiv).update(new Element("table",{"class":"table table-striped table-hover"}).insert({bottom:new Element("thead").update(n.me._getResultTableRow({title:"Name",isbn:"ISBN",qty:"Qty",author:"Author",publishDate:"Publish Date"},!0))}).insert({bottom:n.tbody=new Element("tbody")})),$(n.me.htmlIDs.totalCountDiv).update(n.result.pagination.totalRows)),n.result.items.each(function(e){n.item={id:e.id,title:e.title,isbn:e.attributes.isbn?e.attributes.isbn[0].attribute:"",img:n.me._getProductImgDiv(e.attributes.image_thumb||null,{style:"height: 50px; width:auto;"}),author:e.attributes.author?e.attributes.author[0].attribute:"",publishDate:e.attributes.publish_date?e.attributes.publish_date[0].attribute:"",qty:e.orderedQty,orderedLibs:e.orderedLibs},$(n.me.htmlIDs.listingDiv).down("tbody").insert({bottom:n.me._getResultTableRow(n.item,!1)})}),$(n.me.htmlIDs.listingDiv).insert({bottom:n.me._getPaginationDiv(n.result.pagination)})}catch(i){$(n.me.htmlIDs.listingDiv).update(n.me.getAlertBox("Error: ",i).addClassName("alert-danger"))}"function"==typeof t&&t()}}),n.me},_displayOrderSummary:function(e){var t={};return t.me=this,$(t.me.htmlIDs.orderSummaryDiv).update(""),e.items.reverse().each(function(e){$(t.me.htmlIDs.orderSummaryDiv).insert({bottom:new Element("a",{"class":"list-group-item"}).insert({bottom:e.product.title}).insert({bottom:new Element("span",{"class":"badge"}).update(e.qty)})})}),t.me},_openDetailsPage:function(e){var t={};return t.me=this,jQuery.fancybox({width:"95%",height:"95%",autoScale:!1,autoDimensions:!1,fitToView:!1,autoSize:!1,type:"iframe",href:"/libadmin/order/"+e.id+".html",beforeClose:function(){t.order=$$("iframe.fancybox-iframe").first().contentWindow.pageJs._order,t.order&&"OPEN"!==t.order.status?window.location=document.URL:(t.me.order=t.order,t.me._displayOrderSummary(t.me.order))}}),t.me},setLanguages:function(e,t){var n={};return n.me=this,n.me.langs=t,$(e).insert({bottom:new Element("option",{value:""}).update("ALL")}),n.me.langs.each(function(t){$(e).insert({bottom:new Element("option",{value:t.id}).update(t.name)})}),n.me},setCategories:function(e,t){var n={};return n.me=this,n.me.cates=t,n.me.cates&&0!==n.me.cates.size()?(n.me.cates.each(function(t){$(e).insert({bottom:new Element("option",{value:t.id}).update(t.path)})}),n.me):n.me},bindChosen:function(){var e={};return e.me=this,jQuery(".chosen").chosen({disable_search_threshold:10,no_results_text:"Oops, nothing found!","class":"form-control"}),e.me},getOrderSummary:function(){var e={};return e.me=this,e.me.postAjax(e.me.getCallbackId("getOrderSummary"),{},{onLoading:function(){},onComplete:function(t,n){try{if(e.result=e.me.getResp(n,!1,!0),!e.result.order)return;e.me.order=e.result.order,e.me._displayOrderSummary(e.me.order),$(e.me.htmlIDs.showCartLink).observe("click",function(){e.me._openDetailsPage(e.me.order)}),$(e.me.htmlIDs.showOrderBtn).insert({bottom:new Element("span",{"class":"btn btn-success btn-sm"}).update("Checkout").observe("click",function(){e.me._openDetailsPage(e.me.order)})})}catch(r){e.me.showModalBox("ERROR",r,!0)}}}),e.me}});
+/**
+ * The page Js file
+ */
+var PageJs = new Class.create();
+PageJs.prototype = Object.extend(new FrontPageJs(), {
+	htmlIDs: {'totalCountDiv': '', 'listingDiv': '', 'showOrderBtn': '', 'orderSummaryDiv': '', 'showCartLink': ''}
+	,pagination: {'pageNo': 1, 'pageSize': 30}
+	,order: {} //the order object
+	,searchCriteria: {}
+	,_salesMargin: 0 //the sales margin
+	/**
+	 * Setting the sale margin
+	 */
+	,setSalesMargin: function(margin) {
+		this._salesMargin = margin;
+		return this;
+	}
+	/**
+	 * Getting the HTML IDs
+	 */
+	,setHTMLIDs: function(totalCountDiv, listingDiv, orderSummaryDiv, showOrderBtn, showCartLink) {
+		this.htmlIDs.totalCountDiv = totalCountDiv;
+		this.htmlIDs.listingDiv = listingDiv;
+		this.htmlIDs.orderSummaryDiv = orderSummaryDiv;
+		this.htmlIDs.showOrderBtn = showOrderBtn;
+		this.htmlIDs.showCartLink = showCartLink;
+		return this;
+	}
+	,_orderProduct: function(btn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.btn = btn;
+		tmp.product = tmp.btn.up('.prodcut-row').retrieve('data');
+		tmp.unitPrice = tmp.me.getValueFromCurrency(tmp.product.price);
+		tmp.qty = $F(tmp.btn.up('.prodcut-row').down('.order-qty'));
+		tmp.me.postAjax(tmp.me.getCallbackId('orderProduct'), {'orderId': tmp.me.order.id, 'productId': tmp.product.id, 'qty': tmp.qty, 'unitPrice': tmp.unitPrice}, {
+			'onLoading': function () {}
+			,'onComplete': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.order)
+						return;
+					tmp.me.order = tmp.result.order;
+					tmp.me._displayOrderSummary(tmp.me.order);
+				} catch (e) {
+					tmp.me.showModalBox('ERROR', e, true);
+				}
+			}
+		})
+		return tmp.me;
+	}
+	/**
+	 * Getting a row for displaying the result
+	 */
+	,_getResultTableRow: function(row, isTitle) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.isTitle = (isTitle || false);
+		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
+		tmp.img = (tmp.isTitle === true ? '' : new Element('a', {'href': 'javascript: void(0);'}).update(row.img)
+				.observe('click', function() {
+					tmp.src = $(this).down('img').readAttribute('src');
+					jQuery.fancybox({
+						'type' : 'image',
+						'href' : tmp.src,
+				        'title': row.title
+			 		});
+				})	
+		);
+		tmp.orderBtns = new Element('div', {'class': 'input-group input-group-sm'})
+			.insert({'bottom': new Element('input', {'class': 'form-control order-qty', 'type': 'text', 'value': '1', 'style': 'padding: 4px;'}) })
+			.insert({'bottom': new Element('span', {'class': 'input-group-btn'}) 
+				.insert({'bottom': new Element('span', {'class': 'btn btn-success'})
+					.update(new Element('span', {'class': 'glyphicon glyphicon-plus'})) 
+					.observe('click', function(){
+						tmp.me._orderProduct(this);
+					})
+				}) 
+			});
+		tmp.Qty = new Element('div')
+			.insert({'bottom': new Element('div', {'class': 'row'})
+				.insert({'bottom': new Element('strong', {'class': 'col-xs-5'}).update('Has:') })
+				.insert({'bottom': new Element('div', {'class': 'col-xs-3'}).update(row.qty) })
+			})
+			.insert({'bottom': new Element('div', {'class': 'row', 'title': (row.orderedLibs ? row.orderedLibs.size() : '') + ' libraries ordered this item'})
+				.insert({'bottom': new Element('strong', {'class': 'col-xs-5'}).update('Libs:') })
+				.insert({'bottom': new Element('a', {'class': 'col-xs-3', 'href': 'javascript: void(0);'})
+					.update(row.orderedLibs ? row.orderedLibs.size() : '') 
+					.observe('click', function(){
+						if(row.orderedLibs.size() === 0)
+							return;
+						tmp.div = new Element('div')
+							.insert({'bottom': tmp.list = new Element('div',{'class': 'list-group', 'style': 'min-width: 400px;'})
+								.insert({'bottom': new Element('div', {'class': 'list-group-item active'}).update('Libraries that order this:' + row.title) })
+							})
+						row.orderedLibs.each(function(lib){
+							tmp.list.insert({'bottom': new Element('div', {'class': 'list-group-item'}).update(lib.name)});
+						});
+						jQuery.fancybox({'type': 'html', 'content': tmp.div.innerHTML});
+					})
+				})
+			});
+		tmp.row = new Element('tr', {'class': 'prodcut-row'}).store('data', row)
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.img) })
+			.insert({'bottom': new Element(tmp.tag).update(row.title) })
+			.insert({'bottom': new Element(tmp.tag).update(row.price) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(row.isbn) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.author) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.publishDate) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? row.qty : tmp.Qty) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? '' : tmp.orderBtns) })
+		return tmp.row;
+	}
+	//getting the loading div
+	,_getLoadingDiv: function() {
+		return new Element('span', {'class': 'loading'})
+			.insert({'bottom': new Element('img', {'src': '/images/loading.gif'})})
+			.insert({'bottom': 'Loading ...'});
+	}
+	//get pagination div
+	,_getPaginationDiv: function(pagination) {
+		var tmp = {};
+		if(pagination.pageNumber >= pagination.totalPages)
+			return;
+		
+		tmp.me = this;
+		return new Element('div', {'class': 'pagination_wrapper pull-right'}).insert({'bottom': tmp.me._getPaginationBtn('查看更多 / 查看更多<br />Get more', pagination.pageNumber + 1) });
+	}
+	/**
+	 * Getting the next page
+	 */
+	,changePage: function (btn, pageNo, pageSize) {
+		var tmp = {};
+		this.pagination.pageNo = pageNo;
+		this.pagination.pageSize = pageSize;
+		$(btn).update('Getting more ....').writeAttribute('disabled', true);
+		this.getResult(false, function() {
+			$(btn).up('.pagination_wrapper').remove();
+		});
+	}
+	/**
+	 * getting the pagination button
+	 */
+	,_getPaginationBtn: function (txt, pageNo) {
+		var tmp = {};
+		tmp.me = this;
+		return new Element('button', {'class': 'btn btn-primary', 'type': 'button'})
+			.update(txt)
+			.observe('click', function() {
+				tmp.me.changePage(this, pageNo, tmp.me.pagination.pageSize);
+			})
+		;
+	}
+	/**
+	 * Searching the product
+	 */
+	,searchProducts: function(btn) {
+		 var tmp = {};
+		 tmp.me = this;
+		 tmp.searchPanel = $(btn).up('.search-panel').getElementsBySelector('[search-panel]').each(function(item){
+			 tmp.me.searchCriteria[item.readAttribute('search-panel')] = $F(item);
+		 })
+		 tmp.me.getResult(true);
+		 return tmp.me;
+	}
+	/**
+	 * Getting the list of the products
+	 */
+	,getResult: function(reset, afterFunc) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.reset = (reset || false);
+		tmp.me.postAjax(tmp.me.getCallbackId('getItems'), {'pagination': tmp.me.pagination, 'searchCriteria': tmp.me.searchCriteria}, {
+			'onLoading': function () {
+				if(tmp.reset === true)
+				{
+					tmp.me.pagination.pageNo = 1;
+					$(tmp.me.htmlIDs.listingDiv).update(tmp.me.getLoadingImg());
+				}
+			}
+			,'onComplete': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.items)
+						return;
+					
+					if(tmp.reset === true) {
+						$(tmp.me.htmlIDs.listingDiv).update(new Element('table', {'class': 'table table-striped table-hover'})
+							.insert({'bottom': new Element('thead').update(tmp.me._getResultTableRow({'title': 'Name', 'price': 'Price', 'isbn': 'ISBN', 'qty': 'Qty', 'author': 'Author', 'publishDate': 'Publish Date'}, true) ) })
+							.insert({'bottom': tmp.tbody = new Element('tbody') })
+						);
+						$(tmp.me.htmlIDs.totalCountDiv).update(tmp.result.pagination.totalRows);
+					}
+					tmp.result.items.each(function(item) {
+						tmp.item = {
+								'id': item.id,
+								'title': item.title, 
+								'price': tmp.me.getCurrency(item.attributes.price ? item.attributes.price[0].attribute * 1 * (1 + tmp.me._salesMargin * 1): '0'), 
+								'isbn': item.attributes.isbn ? item.attributes.isbn[0].attribute : '', 
+								'img': tmp.me._getProductImgDiv(item.attributes.image_thumb || null, {'style': 'height: 50px; width:auto;'}),
+								'author': item.attributes.author ? item.attributes.author[0].attribute : '',
+								'publishDate': item.attributes.publish_date ? item.attributes.publish_date[0].attribute : '',
+								'qty': item.orderedQty,
+								'orderedLibs': item.orderedLibs
+						};
+						$(tmp.me.htmlIDs.listingDiv).down('tbody').insert({'bottom': tmp.me._getResultTableRow(tmp.item, false) });
+					});
+					$(tmp.me.htmlIDs.listingDiv).insert({'bottom': tmp.me._getPaginationDiv(tmp.result.pagination) });
+				} catch (e) {
+					$(tmp.me.htmlIDs.listingDiv).update(tmp.me.getAlertBox('Error: ', e).addClassName('alert-danger') );
+				}
+				
+				if(typeof(afterFunc) === 'function')
+					afterFunc();
+			}
+		});
+		return tmp.me;
+	}
+	/**
+	 * display the order summary
+	 */
+	,_displayOrderSummary: function(order) {
+		var tmp = {}
+		tmp.me = this;
+		$(tmp.me.htmlIDs.orderSummaryDiv).update('');
+		tmp.totalAmount = 0;
+		order.items.reverse().each(function(item){
+			tmp.totalAmount = tmp.totalAmount * 1 + item.totalPrice * 1;
+			$(tmp.me.htmlIDs.orderSummaryDiv).insert({'bottom':
+				new Element('a', {'class': 'list-group-item'})
+					.insert({'bottom': item.product.title })
+					.insert({'bottom': new Element('span', {'class': 'badge'}).update(item.qty) })
+			});
+		});
+		$(tmp.me.htmlIDs.orderSummaryDiv).up('.order-summary-wrapper').down('.totalAmount').update(tmp.me.getCurrency(tmp.totalAmount));
+		return tmp.me;
+	}
+	/**
+	 * Open the order details page
+	 */
+	,_openDetailsPage: function(row) {
+		var tmp = {};
+		tmp.me = this;
+		jQuery.fancybox({
+			'width'			: '95%',
+			'height'		: '95%',
+			'autoScale'     : false,
+			'autoDimensions': false,
+			'fitToView'     : false,
+			'autoSize'      : false,
+			'type'			: 'iframe',
+			'href'			: '/libadmin/order/' + row.id + '.html',
+			'beforeClose'	    : function() {
+				tmp.order = $$('iframe.fancybox-iframe').first().contentWindow.pageJs._order;
+				if(tmp.order && tmp.order.status !== 'OPEN') {
+					window.location = document.URL;
+				} else {
+					tmp.me.order = tmp.order;
+					tmp.me._displayOrderSummary(tmp.me.order);
+				}
+			}
+ 		});
+		return tmp.me;
+	}
+	,setLanguages: function (selbox, langs) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.langs = langs;
+		$(selbox).insert({'bottom': new Element('option', {'value': ''}).update('ALL') });
+		tmp.me.langs.each(function(lang){
+			$(selbox).insert({'bottom': new Element('option', {'value': lang.id}).update(lang.name) });
+		})
+		return tmp.me;
+	}
+	,setCategories: function (selbox, cates) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.cates = cates;
+		if(!tmp.me.cates || tmp.me.cates.size() === 0)
+			return tmp.me;
+		tmp.me.cates.each(function(cate){
+			$(selbox).insert({'bottom': new Element('option', {'value': cate.id}).update(cate.path) });
+		})
+		return tmp.me;
+	}
+	,bindChosen: function() {
+		var tmp = {};
+		tmp.me = this;
+		jQuery('.chosen').chosen({
+			disable_search_threshold: 10,
+			no_results_text: "Oops, nothing found!",
+			'class': "form-control"
+		});
+		return tmp.me;
+	}
+	/**
+	 * Getting the order object
+	 */
+	,getOrderSummary: function() {
+		var tmp = {}
+		tmp.me = this;
+		tmp.me.postAjax(tmp.me.getCallbackId('getOrderSummary'), {}, {
+			'onLoading': function () {}
+			,'onComplete': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.order)
+						return;
+					
+					tmp.me.order = tmp.result.order;
+					tmp.me._displayOrderSummary(tmp.me.order);
+					$(tmp.me.htmlIDs.showCartLink).observe('click', function(){
+						tmp.me._openDetailsPage(tmp.me.order);
+					});
+					$(tmp.me.htmlIDs.showOrderBtn).insert({'bottom': new Element('span', {'class': 'btn btn-success btn-sm'}).update('Checkout')
+						.observe('click', function(){
+							tmp.me._openDetailsPage(tmp.me.order);
+						})
+					});
+				} catch (e) {
+					tmp.me.showModalBox('ERROR', e, true);
+				}
+			}
+		})
+		return tmp.me;
+	}
+});

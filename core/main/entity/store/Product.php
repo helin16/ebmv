@@ -461,6 +461,19 @@ class Product extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Adding an attribute to this product
+	 * 
+	 * @param ProductAttributeType $type
+	 * @param string               $value
+	 * 
+	 * @return Product
+	 */
+	public function addAttribute(ProductAttributeType $type, $value)
+	{
+		ProductAttribute::create($this, $type, $value);
+		return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
@@ -490,7 +503,7 @@ class Product extends BaseEntityAbstract
 	public function postSave()
 	{
 	    if(trim($this->getSuk()) === '')
-	        $this->setSuk(self::formatSKU($this->getAttribute(ProductAttributeType::ID_ISBN), $this->getAttribute(ProductAttributeType::ID_CNO)));
+	        $this->setSuk(self::formatSKU($this->getAttribute('isbn'), $this->getAttribute('cno')));
 	}
 	/**
 	 * (non-PHPdoc)

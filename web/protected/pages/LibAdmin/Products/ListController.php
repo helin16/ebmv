@@ -37,10 +37,22 @@ class ListController extends LibAdminPageAbstract
 		$js .= '.setCallbackId("orderProduct", "' . $this->orderProductBtn->getUniqueID() . '")';
 		$js .= '.setLanguages("lang-sel", ' . json_encode(array_map(create_function('$a', 'return $a->getJson();'), Language::getAll())) . ')';
 		$js .= '.setCategories("cate-sel", ' . json_encode($cates) . ')';
+		$js .= '.setSalesMargin(' . $this->_getSaleMargin() . ')';
 		$js .= '.bindChosen()';
 		$js .= '.getOrderSummary()';
 		$js .= '.getResult(true);';
 		return $js;
+	}
+	/**
+	 * Getting sales margin
+	 * @return Ambigous <number, string>
+	 */
+	private function _getSaleMargin()
+	{
+		$margin = trim(Core::getLibrary()->getInfo('sales_margin'));
+		if($margin === '')
+			$margin = trim(SystemSettings::getSettings(SystemSettings::TYPE_DEFAULT_SALES_MARGIN));
+		return $margin === '' ? 0 : $margin;
 	}
 	/**
 	 * Getting items
@@ -65,16 +77,12 @@ class ListController extends LibAdminPageAbstract
 			}
 	
 			$searchCriteria = json_decode(json_encode($param->CallbackParameter->searchCriteria), true);
-			var_dump($searchCriteria);
 			$searchTxt = trim(isset($searchCriteria['searchTxt']) ? $searchCriteria['searchTxt'] : '');
 			$categoryIds = (isset($searchCriteria['categoryIds']) && is_array($searchCriteria['categoryIds']) ? $searchCriteria['categoryIds'] : array());
 			$language = (isset($searchCriteria['languageId']) && ($language = Language::get($searchCriteria['languageId'])) ? $language : null);
 			
 			$stats = array();
-			Dao::$debug = true;
 			$productArray = Product::findProductsInCategory(null, $searchTxt, $categoryIds, '', $language, ProductType::get(ProductType::ID_BOOK), true, $pageNumber, $pageSize, array('pro.id' => 'desc'), $stats);
-			Dao::$debug = false;
-			
 			$result['pagination'] = $stats;
 			$result['items'] = array();
 			foreach($productArray as $product)
@@ -91,6 +99,7 @@ class ListController extends LibAdminPageAbstract
 				}
 				$array['orderedQty'] = $totalOrderedQty;
 				$array['orderedLibs'] = $orderedLibs;
+				$array['gpm'] = Core::getLibrary()->getInfo('gross_profit_margin');
 				$result['items'][] = $array;
 			}
 		}
@@ -125,6 +134,7 @@ class ListController extends LibAdminPageAbstract
 	public function orderProduct($sender, $param)
 	{
 		$result = $errors = array();
+		$gpm=0;
 		try
 		{
 			Dao::beginTransaction();
@@ -134,10 +144,10 @@ class ListController extends LibAdminPageAbstract
 				throw new Exception('Invalid product id passed in!');
 			if(!isset($param->CallbackParameter->qty) || !is_numeric($qty = trim($param->CallbackParameter->qty)))
 				throw new Exception('Invalid qty passed in!');
+			if(!isset($param->CallbackParameter->unitPrice) || !is_numeric($unitPrice = trim($param->CallbackParameter->unitPrice)))
+				throw new Exception('Invalid price passed in!');
 			
-			$price = explode(',', $product->getAttribute('price', ','));
-			$price = (count($price) === 0 ? '0.0000' : trim($price[0]));
-			OrderItem::create($order, $product, $qty, false, $price, (($price * 1) * ($qty * 1)));
+			OrderItem::create($order, $product, $qty, false, $unitPrice);
 			$result['order'] = Order::get($order->getId())->getJson();
 			Dao::commitTransaction();
 		}

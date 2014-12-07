@@ -183,15 +183,18 @@ class OrderItem extends BaseEntityAbstract
     	if(!$this->isJsonLoaded($reset))
     	{
     		$array['order'] = array('id' => $this->getOrder()->getId());
-    		$attributes = array();
-    		foreach($this->getProduct()->getAttributes() as $attr)
-    		{
-    			$typeId = $attr->getType()->getCode();
-    			if(!isset($attributes[$typeId]))
-    				$attributes[$typeId] = array();
-    			$attributes[$typeId][] = $attr->getJson();
+	    	$array['product'] = array();
+    		if($this->getProduct() instanceof Product) {
+	    		$attributes = array();
+	    		foreach($this->getProduct()->getAttributes() as $attr)
+	    		{
+	    			$typeId = $attr->getType()->getCode();
+	    			if(!isset($attributes[$typeId]))
+	    				$attributes[$typeId] = array();
+	    			$attributes[$typeId][] = $attr->getJson();
+	    		}
+	    		$array['product'] = array('id' => $this->getProduct()->getId(), 'title' => $this->getProduct()->getTitle(), 'attributes' => $attributes);
     		}
-    		$array['product'] = array('id' => $this->getProduct()->getId(), 'title' => $this->getProduct()->getTitle(), 'attributes' => $attributes);
     	}
     	return parent::getJson($array, $reset);
     }
@@ -223,7 +226,7 @@ class OrderItem extends BaseEntityAbstract
      * 
      * @return Ambigous <NULL, unknown>
      */
-    public static function create(Order $order, Product $product, $qty = 0 , $needMARCRecord = false, $unitPrice = '0.0000', $totalPrice = '0.0000')
+    public static function create(Order $order, Product $product, $qty = 0 , $needMARCRecord = false, $unitPrice = '0.0000', $totalPrice = null)
     {
     	$items = self::getAllByCriteria('orderId = ? and productId = ?', array($order->getId(), $product->getId()), true, 1, 1);
     	if(count($items) === 0)
@@ -232,9 +235,9 @@ class OrderItem extends BaseEntityAbstract
     		$item = $items[0];
     	$item->setOrder($order)
     		->setProduct($product)
-    		->setUnitPrice($item->getUnitPrice() + $unitPrice)
+    		->setUnitPrice($unitPrice)
     		->setQty($item->getQty() + $qty)
-    		->setTotalPrice($item->getTotalPrice() + $totalPrice)
+    		->setTotalPrice($totalPrice === null ? $unitPrice * $item->getQty() : $totalPrice)
     		->setNeedMARCRecord($needMARCRecord)
     		->save();
     	return $item;

@@ -1,5 +1,5 @@
 <?php 
-require_once 'bootstrap.php';
+require_once dirname(__FILE__) . '/../../../bootstrap.php';
 abstract class DownloadCatalogFromSupplier
 {
 	public static function run($supplierIds) {
@@ -37,7 +37,7 @@ abstract class DownloadCatalogFromSupplier
 }
 
 //checking usage
-if ($argc != 4)
+if ($argc != 2)
 	die("Usage: DownloadCatalog supplierids(1,2,3|all)\r\n");
 $supplierIds = (($supplierIds = trim($argv[1])) === 'all' ? array_map(create_function('$a', 'return $a->getId();'), Supplier::getAll()) : explode(',', str_replace(' ', '', $supplierIds)));
 
