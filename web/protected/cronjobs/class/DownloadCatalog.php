@@ -45,7 +45,7 @@ echo "== Start downloading categories from " . ($startScript = new UDate()) . " 
 echo "== Supplier IDS: " . implode(', ', $supplierIds) . "\n\r";
 if (!Core::getUser() instanceof UserAccount)
 	Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
-DownloadCatalogFromSupplier::run();
+DownloadCatalogFromSupplier::run($supplierIds);
 echo "== Finished Importing @ " . ($finishScript = new UDate()) . ", Took " . ($finishScript->diff($startScript)->format('%r %y yrs, %m mths, %d days, %h hrs, %i mins, %s secs')) . "  ========================================================\n\r";
 echo "\n\r\n\r\n\r\n\r\n\r";
 
