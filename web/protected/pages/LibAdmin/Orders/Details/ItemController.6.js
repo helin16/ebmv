@@ -82,7 +82,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'Author' : (!row.product.attributes.author ? '' : row.product.attributes.author[0].attribute)) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(tmp.isTitle === true ? 'Publish' : (!row.product.attributes.publisher ? '' : row.product.attributes.publisher[0].attribute) + '<div><em> @ ' + (!row.product.attributes.publish_date ? '' : row.product.attributes.publish_date[0].attribute) + '</em></div>') })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1 text-right'}).update(tmp.isTitle === true ? 'Unit Price' : tmp.me.getCurrency(row.unitPrice) ) })
-			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Qty' : tmp.qty ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? 'Qty' : tmp.qty ) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1 text-right'}).update(tmp.isTitle === true ? 'Total Price' : tmp.me.getCurrency(row.totalPrice) ) })
 		;
 		return tmp.newDiv;
