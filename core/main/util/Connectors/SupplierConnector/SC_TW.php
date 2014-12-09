@@ -351,7 +351,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		}
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got LAST RUN TIME' . trim($lastRunTime), __FUNCTION__);
 		
-		$this->_importCatalogList($lastRunTime, 1, $pageSize);
+		$this->_importCatalogList($type, $lastRunTime, 1, $pageSize);
 		
 // 		$result = BmvComScriptSoap::getScript(trim($this->_supplier->getInfo('import_url')))->GetNowDateTime();
 // 		if(isset($result->GetNowDateTimeResult))
@@ -370,7 +370,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * @param number $index
 	 * @param unknown $pageSize
 	 */
-	private function _importCatalogList($lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	private function _importCatalogList(ProductType $type, $lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
 	{
 		//download the current page list
 		$params = array(
@@ -398,7 +398,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$attributes = $bookList->attributes();
 		if($index < $attributes['totalPages']) {
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got more products to download: current page=' . $index . ', total pages=' . $attributes['totalPages'], __FUNCTION__);
-			$this->_importCatalogList($lastUpdateDate, $index + 1, $pageSize);
+			$this->_importCatalogList($type, $lastUpdateDate, $index + 1, $pageSize);
 		}
 	}
 }
