@@ -31,6 +31,12 @@ class SupplierConnectorAbstract
 	 */
 	protected $_debugMode = false;
 	/**
+	 * whether echo the loggin to console
+	 * 
+	 * @var bool
+	 */
+	protected $_echoLogging = false;
+	/**
 	 * The id of the imported products
 	 * 
 	 * @var array
@@ -66,6 +72,8 @@ class SupplierConnectorAbstract
 	 */
 	public static function log(SupplierConnectorAbstract $script, $msg, $funcName = '', $comments = '')
 	{
+		if($this->_echoLogging === true) 
+			echo new UDate() . '::' . $funcName . ':' . $msg .'\r\n';
 		Log::logging($script->getLibrary(), $script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
 	}
 	/**
@@ -91,6 +99,18 @@ class SupplierConnectorAbstract
 	public function setDebugMode($debugMode)
 	{
 		$this->_debugMode = $debugMode;
+		return $this;
+	}
+	/**
+	 * Setting the _echoLogging
+	 * 
+	 * @param bool $debugMode
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function setEchoLogging($echoLogging)
+	{
+		$this->_echoLogging = $echoLogging;
 		return $this;
 	}
 	/**

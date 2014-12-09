@@ -10,7 +10,9 @@ abstract class DownloadCatalogFromSupplier
 			$script = self::_getSupplierScript(Supplier::get($supplierId), Library::get(Library::ID_ADMIN_LIB));
 			if(!$script instanceof SupplierConn)
 				continue;
-			$script->setDebugMode($debugMode)->downloadCatalog(ProductType::get(ProductType::ID_BOOK), 1000);
+			$script->setDebugMode($debugMode)
+				->setEchoLogging(true)
+				->downloadCatalog(ProductType::get(ProductType::ID_BOOK), 1000);
 		}
 	}
 	
