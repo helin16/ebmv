@@ -390,7 +390,17 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		//processing the current list
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through' . count($bookList->children()) . ' product(s):', __FUNCTION__);
 		foreach($bookList->children() as $bookXml) {
-			$this->_importProduct(SupplierConnectorProduct::getProduct($bookXml));
+			try {
+				Dao::beginTransaction();
+				$this->_importProduct(SupplierConnectorProduct::getProduct($bookXml));
+				Dao::commitTransaction();
+			} catch (Exception $e) {
+				Dao::rollbackTransaction();
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'ERROR when processing:' . $e->getMessage(), __FUNCTION__);
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, print_r($bookXml, true), __FUNCTION__);
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Trace: ', __FUNCTION__);
+				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $e->getTraceAsString(), __FUNCTION__);
+			}
 		}
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Finished looping through' . count($bookList->children()) . ' product(s).', __FUNCTION__);
 		
