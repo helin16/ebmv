@@ -388,7 +388,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList instanceof SimpleXMLElement ? $bookList->asXML() : 'BLANK!!!', __FUNCTION__);
 		
 		//processing the current list
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through' . count($bookList->children()) . ' product(s):', __FUNCTION__);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through ' . count($bookList->children()) . ' product(s):', __FUNCTION__);
 		foreach($bookList->children() as $bookXml) {
 			try {
 				Dao::beginTransaction();

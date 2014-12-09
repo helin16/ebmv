@@ -73,7 +73,7 @@ class SupplierConnectorAbstract
 	public static function log(SupplierConnectorAbstract $script, $msg, $funcName = '', $comments = '')
 	{
 		if($script->getEchoLogging() === true) 
-			echo new UDate() . '::' . $funcName . ':' . $msg .'\r\n';
+			echo new UDate() . '::' . $funcName . ':' . $msg . "\r\n";
 		Log::logging($script->getLibrary(), $script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
 	}
 	/**

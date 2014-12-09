@@ -12,7 +12,7 @@ abstract class DownloadCatalogFromSupplier
 				continue;
 			$script->setDebugMode($debugMode)
 				->setEchoLogging(true)
-				->downloadCatalog(ProductType::get(ProductType::ID_BOOK), 1000);
+				->downloadCatalog(ProductType::get(ProductType::ID_BOOK), 100);
 		}
 	}
 	
