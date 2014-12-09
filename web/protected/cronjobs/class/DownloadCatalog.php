@@ -2,7 +2,7 @@
 require_once dirname(__FILE__) . '/../../../bootstrap.php';
 abstract class DownloadCatalogFromSupplier
 {
-	public static function run($supplierIds) {
+	public static function run($supplierIds, $debugMode = false) {
 		
 		foreach($supplierIds as $supplierId) {
 			if(!($supplier = Supplier::get($supplierId)) instanceof Supplier)
@@ -10,7 +10,7 @@ abstract class DownloadCatalogFromSupplier
 			$script = self::_getSupplierScript(Supplier::get($supplierId), Library::get(Library::ID_ADMIN_LIB));
 			if(!$script instanceof SupplierConn)
 				continue;
-			$script->downloadCatalog(ProductType::get(ProductType::ID_BOOK), 1000);
+			$script->setDebugMode($debugMode)->downloadCatalog(ProductType::get(ProductType::ID_BOOK), 1000);
 		}
 	}
 	
@@ -45,7 +45,7 @@ echo "== Start downloading categories from " . ($startScript = new UDate()) . " 
 echo "== Supplier IDS: " . implode(', ', $supplierIds) . "\n\r";
 if (!Core::getUser() instanceof UserAccount)
 	Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
-DownloadCatalogFromSupplier::run($supplierIds);
+DownloadCatalogFromSupplier::run($supplierIds, true);
 echo "== Finished Importing @ " . ($finishScript = new UDate()) . ", Took " . ($finishScript->diff($startScript)->format('%r %y yrs, %m mths, %d days, %h hrs, %i mins, %s secs')) . "  ========================================================\n\r";
 echo "\n\r\n\r\n\r\n\r\n\r";
 

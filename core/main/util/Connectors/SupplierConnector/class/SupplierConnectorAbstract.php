@@ -82,6 +82,18 @@ class SupplierConnectorAbstract
 		if($this->_debugMode === true) self::log($this, 'Got a Supplier Connector for (SID = ' . $supplier->getId() . ', LID = ' . $lib->getId() . ')', __FUNCTION__);
 	}
 	/**
+	 * Setting the debug mode
+	 * 
+	 * @param bool $debugMode
+	 * 
+	 * @return SupplierConnectorAbstract
+	 */
+	public function setDebugMode($debugMode)
+	{
+		$this->_debugMode = $debugMode;
+		return $this;
+	}
+	/**
 	 * Getter for the supplier
 	 * 
 	 * @return Supplier

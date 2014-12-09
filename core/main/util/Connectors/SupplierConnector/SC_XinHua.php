@@ -276,7 +276,8 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	/**
 	 * Downloading Catalog for library to shop
 	 */
-	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE) {
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	{
 		$this->_debugMode = true;
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting NOW TIME from supplier:', __FUNCTION__);
 		$lastRunTime = trim($this->_supplier->getInfo('last_succ_cata_download'));
@@ -306,8 +307,8 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * @param number $index
 	 * @param unknown $pageSize
 	 */
-	private function _importCatalogList($lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE) {
-		$this->_debugMode = true;
+	private function _importCatalogList($lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	{
 		//download the current page list
 		$params = array(
 			"Size" => $pageSize,
