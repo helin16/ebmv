@@ -63,7 +63,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					jQuery.fancybox({
 						'type' : 'image',
 						'href' : tmp.src,
-				        'title': row.title
+				        'title': row.title,
+				        'fitToView': false,
+				        'beforeShow': function () {
+				            this.width = 300;
+				            this.height = 450;
+				        }
 			 		});
 				})	
 		);
