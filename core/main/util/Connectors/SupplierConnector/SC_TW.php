@@ -385,7 +385,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, print_r($params, true), __FUNCTION__);
 		$bookList = $this->_getXmlFromUrl($url, $params['index'], $params['size'], $type, $params['format']);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'GOT response from supplier:', __FUNCTION__);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList->asXML(), __FUNCTION__);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList instanceof SimpleXMLElement ? $bookList->asXML() : 'BLANK!!!', __FUNCTION__);
 		
 		//processing the current list
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through' . count($bookList->children()) . ' product(s):', __FUNCTION__);
