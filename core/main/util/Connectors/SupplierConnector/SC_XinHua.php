@@ -307,6 +307,7 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * @param unknown $pageSize
 	 */
 	private function _importCatalogList($lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE) {
+		$this->_debugMode = true;
 		//download the current page list
 		$params = array(
 			"Size" => $pageSize,

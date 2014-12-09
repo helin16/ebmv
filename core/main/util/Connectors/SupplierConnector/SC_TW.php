@@ -339,7 +339,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::downloadCatalog()
 	 */
-	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE) 
 	{
 		$this->_debugMode = true;
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting NOW TIME from supplier:', __FUNCTION__);

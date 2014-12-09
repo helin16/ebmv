@@ -7,10 +7,10 @@ abstract class DownloadCatalogFromSupplier
 		foreach($supplierIds as $supplierId) {
 			if(!($supplier = Supplier::get($supplierId)) instanceof Supplier)
 				continue;
-			$script = self::_getSupplierScript(Supplier::get($supplierId), Library::get(1));
+			$script = self::_getSupplierScript(Supplier::get($supplierId), Library::get(Library::ID_ADMIN_LIB));
 			if(!$script instanceof SupplierConn)
 				continue;
-			$script->downloadCatalog(ProductType::get(1), 1000);
+			$script->downloadCatalog(ProductType::get(ProductType::ID_BOOK), 1000);
 		}
 	}
 	
