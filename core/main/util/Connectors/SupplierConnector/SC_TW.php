@@ -370,7 +370,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 * @param number $index
 	 * @param unknown $pageSize
 	 */
-	private function _importCatalogList(ProductType $type, $lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
+	private function _importCatalogList(ProductType $type, $lastUpdateDate, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $totalPages = 0)
 	{
 		//download the current page list
 		$params = array(
@@ -385,30 +385,34 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, print_r($params, true), __FUNCTION__);
 		$bookList = $this->_getXmlFromUrl($url, $params['index'], $params['size'], $type, $params['format']);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'GOT response from supplier:', __FUNCTION__);
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList instanceof SimpleXMLElement ? $bookList->asXML() : 'BLANK!!!', __FUNCTION__);
+		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList instanceof SimpleXMLElement ? $bookList->asXML() : print_r($bookList, true), __FUNCTION__);
 		
-		//processing the current list
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through ' . count($bookList->children()) . ' product(s):', __FUNCTION__);
-		foreach($bookList->children() as $bookXml) {
-			try {
-				Dao::beginTransaction();
-				$this->_importProduct(SupplierConnectorProduct::getProduct($bookXml));
-				Dao::commitTransaction();
-			} catch (Exception $e) {
-				Dao::rollbackTransaction();
-				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'ERROR when processing:' . $e->getMessage(), __FUNCTION__);
-				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, print_r($bookXml, true), __FUNCTION__);
-				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Trace: ', __FUNCTION__);
-				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $e->getTraceAsString(), __FUNCTION__);
+		if($bookList instanceof SimpleXMLElement) {
+			//processing the current list
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through ' . count($bookList->children()) . ' product(s):', __FUNCTION__);
+			foreach($bookList->children() as $bookXml) {
+				try {
+					Dao::beginTransaction();
+					$this->_importProduct(SupplierConnectorProduct::getProduct($bookXml));
+					Dao::commitTransaction();
+				} catch (Exception $e) {
+					Dao::rollbackTransaction();
+					if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'ERROR when processing:' . $e->getMessage(), __FUNCTION__);
+					if($this->_debugMode === true) SupplierConnectorAbstract::log($this, print_r($bookXml, true), __FUNCTION__);
+					if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Trace: ', __FUNCTION__);
+					if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $e->getTraceAsString(), __FUNCTION__);
+				}
 			}
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Finished looping through' . count($bookList->children()) . ' product(s).', __FUNCTION__);
+			$attributes = $bookList->attributes();
+			if($totalPages === 0)
+				$totalPages = $attributes['totalPages'];
 		}
-		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Finished looping through' . count($bookList->children()) . ' product(s).', __FUNCTION__);
 		
 		//check whether we need to download more
-		$attributes = $bookList->attributes();
-		if($index < $attributes['totalPages']) {
+		if($index < $totalPages) {
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got more products to download: current page=' . $index . ', total pages=' . $attributes['totalPages'], __FUNCTION__);
-			$this->_importCatalogList($type, $lastUpdateDate, $index + 1, $pageSize);
+			$this->_importCatalogList($type, $lastUpdateDate, $index + 1, $pageSize, $totalPages);
 		}
 	}
 }
