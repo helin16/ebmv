@@ -107,8 +107,10 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			});
 		tmp.row = new Element('tr', {'class': 'prodcut-row'}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.img) })
-			.insert({'bottom': new Element(tmp.tag).update(row.title) })
-			.insert({'bottom': new Element(tmp.tag).update(row.price) })
+			.insert({'bottom': new Element(tmp.tag).update(row.title) 
+				.insert({'bottom': new Element('div').update(new Element('small').update(row.description)) 
+			})
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.price) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(row.isbn) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.author) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.publishDate) })
@@ -200,6 +202,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						tmp.item = {
 								'id': item.id,
 								'title': item.title, 
+								'descripiton': item.attributes.description ? item.attributes.description[0].attribute : '', 
 								'price': tmp.me.getCurrency(item.attributes.price ? item.attributes.price[0].attribute * 1 * (1 + tmp.me._salesMargin * 1): '0'), 
 								'isbn': item.attributes.isbn ? item.attributes.isbn[0].attribute : '', 
 								'img': tmp.me._getProductImgDiv(item.attributes.image_thumb || null, {'style': 'height: 50px; width:auto;'}),
