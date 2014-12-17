@@ -7,6 +7,14 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,pagination: {'pageNo': 1, 'pageSize': 30}
 	,order: {} //the order object
 	,searchCriteria: {}
+	,_salesMargin: 0 //the sales margin
+	/**
+	 * Setting the sale margin
+	 */
+	,setSalesMargin: function(margin) {
+		this._salesMargin = margin;
+		return this;
+	}
 	/**
 	 * Getting the HTML IDs
 	 */
@@ -23,8 +31,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.me = this;
 		tmp.btn = btn;
 		tmp.product = tmp.btn.up('.prodcut-row').retrieve('data');
+		tmp.unitPrice = tmp.me.getValueFromCurrency(tmp.product.price);
 		tmp.qty = $F(tmp.btn.up('.prodcut-row').down('.order-qty'));
-		tmp.me.postAjax(tmp.me.getCallbackId('orderProduct'), {'orderId': tmp.me.order.id, 'productId': tmp.product.id, 'qty': tmp.qty}, {
+		tmp.me.postAjax(tmp.me.getCallbackId('orderProduct'), {'orderId': tmp.me.order.id, 'productId': tmp.product.id, 'qty': tmp.qty, 'unitPrice': tmp.unitPrice}, {
 			'onLoading': function () {}
 			,'onComplete': function (sender, param) {
 				try {
@@ -54,7 +63,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					jQuery.fancybox({
 						'type' : 'image',
 						'href' : tmp.src,
-				        'title': row.title
+				        'title': row.title,
+				        'fitToView': false,
+				        'beforeShow': function () {
+				            this.width = 300;
+				            this.height = 450;
+				        }
 			 		});
 				})	
 		);
@@ -94,6 +108,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.row = new Element('tr', {'class': 'prodcut-row'}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.img) })
 			.insert({'bottom': new Element(tmp.tag).update(row.title) })
+			.insert({'bottom': new Element(tmp.tag).update(row.price) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2'}).update(row.isbn) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.author) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(row.publishDate) })
@@ -176,7 +191,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					
 					if(tmp.reset === true) {
 						$(tmp.me.htmlIDs.listingDiv).update(new Element('table', {'class': 'table table-striped table-hover'})
-							.insert({'bottom': new Element('thead').update(tmp.me._getResultTableRow({'title': 'Name', 'isbn': 'ISBN', 'qty': 'Qty', 'author': 'Author', 'publishDate': 'Publish Date'}, true) ) })
+							.insert({'bottom': new Element('thead').update(tmp.me._getResultTableRow({'title': 'Name', 'price': 'Price', 'isbn': 'ISBN', 'qty': 'Qty', 'author': 'Author', 'publishDate': 'Publish Date'}, true) ) })
 							.insert({'bottom': tmp.tbody = new Element('tbody') })
 						);
 						$(tmp.me.htmlIDs.totalCountDiv).update(tmp.result.pagination.totalRows);
@@ -185,6 +200,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						tmp.item = {
 								'id': item.id,
 								'title': item.title, 
+								'price': tmp.me.getCurrency(item.attributes.price ? item.attributes.price[0].attribute * 1 * (1 + tmp.me._salesMargin * 1): '0'), 
 								'isbn': item.attributes.isbn ? item.attributes.isbn[0].attribute : '', 
 								'img': tmp.me._getProductImgDiv(item.attributes.image_thumb || null, {'style': 'height: 50px; width:auto;'}),
 								'author': item.attributes.author ? item.attributes.author[0].attribute : '',
@@ -212,13 +228,16 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		var tmp = {}
 		tmp.me = this;
 		$(tmp.me.htmlIDs.orderSummaryDiv).update('');
+		tmp.totalAmount = 0;
 		order.items.reverse().each(function(item){
+			tmp.totalAmount = tmp.totalAmount * 1 + item.totalPrice * 1;
 			$(tmp.me.htmlIDs.orderSummaryDiv).insert({'bottom':
 				new Element('a', {'class': 'list-group-item'})
 					.insert({'bottom': item.product.title })
 					.insert({'bottom': new Element('span', {'class': 'badge'}).update(item.qty) })
 			});
 		});
+		$(tmp.me.htmlIDs.orderSummaryDiv).up('.order-summary-wrapper').down('.totalAmount').update(tmp.me.getCurrency(tmp.totalAmount));
 		return tmp.me;
 	}
 	/**
@@ -248,27 +267,50 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
  		});
 		return tmp.me;
 	}
-	,setLanguages: function (selbox, langs) {
+	,setLanguages: function (selbox, langs, cateSelBox) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me.langs = langs;
-		$(selbox).insert({'bottom': new Element('option', {'value': ''}).update('ALL') });
+		$(selbox).insert({'bottom': new Element('option', {'value': ''}).update('ALL') })
+			.observe('change', function() {
+				tmp.langId = $F(this);
+				if(tmp.langId.blank()) {
+					tmp.cates = tmp.me.cates;
+				} else {
+					tmp.cates = {};
+					tmp.cates[tmp.langId] = tmp.me.cates[tmp.langId];
+				}
+				tmp.me._getCategorySelBox(cateSelBox, tmp.cates);
+				jQuery('#' + cateSelBox).val('').trigger("chosen:updated");
+			});
 		tmp.me.langs.each(function(lang){
 			$(selbox).insert({'bottom': new Element('option', {'value': lang.id}).update(lang.name) });
 		})
+		return tmp.me;
+	}
+	,_getCategorySelBox: function(selbox, cates) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.doneIds = [];
+		$(selbox).update('');
+		$H(cates).each(function(cateArray){
+			cateArray.value.each(function(cate){
+				if(tmp.doneIds.indexOf(cate.id) < 0 )
+					$(selbox).insert({'bottom': new Element('option', {'value': cate.id}).update(cate.name) });
+			})
+		});
 		return tmp.me;
 	}
 	,setCategories: function (selbox, cates) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me.cates = cates;
-		if(!tmp.me.cates || tmp.me.cates.size() === 0)
+		if(!tmp.me.cates)
 			return tmp.me;
-		tmp.me.cates.each(function(cate){
-			$(selbox).insert({'bottom': new Element('option', {'value': cate.id}).update(cate.path) });
-		})
+		tmp.me._getCategorySelBox(selbox, cates)
 		return tmp.me;
 	}
+	
 	,bindChosen: function() {
 		var tmp = {};
 		tmp.me = this;

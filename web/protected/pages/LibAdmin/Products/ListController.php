@@ -27,15 +27,24 @@ class ListController extends LibAdminPageAbstract
 		$cates  = array();
 		foreach(Category::getAll() as $cate)
 		{
-			if($cate->getNoOfProducts(ProductType::get(ProductType::ID_BOOK)) > 0)
-				$cates[] = $cate->getJson();
+			if(count($langIds = $cate->getLangIds()) === 0)
+				continue;
+			foreach($langIds as $langId)
+			{
+				if(trim($cate->getName()) !== '')
+				{
+					if(isset($cates[$langId]))
+						$cates[$langId] = array();
+					$cates[$langId][] = array('id' => $cate->getId(), 'name' => $cate->getName());
+				}
+			}
 		}
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list", "current-order-summary", "order-btn", "my-cart")';
 		$js .= '.setCallbackId("getItems", "' . $this->getItemsBtn->getUniqueID() . '")';
 		$js .= '.setCallbackId("getOrderSummary", "' . $this->getOrderSummaryBtn->getUniqueID() . '")';
 		$js .= '.setCallbackId("orderProduct", "' . $this->orderProductBtn->getUniqueID() . '")';
-		$js .= '.setLanguages("lang-sel", ' . json_encode(array_map(create_function('$a', 'return $a->getJson();'), Language::getAll())) . ')';
+		$js .= '.setLanguages("lang-sel", ' . json_encode(array_map(create_function('$a', 'return $a->getJson();'), Language::getAll())) . ', "cate-sel")';
 		$js .= '.setCategories("cate-sel", ' . json_encode($cates) . ')';
 		$js .= '.setSalesMargin(' . $this->_getSaleMargin() . ')';
 		$js .= '.bindChosen()';

@@ -19,7 +19,7 @@
 						<select class="form-control" search-panel="languageId" id="lang-sel"></select>
 					</div>
 	            	<div class="col-sm-6">
-						<select class="form-control chosen" search-panel="categoryIds" id="cate-sel" multiple></select>
+						<select class="form-control chosen" search-panel="categoryIds" id="cate-sel" multiple data-placeholder="Choose a subject ..."></select>
 					</div>
 	            	<div class="col-sm-1">
 						<span class="btn btn-default" id='searchbtn' OnClick="pageJs.searchProducts(this)" title="搜索/搜索/Search">

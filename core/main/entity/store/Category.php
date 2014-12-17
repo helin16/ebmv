@@ -73,6 +73,16 @@ class Category extends TreeEntityAbstract
     	$result = Dao::getSingleResultNative('select count(distinct x.productid) `count` from category_product x inner join product pro on (pro.id = x.productId and pro.active = 1 ' . ($type instanceof ProductType ? 'and pro.productTypeId = ' . $type->getId() : '') . ') where x.categoryId = ? ', array($this->getId()));
     	return intval($result['count']);
     }
+    /**
+     * Getting the language ids for a category
+     * 
+     * @return array
+     */
+    public function getLangIds()
+    {
+    	$result = Dao::getResultsNative('select x.languageId from language_product x inner join product pro on (pro.active = 1 and pro.id = x.productId) inner join category_product cp on (cp.productId = pro.id and cp.categoryId = ?) ', array($this->getId()));
+    	return array_map(create_function('$a', 'return $a["languageId"];'), $result);
+    }
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::loadDaoMap()
