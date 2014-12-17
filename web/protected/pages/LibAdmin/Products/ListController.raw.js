@@ -294,10 +294,12 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.doneIds = [];
 		$(selbox).update('');
 		$H(cates).each(function(cateArray){
-			cateArray.value.each(function(cate){
-				if(tmp.doneIds.indexOf(cate.id) < 0 )
-					$(selbox).insert({'bottom': new Element('option', {'value': cate.id}).update(cate.name) });
-			})
+			if(cateArray.value !== null && cateArray.value.size() > 0 ) {
+				cateArray.value.each(function(cate){
+					if(tmp.doneIds.indexOf(cate.id) < 0 )
+						$(selbox).insert({'bottom': new Element('option', {'value': cate.id}).update(cate.name) });
+				})
+			}
 		});
 		return tmp.me;
 	}

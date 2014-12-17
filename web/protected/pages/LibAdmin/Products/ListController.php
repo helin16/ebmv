@@ -24,20 +24,19 @@ class ListController extends LibAdminPageAbstract
 		$pageSize = 10;
 		$productId = 0;
 		 
-		$cates  = array();
+		$cates  = array('' => array());
+		foreach(Language::getAll() as $lang)
+			$cates[$lang->getId()] = array();
 		foreach(Category::getAll() as $cate)
 		{
+			$cateArray = array('id' => $cate->getId(), 'name' => $cate->getName());
 			if(count($langIds = $cate->getLangIds()) === 0)
-				continue;
-			foreach($langIds as $langId)
 			{
-				if(trim($cate->getName()) !== '')
-				{
-					if(isset($cates[$langId]))
-						$cates[$langId] = array();
-					$cates[$langId][] = array('id' => $cate->getId(), 'name' => $cate->getName());
-				}
+				$cates[''][] = $cateArray;
+					continue;
 			}
+			foreach($langIds as $langId)
+				$cates[$langId][] = $cateArray;
 		}
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list", "current-order-summary", "order-btn", "my-cart")';
