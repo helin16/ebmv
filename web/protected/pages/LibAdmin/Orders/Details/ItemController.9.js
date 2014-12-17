@@ -78,7 +78,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				: new Element('input', {'type': 'checkbox', 'save-order': 'need-marc'})
 			) })
 			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Title' : row.product.title)
-				.insert({'bottom': new Element('small').update(!row.product.attributes.description ? '' : row.product.attributes.description[0].attribute) })
+				.insert({'bottom': new Element('small').update(tmp.isTitle === true ? '' : (!row.product.attributes.description ? '' : row.product.attributes.description[0].attribute) ) })
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? 'ISBN' : (!row.product.attributes.isbn ? '' : row.product.attributes.isbn[0].attribute)) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-1'}).update(tmp.isTitle === true ? 'Author' : (!row.product.attributes.author ? '' : row.product.attributes.author[0].attribute)) })
