@@ -45,10 +45,10 @@ class ListController extends LibAdminPageAbstract
 			$finalCates[$langId]  = array();
 			foreach($cateArray as $cate)
 			{
-				if(in_array($cate->getId(), $ids))
+				if(in_array($cate['id'], $ids))
 					continue;
 				$finalCates[$langId][] = $cate;
-				$ids[] = $cate->getId();
+				$ids[] = $cate['id'];
 			}
 		}
 		$js = parent::_getEndJs();
