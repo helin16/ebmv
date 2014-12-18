@@ -57,7 +57,7 @@ class ListController extends LibAdminPageAbstract
 		$js .= '.setCallbackId("getOrderSummary", "' . $this->getOrderSummaryBtn->getUniqueID() . '")';
 		$js .= '.setCallbackId("orderProduct", "' . $this->orderProductBtn->getUniqueID() . '")';
 		$js .= '.setLanguages("lang-sel", ' . json_encode(array_map(create_function('$a', 'return $a->getJson();'), Language::getAll())) . ', "cate-sel")';
-		$js .= '.setCategories("cate-sel", ' . json_encode($cates) . ')';
+		$js .= '.setCategories("cate-sel", ' . json_encode($finalCates) . ')';
 		$js .= '.setSalesMargin(' . $this->_getSaleMargin() . ')';
 		$js .= '.bindChosen()';
 		$js .= '.getOrderSummary()';
