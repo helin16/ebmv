@@ -39,6 +39,9 @@ class ListController extends LibAdminPageAbstract
 			foreach($langIds as $langId)
 				$cates[$langId][] = $cateArray;
 		}
+		foreach($cates as $langId => $cateArray){
+			$cates[$langId]  = array_unique($cateArray);
+		}
 		$js = parent::_getEndJs();
 		$js .= 'pageJs.setHTMLIDs("item-total-count", "item-list", "current-order-summary", "order-btn", "my-cart")';
 		$js .= '.setCallbackId("getItems", "' . $this->getItemsBtn->getUniqueID() . '")';
