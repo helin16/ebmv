@@ -78,9 +78,9 @@ class Category extends TreeEntityAbstract
      * 
      * @return array
      */
-    public function getLangIds()
+    public function getLangIds(ProductType $type = null)
     {
-    	$result = Dao::getResultsNative('select x.languageId from language_product x inner join product pro on (pro.active = 1 and pro.id = x.productId) inner join category_product cp on (cp.productId = pro.id and cp.categoryId = ?) ', array($this->getId()));
+    	$result = Dao::getResultsNative('select x.languageId from language_product x inner join product pro on (pro.active = 1 and pro.id = x.productId ' . ($type instanceof ProductType ? ' AND pro.productTypeId = ' . $type->getId() : '') . ') inner join category_product cp on (cp.productId = pro.id and cp.categoryId = ?) ', array($this->getId()));
     	return array_map(create_function('$a', 'return $a["languageId"];'), $result);
     }
 	/**
@@ -119,9 +119,14 @@ class Category extends TreeEntityAbstract
 			$query->eagerLoad('Product.libOwns', 'inner join', 'x_libowns', '`x_libowns`.`productId` = `pro`.id and x_libowns.active = 1 and x_libowns.libraryId = :libId');
 			$params['libId'] =  $lib->getId();
 		}
-		$params['languageId'] =  $lang->getId();
+		$where = '`pro`.productTypeId = :productTypeId';
 		$params['productTypeId'] =  $type->getId();
-		return self::getAllByCriteria('lang.id = :languageId and `pro`.productTypeId = :productTypeId', $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
+		if($lang instanceof Language)
+		{
+			$where .= ' AND lang.id = :languageId';
+			$params['languageId'] =  $lang->getId();
+		}
+		return self::getAllByCriteria($where, $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
 	}
 	/**
 	 * Find or create a category with the same name

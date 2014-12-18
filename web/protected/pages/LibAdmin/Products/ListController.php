@@ -27,10 +27,11 @@ class ListController extends LibAdminPageAbstract
 		$cates  = array('' => array());
 		foreach(Language::getAll() as $lang)
 			$cates[$lang->getId()] = array();
-		foreach(Category::getAll() as $cate)
+		$type = ProductType::get(ProductType::ID_BOOK);
+		foreach(Category::getCategories($type) as $cate)
 		{
 			$cateArray = array('id' => $cate->getId(), 'name' => $cate->getName());
-			if(count($langIds = $cate->getLangIds()) === 0)
+			if(count($langIds = $cate->getLangIds($type)) === 0)
 			{
 				$cates[''][] = $cateArray;
 					continue;
