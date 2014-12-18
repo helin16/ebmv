@@ -24,7 +24,7 @@ class ListController extends LibAdminPageAbstract
 		$pageSize = 10;
 		$productId = 0;
 		 
-		$cates  = array('' => array());
+		$cates  = array('nolangid' => array());
 		foreach(Language::getAll() as $lang)
 			$cates[$lang->getId()] = array();
 		$type = ProductType::get(ProductType::ID_BOOK);
@@ -33,7 +33,7 @@ class ListController extends LibAdminPageAbstract
 			$cateArray = array('id' => $cate->getId(), 'name' => $cate->getName());
 			if(count($langIds = $cate->getLangIds($type)) === 0)
 			{
-				$cates[''][] = $cateArray;
+				$cates['nolangid'][] = $cateArray;
 					continue;
 			}
 			foreach($langIds as $langId)
