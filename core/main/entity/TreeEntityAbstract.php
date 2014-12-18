@@ -22,7 +22,7 @@ abstract class TreeEntityAbstract extends BaseEntityAbstract
      * 
      * @var Category
      */
-    protected $parent;
+    protected $parent = null;
     /**
      * The position of the category with the category tree
      *

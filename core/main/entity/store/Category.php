@@ -98,6 +98,17 @@ class Category extends TreeEntityAbstract
 		DaoMap::commit();
 	}
 	/**
+	 * Getting the name for
+	 * 
+	 * @param string $name
+	 * 
+	 * @return Ambigous <NULL, BaseEntityAbstract>
+	 */
+	public static function getByName($name)
+	{
+		return (count($cates = self::getAllByCriteria('name = ?', array(trim($name)), true, 1, 1)) === 0 ) ? null : $cates[0];
+	}
+	/**
 	 * Getting the categories for the language and type
 	 *
 	 * @param Language    $lang
@@ -139,16 +150,16 @@ class Category extends TreeEntityAbstract
 	 */
 	public static function updateCategory($categoryName, Category $parent = null, &$isNew = false)
 	{
-		$category = self::getAllByCriteria('name = ?', array($categoryName), true, 1, 1);
-		if(count($category) > 0)
+		if(($category = self::getByName($name)) instanceof Category)
 		{
 			$isNew = false;
-			return $category[0];
+			return $category;
 		}
 	
 		$isNew = true;
 		$category = new Category();
-		$category->setName($categoryName);
+		$category->setName($categoryName)
+			->save();
 		return self::moveCategory($category, $parent);
 	}
 	/**
