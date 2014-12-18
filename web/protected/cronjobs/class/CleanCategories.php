@@ -15,9 +15,11 @@ abstract class CleanCategories
 			$mergeFromIds = array_map(create_function('$a', 'return $a->getId()'), $cateArray);
 			if(count($mergeFromIds) === 0)
 				continue;
-			
-			Dao::getResultsNative('update category_product set categoryId = ' . $mergeTo->getId() . ' where categoryId in( ' . implode(', ', $mergeFromIds) . ')');
-			Category::updateByCriteria('active = 0', 'categoryId != ' .$mergeTo->getId() . ' AND catgoryId in (' . implode(', ', $mergeFromIds) . ')');
+			echo 'Start merging( ' . implode(', ', $mergeFromIds) . ') to ' . $mergeTo->getName() . '(' . $mergeTo->getId() . ")\n";
+			$sql = 'update category_product set categoryId = ' . $mergeTo->getId() . ' where categoryId in( ' . implode(', ', $mergeFromIds) . ')';
+			Dao::getResultsNative($sql);
+			Category::updateByCriteria('active = 0', 'id != ' .$mergeTo->getId() . ' AND id in (' . implode(', ', $mergeFromIds) . ')');
+			echo "END\n";
 		}
 	}
 	/**
