@@ -45,7 +45,7 @@ class ListController extends LibAdminPageAbstract
 			$finalCates[$langId]  = array();
 			foreach($cateArray as $cate)
 			{
-				if(in_array($cate->getId(), $cates))
+				if(in_array($cate->getId(), $ids))
 					continue;
 				$finalCates[$langId][] = $cate;
 				$ids[] = $cate->getId();
