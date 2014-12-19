@@ -271,7 +271,9 @@ class SC_XinHua extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::returnProduct()
 	 */
-	public function returnProduct(Product &$product, UserAccount $user){}
+	public function returnProduct(Product &$product, UserAccount $user){
+		return $this;
+	}
 	
 	/**
 	 * Downloading Catalog for library to shop

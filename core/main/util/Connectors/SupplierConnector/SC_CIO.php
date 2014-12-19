@@ -220,6 +220,7 @@ class SC_CIO extends SupplierConnectorAbstract implements SupplierConn
 	 * @see SupplierConn::returnProduct()
 	 */
 	public function returnProduct(Product &$product, UserAccount $user) {
+		return $this;
 	}
 	/**
 	 * (non-PHPdoc)
