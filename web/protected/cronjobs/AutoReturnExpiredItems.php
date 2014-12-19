@@ -26,16 +26,12 @@ class AutoReturnExpiredShelfItems
 	 */
 	public static function run()
 	{
-		$now = new UDate();
-		$sql = 'select * from productshelfitem where expiryTime < ?';
-		foreach(Dao::getResultsNative($sql, array(trim($now))) as $shelfItemId)
+		foreach(ProductShelfItem::getAllByCriteria('expiryTime < ?', array(trim(new UDate()))) as $shelfItem)
 		{
 			try
 			{
 				Dao::beginTransaction();
-				$shelfItem = ProductShelfItem::get($shelfItemId);
-				if(!$shelfItem instanceof ProductShelfItem)
-					throw new Exception('Invalid ProductShelfItem(ID=' . $shelfItemId . ')');
+				
 				$user = $shelfItem->getOwner();
 				$lib = $user->getLibrary();
 				ProductShelfItem::cleanUpShelfItems($user);
