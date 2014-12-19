@@ -54,4 +54,5 @@ class AutoReturnExpiredShelfItems
 	}
 }
 
+Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 AutoReturnExpiredShelfItems::run();
