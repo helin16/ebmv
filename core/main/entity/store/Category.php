@@ -150,7 +150,7 @@ class Category extends TreeEntityAbstract
 	 */
 	public static function updateCategory($categoryName, Category $parent = null, &$isNew = false)
 	{
-		if(($category = self::getByName($name)) instanceof Category)
+		if(($category = self::getByName($categoryName)) instanceof Category)
 		{
 			$isNew = false;
 			return $category;
