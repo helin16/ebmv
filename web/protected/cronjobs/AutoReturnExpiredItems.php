@@ -38,7 +38,7 @@ class AutoReturnExpiredShelfItems
 				ProductShelfItem::returnItem($user, $shelfItem->getProduct(), $lib);
 				SupplierConnectorAbstract::getInstance($shelfItem->getProduct()->getSupplier(), $lib)->returnProduct($shelfItem->getProduct(), $user)
 					->removeBookShelfList($user, $shelfItem->getProduct());
-				Log::LogEntity($lib, $shelfItem->getId(), 'ProductShelfItem', 'Auto Returned ShelfItem(ID' . $shelfItem->getId() . ', ProductID=' . $shelfItem->getProduct()->getId(), ', OwnerID=' . $user->getId() . ')' , Log::TYPE_AUTO_EXPIRY);
+				Log::LogEntity($lib, $shelfItem, 'ProductShelfItem', 'Auto Returned ShelfItem(ID' . $shelfItem->getId() . ', ProductID=' . $shelfItem->getProduct()->getId(), ', OwnerID=' . $user->getId() . ')' , Log::TYPE_AUTO_EXPIRY);
 				Dao::commitTransaction();
 			}
 			catch (Exception $ex)
