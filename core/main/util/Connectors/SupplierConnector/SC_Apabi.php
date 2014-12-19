@@ -9,7 +9,7 @@ class SC_Apabi extends SupplierConnectorAbstract implements SupplierConn
 	);
 	private $_orgnizationNo = 'bmv';
 	private $_orgnizationKey = 'apabikey';
-	private $_supplierUserName ='auchen';
+	private $_supplierUserName ='auebmv';
 	private $_supplierPassword = '111111';
 	private static $_cache = array();
 	/**
