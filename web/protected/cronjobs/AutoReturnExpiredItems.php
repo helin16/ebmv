@@ -27,7 +27,7 @@ class AutoReturnExpiredShelfItems
 	public static function run()
 	{
 		$now = new UDate();
-		$sql = 'select * from Structureproductshelfitem where expiryTime < ?';
+		$sql = 'select * from productshelfitem where expiryTime < ?';
 		foreach(Dao::getResultsNative($sql, array(trim($now))) as $shelfItemId)
 		{
 			try
