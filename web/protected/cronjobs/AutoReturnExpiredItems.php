@@ -48,7 +48,8 @@ class AutoReturnExpiredShelfItems
 			catch (Exception $ex)
 			{
 				Dao::rollbackTransaction();
-				Log::LogEntity($lib, $shelfItemId, 'ProductShelfItem', 'ERROR: ' . $ex->getMessage() . '. Trace:' . $ex->getTraceAsString(), Log::TYPE_AUTO_EXPIRY);
+				echo 'ERROR: ' . $ex->getMessage() . "\n";
+				echo 'Trace:' . $ex->getTraceAsString() . "\n";
 				continue;
 			}
 		}
