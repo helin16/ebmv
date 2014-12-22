@@ -26,7 +26,7 @@ class AutoReturnExpiredShelfItems
 	 */
 	public static function run()
 	{
-		foreach(ProductShelfItem::getAllByCriteria('expiryTime < ?', array(trim(new UDate()))) as $shelfItem)
+		foreach(ProductShelfItem::getAllByCriteria('expiryTime < NOW()', array()) as $shelfItem)
 		{
 			try
 			{
