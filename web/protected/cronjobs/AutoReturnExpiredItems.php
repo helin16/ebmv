@@ -26,29 +26,26 @@ class AutoReturnExpiredShelfItems
 	 */
 	public static function run()
 	{
-		$now = new UDate();
-		$sql = 'select * from Structureproductshelfitem where expiryTime < NOW()';
-		foreach(Dao::getResultsNative($sql) as $shelfItemId)
+		foreach(ProductShelfItem::getAllByCriteria('expiryTime < ?', array(trim(new UDate()))) as $shelfItem)
 		{
 			try
 			{
 				Dao::beginTransaction();
-				$shelfItem = ProductShelfItem::get($shelfItemId);
-				if(!$shelfItem instanceof ProductShelfItem)
-					throw new Exception('Invalid ProductShelfItem(ID=' . $shelfItemId . ')');
+				
 				$user = $shelfItem->getOwner();
 				$lib = $user->getLibrary();
 				ProductShelfItem::cleanUpShelfItems($user);
 				ProductShelfItem::returnItem($user, $shelfItem->getProduct(), $lib);
 				SupplierConnectorAbstract::getInstance($shelfItem->getProduct()->getSupplier(), $lib)->returnProduct($shelfItem->getProduct(), $user)
 					->removeBookShelfList($user, $shelfItem->getProduct());
-				Log::LogEntity($lib, $shelfItemId, 'ProductShelfItem', 'Auto Returned ShelfItem(ID' . $shelfItemId . ', ProductID=' . $shelfItem->getProduct()->getId(), ', OwnerID=' . $user->getId() . ')' , Log::TYPE_AUTO_EXPIRY);
+				Log::LogEntity($lib, $shelfItem, 'ProductShelfItem', 'Auto Returned ShelfItem(ID' . $shelfItem->getId() . ', ProductID=' . $shelfItem->getProduct()->getId(), ', OwnerID=' . $user->getId() . ')' , Log::TYPE_AUTO_EXPIRY);
 				Dao::commitTransaction();
 			}
 			catch (Exception $ex)
 			{
 				Dao::rollbackTransaction();
-				Log::LogEntity($lib, $shelfItemId, 'ProductShelfItem', 'ERROR: ' . $ex->getMessage() . '. Trace:' . $ex->getTraceAsString(), Log::TYPE_AUTO_EXPIRY);
+				echo 'ERROR: ' . $ex->getMessage() . "\n";
+				echo 'Trace:' . $ex->getTraceAsString() . "\n";
 				continue;
 			}
 		}
@@ -57,4 +54,5 @@ class AutoReturnExpiredShelfItems
 	}
 }
 
+Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 AutoReturnExpiredShelfItems::run();
