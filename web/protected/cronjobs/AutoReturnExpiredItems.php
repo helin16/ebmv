@@ -26,7 +26,7 @@ class AutoReturnExpiredShelfItems
 	 */
 	public static function run()
 	{
-		foreach(ProductShelfItem::getAllByCriteria('expiryTime < ?', array(trim(new UDate()))) as $shelfItem)
+		foreach(ProductShelfItem::getAllByCriteria('expiryTime < NOW()', array()) as $shelfItem)
 		{
 			try
 			{
@@ -38,6 +38,7 @@ class AutoReturnExpiredShelfItems
 				ProductShelfItem::returnItem($user, $shelfItem->getProduct(), $lib);
 				SupplierConnectorAbstract::getInstance($shelfItem->getProduct()->getSupplier(), $lib)->returnProduct($shelfItem->getProduct(), $user)
 					->removeBookShelfList($user, $shelfItem->getProduct());
+				ProductShelfItem::removeItem($user, $shelfItem->getProduct(), $lib);
 				Log::LogEntity($lib, $shelfItem, 'ProductShelfItem', 'Auto Returned ShelfItem(ID' . $shelfItem->getId() . ', ProductID=' . $shelfItem->getProduct()->getId(), ', OwnerID=' . $user->getId() . ')' , Log::TYPE_AUTO_EXPIRY);
 				Dao::commitTransaction();
 			}
