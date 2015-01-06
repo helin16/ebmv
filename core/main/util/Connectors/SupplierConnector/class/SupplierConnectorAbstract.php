@@ -220,11 +220,15 @@ class SupplierConnectorAbstract
 		{
 			foreach($productList as $child)
 			{
-				if($this->_debugMode === true)
-					SupplierConnectorAbstract::log($this, print_r($child, true) , __FUNCTION__);
-				$product = $this->_importProduct(SupplierConnectorProduct::getProduct($child), $this->_lib);
-				$products[] = $product;
-				$this->_importedProductIds[] = $product->getId();
+				try {
+					if($this->_debugMode === true)
+						SupplierConnectorAbstract::log($this, print_r($child, true) , __FUNCTION__);
+					$product = $this->_importProduct(SupplierConnectorProduct::getProduct($child), $this->_lib);
+					$products[] = $product;
+					$this->_importedProductIds[] = $product->getId();
+				} catch (Exception $ex) {
+					if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'IMPORT ERROR: ' . $ex->getMessage() , __FUNCTION__);
+				}
 			}
 		}
 		return $products;
@@ -400,7 +404,11 @@ class SupplierConnectorAbstract
 			
 			$localFile = $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl);
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'downloading file(' . $imageUrl . ') to (' . $localFile . ')' , __FUNCTION__);
-			$tmpFile = self::downloadFile($imageUrl, $localFile);
+			$extraOpts = array(
+					CURLOPT_BINARYTRANSFER => true,
+					CURLOPT_FOLLOWLOCATION     => true
+			);
+			$tmpFile = self::downloadFile($imageUrl, $localFile, null, $extraOpts);
 			//checking whether the file is an image
 			try 
 			{ 
@@ -449,9 +457,9 @@ class SupplierConnectorAbstract
 	 *
 	 * @return string The local file path
 	 */
-	public static function downloadFile($url, $localFile, $timeout = null)
+	public static function downloadFile($url, $localFile, $timeout = null, $extraOpts = array())
 	{
-		return BmvComScriptCURL::downloadFile($url, $localFile, $timeout);
+		return BmvComScriptCURL::downloadFile($url, $localFile, $timeout, $extraOpts);
 	}
 	/**
 	 * read from a url
