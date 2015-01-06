@@ -124,31 +124,6 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $onceOnly = false)
 	{
-// 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
-// 		if(trim($pageSize) === '')
-// 		{
-// 			$pageInfo = $this->getProductListInfo($type);
-// 			$pageSize = $pageInfo['totalRecords'];
-// 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::pageInfo:' . print_r($pageInfo, true), __FUNCTION__);
-// 		}
-// 		$data = array(
-// 			'paperUids' => implode(',', array_keys($this->_products))
-// 			,'picType' => ''
-// 			,'orgNo' => trim($this->_orgnizationNo)
-// 		);
-// 		$xml = BmvComScriptCURL::readUrl(trim($this->_supplier->getInfo('import_url')), BmvComScriptCURL::CURL_TIMEOUT, $data);
-// 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Trying to get images, got ' . $xml, __FUNCTION__);
-		
-// 		$xml = new SimpleXMLElement($xml);
-// 		$array = array();
-// 		foreach($xml->children() as $fakeProductXml)
-// 		{
-// 			$attributes = $fakeProductXml->attributes();
-// 			$paperUid = trim($attributes['paperUid']);
-// 			$array[] = $this->_getFakeXml($this->_products[$paperUid]['productType'], $attributes['paperName'], $paperUid, $attributes['pageUid'], $attributes['issueDate'], trim($fakeProductXml));
-// 		}
-// 		return $array;
-		//$url = trim($this->_supplier->getInfo('import_url'));
 		$xml = $this->_getListData($pageNo, $pageSize);
 		$array = array();
 		foreach($xml->Records->children() as $fakeProductXml)
@@ -343,7 +318,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		
 		//check whether we need to download more
 		if($index < $totalPages) {
-			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got more products to download: current page=' . $index . ', total pages=' . $attributes['totalPages'], __FUNCTION__);
+			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got more products to download: current page=' . $index . ', total pages=' . $totalPages, __FUNCTION__);
 			$this->_importCatalogList($type, $lastUpdateDate, $index + 1, $pageSize, $totalPages);
 		}
 	}
