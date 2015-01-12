@@ -8,6 +8,7 @@
  */
 class LibraryInfoType extends BaseEntityAbstract
 {
+	const ID_PRODUCT_TYPE = 11;
     /**
      * The attribute of the product
      * 

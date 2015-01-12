@@ -156,6 +156,19 @@ class Library extends BaseEntityAbstract
 		return trim($this->getInfo('running_mode')) === '1';
 	}
 	/**
+	 * getting all the related product types
+	 * 
+	 * @return multitype:ProductType
+	 */
+	public function getProductTypes()
+	{
+		$types = LibraryInfo::getAllByCriteria('libraryId = ? and typeId = ?', array($this->getId(), LibraryInfoType::ID_PRODUCT_TYPE));
+		$typeIds = array_map(create_function('$a', 'return $a->getValue();'), $types); 
+		if(count($typeIds) === 0)
+			return array();
+		return ProductType::getAllByCriteria('id in (' . implode(', ', array_fill(0, count($typeIds), '?')) . ')', $typeIds);
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
