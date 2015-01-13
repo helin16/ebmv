@@ -146,6 +146,20 @@ class ProductsController extends FrontEndPageAbstract
 	    return $array;
 	}
 	
+	private function checkProductType(ProductType $productType)
+	{
+		$found = false;
+		$allowedTypes =  Core::getLibrary()->getProductTypes();
+		if(count($allowedTypes) < 1)
+			return $found;
+		foreach ($allowedTypes as $type)
+		{
+			if($productType->getId() === $type->getId() && !$found)
+				$found = true;
+		}
+		return $found;
+	}
+	
 	public function getProducts($sender, $params)
 	{
 	    $errors = $result = array();
@@ -174,19 +188,19 @@ class ProductsController extends FrontEndPageAbstract
 	            $productTypeId = (isset($searchCriteria['productType']) && trim($searchCriteria['productType']) !== '') ? trim($searchCriteria['productType']) : '';
 	            $language = Language::get($languageId);
 	            $productType = ProductType::get($productTypeId);
-	            
 	            if($searchCategory !== '')
 	            	$categoryIds[] = $searchCategory;
 	        }
 	        
 	        $stats = array();
-	        $products = Product::findProductsInCategory(Core::getLibrary(), $searchText, $categoryIds, $searchOption, $language, $productType, true, $pageNo, $pageSize, array('pro.id' => 'desc'), $stats);
-	        $result['pagination'] = $stats;
-	        $result['products'] = array();
-	        foreach($products as $product)
-	        {
-	            $result['products'][] = $product->getJson();
-	        } 
+		        $products = Product::findProductsInCategory(Core::getLibrary(), $searchText, $categoryIds, $searchOption, $language, $productType, true, $pageNo, $pageSize, array('pro.id' => 'desc'), $stats);
+		        $result['pagination'] = $stats;
+		        $result['products'] = array();
+		        foreach($products as $product)
+		        {
+		        	if($this->checkProductType($product->getProductType() ) )
+		            	$result['products'][] = $product->getJson();
+		        } 
 	    }
 	    catch(Exception $ex)
 	    {

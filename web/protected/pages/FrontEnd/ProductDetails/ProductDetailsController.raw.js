@@ -38,51 +38,57 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	,displayProduct: function() {
 		var tmp = {};
 		tmp.me = this;
-		
-		tmp.newDiv = new Element('div', {'class': 'row'})
-			.insert({'bottom': new Element('div', {'class': 'col-sm-5 left'})
-				.insert({'bottom':	tmp.me._getProductImgDiv((tmp.me.product.attributes.image_thumb || null), {'class': 'img-thumbnail'})
-					.addClassName('img-thumbnail')
-				})
-			})
-			.insert({'bottom': new Element('div', {'class': 'col-sm-7 right'})
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('h3')
-						.insert({'bottom': tmp.me.product.title })
+		tmp.newDiv = new Element('div', {'class': 'row'});
+		if(tmp.me.product) {
+			tmp.newDiv
+				.insert({'bottom': new Element('div', {'class': 'col-sm-5 left'})
+					.insert({'bottom':	tmp.me._getProductImgDiv((tmp.me.product.attributes.image_thumb || null), {'class': 'img-thumbnail'})
+						.addClassName('img-thumbnail')
 					})
 				})
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': tmp.me._getAtts('author', '<strong>作者/作者/Author:</strong>', 'author') })
-					.insert({'bottom': tmp.me._getAtts('isbn', '<strong>ISBN:</strong>', 'product_isbn') })
-					.insert({'bottom': tmp.me._getAtts('publisher', '<strong>出版社/出版社/Publisher:</strong>', 'product_publisher') })
-					.insert({'bottom': tmp.me._getAtts('publish_date', '<strong>出版日期/出版日期/Publish Date:</strong>', 'product_publish_date') })
-					.insert({'bottom': tmp.me._getAtts('languages', '<strong>语言/語言/Languages:</strong>', 'product_languages', tmp.me._joinAtts(tmp.me.product.languages, 'name').join(', ')) })
-					.insert({'bottom': tmp.me._getAtts('no_of_words', '<strong>Length:</strong>', 'product_no_of_words') })
-				})
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': tmp.me._getLoadingImg('copies_display') })
-				})
-				.insert({'bottom': new Element('div', {'class': 'clearfix attr-wrapper'}) })
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('div')
-						.insert({'bottom': '<strong>内容简介/內容簡介/Description:</strong>' })
+				.insert({'bottom': new Element('div', {'class': 'col-sm-7 right'})
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': new Element('h3')
+							.insert({'bottom': tmp.me.product.title })
+						})
 					})
-					.insert({'bottom': new Element('em')	
-						.insert({'bottom': tmp.me._joinAtts(tmp.me.product.attributes['description'], 'attribute').join(' ') })
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': tmp.me._getAtts('author', '<strong>作者/作者/Author:</strong>', 'author') })
+						.insert({'bottom': tmp.me._getAtts('isbn', '<strong>ISBN:</strong>', 'product_isbn') })
+						.insert({'bottom': tmp.me._getAtts('publisher', '<strong>出版社/出版社/Publisher:</strong>', 'product_publisher') })
+						.insert({'bottom': tmp.me._getAtts('publish_date', '<strong>出版日期/出版日期/Publish Date:</strong>', 'product_publish_date') })
+						.insert({'bottom': tmp.me._getAtts('languages', '<strong>语言/語言/Languages:</strong>', 'product_languages', tmp.me._joinAtts(tmp.me.product.languages, 'name').join(', ')) })
+						.insert({'bottom': tmp.me._getAtts('no_of_words', '<strong>Length:</strong>', 'product_no_of_words') })
 					})
-				})
-				.insert({'bottom': new Element('div', {'class': 'clearfix attr-wrapper'}) })
-				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-						.insert({'bottom':  tmp.me._getLoadingImg('view_btn') })
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': tmp.me._getLoadingImg('copies_display') })
 					})
-					.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
-						.insert({'bottom': tmp.me._getLoadingImg('downloadBtn') })
+					.insert({'bottom': new Element('div', {'class': 'clearfix attr-wrapper'}) })
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': new Element('div')
+							.insert({'bottom': '<strong>内容简介/內容簡介/Description:</strong>' })
+						})
+						.insert({'bottom': new Element('em')	
+							.insert({'bottom': tmp.me._joinAtts(tmp.me.product.attributes['description'], 'attribute').join(' ') })
+						})
 					})
-				})
-			});
-		$(tmp.me.resultDivId).update(tmp.newDiv);
-		tmp.me._getCopies('copies_display', 'view_btn', 'downloadBtn');
+					.insert({'bottom': new Element('div', {'class': 'clearfix attr-wrapper'}) })
+					.insert({'bottom': new Element('div', {'class': 'row'})
+						.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+							.insert({'bottom':  tmp.me._getLoadingImg('view_btn') })
+						})
+						.insert({'bottom': new Element('div', {'class': 'col-xs-6'})
+							.insert({'bottom': tmp.me._getLoadingImg('downloadBtn') })
+						})
+					})
+				});
+			$(tmp.me.resultDivId).update(tmp.newDiv);
+			tmp.me._getCopies('copies_display', 'view_btn', 'downloadBtn');
+		} else {
+			tmp.msg = 'Product not exist or you don’t have access to it.';
+			tmp.newDiv.insert({'bottom': tmp.me.getAlertBox('Notice: ', tmp.msg).addClassName('alert-danger') });
+			$(tmp.me.resultDivId).update(tmp.newDiv);
+		}
 		return this;
 	}
 	
@@ -96,6 +102,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onComplete': function(sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
+					console.debug(tmp.result);
 					tmp.readCopies = tmp.downloadCopies = 'N/A';
 					tmp.readBtn = new Element('span', {'class': 'btn btn-success iconbtn disabled popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'preadonlinebtn', 'data-loading-text': "处理中/處理中/Processing ..."})
 						.insert({'bottom': new Element('div', {'class': 'btnname'})

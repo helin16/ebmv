@@ -38,13 +38,26 @@ class ProductDetailsController extends FrontEndPageAbstract
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
-		$js .= 'pageJs.product = ' . json_encode($this->_product->getJson()) . ';';
+		$js .= 'pageJs.product = ' . ( $this->checkProductType($this->_product->getProductType()) ? json_encode($this->_product->getJson()) : '""' ) . ';';
 		$js .= 'pageJs.ownTypeIds = ' . json_encode($this->_libowns()) . ';';
 		$js .= 'pageJs.resultDivId = "product_details";';
 		$js .= 'pageJs.setCallbackId("geturl", "' . $this->getUrlBtn->getUniqueID(). '");';
 		$js .= 'pageJs.setCallbackId("getCopies", "' . $this->getCopiesBtn->getUniqueID(). '");';
 		$js .= 'pageJs.displayProduct();';
 		return $js;
+	}
+	private function checkProductType(ProductType $productType)
+	{
+		$found = false;
+		$allowedTypes =  Core::getLibrary()->getProductTypes();
+		if(count($allowedTypes) < 1)
+			return $found;
+		foreach ($allowedTypes as $type)
+		{
+			if($productType->getId() === $type->getId() && !$found)
+				$found = true;
+		}
+		return $found;
 	}
 	private function _libowns()
 	{
