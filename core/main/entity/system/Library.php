@@ -163,7 +163,8 @@ class Library extends BaseEntityAbstract
 	public function getProductTypes()
 	{
 		$types = LibraryInfo::getAllByCriteria('libraryId = ? and typeId = ?', array($this->getId(), LibraryInfoType::ID_PRODUCT_TYPE));
-		$typeIds = array_map(create_function('$a', 'return $a->getValue();'), $types); 
+		$typeIds = array_map(create_function('$a', 'return $a->getValue();'), $types);
+		$typeIds = explode(',', str_replace(' ', '', implode(', ', $typeIds))); 
 		if(count($typeIds) === 0)
 			return array();
 		return ProductType::getAllByCriteria('id in (' . implode(', ', array_fill(0, count($typeIds), '?')) . ')', $typeIds);
