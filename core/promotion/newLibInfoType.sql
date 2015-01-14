@@ -1,0 +1,1 @@
+INSERT INTO `bmv`.`libraryinfotype` (`id`, `name`, `code`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES ('11', 'The Library Product Type', 'lib_product_type', '1', '2001-01-13 00:00:00', '100', CURRENT_TIMESTAMP, '100');
