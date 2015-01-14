@@ -50,6 +50,9 @@
 			<!-- asset service -->
 			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
 			
+			<!-- app service -->
+			<url ServiceId="app" ServiceParameter="" pattern="app/{method}" parameters.method="get"  />
+			
 			<!-- *********************************************************************************************** -->
 			<!-- Library Admin Page                                                                              -->
 			<!-- *********************************************************************************************** -->
