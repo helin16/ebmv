@@ -1,0 +1,1 @@
+var HeaderJs=new Class.create();HeaderJs.prototype={initialize:function(){},load:function(b){var a={};a.me=this;if(!b){$$(".learn-chinese-menu").each(function(c){if(a.menuEl=c.up("li.dropdown")){a.menuEl.remove()}})}return a.me}};

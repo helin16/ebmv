@@ -45,103 +45,10 @@
 				</li>
 				<li><a href="/user.html" class="iconbtn"><div class="btnname">我的书架/我的書架<small>My Bookshelf</small></div><span class="glyphicon glyphicon-signal"></span></a></li>
 				<li class="hidden-xs"><a> | </a></li>
-				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
-				    <a href="#" role="button" class="dropdown-toggle iconbtn" data-toggle="dropdown" id="schinese-dropdown-btn" data-target="#">
-				        <div class="btnname">简体中文<small>Simplifed Chinese</small></div>
-				        <b class="caret"></b>
-				    </a>
-				    <ul class="dropdown-menu" role="menu" aria-labelledby="schinese-dropdown-btn">
-						<li>
-						  <a href="/products/1/1" class="iconbtn">
-						      <div class="row">
-							      <div class="col-xs-4">书</div>
-							      <div class="col-xs-8 en">Books</div>
-						      </div>
-						  </a>
-						</li>
-						<li>
-						  <a href="/products/1/3" class="iconbtn">
-						      <div class="row">
-							      <div class="col-xs-4">杂志</div>
-							      <div class="col-xs-8 en">Magazines</div>
-						      </div>
-						  </a>
-						</li>
-						<li>
-						  <a href="/products/1/2" class="iconbtn">
-						      <div class="row">
-							      <div class="col-xs-4">报纸</div>
-							      <div class="col-xs-8 en">NewsPapers</div>
-						      </div>
-						  </a>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
-                    <a href="#" class="iconbtn" data-toggle="dropdown" id="tchinese-dropdown-btn">
-                        <div class="btnname">繁體中文<small>Traditional Chinese</small></div>
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu" role="menu"  aria-labelledby="tchinese-dropdown-btn">
-                        <li>
-                          <a href="/products/2/1" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-4">書</div>
-                                  <div class="col-xs-8 en">Books</div>
-                              </div>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/products/2/3" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-4">雜誌</div>
-                                  <div class="col-xs-8 en">Magazines</div>
-                              </div>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/products/2/2" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-4">報紙</div>
-                                  <div class="col-xs-8 en">NewsPapers</div>
-                              </div>
-                          </a>
-                        </li>
-                    </ul>
-                </li>
-				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
-                    <a href="/products/1/4" class="iconbtn" data-toggle="dropdown" id="len-dropdown-btn">
-                        <div class="btnname">学英语<small>ESL</small></div>
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn">
-                        <li role="presentation">
-                          <a href="/product/62" role="menuitem" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-12">新概念英语一册</div>
-                              </div>
-                          </a>
-                        </li>
-                        <li role="presentation">
-                          <a href="/product/61" role="menuitem" class="iconbtn">
-                              <div class="row">
-                                  <div class="col-xs-12">托福词汇课</div>
-                              </div>
-                          </a>
-                        </li>
-                    </ul>
-                </li>
-				<li class="dropdown visible-lg visible-md visible-sm visible-xs">
-                    <a href="#" class="iconbtn" data-toggle="dropdown" id="lch-dropdown-btn">
-                        <div class="btnname">学汉语<small>Learn Chinese</small></div>
-                        <b class="caret"></b>
-                        <ul class="dropdown-menu extra-long" role="menu" aria-labelledby="lch-dropdown-btn">
-                        
-                        </ul>
-                    </a>
-                    <ul class="dropdown-menu extra-long" role="menu"  aria-labelledby="lch-dropdown-btn" id="learn-chinese-menu">
-                    </ul>
-                </li>
+				<%= $this->getMenuList(Language::get(Language::ID_SIMPLIFIED_CHINESE), Core::getLibrary()) %>
+				<%= $this->getMenuList(Language::get(Language::ID_TRADITIONAL_CHINESE), Core::getLibrary()) %>
+				<%= $this->getMenuList('', Core::getLibrary(), array('CN'=> '学英语', 'EN'=> 'ESL'), array(Product::get(62), Product::get(61))) %>
+				<%= $this->getMenuList('', Core::getLibrary(), array('CN'=> '学汉语', 'EN'=> 'Learn Chinese'),  Supplier::get(Supplier::ID_CIO)->getProducts(array(), array(ProductType::ID_COURSE))) %>
 				<li class="visible-xs"><a href="/" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
 				<li class="visible-xs"><a href="/user.html" class="iconbtn"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
 			</ul>
