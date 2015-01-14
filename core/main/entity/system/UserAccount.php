@@ -21,6 +21,12 @@ class UserAccount extends BaseEntityAbstract
      */
     const ID_SYSTEM_ACCOUNT = 100;
     /**
+     * expiry time
+     * 
+     * @var UDate
+     */
+    private $expiry = UDate::DEFAULT_DATE_TIME;
+    /**
      * The username
      *
      * @var string
@@ -143,6 +149,7 @@ class UserAccount extends BaseEntityAbstract
      */ 
     public function getLibrary() 
     {
+    	$this->loadOneToMany('library');
         return $this->library;
     }
     /**
@@ -157,6 +164,30 @@ class UserAccount extends BaseEntityAbstract
         $this->library = $value;
         return $this;
     }
+    /**
+     * Getter for the expiry
+     * 
+     * @return UDate
+     */ 
+    public function getExpiry() 
+    {
+    	if(is_string($this->expiry))
+    		$this->expiry = new UDate($this->expiry);
+        return $this->expiry;
+    }
+    /**
+     * Setter for the Expiry
+     * 
+     * @param string $value
+     * 
+     * @return UserAccount
+     */
+    public function setExpiry($value) 
+    {
+        $this->expiry = is_string($value) ? new UDate($value) : $value;
+        return $this;
+    }
+   
     /**
      * Cleanup all inactive product shelf items for the current user
      * 
@@ -235,6 +266,7 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::setManyToOne("person", "Person", "p");
         DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
         DaoMap::setManyToOne('library', 'Library', 'lib');
+        DaoMap::setDateType('expiry', 'datetime');
         parent::__loadDaoMap();
         
         DaoMap::createIndex('username');
@@ -257,7 +289,7 @@ class UserAccount extends BaseEntityAbstract
     	$query = self::getQuery();
     	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
     	$query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
-    	$userAccounts = self::getAllByCriteria("`UserName` = :username AND `Password` = :password AND r.id != :roleId and lib.id = :libId", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password)), 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username AND `Password` = :password AND r.id != :roleId and lib.id = :libId and expiry = :expiry", array('expiry' => trim(UDate::DEFAULT_DATE_TIME), 'username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password)), 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
     	if(count($userAccounts) === 1)
     		return $userAccounts[0];
     	if(count($userAccounts) > 1)
@@ -281,7 +313,7 @@ class UserAccount extends BaseEntityAbstract
     	$query = self::getQuery();
     	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
     	$query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
-    	return self::getAllByCriteria("r.id = :roleId and lib.id = :libId", array('roleId' => Role::ID_LIB_ADMIN, 'libId' => $library->getId()), $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
+    	return self::getAllByCriteria("r.id = :roleId and lib.id = :libId and expiry = :expiry", array('expiry' => trim(UDate::DEFAULT_DATE_TIME), 'roleId' => Role::ID_LIB_ADMIN, 'libId' => $library->getId()), $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
     }
     /**
      * Getting UserAccount by username
@@ -297,7 +329,29 @@ class UserAccount extends BaseEntityAbstract
     	$query = self::getQuery();
     	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
     	$query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
-    	$userAccounts = self::getAllByCriteria("`UserName` = :username  AND r.id != :roleId and lib.id = :libId", array('username' => $username, 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username  AND r.id != :roleId and lib.id = :libId and expiry = :expiry", array('expiry' => trim(UDate::DEFAULT_DATE_TIME), 'username' => $username, 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
+    	if(count($userAccounts) === 1)
+    		return $userAccounts[0];
+    	else if(count($userAccounts) > 1)
+    		throw new AuthenticationException("Multiple Users Found!Contact you administrator!");
+    	else
+    		return null;
+    }
+    /**
+     * Getting token
+     *
+     * @param string $token The token string
+     *
+     * @throws AuthenticationException
+     * @throws Exception
+     * @return Ambigous <BaseEntityAbstract>|NULL
+     */
+    public static function getToken($token, Library $library)
+    {
+    	$query = self::getQuery();
+    	$query->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
+    	$query->eagerLoad('UserAccount.library', DaoQuery::DEFAULT_JOIN_TYPE, 'lib');
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username  AND r.id != :roleId and lib.id = :libId and expiry != :defExpiry and expiry < NOW()", array('defExpiry' => trim(UDate::DEFAULT_DATE_TIME), 'username' => $username, 'roleId' => Role::ID_GUEST, 'libId' => $library->getId()), false, 1, 2);
     	if(count($userAccounts) === 1)
     		return $userAccounts[0];
     	else if(count($userAccounts) > 1)
@@ -327,6 +381,27 @@ class UserAccount extends BaseEntityAbstract
     		->save();
     	self::saveManyToManyJoin($role, $userAccount);
     	return self::get($userAccount->getId());
+    }
+    /**
+     * Creating a new token
+     *
+     * @param UserAccount $user
+     * @param string      $token
+     *
+     * @return UserAccount
+     */
+    public static function createToken(UserAccount $user, $token)
+    {
+    	$userAccount = new UserAccount();
+    	$now = new UDate();
+    	$now->modify('+30 min');
+    	$userAccount->setUserName('')
+    		->setPassword($token)
+    		->setPerson($user->getPerson())
+    		->setLibrary($user->getLibrary())
+    		->setExpiry($now)
+    		->save();
+    	return $userAccount;
     }
     /**
      * Updating an useraccount

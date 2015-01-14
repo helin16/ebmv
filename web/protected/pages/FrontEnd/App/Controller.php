@@ -82,11 +82,11 @@ class Controller extends TService
     		throw new Exception('username needed.');
     	if(($password = (isset($params['password']) ? trim($params['password']) : '')) === '')
     		throw new Exception('password needed.');
-    	$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, false);
+    	$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, Core::getLibrary(), false);
     	if($userAccount instanceof UserAccount)
-    		throw new Exception('Invalide user');
+    		throw new Exception('Invalid user');
     	$token = md5($username . $password . trim(new UDate()));
-    	UserAccount::create('', $token, $userAccount);
+    	UserAccount::create(Core::getLibrary(), '', $token, $userAccount);
     	return array('token', $token);
     }
 }

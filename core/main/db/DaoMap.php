@@ -280,7 +280,7 @@ abstract class DaoMap
      * @param bool $nullable
      * @param string $defaultValue
      */
-    public static function setDateType($field, $dataType='datetime', $nullable=false, $defaultValue='0001-01-01 00:00:00')
+    public static function setDateType($field, $dataType='datetime', $nullable=false, $defaultValue = UDate::DEFAULT_DATE_TIME)
     {
         self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
                         'type' => $dataType,
