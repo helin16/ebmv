@@ -1,0 +1,103 @@
+.header .navbar-default,
+.panel.nodefault > .panel-heading,
+.panel.nodefault > .panel-heading .btn.dropdown-toggle {
+    background: #3B4D09;
+    color: #fff;
+    filter: none;
+}
+.header .navbar-default .navbar-nav > li > a {
+    color: #fff;
+}
+
+.header #topmenulist {
+	background: #0055a5;
+}
+
+.header #topmenulist .navbar-nav > .active > a, 
+.header #topmenulist .navbar-nav > .active > a:hover, 
+.header #topmenulist .navbar-nav > .active > a:focus,
+.header #topmenulist .navbar-nav > li > a:hover,
+.header #topmenulist .navbar-nav > li > a:focus {
+    color: #8dc73f;
+}
+
+.header .logo,
+.header .media-body {
+	margin: 10px 0 0 0;
+	height: 80px;
+	vertical-align: bottom;
+}
+.header .media-body h4 {
+	vertical-align: bottom;
+}
+
+.header .topmenu {
+	margin: 10px 0 0 0;
+}
+.header .topmenu > ul > li > a.iconbtn:hover {
+	color: #E68217;
+}
+
+.header .title {
+	display: none;
+}
+
+/** NEW 18JAN15 **/
+.framewrapper .contentwrapper .navbar.navbar-static-top {
+	background-color: #fdfdfd;
+}
+.dropdown-menu {
+	background-color: #0055a5 !important;
+}
+.dropdown-menu > li > a {
+	color: #fff !important;
+}
+.dropdown-menu > li > a:hover {
+	color: #8dc73f !important;
+	background-color: transparent !important;
+	background-image: none !important;
+}
+.header .navbar-default, .panel.nodefault > .panel-heading, .panel.nodefault > .panel-heading .btn.dropdown-toggle, .contentwrapper>.pagewrapper.products .panel-default > .panel-heading {
+	background: none repeat scroll 0 0 #0098D9;
+}
+.header .navbar-static-top .nav.navbar-right > li > a{
+	color:#0099d9 !important;
+}
+.nav-tabs > li > a, .nav-tabs > li.active > a:hover, .contentwrapper>.pagewrapper.products .panel-default > .panel-heading{
+	color:#fff !important;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus {
+	color:#0098D9 !important;
+}
+.nodefault.thumbnail .caption{
+	background-color: #8DC73F !important;
+	color: #0057a7;
+	font-weight: bolder;
+	opacity: 0.87;
+	width: 100%;
+	left: 0;
+	bottom: 0;
+}
+.prolistshowcase .thumbnail{
+	padding: 0 !important;
+}
+.btn-primary{
+	background-image: linear-gradient(to bottom, #0098d9 0px, #0055a5 100%) !important;
+	border-color: #0098d9 !important;
+}
+.maincontent .well{
+	background-image: linear-gradient(to bottom, #f0f0f0 0px, #f5f5f5 100%) !important;
+}
+.well .glyphicon {
+	color: #339900 !important;
+}
+#product_details .btn-success,#pop_login_btn{
+	background-image: linear-gradient(to bottom, #0098d9 0px, #0055a5 100%) !important;
+	border-color: #0098d9 !important;
+}
+#product_details .btn-success:hover,#pop_login_btn:hover{
+	background-color: #9FD05D;
+	background-image: linear-gradient(to bottom, #9FD05D 0px, #9FD05D 100%) !important;
+	border-color: #9FD05D !important;
+	background-position: 0 -9px;
+}
