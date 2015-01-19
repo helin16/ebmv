@@ -21,8 +21,83 @@ class HelpController extends FrontEndPageAbstract
     }
     private function _getQuestions()
     {
+    	
         $array = array(
 			 array (
+        		'en' => array (
+        			'question' => "How to read traditional Chinese e-books and e-magazines via iPad and Android apps?"
+        			,'answer'   => '<p>iPad and Android apps are available for traditional Chinese e-books and e-magazines. To download the apps please go to these sites:'
+        				          .'<br/>iPad app'
+        				          .'<br/><a href:"https://itunes.apple.com/tw/app/tai-wan-yun-duan-shu-ku/id675068310?l=zh&mt=8">https://itunes.apple.com/tw/app/tai-wan-yun-duan-shu-ku/id675068310?l=zh&mt=8</a>'
+        				          .'<br/>Android app'
+        				          .'<br/><a href:"https://play.google.com/store/apps/details?id=tw.ebookservice.voler">https://play.google.com/store/apps/details?id=tw.ebookservice.voler</a>'
+        				          .'<br/>Once you have downloaded and installed the apps, the steps to access contents using either of the app are the same.'
+        				          .'<br/>1) Click to launch the app'
+        				          .'<br/>2) Click the menu icon at top left corner highlighted in red'
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_01.jpg">'
+        				          .'<br/>3) A side bar appears displaying a list of libraries as in image shown. Click the button down the bottom highlighted in red'
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_02.jpg">'
+        				          ."<br/>4) Enter your library's code as Picture 3. Please use:"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;<b>VHEI</b> for Yarra Plenty Regional Library"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;<b>VHOB</b> for Moreland City Library Services"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;<b>VCML</b> for City of Melbourne Library Services"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;<b>VHOB</b> for Hobsons Bay Library Services"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;<b>WML</b> for Whitehorse Manningham Regional Library Corporation "
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_03.jpg">'
+        				          .'<br/>5) Select your library and log in, you can now access e-books and e-magazines in traditional Chinese.'
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_04.jpg">'
+        				          .'</p>'
+				)
+			 	,'zh_cn' => array (
+        			'question' => "怎樣用iPad和安卓應用閱讀繁體中文電子書和電子雜誌?"
+        			,'answer'   => '<p>iPad和安卓应用可用来阅读繁体中文电子书和电子杂志. 请去以下网站下载这两个应用:'
+        				          .'<br/>iPad 应用'
+        				          .'<br/><a href:"https://itunes.apple.com/tw/app/tai-wan-yun-duan-shu-ku/id675068310?l=zh&mt=8">https://itunes.apple.com/tw/app/tai-wan-yun-duan-shu-ku/id675068310?l=zh&mt=8</a>'
+        				          .'<br/>安卓应用'
+        				          .'<br/><a href:"https://play.google.com/store/apps/details?id=tw.ebookservice.voler">https://play.google.com/store/apps/details?id=tw.ebookservice.voler</a>'
+        				          .'<br/>一旦你下载, 安装了应用, 从iPad或安卓平板电脑上阅读电子资源的步骤是相同的.'
+        				          .'<br/>1) 点击打开应用'
+        				          .'<br/>2) 点击左上角的目录键 (在图中有红色记号处) '
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_01.jpg">'
+        				          .'<br/>3) 屏幕左边会出现一个图书馆名单, 如图二所示. 点击屏幕下方的按钮(在图中已经用红色方框指出) '
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_02.jpg">'
+        				          ."<br/>4) 键入你的图书馆代号, 如图所示"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Yarra Plenty Regional Library 的读者请键入<b>VHEI</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Moreland City Library Services 的读者请键入<b>VHOB</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Melbourne City Library 的读者请键入 <b>VCML</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Hobsons Bay Library Services 的读者请键入<b>VHOB</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Whitehorse Manningham Regional Library 的读者请键入<b>WML</b>"
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_03.jpg">'
+        				          .'<br/>5) 选择你的图书馆, 登录. 你就可以在iPad 或 安卓平板电脑上阅读繁体中文电子书和电子杂志了'
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_04.jpg">'
+        				          .'</p>'
+				)
+			 	,'zh_tw' => array (
+        			'question' => "怎样用iPad和安卓应用阅读繁体中文电子书和电子杂志"
+        			,'answer'   => '<p>iPad和安卓應用可以用來閱讀繁體中文電子書和電子雜誌. 請去以下網站下載這兩個應用:'
+        				          .'<br/>iPad app'
+        				          .'<br/><a href:"https://itunes.apple.com/tw/app/tai-wan-yun-duan-shu-ku/id675068310?l=zh&mt=8">https://itunes.apple.com/tw/app/tai-wan-yun-duan-shu-ku/id675068310?l=zh&mt=8</a>'
+        				          .'<br/>Android app'
+        				          .'<br/><a href:"https://play.google.com/store/apps/details?id=tw.ebookservice.voler">https://play.google.com/store/apps/details?id=tw.ebookservice.voler</a>'
+        				          .'<br/>一旦你下載, 安裝了應用, 從iPad或安卓平板電腦上閱讀電子資源的步驟是相同的.'
+        				          .'<br/>1) 點擊打開應用'
+        				          .'<br/>2) 點擊左上角的目錄鍵(在圖中有紅色記號處) '
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_01.jpg">'
+        				          .'<br/>3) 屏幕左邊會出現一個圖書館名單, 如圖二所示. 點擊屏幕下方的按鈕 (在圖中已經用紅色方框指出) '
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_02.jpg">'
+        				          ."<br/>4) 鍵入你的圖書館代號, 如圖所示"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Yarra Plenty Regional Library 的讀者請鍵入<b>VHEI</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Moreland City Library Services 的讀者請鍵入<b>VHOB</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Melbourne City Library 的讀者請鍵入 <b>VCML</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Hobsons Bay Library Services 的讀者請鍵入<b>VHOB</b>"
+        				          ."<br/>&nbsp;&nbsp;&nbsp;&nbsp;Whitehorse Manningham Regional Library 的讀者請鍵入<b>WML</b>"
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_03.jpg">'
+        				          .'<br/>5) 選擇你的圖書館, 登錄. 你就可以在iPad或安卓平板電腦上閱讀繁體中文電子書和電子雜誌了.'
+        				          .'<br/><img class="img-responsive" src="/themes/fairfield/images/yuanhang_help_zh_tw_04.jpg">'
+        				          .'</p>'
+				)
+			 )
+			 ,array (
         		'en' => array (
         			'question' => "How can I access eBMV?"
         			,'answer'   => '<p>You can access eBMV Chinese Language e-Resource via the link on your library’s website. '
