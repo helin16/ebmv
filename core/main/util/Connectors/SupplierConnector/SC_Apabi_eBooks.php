@@ -319,7 +319,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		//check whether we need to download more
 		if($index < $totalPages) {
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got more products to download: current page=' . $index . ', total pages=' . $totalPages, __FUNCTION__);
-			$this->_importCatalogList($type, $lastUpdateDate, $index + 1, $pageSize, $totalPages);
+			$this->_importCatalogList($type, $index + 1, $pageSize, $totalPages);
 		}
 	}
 }
