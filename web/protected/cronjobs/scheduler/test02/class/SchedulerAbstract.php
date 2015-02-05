@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/../../bootstrap.php';
+require_once dirname(__FILE__) . '/../../../../../bootstrap.php';
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
 class SchedulerAbstract
@@ -19,14 +19,17 @@ class SchedulerAbstract
 	/**
 	 * add new task
 	 * 
+	 * @param number the index of randprocess
+	 * 
 	 * @return Process
 	 */
-	public static function addTask()
+	public static function addTask($number)
 	{
-		require_once('RandProcess.php');
-		$class = new RandProcess();
+		$className = 'RandProcess' . $number;
+		$classPhpName = 'RandProcess' . $number . '.php';
+		require_once($classPhpName);
+		$class = new $className();
 		$process = $class->getRandProcess();
-		self::_debug('Process ID: ' . $process->getProcessId());
 		return $process;
 	}
 	/**
