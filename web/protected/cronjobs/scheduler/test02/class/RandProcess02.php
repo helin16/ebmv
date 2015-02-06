@@ -4,7 +4,7 @@ Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
 $now = new UDate();
 $pid = getmypid();
-$lifespan = rand(1,3); // in seconds
+$lifespan = rand(6,10); // in seconds
 
 $task = Task::getAllByCriteria('path = ?', array(__FILE__), true, 1, 1);
 if(count($task) < 1 || !$task[0] instanceof Task)

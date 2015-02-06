@@ -8,11 +8,23 @@
 class Process extends BaseEntityAbstract
 {
 	/**
+	 * The Task of Process
+	 *
+	 * @var Task
+	 */
+	protected $task;
+	/**
 	 * The processId 
 	 * 
 	 * @var int
 	 */
 	private $processId;
+	/**
+	 * The error code
+	 * 
+	 * @var int
+	 */
+	private $error;
 	/**
 	 * The starting time
 	 * 
@@ -24,7 +36,7 @@ class Process extends BaseEntityAbstract
 	 * 
 	 * @var Udate
 	 */
-	private $end;
+	private $end = '';
 	/**
 	 * The lifespan in second
 	 * 
@@ -43,6 +55,28 @@ class Process extends BaseEntityAbstract
 	 * @var string
 	 */
 	private $type;
+	/**
+	 * Getter for task
+	 *
+	 * @return Task
+	 */
+	public function getTask()
+	{
+		$this->loadManyToOne('task');
+		return $this->task;
+	}
+	/**
+	 * Setter for task
+	 *
+	 * @param Task $value The task
+	 *
+	 * @return Process
+	 */
+	public function setTask(Task $value)
+	{
+		$this->task = $value;
+		return $this;
+	}
 	/**
 	 * getter for processId
 	 *
@@ -63,12 +97,33 @@ class Process extends BaseEntityAbstract
 		return $this;
 	}
 	/**
+	 * getter for error
+	 *
+	 * @return int
+	 */
+	public function getError()
+	{
+		return $this->error;
+	}
+	/**
+	 * Setter for error
+	 *
+	 * @return Process
+	 */
+	public function setError($error)
+	{
+		$this->error = $error;
+		return $this;
+	}
+	/**
 	 * getter for start
 	 *
 	 * @return UDate
 	 */
 	public function getStart()
 	{
+		if (is_string($this->start))
+			$this->start = new UDate($this->start);
 		return $this->start;
 	}
 	/**
@@ -88,6 +143,8 @@ class Process extends BaseEntityAbstract
 	 */
 	public function getEnd()
 	{
+		if (is_string($this->end))
+			$this->end = new UDate($this->end);
 		return $this->end;
 	}
 	/**
@@ -167,28 +224,33 @@ class Process extends BaseEntityAbstract
 	 * @param int $processId
 	 * @param UDate $start
 	 * @param string $lifespan
+	 * @param Task $task
 	 * @param string $end
 	 * @param string $comments
 	 * @param string $type
 	 * @return Process
 	 */
-	public static function create($processId, UDate $start, $lifespan, $end = '', $comments = '', $type = '')
+	public static function create($processId, UDate $start, Task $task, $lifespan, $comments = '', $type = '')
 	{
 		$entity = new Process();
 		$entity->setProcessId($processId)
 			->setStart($start)
 			->setLifespan($lifespan)
-			->setEnd($end)
+			->setTask($task)
 			->setComments($comments)
+			->setEnd(UDate::zeroDate())
 			->setType($type)
+			->setError(0)
 			->save();
 		return $entity;
 	}
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'ps');
-	
+		
+		DaoMap::setManyToOne('task', 'Task', 'ps_tsk', false);
 		DaoMap::setIntType('processId', 'INT', '10');
+		DaoMap::setIntType('error', 'INT', '10');
 		DaoMap::setDateType('start', 'DATETIME');
 		DaoMap::setDateType('end', 'DATETIME');
 		DaoMap::setIntType('lifespan', 'INT', '255');
@@ -198,6 +260,7 @@ class Process extends BaseEntityAbstract
 		parent::__loadDaoMap();
 	
 		DaoMap::createIndex('processId');
+		DaoMap::createIndex('error');
 		DaoMap::createIndex('start');
 		DaoMap::createIndex('lifespan');
 		

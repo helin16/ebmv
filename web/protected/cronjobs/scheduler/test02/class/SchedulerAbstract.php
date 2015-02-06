@@ -25,12 +25,9 @@ class SchedulerAbstract
 	 */
 	public static function addTask($number)
 	{
-		$className = 'RandProcess' . $number;
-		$classPhpName = 'RandProcess' . $number . '.php';
-		require_once($classPhpName);
-		$class = new $className();
-		$process = $class->getRandProcess();
-		return $process;
+		$path = __DIR__ . '\RandProcess' . $number . '.php';
+		$task = Task::create($path, false, basename($path));
+		self::_debug('Task Added: ' . $task->getPath());
 	}
 	/**
 	 * Debug output function

@@ -1,3 +1,7 @@
 /Applications/MAMP/bin/php/php5.6.2/bin/php /Volumes/Users/Frank-Desktop/git/ebmv/web/protected/cronjobs/scheduler/test02/SchedulerRunner.php
 
 /Applications/MAMP/bin/php/php5.6.2/bin/php /Volumes/Users/Frank-Desktop/git/ebmv/web/protected/cronjobs/scheduler/test02/SchedulerMonitor.php
+
+C:\wamp\bin\php\php5.5.12\php.exe C:\Users\Frank-Desktop\git\ebmv\web\protected\cronjobs\scheduler\test02\SchedulerRunner.php
+
+C:\wamp\bin\php\php5.5.12\php.exe C:\Users\Frank-Desktop\git\ebmv\web\protected\cronjobs\scheduler\test02\SchedulerMonitor.php
