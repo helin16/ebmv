@@ -102,7 +102,6 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onComplete': function(sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					console.debug(tmp.result);
 					tmp.readCopies = tmp.downloadCopies = 'N/A';
 					tmp.readBtn = new Element('span', {'class': 'btn btn-success iconbtn disabled popoverbtn visible-lg visible-md visible-sm visible-xs', 'id': 'preadonlinebtn', 'data-loading-text': "处理中/處理中/Processing ..."})
 						.insert({'bottom': new Element('div', {'class': 'btnname'})

@@ -387,12 +387,22 @@ class SupplierConnectorAbstract
 	protected function _importImage($imageUrl)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Importing image:' . $imageUrl , __FUNCTION__);
-		$transStarted = false;
-		try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
 		try
 		{
-			if(($imageUrl = trim($imageUrl)) === '')
+			$transStarted = false;
+			try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
+			
+			if(($imageUrl = trim($imageUrl)) === ''){
+				if($transStarted === false)
+					Dao::rollbackTransaction();
 				return '';
+			}
+			
+			if(($asset = Asset::getAsset($imageUrl)) instanceof Asset){
+				if($transStarted === false)
+					Dao::rollbackTransaction();
+				return $imageUrl;
+			}
 			
 			$tmpDir = explode(',', $this->_supplier->getInfo('default_img_dir'));
 			$tmpDir = $tmpDir[0];

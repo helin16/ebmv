@@ -7,10 +7,10 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 // 		'n.D440100nfdsb'  => array('name' => '南方都市报',  'productId' =>  'CN44-0175', 'paperUid' => 'n.D440100nfdsb', 'productType' => 'NewsPaper'),
 // 		'n.D440100nfzm'   => array('name' => '南方周末',    'productId' =>  'CN44-0003', 'paperUid' => 'n.D440100nfzm', 'productType' => 'NewsPaper')
 // 	);
-// 	private $_orgnizationNo = 'bmv';
-// 	private $_orgnizationKey = 'apabikey';
-// 	private $_supplierUserName ='auebmv';
-// 	private $_supplierPassword = '111111';
+	private $_orgnizationNo = 'bmv';
+	private $_orgnizationKey = 'apabikey';
+	private $_supplierUserName ='auebmv';
+	private $_supplierPassword = '111111';
 	private static $_cache = array();
 	/**
 	 * DES with Zeros encryption
@@ -87,20 +87,18 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$thisYear = $now->format('Y');
 		$now->modify('-1 year');
 		$beforeYear = $now->format('Y');
-		$url = 'http://www.apabi.com/tiyan';
+		$url = 'http://www.apabi.com/bmv/mobile.mvc';
 		$data = array(
-				'pid' => 'search.api',
-				'wd' => '',
-				'cult' => 'CN',
-				'db' => 'dlib',
-				'dt' => 'EBook',
-				'pg' => $pageNo,
-				'dc' => intval($pageSize * 1 / 10),
-				'ps' => 10,
-				'filter' => 'FileStatus:[' . $beforeYear . ',' . $thisYear . ']'
+				'api' => 'metadatasearch',
+				'type' => '0',
+				'key' => '',
+				'order' => '1',
+				'ordertype' => '0',
+				'page' => $pageNo,
+				'pagesize' => $pageSize,
+				'digitresgroupid' => 486
 		);
 		$xml = BmvComScriptCURL::readUrl($url . '?' . http_build_query($data), BmvComScriptCURL::CURL_TIMEOUT);
-		
 		return new SimpleXMLElement($xml);
 	}
 	/**
@@ -115,7 +113,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$totalRecords = $xml->TotalCount;
 		$pageNo = 1;
 		$pageSize = 100;
-		$array = $array = array('totalPages' => (intval($pageSize) === 0 ? 0 : ceil($totalRecords / $pageSize)), 'pageNo' => $pageNo, 'pageSize' => $pageSize, 'totalRecords' => $totalRecords);;
+		$array = array('totalPages' => (intval($pageSize) === 0 ? 0 : ceil($totalRecords / $pageSize)), 'pageNo' => $pageNo, 'pageSize' => $pageSize, 'totalRecords' => $totalRecords);
 		return $array;
 	}
 	/**
@@ -128,28 +126,36 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$array = array();
 		foreach($xml->Records->children() as $fakeProductXml)
 		{
-			$array[] = $this->_getFakeProduct($fakeProductXml, trim($this->_lib->getInfo ( 'aus_code' ) ) );
+			$array[] = $this->_getFakeProduct($fakeProductXml, trim($this->_lib->getInfo ( 'aus_code' ) ), '_getXmlElementFromFormat2' );
 		}
 		return $array;
 	}
-	private function _getFakeProduct(SimpleXMLElement $fakeProductXml, $siteId = '')
+	/**
+	 * Generating a fake product
+	 * 
+	 * @param SimpleXMLElement $fakeProductXml
+	 * @param string           $siteId
+	 * 
+	 * @return SimpleXMLElement
+	 */
+	private function _getFakeProduct(SimpleXMLElement $fakeProductXml, $siteId = '', $funcName = '')
 	{
 		$productType = ProductType::get(ProductType::ID_BOOK);
-		$cno = $this->_getXmlElement($fakeProductXml, 'Identifier');
-		$productName = $this->_getXmlElement($fakeProductXml, 'Title');
+		$cno = $this->$funcName($fakeProductXml, 'Identifier');
+		$productName = $this->$funcName($fakeProductXml, 'Title');
 		// ignore AlternativeTitle
-		$author = $this->_getXmlElement($fakeProductXml, 'Creator');
-		$publisher = $this->_getXmlElement($fakeProductXml, 'Publisher');
+		$author = $this->$funcName($fakeProductXml, 'Creator');
+		$publisher = $this->$funcName($fakeProductXml, 'Publisher');
 		// ignore Keywords
-		$intro = $this->_getXmlElement($fakeProductXml, 'Abstract');
-		$issueDate = $this->_getXmlElement($fakeProductXml, 'PublishDate');
+		$intro = $this->$funcName($fakeProductXml, 'Abstract');
+		$issueDate = $this->$funcName($fakeProductXml, 'PublishDate');
 		// ignore Score
 		// ignore BookStatus
-		$isbn = $this->_getXmlElement($fakeProductXml, 'ISBN');
+		$isbn = $this->$funcName($fakeProductXml, 'ISBN');
 		// ignore Fulltext
 		// ignore Catalog
 		// ignore Path
-		$category = $this->_getXmlElement($fakeProductXml, 'ZTFCategory');
+		$category = $this->$funcName($fakeProductXml, 'ZTFCategory');
 		if(count($tokens = explode(',', $category)) > 1) {
 			if(is_numeric(trim($tokens[0]))) {
 				$category = trim($tokens[1]);
@@ -160,18 +166,23 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$category = str_replace('|', '/', $category);
 		// ignore TIYAN
 		// ignore ContentUrl
-		$coverImg = $this->_getXmlElement($fakeProductXml, 'CoverUrl');
+		$coverImg = $this->$funcName($fakeProductXml, 'CoverUrl');
 			
 		$array = $this->_getFakeXml($productType, $productName, $isbn, $cno, $issueDate, $coverImg, $author, $publisher, $intro, $category, $siteId);
-		
 		return $array;
 	}	
-	private function _getXmlElement(SimpleXMLElement $xml, $filedName)
+	private function _getXmlElementFromFormat1(SimpleXMLElement $xml, $filedName)
 	{
 		if(empty($filedName))
 			throw new Exception('XML fieldname cannot be empty');
 		$result = $xml->xpath("Field[@name='" . $filedName . "']");
 		return trim(count($result) > 0 ? $result[0] : '');
+	}
+	private function _getXmlElementFromFormat2(SimpleXMLElement $xml, $filedName)
+	{
+		if(empty($filedName))
+			throw new Exception('XML fieldname cannot be empty');
+		return isset($xml->$filedName) ? trim($xml->$filedName) : '';
 	}
 	/**
 	 * (non-PHPdoc)
@@ -213,12 +224,13 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_ISBN)->getCode()), 
 				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_CNO)->getCode()), 
 				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_PUBLISHDATE)->getCode()), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_IMAGE)->getCode()), 
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_IMAGE_THUMB)->getCode()), 
 				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_AUTHOR)->getCode()), 
 				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_PUBLISHER)->getCode()), 
 				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_DESCRIPTION)->getCode()), 
 				$product->getProductType()->getName(),
-				trim($this->_lib->getInfo ( 'aus_code' ) )
+				trim($this->_lib->getInfo ( 'aus_code' ) ),
+				'_getXmlElementFromFormat2'
 				);
 		return SupplierConnectorProduct::getProduct($productXML);
 	}
@@ -282,6 +294,28 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$this->_importCatalogList($type, 1, $pageSize);
 		return $this;
 	}
+	private function _getCatalogListData($pageNo, $pageSize = DaoQuery::DEFAULT_JOIN_TYPE)
+	{
+		$now = new UDate();
+		$thisYear = $now->format('Y');
+		$now->modify('-1 year');
+		$beforeYear = $now->format('Y');
+		$url = 'http://www.apabi.com/tiyan';
+		$data = array(
+				'pid' => 'search.api',
+				'wd' => '',
+				'cult' => 'CN',
+				'db' => 'dlib',
+				'dt' => 'EBook',
+				'pg' => $pageNo,
+				'dc' => intval($pageSize * 1 / 10),
+				'ps' => 10,
+				'filter' => 'FileStatus:[' . $beforeYear . ',' . $thisYear . ']'
+		);
+		$xml = BmvComScriptCURL::readUrl($url . '?' . http_build_query($data), BmvComScriptCURL::CURL_TIMEOUT);
+	
+		return new SimpleXMLElement($xml);
+	}
 	/**
 	 * importing the product based on the last updated date
 	 *
@@ -291,7 +325,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _importCatalogList(ProductType $type, $index = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $totalPages = 0)
 	{
-		$bookList = $this->_getListData($index, $pageSize);
+		$bookList = $this->_getCatalogListData($index, $pageSize);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'GOT response from supplier:', __FUNCTION__);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList instanceof SimpleXMLElement ? $bookList->asXML() : print_r($bookList, true), __FUNCTION__);
 		
@@ -301,7 +335,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 			foreach($bookList->Records->children() as $bookXml) {
 				try {
 					Dao::beginTransaction();
-					$this->_importProduct(SupplierConnectorProduct::getProduct($this->_getFakeProduct($bookXml) ) );
+					$this->_importProduct(SupplierConnectorProduct::getProduct($this->_getFakeProduct($bookXml, '', '_getXmlElementFromFormat1') ) );
 					Dao::commitTransaction();
 				} catch (Exception $e) {
 					Dao::rollbackTransaction();
