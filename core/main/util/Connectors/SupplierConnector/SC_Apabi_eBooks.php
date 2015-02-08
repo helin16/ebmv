@@ -193,25 +193,25 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$readurl = $this->_supplier->getInfo('view_url');
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
-		$baseUrl = $readurl .  trim($this->_orgnizationNo) . '/';
+		$baseUrl = $readurl .  trim($this->_orgnizationNo) . '/pub.mvc';
 		$sigleProductUrlData = array(
-			'pid' => 'newspaper.page',
+			'pid' => 'book.detail',
 			'metaid' => $product->getAttribute('cno'),
 			'cult' => 'CN'
 		);
 		
-		$now = new UDate();
-		$data = array(
-				'pid' => 'sso'
-				,'uid' => trim($this->_supplierUserName)
-				,'pwd'=> strtoupper(md5($this->_supplierPassword))
-				,'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
-				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
-				,'autoreg' => '1'
-				,'pdm' => '0'
-				,'errorurl'=>'http://ebmv.com.au'
-		);
-		return $baseUrl . '?' . http_build_query($data);
+// 		$now = new UDate();
+// 		$data = array(
+// 				'pid' => 'sso'
+// 				,'uid' => trim($this->_supplierUserName)
+// 				,'pwd'=> strtoupper(md5($this->_supplierPassword))
+// 				,'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
+// 				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
+// 				,'autoreg' => '1'
+// 				,'pdm' => '0'
+// 				,'errorurl'=>'http://ebmv.com.au'
+// 		);
+		return $baseUrl . '?' . http_build_query($sigleProductUrlData);
 	}
 	/**
 	 * (non-PHPdoc)
