@@ -197,21 +197,21 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$sigleProductUrlData = array(
 			'pid' => 'book.detail',
 			'metaid' => $product->getAttribute('cno'),
-			'cult' => 'CN'
+			'cult' => 'US'
 		);
 		
-// 		$now = new UDate();
-// 		$data = array(
-// 				'pid' => 'sso'
-// 				,'uid' => trim($this->_supplierUserName)
-// 				,'pwd'=> strtoupper(md5($this->_supplierPassword))
-// 				,'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
-// 				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
-// 				,'autoreg' => '1'
-// 				,'pdm' => '0'
-// 				,'errorurl'=>'http://ebmv.com.au'
-// 		);
-		return $baseUrl . '?' . http_build_query($sigleProductUrlData);
+		$now = new UDate();
+		$data = array(
+				'pid' => 'sso'
+				,'uid' => trim($this->_supplierUserName)
+				,'pwd'=> strtoupper(md5($this->_supplierPassword))
+				,'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
+				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
+				,'autoreg' => '1'
+				,'pdm' => '0'
+				,'errorurl'=>'http://ebmv.com.au'
+		);
+		return $baseUrl . '?' . http_build_query($data);
 	}
 	/**
 	 * (non-PHPdoc)
