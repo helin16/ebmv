@@ -17,9 +17,10 @@ try {
 	$process = Process::create($pid, $now, $task, $lifespan);
 	
 	//test
+	sleep(1);
 	throw new Exception('Test Exception!');
 	
-	sleep($lifespan);
+	sleep($lifespan-1);
 	
 	$now = new UDate();
 	$process->setEnd($now)->setActive(false)->save();

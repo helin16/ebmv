@@ -17,17 +17,18 @@ foreach (Task::getAll() as $task)
 		debug($e->getMessage());
 	}
 }
-
+$firstTry = true;
 while($alldone === false)
 {
 	try {
 		monitor();
-		if(count(Process::getAllByCriteria('active = ? AND error = ?', array(true, 0), false, 1, 1, array('id'=> 'desc'))) == 0 
-			&& count(Task::getAllByCriteria('done = ?', array(true), true, 1, 1, array('id'=> 'desc'))) > 0 ) // assume at least one process done at first run
+		if(count(Process::getAllByCriteria('active = ? AND error = ?', array(true, 0), false, 1, 1, array('id'=> 'desc'))) == 0 // make sure all active process is finished
+			&& $firstTry === false ) // avoid error (rodo task duplicate the inital task run) on first time run
 		{
 			redoTasks();
 		}
 		sleep(delay);
+		$firstTry = false;
 		debug(str_repeat('-', 100));
 		
 		//if no running process and all tasks EXCEPT retry > const retryLimit done, all done, this monitor terminate
@@ -76,7 +77,7 @@ function monitor()
 		debug('-----FORED QUIT-----');
 		foreach (Process::getAllByCriteria('error != ?', array(0), false, 1, 3, array('id'=> 'desc')) as $process)
 		{
-			debug(getMonitorMsg($process) . ', ERROR: ' . getReason($process->getError()) . '(' . $process->getError() . ')');
+			debug(getMonitorMsg($process) . ', ERROR ' . $process->getError() . ': ' . getReason($process->getError()));
 		}
 	} catch(Exception $ex)
 	{
@@ -108,7 +109,10 @@ function killProcess($pid, Process $process, $errorCode = '1') // 1: timeout
 	$process->setError($errorCode)->setEnd(getNow())->setActive(false)->save();
 	switch (intval($errorCode))
 	{
-		case 1:
+		case 1: // Timeout
+			debug('** Warning: Process(pid=' . $pid . ') terminated, Task ' . basename($process->getTask()->getPath()) . '(id=' . $process->getTask()->getId() . ') ' . ((intval($process->getTask()->getRetry()) >= retryLimit) ? 'TERMINATED' : 'RETRY') . ' due to ' . strtoupper(getReason($errorCode)) . ', retry limit(' . $process->getTask()->getRetry() . '/' . retryLimit . ')');
+			break;
+		case 2: // Exception (won't get here b/c process will kill itself if exception occurs with in ifself)
 			debug('** Warning: Process(pid=' . $pid . ') terminated, Task ' . basename($process->getTask()->getPath()) . '(id=' . $process->getTask()->getId() . ') ' . ((intval($process->getTask()->getRetry()) >= retryLimit) ? 'TERMINATED' : 'RETRY') . ' due to ' . strtoupper(getReason($errorCode)) . ', retry limit(' . $process->getTask()->getRetry() . '/' . retryLimit . ')');
 			break;
 		default:
