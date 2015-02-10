@@ -11,26 +11,34 @@ execAndWait(phpPath . __DIR__ . '\SchedulerRunner.php');
 
 foreach (Task::getAll() as $task)
 {
-	execInBackground(phpPath . $task->getPath());
+	try {
+		execInBackground(phpPath . $task->getPath());
+	} catch(Exception $e) {
+		debug($e->getMessage());
+	}
 }
 
 while($alldone === false)
 {
-	monitor();
-	if(count(Process::getAllByCriteria('active = ? AND error = ?', array(true, 0), false, 1, 1, array('id'=> 'desc'))) == 0 
-		&& count(Task::getAllByCriteria('done = ?', array(true), true, 1, 1, array('id'=> 'desc'))) > 0 )
-	{
-		redoTasks();
-	}
-	sleep(delay);
-	debug(str_repeat('-', 100));
-	
-	//if no running process and all tasks EXCEPT retry > const retryLimit done, all done, this monitor terminate
-	if(count(Process::getAllByCriteria('active = ? AND error = ?', array(true, 0), false, 1, 1, array('id'=> 'desc'))) == 0
-			&& count(Task::getAllByCriteria('done = ? AND retry < ?', array(false, retryLimit))) == 0)
-	{
-		$alldone = true;
-		debug('** Notice: All task within retry limit in done. The Scheduler Monitor QUIT now.');
+	try {
+		monitor();
+		if(count(Process::getAllByCriteria('active = ? AND error = ?', array(true, 0), false, 1, 1, array('id'=> 'desc'))) == 0 
+			&& count(Task::getAllByCriteria('done = ?', array(true), true, 1, 1, array('id'=> 'desc'))) > 0 ) // assume at least one process done at first run
+		{
+			redoTasks();
+		}
+		sleep(delay);
+		debug(str_repeat('-', 100));
+		
+		//if no running process and all tasks EXCEPT retry > const retryLimit done, all done, this monitor terminate
+		if(count(Process::getAllByCriteria('active = ? AND error = ?', array(true, 0), false, 1, 1, array('id'=> 'desc'))) == 0
+				&& count(Task::getAllByCriteria('done = ? AND retry < ?', array(false, retryLimit))) == 0)
+		{
+			$alldone = true;
+			debug('** Notice: All task within retry limit in done. The Scheduler Monitor QUIT now.');
+		}
+	} catch(Exception $e) {
+		debug($e->getMessage());
 	}
 }
 /**
@@ -125,8 +133,11 @@ function getReason($errorCode)
 		case 1:
 			return 'TIMEOUT';
 			break;
+		case 2:
+			return 'EXCEPTION';
+			break;
 		default:
-			throw new Exception(__FUNCTION__, '** Error: ' . 'Invalid Error code passed in');
+			throw new Exception(__FUNCTION__ . '** Error: ' . 'Invalid Error code passed in');
 	}
 }
 function win_kill($pid){
