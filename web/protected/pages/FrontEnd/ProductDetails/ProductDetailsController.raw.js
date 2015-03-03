@@ -6,7 +6,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 	product: null //the product object
 	,resultDivId: '' //where we are displaying product details
 	,ownTypeIds: {} //the libraryowntypes
-		
+
 	,_joinAtts: function(attributes, name) {
 		var tmp = {};
 		tmp.attrs = [];
@@ -18,23 +18,23 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		}
 		return tmp.attrs;
 	}
-		
+
 	,_getAtts: function(attrcode, title, className, overRideContent) {
 		var tmp = {};
 		tmp.me = this;
 		if(!tmp.me.product.attributes[attrcode] && !overRideContent)
 			return [];
-		
+
 		tmp.overRideContent = (overRideContent || '');
 		return new Element('div', {'class': 'col-xs-6 attr-wrapper'}).addClassName(className)
 			.insert({'bottom': new Element('div', {'class': 'title'}).update(title) })
 			.insert({'bottom': new Element('div', {'class': 'attribute'}).update((!tmp.overRideContent ? tmp.me._joinAtts(tmp.me.product.attributes[attrcode], 'attribute').join(', ') : tmp.overRideContent)) });
 	}
-	
+
 	,_getLoadingImg: function (id) {
 		return new Element('img', {'class': 'loadingImg', 'id': id, 'src': "/themes/images/loading.gif", 'width': '50px', 'height': '50px'});
 	}
-	
+
 	,displayProduct: function() {
 		var tmp = {};
 		tmp.me = this;
@@ -68,7 +68,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 						.insert({'bottom': new Element('div')
 							.insert({'bottom': '<strong>内容简介/內容簡介/Description:</strong>' })
 						})
-						.insert({'bottom': new Element('em')	
+						.insert({'bottom': new Element('em')
 							.insert({'bottom': tmp.me._joinAtts(tmp.me.product.attributes['description'], 'attribute').join(' ') })
 						})
 					})
@@ -91,7 +91,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		}
 		return this;
 	}
-	
+
 	,_getCopies: function (readCopiesDisplayHolderId, readOnlineBtnId, downloadBtnId) {
 		var tmp = {};
 		tmp.me = this;
@@ -113,7 +113,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 							.insert({'bottom': '下载阅读 / 下載閱讀'})
 							.insert({'bottom': new Element('small').update('Download') })
 						});
-					
+
 					//getting the readonline url
 					if(tmp.result.urls.viewUrl && tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail * 1 > 0) {
 						tmp.readCopies = tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.OnlineRead].total;
@@ -122,7 +122,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 								return tmp.me._getLink(this, 'read');
 							});
 					}
-					
+
 					//getting the download url
 					if(tmp.result.urls.downloadUrl && tmp.result.copies[tmp.me.ownTypeIds.Download].avail * 1 > 0) {
 						tmp.downloadCopies = tmp.result.copies[tmp.me.ownTypeIds.Download].avail + ' out of ' + tmp.result.copies[tmp.me.ownTypeIds.Download].total;
@@ -130,21 +130,21 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 							.observe('click', function(){
 								return tmp.me._getLink(this, 'download');
 							});
-					} 
-					
+					}
+
 					tmp.copiesHolder.update('')
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Online Read Copies:</strong>', 'online_read_copies', tmp.readCopies) })
 						.insert({'bottom': tmp.me._getAtts('', '<strong>Download Copies:</strong>', 'download_copies', tmp.downloadCopies) });
 					if(tmp.result.warningMsg) {
 						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Warning:</h4>', new Element('small').update(
 								tmp.result.warningMsg.zh_CN + ' / ' + tmp.result.warningMsg.zh_TW + '<br />' + tmp.result.warningMsg.en)
-							).addClassName('alert-warning') 
+							).addClassName('alert-warning')
 						});
 					}
 					if(tmp.result.stopMsg) {
 						tmp.btnsHolder.insert({'top': tmp.me.getAlertBox('<h4>Error:</h4>', new Element('small').update(
 								tmp.result.stopMsg.zh_CN + ' / ' + tmp.result.stopMsg.zh_TW + '<br />' + tmp.result.stopMsg.en)
-						).addClassName('alert-danger') 
+						).addClassName('alert-danger')
 						});
 					}
 					$(readOnlineBtnId).replace(tmp.readBtn);
@@ -155,17 +155,28 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			}
 		}, 120000);
 	}
-	
+
 	,_openNewUrl: function(url) {
 		var tmp = {};
 		tmp.me = this;
-		if(url.url)
-			window.open(url.url);
+		if(url.url) {
+			tmp.newWindow = window.open(url.url);
+			if(!tmp.newWindow) {
+				tmp.newDiv = new Element('div')
+					.insert({'bottom': new Element('h4', {'class': 'text-warning'})
+						.insert({'bottom': new Element('span').update('Your browser probably block the window popup.') })
+						.insert({'bottom': new Element('span').update('If it is, please ') })
+						.insert({'bottom': new Element('a', {'href': url.url, 'target': '_BLANK'}).update('click here to view it') })
+						.insert({'bottom': new Element('span').update(' for now.') })
+					});
+				tmp.me.showModalBox('<strong class="text-warning">Popup Window Blocked</strong>', tmp.newDiv);
+			}
+		}
 		if(url.redirecturl)
 			window.location = url.redirecturl;
 		return this;
 	}
-	
+
 	/**
 	 * trying to get the read or download url
 	 */
@@ -194,7 +205,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 				jQuery('#' + btn.id).button('reset');
 			}
 		);
-		
+
 		return false;
 	}
 });
