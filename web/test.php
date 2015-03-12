@@ -2,6 +2,7 @@
 require_once 'bootstrap.php';
 class test
 {
+	private static $fromLocalDB = false;
 	/**
 	 * login for the library reader
 	 *
