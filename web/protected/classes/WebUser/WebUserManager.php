@@ -28,10 +28,10 @@ class WebUserManager extends TModule implements IUserManager
 	{
 		if($username === null)
 			return new WebUser($this);
-		
+
 		if(!($userAccount = (Core::getUser() instanceof UserAccount ? Core::getUser(): UserAccount::getUserByUsername($username, Core::getLibrary()))) instanceof UserAccount)
 			return null;
-		
+
 		$user = new WebUser($this);
 		$user->setUserAccount($userAccount);
 		$user->setName($userAccount->getUsername());
@@ -39,7 +39,7 @@ class WebUserManager extends TModule implements IUserManager
 		$user->setRoles($userAccount->getRoles());
 		return $user;
 	}
-	
+
 	/**
 	 * validate a user providing $username and $password
 	 *
@@ -56,7 +56,7 @@ class WebUserManager extends TModule implements IUserManager
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Save a TUser to cookie
 	 *
@@ -89,7 +89,7 @@ class WebUserManager extends TModule implements IUserManager
 	 */
 	public static function login(Library $lib, $libCardNo, $password)
 	{
-	
+
 		if (! Core::getUser () instanceof UserAccount)
 			Core::setUser ( UserAccount::get ( UserAccount::ID_SYSTEM_ACCOUNT ) );
 		if(self::$fromLocalDB === true)
@@ -104,19 +104,18 @@ class WebUserManager extends TModule implements IUserManager
 			// check whether the library has the user or not
 			if (! LibraryConnectorAbstract::getScript ($lib)->chkUser ( $libCardNo, $password ))
 				throw new CoreException ( 'Invalid login please contact your library!' );
-				
+
 			// get the information from the library system
 			$userInfo = LibraryConnectorAbstract::getScript ($lib)->getUserInfo ( $libCardNo, $password );
 			// check whether our local db has the record already
 			if (($userAccount = UserAccount::getUserByUsername ( $libCardNo, $lib )) instanceof UserAccount) {
 				$person = $userAccount->getPerson();
 				$userAccount = UserAccount::updateUser ( $userAccount, $lib, $userInfo->getUsername (), $userInfo->getPassword (), null, Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName(), $person ) );
-			} else 		// we need to create a user account from blank
-			{
+			} else {		// we need to create a user account from blank
 				$userAccount = UserAccount::createUser ( $lib, $userInfo->getUsername (), $userInfo->getPassword (), Role::get(Role::ID_READER), Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName() ) );
 			}
 		}
-	
+
 		$role = null;
 		if (! Core::getRole () instanceof Role)
 		{

@@ -1,6 +1,7 @@
-<?php 
+<?php
 require_once 'bootstrap.php';
- 
-ImportProduct::run(array(37), array(4), 1);
+
+$userAccount = WebUserManager::login(Library::get(3), '11380047', '1234');
+var_dump($userAccount);
 
 ?>
