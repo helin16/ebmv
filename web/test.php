@@ -1,5 +1,6 @@
 <?php
 require_once 'bootstrap.php';
+echo '<pre>';
 $result1 = BmvComSIP2::getSIP('206.187.32.35', '8164')->getPatronInfo('11380047', '1234');
 var_dump($result1);
 
