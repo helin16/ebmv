@@ -5,9 +5,9 @@ class ImportProduct
 	const FLAG_END = 'Import END';
 	/**
 	 * Getting the trans id from the log
-	 * 
+	 *
 	 * @param string $salt
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function getLogTransId($salt = '')
@@ -16,11 +16,11 @@ class ImportProduct
 	}
 	/**
 	 * The runner
-	 * 
+	 *
 	 * @param array  $libCodes
 	 * @param array  $supplierIds
 	 * @param string $totalRecords
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null)
@@ -32,7 +32,7 @@ class ImportProduct
 		{
 			$startScript = new UDate();
 			self::log( "== Start import script @ " . $startScript . "=============================", __FUNCTION__, self::FLAG_START);
-			
+
 			//loop through each library
 			$libraries = self::_getLibs($libCodes);
 			$suppliers = self::_getSuppliers($supplierIds) ;
@@ -58,14 +58,14 @@ class ImportProduct
 // 		echo self::showLogs($transId);
 		return $transId;
 	}
-	
+
 	private static function _importProduct(Supplier $supplier, Library $lib, $totalRecords)
 	{
 		$totalRecords = trim($totalRecords);
 		$fullUpdate = ($totalRecords === '');
-		
+
 		self::log( "== import from " . __FUNCTION__, $supplier->getName());
-			
+
 		//if there is an error for supplier connector
 		try {$script = SupplierConnectorAbstract::getInstance($supplier, $lib); }
 		catch(Exception $ex)
@@ -73,7 +73,7 @@ class ImportProduct
 			self::log( "  :: " . $ex->getMessage() . ". Trace: " . $ex->getTraceAsString(), __FUNCTION__);
 			continue;
 		}
-			
+
 		$types = $script->getImportProductTypes();
 		self::log( "  :: Got (" . count($types) . ") types to import:", __FUNCTION__);
 		foreach($types as $type)
@@ -82,7 +82,7 @@ class ImportProduct
 			self::log( "  :: start download the xml for "  .$type->getName() ."...", __FUNCTION__);
 			$productList = $script->getProductList(1, $fullUpdate ? 100 : trim($totalRecords), $type, !$fullUpdate);
 			self::log( " downloaded.", __FUNCTION__);
-		
+
 			//process each record
 			$childrenCount = count($productList);
 			self::log("  :: Start to import (" . $childrenCount . ") products:", __FUNCTION__);
@@ -101,7 +101,7 @@ class ImportProduct
 					continue;
 							}
 			}
-		
+
 //			removing the un-imported products
 // 			$ids = $supplier->getProducts($script->getImportedProductIds());
 // 			if($fullUpdate === true && count($ids) > 0)
@@ -114,9 +114,9 @@ class ImportProduct
 	}
 	/**
 	 * Getting the suppliers
-	 * 
+	 *
 	 * @param string $supplierIds
-	 * 
+	 *
 	 * @throws Exception
 	 * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
 	 */
@@ -130,7 +130,7 @@ class ImportProduct
 	}
 	/**
 	 * getting the libraries
-	 * 
+	 *
 	 * @param string $libCodes
 	 * @throws Exception
 	 * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
@@ -145,19 +145,19 @@ class ImportProduct
 	}
 	/**
 	 * Loging the messages
-	 * 
+	 *
 	 * @param unknown $msg
 	 * @param unknown $script
-	 * 
+	 *
 	 */
 	public static function log($msg, $funcName, $comments = '')
 	{
 		echo $msg . "\r\n";
-		Log::logging(Library::get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
+// 		Log::logging(Library::get(Library::ID_ADMIN_LIB), 0, 'ImportProduct', $msg, Log::TYPE_PIMPORT, $comments,  $funcName);
 	}
 	/**
 	 * Getting the logs
-	 * 
+	 *
 	 * @param string $logKey
 	 * @param string $lineBreaker
 	 */
