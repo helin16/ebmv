@@ -164,10 +164,22 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			if(!tmp.newWindow) {
 				tmp.newDiv = new Element('div')
 					.insert({'bottom': new Element('h4', {'class': 'text-warning'})
-						.insert({'bottom': new Element('span').update('Your browser probably block the window popup.') })
+						.insert({'bottom': new Element('span').update('Your browser probably blocked the window popup.') })
 						.insert({'bottom': new Element('span').update('If it is, please ') })
 						.insert({'bottom': new Element('a', {'href': url.url, 'target': '_BLANK'}).update('click here to view it') })
-						.insert({'bottom': new Element('span').update(' for now.') })
+						.insert({'bottom': new Element('span').update(' for now, and change your browser setting to allow popup from ebmv.com.au later.') })
+					})
+					.insert({'bottom': new Element('h4', {'class': 'text-warning'})
+						.insert({'bottom': new Element('span').update('您的浏览器可能阻止窗口弹出。') })
+						.insert({'bottom': new Element('span').update('如果是，请 ') })
+						.insert({'bottom': new Element('a', {'href': url.url, 'target': '_BLANK'}).update('击这里进行查看') })
+						.insert({'bottom': new Element('span').update(' .之后, 麻烦您改变您浏览器的设置允许从ebmv.com.au弹出。') })
+					})
+					.insert({'bottom': new Element('h4', {'class': 'text-warning'})
+						.insert({'bottom': new Element('span').update('您的瀏覽器可能阻止窗口彈出。') })
+						.insert({'bottom': new Element('span').update('I如果是，請 ') })
+						.insert({'bottom': new Element('a', {'href': url.url, 'target': '_BLANK'}).update('擊這裡進行查看') })
+						.insert({'bottom': new Element('span').update(' .之後, 麻煩您改變您瀏覽器的設置允許從ebmv.com.au彈出。') })
 					});
 				tmp.me.showModalBox('<strong class="text-warning">Popup Window Blocked</strong>', tmp.newDiv);
 			}
