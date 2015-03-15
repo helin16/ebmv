@@ -286,12 +286,13 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$now = new UDate();
 		$data = array(
 				'metaid' => $product->getAttribute('cno'),
-				'objid' => '',
-				'usercode' => trim($this->_orgnizationNo),
-				'devicetype' => '2',
+				'objid' => ($objId = ''),
+				'usercode' => ($userCode = trim($this->_orgnizationNo)),
+				'devicetype' => ($deviceType = '2'),
 				'type' => 'borrow',
-				'orgcode' => trim($this->_orgnizationNo),
-				'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey)),
+				'orgcode' => ($orgCode = trim($this->_orgnizationNo)),
+				//$metaId . $objectId . $orgCode . $deviceType . $userCode . $date, $secret
+				'sign' => $this->_getSign($product->getAttribute('cno') . $objId . $orgCode . $deviceType . $userCode . $now->format('YmdH:i'), trim($this->_orgnizationKey)),
 				'cult' => 'CN'
 		);
 		return $downloadUrl . '?' . http_build_query($data);
