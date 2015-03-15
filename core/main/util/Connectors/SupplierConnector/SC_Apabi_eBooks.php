@@ -281,7 +281,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getDownloadUrl(Product $product, UserAccount $user) {
 		$downloadUrl = trim($this->_supplier->getInfo('download_url'));
-		if($readurl === false || count($readurl) === 0)
+		if($downloadUrl === false || count($downloadUrl) === 0)
 			throw new SupplierConnectorException('Invalid download url for supplier: ' . $this->_supplier->getName());
 		
 		$data = array(
