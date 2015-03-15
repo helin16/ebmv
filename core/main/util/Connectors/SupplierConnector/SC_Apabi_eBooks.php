@@ -193,25 +193,17 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$readurl = $this->_supplier->getInfo('view_url');
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
-		$baseUrl = $readurl .  trim($this->_orgnizationNo) . '/pub.mvc';
+		$tokenXml = new SimpleXMLElement(BmvComScriptCURL::readUrl('http://www.apabi.com/bmv/uspservice.mvc?api=signin&uid=bmv&pwd=MTExMTEx', BmvComScriptCURL::CURL_TIMEOUT));
+		if(!isset($tokenXml->token) || trim($tokenXml->token) === '')
+			throw new SupplierConnectorException('Invalid token!' . $tokenXml->asXML());
 		$sigleProductUrlData = array(
-			'pid' => 'book.detail',
+			'api' => 'onlineread',
 			'metaid' => $product->getAttribute('cno'),
-			'cult' => 'US'
+			'objid' => $product->getAttribute('cno') . '.ft.CEBX.1',
+			'token' => trim($tokenXml->token),
+			'cult' => 'CN'
 		);
-		
-		$now = new UDate();
-		$data = array(
-				'pid' => 'sso'
-				,'uid' => trim($this->_supplierUserName)
-				,'pwd'=> strtoupper(md5($this->_supplierPassword))
-				,'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey))
-				,'returnurl' => $baseUrl . '?' . http_build_query($sigleProductUrlData)
-				,'autoreg' => '1'
-				,'pdm' => '0'
-				,'errorurl'=>'http://ebmv.com.au'
-		);
-		return $baseUrl . '?' . http_build_query($data);
+		return $readurl . '?' . http_build_query($data);
 	}
 	/**
 	 * (non-PHPdoc)
