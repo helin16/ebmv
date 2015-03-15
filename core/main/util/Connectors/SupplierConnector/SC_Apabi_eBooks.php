@@ -13,21 +13,6 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	private $_supplierPassword = '111111';
 	private static $_cache = array();
 	/**
-	 * DES with Zeros encryption
-	 * 
-	 * @param string $string The data that we are trying to encrypt
-	 * @param string $key    The salt
-	 * 
-	 * @return string
-	 */
-	private function _getSign($string, $key)
-	{
-		//Encryption
-		$iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB), MCRYPT_RAND);
-		$encrypted_string = mcrypt_encrypt(MCRYPT_TRIPLEDES, $key, $string, MCRYPT_MODE_ECB, $iv);
-		return base64_encode($encrypted_string);
-	}
-	/**
 	 * Getting the library owns type
 	 *
 	 * @param unknown $typeId
@@ -292,7 +277,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 				'type' => 'borrow',
 				'orgcode' => ($orgCode = trim($this->_orgnizationNo)),
 				//$metaId . $objectId . $orgCode . $deviceType . $userCode . $date, $secret
-				'sign' => $this->_getSign($product->getAttribute('cno') . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd'), trim($this->_orgnizationKey)),
+				'sign' => md5($product->getAttribute('cno') . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd') . trim($this->_orgnizationKey)),
 				'cult' => 'CN'
 		);
 		return $downloadUrl . '?' . http_build_query($data);
