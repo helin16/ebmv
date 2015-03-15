@@ -74,8 +74,8 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$readOnline->Available = 1;
 		$readOnline->Total = 1;
 		$download = $copiesXml->addChild ( $this->_getLibOwnsType ( LibraryOwnsType::ID_DOWNLOAD_COPIES )->getCode () );
-		$download->Available = 0;
-		$download->Total = 0;
+		$download->Available = 1;
+		$download->Total = 1;
 		$download = $copiesXml->addChild ( $this->_getLibOwnsType ( LibraryOwnsType::ID_BORROW_TIMES )->getCode () );
 		$download->Available = 1;
 		$download->Total = 1;
