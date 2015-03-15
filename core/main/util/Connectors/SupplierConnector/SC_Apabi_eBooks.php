@@ -294,7 +294,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 				'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey)),
 				'cult' => 'CN'
 		);
-		return $readurl . '?' . http_build_query($data);
+		return $downloadUrl . '?' . http_build_query($data);
 	}
 	/**
 	 * (non-PHPdoc)
