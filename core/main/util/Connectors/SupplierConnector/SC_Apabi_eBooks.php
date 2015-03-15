@@ -277,6 +277,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 				'type' => 'borrow',
 				'orgcode' => ($orgCode = trim($this->_orgnizationNo)),
 				//md5(metaid+objected+orgcode+devicetype+usercode+ DateTime.Now.Date.ToString("yyyyMMdd") +秘钥)
+				'string' => ($metaId . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd') . trim($this->_orgnizationKey)),
 				'sign' => strtoupper(md5($metaId . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd') . trim($this->_orgnizationKey))),
 				'cult' => 'CN'
 		);
