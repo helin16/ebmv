@@ -193,7 +193,12 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$readurl = $this->_supplier->getInfo('view_url');
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
-		$tokenXml = new SimpleXMLElement(BmvComScriptCURL::readUrl('http://www.apabi.com/bmv/uspservice.mvc?api=signin&uid=bmv&pwd=MTExMTEx', BmvComScriptCURL::CURL_TIMEOUT));
+		$tokenData = array(
+			'api' => 'signin',
+			'uid' => trim($this->_orgnizationNo),
+			'pwd' => base64_encode($this->_supplierPassword)
+		);
+		$tokenXml = new SimpleXMLElement(BmvComScriptCURL::readUrl($readurl . '?' . http_build_query($tokenData), BmvComScriptCURL::CURL_TIMEOUT));
 		if(!isset($tokenXml->token) || trim($tokenXml->token) === '')
 			throw new SupplierConnectorException('Invalid token!' . $tokenXml->asXML());
 		$data = array(
@@ -275,6 +280,21 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 * @see SupplierConn::getDownloadUrl()
 	 */
 	public function getDownloadUrl(Product $product, UserAccount $user) {
+		$downloadUrl = trim($this->_supplier->getInfo('download_url'));
+		if($readurl === false || count($readurl) === 0)
+			throw new SupplierConnectorException('Invalid download url for supplier: ' . $this->_supplier->getName());
+		
+		$data = array(
+				'metaid' => $product->getAttribute('cno'),
+				'objid' => '',
+				'usercode' => 'bmv',
+				'devicetype' => '2',
+				'type' => 'borrow',
+				'orgcode' => 'bmv',
+				'sign' => $this->_getSign(trim($this->_supplierUserName) . '$' .  trim($this->_orgnizationNo) . '$' . $now->format('YmdH:i'), trim($this->_orgnizationKey)),
+				'cult' => 'CN'
+		);
+		return $readurl . '?' . http_build_query($data);
 	}
 	/**
 	 * (non-PHPdoc)
