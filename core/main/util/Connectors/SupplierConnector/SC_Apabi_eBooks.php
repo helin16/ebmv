@@ -283,7 +283,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$downloadUrl = trim($this->_supplier->getInfo('download_url'));
 		if($downloadUrl === false || count($downloadUrl) === 0)
 			throw new SupplierConnectorException('Invalid download url for supplier: ' . $this->_supplier->getName());
-		
+		$now = new UDate();
 		$data = array(
 				'metaid' => $product->getAttribute('cno'),
 				'objid' => '',
