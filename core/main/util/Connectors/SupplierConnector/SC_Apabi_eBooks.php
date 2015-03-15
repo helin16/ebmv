@@ -270,14 +270,14 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 			throw new SupplierConnectorException('Invalid download url for supplier: ' . $this->_supplier->getName());
 		$now = new UDate();
 		$data = array(
-				'metaid' => $product->getAttribute('cno'),
+				'metaid' => ($metaId = $product->getAttribute('cno')),
 				'objid' => ($objId = ''),
 				'usercode' => ($userCode = trim($this->_orgnizationNo)),
 				'devicetype' => ($deviceType = '2'),
 				'type' => 'borrow',
 				'orgcode' => ($orgCode = trim($this->_orgnizationNo)),
-				//$metaId . $objectId . $orgCode . $deviceType . $userCode . $date, $secret
-				'sign' => md5($product->getAttribute('cno') . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd') . trim($this->_orgnizationKey)),
+				//md5(metaid+objected+orgcode+devicetype+usercode+ DateTime.Now.Date.ToString("yyyyMMdd") +秘钥)
+				'sign' => strtoupper(md5($metaId . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd') . trim($this->_orgnizationKey))),
 				'cult' => 'CN'
 		);
 		return $downloadUrl . '?' . http_build_query($data);
