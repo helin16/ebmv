@@ -271,7 +271,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$now = new UDate();
 		$data = array(
 				'metaid' => ($metaId = $product->getAttribute('cno')),
-				'objectid' => ($objId = ''),
+				'objectid' => ($objId = $product->getAttribute('cno') . '.ft.CEBX.1'),
 				'usercode' => ($userCode = trim($this->_orgnizationNo)),
 				'devicetype' => ($deviceType = '2'),
 				'type' => 'borrow',
