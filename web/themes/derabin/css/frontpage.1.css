@@ -1,0 +1,127 @@
+/** new **/
+html body {
+	background-color: #f1f1f1;
+	color: #414141;
+}
+
+html body div#frontend {
+	background-color: #ffffff;
+	background-image: url("../images/BgMainGrad.jpg");
+	background-repeat: repeat-x;
+}
+
+html body div.framewrapper.footer {
+	background-image: url("../images/BgFooterGrad.jpg");
+	background-repeat: repeat-x;
+}
+
+html body div#frontend {
+	margin-bottom: unset;
+}
+
+#topmenulist {
+	background-color: #006A8C !important;
+}
+
+#topmenulist>ul>li * 
+{
+	color: #fff;
+}
+
+#topmenulist>ul>li:hover * ,
+#topmenulist>ul>li[class~=open] * {
+	color: #006A8C !important;
+}
+#topmenulist>ul>li:hover {
+	background-color: #fff !important;
+}
+
+#topmenulist>ul>li.dropdown.visible-lg.visible-md.visible-sm.visible-xs.open>ul>li>a>div>div {
+	color: #669700 !important;
+}
+.panel-default>.panel-heading {
+	background: #8aa513 !important;
+	border-bottom: none;
+}
+#catelist > a {
+	background: #006a8c !important;
+}
+/** end new **/
+.header .navbar.navbar-default {
+	border: none;
+	background: #fff;
+	box-shadow: none;
+}
+#catelist > a:hover {
+	text-decoration: underline;
+}
+html body div#frontend form#ctl0_ctl0 div.framewrapper.header div.contentwrapper nav.navbar.navbar-default.navbar-static-top
+	{
+	background: transparent;
+}
+#frontend {
+	margin-bottom: 0;
+}
+.header .navbar-default .container>.row {
+	background-color: #FFFFFF;
+	background-size: 100% auto;
+	border-radius: 15px 15px 0 0;
+}
+.header .navbar-default .mainmenu {
+	padding: 0px;
+}
+#ctl0_ctl0 > div.framewrapper.container.mainbody > div > div > div > div.maincontent.col-md-9.col-md-push-3 > div.well.well-sm {
+	background: #8AA513;
+	color: #FFF;
+}
+#mybookshelfbtn {
+	background: #006a8c;
+}
+.header .logo, .header .media-body {
+	margin-top: 20px;
+	height: 90px;
+	vertical-align: bottom;
+}
+
+.header .logo {
+	background: #fff;
+	padding: 5px;
+}
+
+.header .media-body h4 {
+	vertical-align: bottom;
+}
+
+.header .title {
+	display: none;
+}
+
+.header .topmenu {
+	margin: 10px 0 0 0;
+}
+
+.pageWrapper>.col-md-3>.panel {
+	border: none;
+}
+
+#catelist .list-group-item {
+	background: #315F88;
+	color: #fff;
+	border: none;
+}
+
+.footer .container {
+	background: #2E5578;
+	color: #C1CCD7;
+	padding: 20px 30px 30px;
+}
+
+#catelist .list-group-item:hover {
+	background: url("../images/menu-bg.gif") repeat-x scroll center top
+		#104164;
+	color: #fff;
+}
+
+.pageWrapper.product_details_page {
+	background: #fff;
+}
