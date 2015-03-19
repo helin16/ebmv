@@ -8,7 +8,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 // 		'n.D440100nfzm'   => array('name' => '南方周末',    'productId' =>  'CN44-0003', 'paperUid' => 'n.D440100nfzm', 'productType' => 'NewsPaper')
 // 	);
 	private $_orgnizationNo = 'bmv';
-	private $_orgnizationKey = 'apabikey';
+	private $_orgnizationKey = 'apabi';
 	private $_supplierUserName ='auebmv';
 	private $_supplierPassword = '111111';
 	private static $_cache = array();
