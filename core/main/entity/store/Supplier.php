@@ -9,6 +9,7 @@
 class Supplier extends BaseEntityAbstract
 {
 	const ID_CIO = 10;
+	const ID_XIN_DONG_FANG = 8;
 	/**
 	 * The informaction cacher
 	 * 

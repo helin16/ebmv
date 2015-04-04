@@ -47,7 +47,7 @@
 				<li class="hidden-xs"><a> | </a></li>
 				<%= $this->getMenuList(Language::get(Language::ID_SIMPLIFIED_CHINESE), Core::getLibrary()) %>
 				<%= $this->getMenuList(Language::get(Language::ID_TRADITIONAL_CHINESE), Core::getLibrary()) %>
-				<%= $this->getMenuList('', Core::getLibrary(), array('CN'=> '学英语', 'EN'=> 'ESL'), array(Product::get(62), Product::get(61))) %>
+				<%= $this->getMenuList('', Core::getLibrary(), array('CN'=> '学英语', 'EN'=> 'ESL'), Supplier::get(Supplier::ID_XIN_DONG_FANG)->getProducts(array(), array(ProductType::ID_COURSE))) %>
 				<%= $this->getMenuList('', Core::getLibrary(), array('CN'=> '学汉语', 'EN'=> 'Learn Chinese'),  Supplier::get(Supplier::ID_CIO)->getProducts(array(), array(ProductType::ID_COURSE))) %>
 				<li class="visible-xs"><a href="/help.html" class="iconbtn"><div class="btnname">帮助/幫助<small>Help</small></div><span class=" glyphicon glyphicon-question-sign"></span></a></li>
 				<li class="visible-xs"><a href="/user.html" class="iconbtn"><div class="btnname">登录/登錄<small>Login</small></div></a></li>
