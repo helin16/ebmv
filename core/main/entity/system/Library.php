@@ -175,7 +175,7 @@ class Library extends BaseEntityAbstract
 	 */
 	public function getJson($extra = array(), $reset = false)
 	{
-		$array = array();
+		$array = $extra;
 		if(!$this->isJsonLoaded($reset))
 		{
 			$infoArray = array();

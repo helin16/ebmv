@@ -106,6 +106,7 @@ class AdminLibraryController extends CrudPageAbstract
     	$result = $errors = array();
     	try
     	{
+    		var_dump($param->CallbackParameter);
     		Dao::beginTransaction();
     		if(!isset($param->CallbackParameter->id))
     			throw new Exception("System Error: No item id passed in!");
@@ -134,7 +135,8 @@ class AdminLibraryController extends CrudPageAbstract
     				->save();
     		}
     		Dao::commitTransaction();
-    		$result['items'] = array($item->getJson());
+    		var_dump(Core::getUser());
+    		$result['items'] = array($item->getJson(array('user'=>Core::getUser()->getJson())));
     	}
     	catch(Exception $ex)
     	{
@@ -145,7 +147,7 @@ class AdminLibraryController extends CrudPageAbstract
     }
 	/**
 	 * (non-PHPdoc)
-	 * @see CrudPageAbstract::saveItems()
+	 * @see CrudPageAbstract::delItems()
 	 */
 	public function delItems($sender, $param)
     {
