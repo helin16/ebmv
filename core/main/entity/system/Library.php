@@ -188,6 +188,7 @@ class Library extends BaseEntityAbstract
 				$infoArray[$row['typeId']][] = array("id" => $row['infoId'], "value" => $row["infoValue"], "type" => array("id" => $row["typeId"], "name" => $row["typeName"]));
 			}
 			$array['info'] = $infoArray;
+			$array['adminusers'] = array_map(create_function('$a', 'return $a->getJson();'), UserAccount::getLibAdminUsers($this));
 		}
 		return parent::getJson($array, $reset);
 	}
