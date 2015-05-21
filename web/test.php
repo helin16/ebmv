@@ -1,12 +1,10 @@
 <?php
 require_once 'bootstrap.php';
 echo '<pre>';
-$result1 = BmvComSIP2::getSIP('206.187.32.35', '8164')->getPatronInfo('11380047', '1234');
-var_dump($result1);
-
-var_dump('==============================');
-
-$result2 = BmvComSIP2::getSIP('206.187.32.35', '8164')->getPatronInfo('11380047', 'abc');
+Core::setUser(UserAccount::get(191));
+$product = Product::get(22211);
+$library = Library::get(10);
+$result2 = SupplierConnectorAbstract::getInstance($product->getSupplier(), $library)->getOnlineReadUrl($product, Core::getUser());
 var_dump($result2);
 
 ?>
