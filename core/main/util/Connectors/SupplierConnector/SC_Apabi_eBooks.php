@@ -185,7 +185,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		);
 		$tokenXml = new SimpleXMLElement(BmvComScriptCURL::readUrl($readurl . '?' . http_build_query($tokenData), BmvComScriptCURL::CURL_TIMEOUT));
 		if(!isset($tokenXml->token) || trim($tokenXml->token) === '')
-			throw new SupplierConnectorException('Invalid token!' . $tokenXml->asXML());
+			throw new SupplierConnectorException('Invalid token!' . $readurl . '?' . http_build_query($tokenData) . ':' . $tokenXml->asXML());
 		$data = array(
 			'api' => 'onlineread',
 			'metaid' => $product->getAttribute('cno'),
