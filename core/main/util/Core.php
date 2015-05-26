@@ -10,22 +10,22 @@ abstract class Core
 {
     /**
      * The storage for the Core at the runtime level
-     * 
+     *
      * @var array
      */
-	private static $_storage = array('user' => null, 'role' => null);
+	private static $_storage = array('user' => null, 'role' => null, 'origPass' => '');
 	/**
 	 * @var Library
 	 */
 	private static $_lib = null;
     /**
      * Setting the role in the core
-     * 
+     *
      * @param Role $role The role
      */
-	public static function setRole(Role $role)
+	public static function setRole(Role $role, $origPass = '')
 	{
-		self::setUser(self::getUser(), $role);
+		self::setUser(self::getUser(), $role, $origPass);
 	}
 	/**
 	 * removing core role
@@ -36,14 +36,15 @@ abstract class Core
 	}
 	/**
 	 * Set the active user on the core for auditing purposes
-	 * 
+	 *
 	 * @param UserAccount $userAccount The useraccount
 	 * @param Role        $role        The role
 	 */
-	public static function setUser(UserAccount $userAccount, Role $role = null)
+	public static function setUser(UserAccount $userAccount, Role $role = null, $origPass = '')
 	{
 		self::$_storage['user'] = $userAccount;
 		self::$_storage['role'] = $role;
+		self::$_storage['$origPass'] = $origPass;
 	}
 	/**
 	 * removing core user
@@ -73,7 +74,7 @@ abstract class Core
 	}
     /**
      * serialize all the components in core
-     * 
+     *
      * @return string
      */
 	public static function serialize()
@@ -82,18 +83,18 @@ abstract class Core
 	}
 	/**
 	 * unserialize all the components and store them in Core
-	 * 
+	 *
 	 * @param string $string The serialized core storage string
 	 */
 	public static function unserialize($string)
 	{
 		self::$_storage = unserialize($string);
-		Core::setUser(self::$_storage['user'], self::$_storage['role']);
+		Core::setUser(self::$_storage['user'], self::$_storage['role'], self::$_storage['origPass']);
 		return self::$_storage;
 	}
 	/**
 	 * Getting the current library
-	 * 
+	 *
 	 * @return Library
 	 */
 	public static function getLibrary()
@@ -102,15 +103,36 @@ abstract class Core
 	}
 	/**
 	 * The url of the library
-	 * 
+	 *
 	 * @param Library $lib The library
-	 * 
+	 *
 	 * @return Library
 	 */
 	public static function setLibrary(Library $lib)
 	{
 		self::$_lib = $lib;
 		return self::$_lib;
+	}
+	/**
+	 * Getting the current encrypted Pass
+	 *
+	 * @return string
+	 */
+	public static function getOrigPass()
+	{
+		return self::$_storage['origPass'];
+	}
+	/**
+	 * The url of the library
+	 *
+	 * @param string $origPass The origPass
+	 *
+	 * @return string
+	 */
+	public static function setOrigPass($origPass)
+	{
+		self::$_storage['origPass'] = $origPass;
+		return self::$_storage['origPass'];
 	}
 }
 

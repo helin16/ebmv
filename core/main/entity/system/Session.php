@@ -10,19 +10,19 @@ class Session extends BaseEntityAbstract
 {
     /**
      * The session ID
-     * 
+     *
      * @var string
      */
     private $key;
     /**
      * The session data
-     * 
+     *
      * @var string
      */
     private $data;
     /**
      * Getting the sesison ID
-     * 
+     *
      * @return string
      */
     public function getKey()
@@ -31,9 +31,9 @@ class Session extends BaseEntityAbstract
     }
     /**
      * Setter for the session ID
-     * 
-     * @param string $key The 
-     * 
+     *
+     * @param string $key The
+     *
      * @return string
      */
     public function setKey($key)
@@ -43,7 +43,7 @@ class Session extends BaseEntityAbstract
     }
     /**
      * Getter for the session data
-     * 
+     *
      * @return string
      */
     public function getData()
@@ -52,9 +52,9 @@ class Session extends BaseEntityAbstract
     }
     /**
      * Setter for the session data
-     * 
+     *
      * @param string $data The session data
-     * 
+     *
      * @return Session
      */
     public function setData($data)
@@ -80,7 +80,7 @@ class Session extends BaseEntityAbstract
 		DaoMap::setStringType('key', 'varchar', 32);
 		DaoMap::setStringType('data', 'longtext');
 		parent::__loadDaoMap();
-		
+
 		DaoMap::createUniqueIndex('key');
 		DaoMap::commit();
 	}
@@ -107,7 +107,7 @@ class Session extends BaseEntityAbstract
 	public static function write($sessionId, $sessionData)
 	{
 		$user = (($user = Core::getUser()) instanceof UserAccount ? $user : UserAccount::get(UserAccount::ID_GUEST_ACCOUNT));
-		Core::setUser($user, Core::getRole());
+		Core::setUser($user, Core::getRole(), Core::getOrigPass());
 		$session = ($session = self::getSession($sessionId)) instanceof Session ? $session : new Session();
 		$session->setKey($sessionId)
 			->setData($sessionData)

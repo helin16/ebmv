@@ -22,10 +22,10 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	private function _getLibOwnsType($typeId) {
 		if (! isset ( self::$_cache ['libType'] ))
 			self::$_cache ['libType'] = array ();
-	
+
 		if (! isset ( self::$_cache ['libType'] [$typeId] ))
 			self::$_cache ['libType'] [$typeId] = LibraryOwnsType::get ( $typeId );
-	
+
 		return self::$_cache ['libType'] [$typeId];
 	}
 	/**
@@ -53,7 +53,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$xml->SiteID = $siteId;
 		$xml->Language = 'zh_CN';
 		$xml->BookType = $category;
-	
+
 		$copiesXml = $xml->addChild( 'Copies' );
 		$readOnline = $copiesXml->addChild ($this->_getLibOwnsType ( LibraryOwnsType::ID_ONLINE_VIEW_COPIES )->getCode ());
 		$readOnline->Available = 1;
@@ -88,7 +88,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	}
 	/**
 	 * Gettht product List
-	 * 
+	 *
 	 * @throws CoreException
 	 * @return SimpleXMLElement
 	 */
@@ -117,10 +117,10 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	}
 	/**
 	 * Generating a fake product
-	 * 
+	 *
 	 * @param SimpleXMLElement $fakeProductXml
 	 * @param string           $siteId
-	 * 
+	 *
 	 * @return SimpleXMLElement
 	 */
 	private function _getFakeProduct(SimpleXMLElement $fakeProductXml, $siteId = '', $funcName = '')
@@ -152,10 +152,10 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		// ignore TIYAN
 		// ignore ContentUrl
 		$coverImg = $this->$funcName($fakeProductXml, 'CoverUrl');
-			
+
 		$array = $this->_getFakeXml($productType, $productName, $isbn, $cno, $issueDate, $coverImg, $author, $publisher, $intro, $category, $siteId);
 		return $array;
-	}	
+	}
 	private function _getXmlElementFromFormat1(SimpleXMLElement $xml, $filedName)
 	{
 		if(empty($filedName))
@@ -178,14 +178,18 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$readurl = $this->_supplier->getInfo('view_url');
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
+		$readurl = str_replace('{sitecode}', strtolower(trim($this->_lib->getInfo ( 'aus_code' ) )), $readurl);
 		$tokenData = array(
 			'api' => 'signin',
-			'uid' => trim($this->_orgnizationNo),
-			'pwd' => base64_encode($this->_supplierPassword)
+			'uid' => $user->getUserName(),
+			'pwd' => strtoupper(base64_encode(trim(Core::getOrigPass() === '' ? Core::getOrigPass() : $user->getPassword())))
 		);
-		$tokenXml = new SimpleXMLElement(BmvComScriptCURL::readUrl($readurl . '?' . http_build_query($tokenData), BmvComScriptCURL::CURL_TIMEOUT));
+		$url = $readurl . '?api=signin&uid=' . $user->getUserName() . '&pwd=' . base64_encode('1234');
+// 		$url = $readurl . '?' . http_build_query($tokenData);
+		$result = BmvComScriptCURL::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
+		$tokenXml = new SimpleXMLElement($result);
 		if(!isset($tokenXml->token) || trim($tokenXml->token) === '')
-			throw new SupplierConnectorException('Invalid token!' . $readurl . '?' . http_build_query($tokenData) . ':' . $tokenXml->asXML());
+			throw new SupplierConnectorException('Invalid token!' . $url . ':' . $tokenXml->asXML());
 		$data = array(
 			'api' => 'onlineread',
 			'metaid' => $product->getAttribute('cno'),
@@ -201,15 +205,15 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProduct(Product $product)
 	{
-		$productXML = $this->_getFakeXml($product->getProductType(), 
-				$product->getTitle(), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_ISBN)->getCode()), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_CNO)->getCode()), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_PUBLISHDATE)->getCode()), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_IMAGE_THUMB)->getCode()), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_AUTHOR)->getCode()), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_PUBLISHER)->getCode()), 
-				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_DESCRIPTION)->getCode()), 
+		$productXML = $this->_getFakeXml($product->getProductType(),
+				$product->getTitle(),
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_ISBN)->getCode()),
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_CNO)->getCode()),
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_PUBLISHDATE)->getCode()),
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_IMAGE_THUMB)->getCode()),
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_AUTHOR)->getCode()),
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_PUBLISHER)->getCode()),
+				$product->getAttribute(ProductAttributeType::get(ProductAttributeType::ID_DESCRIPTION)->getCode()),
 				$product->getProductType()->getName(),
 				trim($this->_lib->getInfo ( 'aus_code' ) ),
 				'_getXmlElementFromFormat2'
@@ -272,10 +276,10 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$data = array(
 				'metaid' => ($metaId = $product->getAttribute('cno')),
 				'objectid' => ($objId = ''),
-				'usercode' => ($userCode = trim($this->_orgnizationNo)),
+				'usercode' => ($userCode = trim($this->_lib->getInfo('aus_code'))),
 				'devicetype' => ($deviceType = '2'),
 				'type' => 'borrow',
-				'orgcode' => ($orgCode = trim($this->_orgnizationNo)),
+				'orgcode' => ($orgCode = trim($this->_lib->getInfo('aus_code'))),
 				//md5(metaid+objected+orgcode+devicetype+usercode+ DateTime.Now.Date.ToString("yyyyMMdd") +秘钥)
 				'string' => ($metaId . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd') . trim($this->_orgnizationKey)),
 				'sign' => strtoupper(md5($metaId . $objId . $orgCode . $deviceType . $userCode . $now->format('Ymd') . trim($this->_orgnizationKey))),
@@ -287,7 +291,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 * (non-PHPdoc)
 	 * @see SupplierConn::downloadCatalog()
 	 */
-	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE) 
+	public function downloadCatalog(ProductType $type, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting NOW TIME from supplier:', __FUNCTION__);
 		$this->_importCatalogList($type, 1, $pageSize);
@@ -312,7 +316,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 				'filter' => 'FileStatus:[' . $beforeYear . ',' . $thisYear . ']'
 		);
 		$xml = BmvComScriptCURL::readUrl($url . '?' . http_build_query($data), BmvComScriptCURL::CURL_TIMEOUT);
-	
+
 		return new SimpleXMLElement($xml);
 	}
 	/**
@@ -327,7 +331,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$bookList = $this->_getCatalogListData($index, $pageSize);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'GOT response from supplier:', __FUNCTION__);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, $bookList instanceof SimpleXMLElement ? $bookList->asXML() : print_r($bookList, true), __FUNCTION__);
-		
+
 		if($bookList instanceof SimpleXMLElement) {
 			//processing the current list
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start looping through ' . count($bookList->Records->children()) . ' product(s):', __FUNCTION__);
@@ -348,7 +352,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 			if($totalPages === 0)
 				$totalPages = intval(trim($bookList->TotalCount));
 		}
-		
+
 		//check whether we need to download more
 		if($index < $totalPages) {
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got more products to download: current page=' . $index . ', total pages=' . $totalPages, __FUNCTION__);
