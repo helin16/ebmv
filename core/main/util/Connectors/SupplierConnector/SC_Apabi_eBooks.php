@@ -179,7 +179,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		if($readurl === false || count($readurl) === 0)
 			throw new SupplierConnectorException('Invalid view url for supplier: ' . $this->_supplier->getName());
 		$readurl = str_replace('{sitecode}', strtolower(trim($this->_lib->getInfo ( 'aus_code' ) )), $readurl);
-		$password = trim(trim(Core::getOrigPass()) !== '' ? Core::getOrigPass() : $user->getPassword());
+		$password = trim(Core::getOrigPass());
 		$tokenData = array(
 			'api' => 'signin',
 			'uid' => $user->getUserName(),
