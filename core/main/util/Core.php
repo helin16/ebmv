@@ -13,7 +13,7 @@ abstract class Core
      *
      * @var array
      */
-	private static $_storage = array('user' => null, 'role' => null, 'origPass' => '');
+	private static $_storage = array('userId' => '', 'roleId' => '', 'origPass' => '');
 	/**
 	 * @var Library
 	 */
@@ -42,16 +42,16 @@ abstract class Core
 	 */
 	public static function setUser(UserAccount $userAccount, Role $role = null, $origPass = '')
 	{
-		self::$_storage['user'] = $userAccount;
-		self::$_storage['role'] = $role;
-		self::$_storage['$origPass'] = $origPass;
+		self::$_storage['userId'] = $userAccount->getId();
+		self::$_storage['roleId'] = $role instanceof Role ? $role->getId() : '';
+		self::$_storage['origPass'] = $origPass;
 	}
 	/**
 	 * removing core user
 	 */
 	public static function rmUser()
 	{
-	    self::$_storage['user'] = null;
+	    self::$_storage['userId'] = '';
 	    self::rmRole();
 	}
 	/**
@@ -61,7 +61,7 @@ abstract class Core
 	 */
 	public static function getUser()
 	{
-		return self::$_storage['user'];
+		return UserAccount::get(self::$_storage['userId']);
 	}
 	/**
 	 * Get the current user role set against the System for Dao filtering purposes
@@ -70,7 +70,7 @@ abstract class Core
 	 */
 	public static function getRole()
 	{
-		return self::$_storage['role'] instanceof Role ? self::$_storage['role'] : null;
+		return Role::get(self::$_storage['roleId']);
 	}
     /**
      * serialize all the components in core
@@ -89,7 +89,7 @@ abstract class Core
 	public static function unserialize($string)
 	{
 		self::$_storage = unserialize($string);
-		Core::setUser(self::$_storage['user'], self::$_storage['role'], self::$_storage['origPass']);
+		Core::setUser(UserAccount::get(self::$_storage['userId']), Role::get(self::$_storage['roleId']), self::$_storage['origPass']);
 		return self::$_storage;
 	}
 	/**
