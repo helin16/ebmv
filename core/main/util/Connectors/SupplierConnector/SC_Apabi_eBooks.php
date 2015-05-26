@@ -182,9 +182,9 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$tokenData = array(
 			'api' => 'signin',
 			'uid' => $user->getUserName(),
-			'pwd' => strtoupper(base64_encode(trim(Core::getOrigPass() === '' ? Core::getOrigPass() : $user->getPassword())))
+			'pwd' => ($password = strtoupper(base64_encode(trim(Core::getOrigPass() === '' ? Core::getOrigPass() : $user->getPassword()))))
 		);
-		$url = $readurl . '?api=signin&uid=' . $user->getUserName() . '&pwd=' . base64_encode('1234');
+		$url = $readurl . '?api=signin&uid=' . $user->getUserName() . '&pwd=' . base64_encode($password);
 // 		$url = $readurl . '?' . http_build_query($tokenData);
 		$result = BmvComScriptCURL::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
 		$tokenXml = new SimpleXMLElement($result);
