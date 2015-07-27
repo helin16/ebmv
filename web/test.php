@@ -1,10 +1,8 @@
 <?php
 require_once 'bootstrap.php';
 echo '<pre>';
-Core::setUser(UserAccount::get(191));
-$product = Product::get(22211);
-$library = Library::get(10);
-$result2 = SupplierConnectorAbstract::getInstance($product->getSupplier(), $library)->getOnlineReadUrl($product, Core::getUser());
-var_dump($result2);
+$script = new SC_DLTX(Supplier::get(Supplier::ID_XIN_DONG_FANG), Library::get(1));
+$script->getProductListInfo();
+var_dump(SC_DLTX::$cache);
 
 ?>
