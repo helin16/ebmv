@@ -53,7 +53,8 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	public function getProductListInfo(ProductType $type = null)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list info:', __FUNCTION__);
-		$importUrl = 'http://public.dooland.com/v1/Magazine/lists/page/{page_no}';
+// 		$importUrl = 'http://public.dooland.com/v1/Magazine/lists/page/{page_no}';
+		$importUrl =trim($this->_supplier->getInfo('import_url'));
 
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
 		if(!isset(self::$cache['data']))
@@ -83,8 +84,10 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getOnlineReadUrl(Product $product, UserAccount $user) {
 // 		$url = explode (',', $this->_supplier->getInfo ( 'view_url' ) );
+// 		$url = trim('http://public.dooland.com/v1/Read/webonline/?content=' . $content);
+		$url = explode (',', $this->_supplier->getInfo ( 'view_url' ) );
 		$content = $this->_getContent($product);
-		$url = trim('http://public.dooland.com/v1/Read/webonline/?content=' . $content);
+		$url = str_replace('{content}', $content, $url);
 		if ($url === false || count ( $url ) === 0)
 			throw new SupplierConnectorException ( 'Invalid view url for supplier: ' . $this->_supplier->getName () );
 		return $url;
@@ -106,7 +109,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 			'accountid' => '111',
 			'timestamp' => time()
 		);
-		return urlencode($this->_encrypt(json_encode($contentArr), self::APP_SECRET));
+		return urlencode($this->_encrypt(json_encode($contentArr), substr(self::APP_SECRET, 0, 8)));
 	}
 	/**
 	 * (non-PHPdoc)
