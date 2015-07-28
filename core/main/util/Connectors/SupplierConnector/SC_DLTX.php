@@ -102,13 +102,14 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _getContent(Product $product)
 	{
+		$now = new UDate('now', 'Asia/Shanghai');
 		$contentArr = array(
 			'appid' => self::APP_ID,
 			'id' => $product->getAttribute ( 'isbn' ),
 			'issuetype' => 'mag',
 			'pageid' => '1',
 			'accountid' => '111',
-			'timestamp' => time()
+			'timestamp' => $now->getUnixTimeStamp()
 		);
 		return urlencode($this->_encrypt(json_encode($contentArr), substr(self::APP_SECRET, 0, 8)));
 	}
