@@ -829,7 +829,9 @@ class Product extends BaseEntityAbstract
 			$where .= ' AND pro.productTypeId = ?';
 			$params[] = trim($type->getId());
 		}
+		Dao::$debug = true;
 		$results =  self::getAllByCriteria($where, $params, true, $pageNo, $pageSize, array('pro.id'=>'desc'), $stats);
+		Dao::$debug = false;
 		return $results;
 	}
 	/**
