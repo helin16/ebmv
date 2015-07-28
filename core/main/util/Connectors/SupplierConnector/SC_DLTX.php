@@ -88,6 +88,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$url = explode (',', $this->_supplier->getInfo ( 'view_url' ) );
 		$content = $this->_getContent($product);
 		$url = str_replace('{content}', $content, $url);
+		$url = str_replace('{appid}', self::APP_ID, $url);
 		if ($url === false || count ( $url ) === 0)
 			throw new SupplierConnectorException ( 'Invalid view url for supplier: ' . $this->_supplier->getName () );
 		return $url;
