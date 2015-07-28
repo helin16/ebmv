@@ -54,7 +54,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list info:', __FUNCTION__);
 // 		$importUrl = 'http://public.dooland.com/v1/Magazine/lists/page/{page_no}';
-		$importUrl =trim($this->_supplier->getInfo('import_url'));
+		$importUrl = str_replace('{page_no}', 1, trim($this->_supplier->getInfo('import_url')));
 
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
 		if(!isset(self::$cache['data']))
@@ -74,7 +74,10 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
 		if(!isset(self::$cache['data']))
+		{
+			$importUrl = str_replace('{page_no}', 1, trim($this->_supplier->getInfo('import_url')));
 			$this->_getJsonFromUrl($importUrl, $type);
+		}
 		return array_slice(self::$cache['data'], ($pageNo - 1) * $pageSize, $pageSize);
 	}
 	/**
