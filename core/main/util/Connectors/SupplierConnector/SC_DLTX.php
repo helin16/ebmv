@@ -199,7 +199,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$xml->Press = $product instanceof Product ? $product->getAttribute ( 'publisher' ) : $this->_supplier->getName ();
 		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute ( 'publish_date' ) : $data['pubDate'];
 		$xml->Words = '';
-		$xml->FrontCover = $product instanceof Product ? $product->getAttribute ( 'image' ) : $data['thumbnail'];
+		$xml->FrontCover = $product instanceof Product ? $product->getAttribute ( 'image_thumb' ) : $data['thumbnail'];
 		$xml->Introduction = $product instanceof Product ? $product->getAttribute ( 'description' ) : $data['des'];
 		$xml->Cip = '';
 		$xml->SiteID = trim ( $this->_lib->getInfo ( 'aus_code' ) );
