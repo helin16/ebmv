@@ -887,7 +887,7 @@ class TControl extends TApplicationComponent implements IRenderable, IBindable
 	/**
 	 * @return boolean whether child controls have been created
 	 */
-	final protected function getChildControlsCreated()
+	protected function getChildControlsCreated()
 	{
 		return ($this->_flags & self::IS_CHILD_CREATED)!==0;
 	}
