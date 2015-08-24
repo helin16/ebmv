@@ -897,7 +897,7 @@ class TControl extends TApplicationComponent implements IRenderable, IBindable
 	 * If false, any existing child controls will be cleared up.
 	 * @param boolean whether child controls are created
 	 */
-	final protected function setChildControlsCreated($value)
+	protected function setChildControlsCreated($value)
 	{
 		if($value)
 			$this->_flags |= self::IS_CHILD_CREATED;
@@ -1154,7 +1154,7 @@ class TControl extends TApplicationComponent implements IRenderable, IBindable
 	 * This method will remove these state.
 	 * Only frameworker developers and control developers should use this method.
 	 */
-	final protected function clearChildState()
+	 protected function clearChildState()
 	{
 		unset($this->_rf[self::RF_CHILD_STATE]);
 	}
@@ -1164,7 +1164,7 @@ class TControl extends TApplicationComponent implements IRenderable, IBindable
 	 * @return boolean if the control is a descendent (parent, parent of parent, etc.)
 	 * of the specified control
 	 */
-	final protected function isDescendentOf($ancestor)
+	 protected function isDescendentOf($ancestor)
 	{
 		$control=$this;
 		while($control!==$ancestor && $control->_parent)
