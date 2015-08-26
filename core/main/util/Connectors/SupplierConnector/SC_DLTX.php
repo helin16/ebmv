@@ -25,7 +25,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$url = str_replace('{page_no}', $pageNo, $url);
 		if($this->_debugMode === true)
 			SupplierConnectorAbstract::log($this, '::reading from url: ' . $url , __FUNCTION__);
-		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
+		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, array('appid' => self::APP_ID));
 		if($this->_debugMode === true)
 			SupplierConnectorAbstract::log($this, '::got results:' . $result , __FUNCTION__);
 		$result = json_decode($result, true);
