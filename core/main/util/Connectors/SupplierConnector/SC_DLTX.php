@@ -192,12 +192,12 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 // 		if (($coverImg = $this->_getCoverImage ( $productKey )) !== '')
 // 			$readOnlineCopy = 1;
 		$xml = new SimpleXMLElement ( '<' . $type->getName () . '/>' );
-		$xml->BookName = $product instanceof Product ? $product->getTitle () : $data['title'];
+		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute ( 'publish_date' ) : $data['pubDate'];
+		$xml->BookName = $product instanceof Product ? $product->getTitle () : $data['title'] . $data['pubDate'];
 		$xml->Isbn = $product instanceof Product ? $product->getAttribute ( 'isbn' ) : $data['magazineId'];
 		$xml->NO = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $data['pid'];
 		$xml->Author = $product instanceof Product ? $product->getAttribute ( 'author' ) : $this->_supplier->getName ();
 		$xml->Press = $product instanceof Product ? $product->getAttribute ( 'publisher' ) : $this->_supplier->getName ();
-		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute ( 'publish_date' ) : $data['pubDate'];
 		$xml->Words = '';
 		$xml->FrontCover = $product instanceof Product ? $product->getAttribute ( 'image_thumb' ) : $data['thumbnail'];
 		$xml->Introduction = $product instanceof Product ? $product->getAttribute ( 'description' ) : $data['des'];
