@@ -14,40 +14,40 @@ class SupplierConnectorAbstract
 	protected $_supplier;
 	/**
 	 * The library we are dealing with
-	 * 
+	 *
 	 * @var Library
 	 */
 	protected $_lib;
 	/**
 	 * The connectors
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $_connectors = array();
 	/**
 	 * Whether we are in debug mode for this script
-	 * 
+	 *
 	 * @var bool
 	 */
 	protected $_debugMode = false;
 	/**
 	 * whether echo the loggin to console
-	 * 
+	 *
 	 * @var bool
 	 */
 	protected $_echoLogging = false;
 	/**
 	 * The id of the imported products
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_importedProductIds = array();
 	/**
 	 * singleton getter
-	 * 
+	 *
 	 * @param Supplier $supplier The supplier
 	 * @param Library  $lib      The library
-	 * 
+	 *
 	 * @return SupplierConn
 	 */
 	public static function getInstance(Supplier $supplier, Library $lib)
@@ -64,7 +64,7 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Logging for SupplierConnenctorAbastract
-	 * 
+	 *
 	 * @param SupplierConnectorAbstract $script
 	 * @param string                    $msg
 	 * @param string                    $funcName
@@ -72,13 +72,13 @@ class SupplierConnectorAbstract
 	 */
 	public static function log(SupplierConnectorAbstract $script, $msg, $funcName = '', $comments = '')
 	{
-		if($script->getEchoLogging() === true) 
+		if($script->getEchoLogging() === true)
 			echo new UDate() . '::' . $funcName . ':' . $msg . "\r\n";
 		Log::logging($script->getLibrary(), $script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
 	}
 	/**
 	 * construtor
-	 * 
+	 *
 	 * @param Supplier $supplier The supplier
 	 * @param Library  $lib      The library
 	 */
@@ -91,9 +91,9 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Setting the debug mode
-	 * 
+	 *
 	 * @param bool $debugMode
-	 * 
+	 *
 	 * @return SupplierConnectorAbstract
 	 */
 	public function setDebugMode($debugMode)
@@ -103,9 +103,9 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Setting the _echoLogging
-	 * 
+	 *
 	 * @param bool $debugMode
-	 * 
+	 *
 	 * @return SupplierConnectorAbstract
 	 */
 	public function setEchoLogging($echoLogging)
@@ -115,7 +115,7 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * getting the _echoLogging
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function getEchoLogging()
@@ -124,7 +124,7 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Getter for the supplier
-	 * 
+	 *
 	 * @return Supplier
 	 */
 	public function getSupplier()
@@ -133,7 +133,7 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Getter for the Library
-	 * 
+	 *
 	 * @return Library
 	 */
 	public function getLibrary()
@@ -142,7 +142,7 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Getting the default language and product type for a supplier
-	 * 
+	 *
 	 * @return multitype:Language ProductType
 	 */
 	protected function _getDefaulLangNType()
@@ -163,7 +163,7 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * resetting the imported product ids
-	 * 
+	 *
 	 * @return SupplierConnectorAbstract
 	 */
 	public function resetImportedProductIds()
@@ -173,7 +173,7 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Getting the imported product ids
-	 * 
+	 *
 	 * @return multitype:int
 	 */
 	public function getImportedProductIds()
@@ -182,9 +182,9 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * removing all the unimported products, if the supplier not giving us that information anymore, then we treated it as an remove from our system
-	 * 
+	 *
 	 * @param bool $resetImportedPids Whether we reset the imported product ids after removing
-	 * 
+	 *
 	 * @return SupplierConnectorAbstract
 	 */
 	public function rmUnImportedProducts($resetImportedPids = true)
@@ -216,7 +216,7 @@ class SupplierConnectorAbstract
 			$products[] = $product;
 			$this->_importedProductIds[] = $product->getId();
 		}
-		else 
+		else
 		{
 			foreach($productList as $child)
 			{
@@ -235,12 +235,12 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * /**
-	 * 
+	 *
 	 * Importing the product
 	 *
 	 * @param SupplierConnectorProduct $productInfo The SupplierConnectorProduct object
 	 * @param Library                  $lib         The library this product is belonging to
-	 * 
+	 *
 	 * @throws SupplierConnectorException
 	 * @throws Exception
 	 * @return Ambigous <Product, NULL, BaseEntityAbstract>
@@ -249,13 +249,13 @@ class SupplierConnectorAbstract
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Importing product:' , __FUNCTION__);
 		$transStarted = false;
-		try 
-		{ 
+		try
+		{
 			Dao::beginTransaction();
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::starting transaction for DB' , __FUNCTION__);
 		} catch (Exception $ex) {
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::transaction for DB started already' , __FUNCTION__);
-			$transStarted = true; 
+			$transStarted = true;
 		}
 		try
 		{
@@ -264,23 +264,23 @@ class SupplierConnectorAbstract
 			if(count($langs = Language::getLangsByCodes($infoArray['languageCodes'])) === 0)
 				throw new SupplierConnectorException("Invalid lanuage codes: " . implode(', ', $infoArray['languageCodes']));
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got languges' , __FUNCTION__);
-			
+
 			if(!($type = ProductType::getByName($infoArray['productTypeName'])) instanceof ProductType)
 				throw new SupplierConnectorException("Invalid ProductType: " . $infoArray['productTypeName']);
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got product type (ID=' . $type->getId() . ')' , __FUNCTION__);
-			
+
 			//getting the categories
 			if(count($infoArray['categories']) >0)
 				$categories = $this->_importCategories($infoArray['categories']);
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got (' . count($categories) . ') categories.' , __FUNCTION__);
-			
+
 			//downloading images
 			$imgs = array();
 			foreach(array_unique($infoArray['attributes']['image_thumb']) as $imgUrl)
 				$imgs[] = $this->_importImage($imgUrl);
 			$infoArray['attributes']['image_thumb'] = $imgs;
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got (' . count($imgs) . ') images.' , __FUNCTION__);
-			
+
 			$sku = Product::formatSKU($infoArray['attributes']['isbn'][0], $infoArray['attributes']['cno'][0]);
 			//updating the product
 			if(($product = Product::getProductBySKU($sku)) instanceof Product)
@@ -289,22 +289,22 @@ class SupplierConnectorAbstract
 				//remove all categoies
 				$product->removeAllCategories();
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed categories:' , __FUNCTION__);
-				
+
 				//delete the thumb
 				if(!($thumbs = explode(',', $product->getAttribute('image_thumb'))) !== false)
 					Asset::removeAssets($thumbs);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed asset file for thumb_images:' , __FUNCTION__);
-				
+
 				//delete the img
 				if(!($imgs = explode(',', $product->getAttribute('image'))) !== false)
 					Asset::removeAssets($imgs);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed asset file for images:' , __FUNCTION__);
-				
+
 				//deleting the thumb and image for the product
 				ProductAttribute::removeAttrsForProduct($product, array('image_thumb', 'image'));
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::removed images and thumb images from DB' , __FUNCTION__);
-				
-				$product = Product::updateProduct($product, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']); 
+
+				$product = Product::updateProduct($product, $infoArray['title'], $type, $this->_supplier, $categories, $langs, $infoArray['attributes']);
 				if($this->_debugMode === true) SupplierConnectorAbstract::log($this, ':: ::Updated product(ID=' . $product->getId() . ')' , __FUNCTION__);
 			}
 			//creating new product
@@ -329,7 +329,7 @@ class SupplierConnectorAbstract
 				$product->setActive(false)
 					->save();
 			}
-			
+
 			if($transStarted === false)
 			{
 				Dao::commitTransaction();
@@ -391,27 +391,27 @@ class SupplierConnectorAbstract
 		{
 			$transStarted = false;
 			try { Dao::beginTransaction();} catch (Exception $ex) {$transStarted = true;}
-			
+
 			if(($imageUrl = trim($imageUrl)) === ''){
 				if($transStarted === false)
 					Dao::rollbackTransaction();
 				return '';
 			}
-			
+
 			if(($asset = Asset::getAsset($imageUrl)) instanceof Asset){
 				if($transStarted === false)
 					Dao::rollbackTransaction();
 				return $imageUrl;
 			}
-			
+
 			$tmpDir = explode(',', $this->_supplier->getInfo('default_img_dir'));
 			$tmpDir = $tmpDir[0];
 			if(!is_dir($tmpDir))
 				$this->_mkDir($tmpDir);
-			
+
 			$paths = parse_url($imageUrl);
 			$paths = explode('/', $paths['path']);
-			
+
 			$localFile = $tmpDir . DIRECTORY_SEPARATOR . md5($imageUrl);
 			if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'downloading file(' . $imageUrl . ') to (' . $localFile . ')' , __FUNCTION__);
 			$extraOpts = array(
@@ -420,13 +420,13 @@ class SupplierConnectorAbstract
 			);
 			$tmpFile = self::downloadFile($imageUrl, $localFile, null, $extraOpts);
 			//checking whether the file is an image
-			try 
-			{ 
+			try
+			{
 				if (($size = getimagesize($tmpFile)) === false)
 					throw new SupplierConnectorException('Can NOT download the image');
 			}
 			catch(Exception $e) {return null;}
-			
+
 			$assetId = Asset::registerAsset(end($paths), $tmpFile, $tmpDir);
 			if($transStarted === false)
 				Dao::commitTransaction();
@@ -441,9 +441,9 @@ class SupplierConnectorAbstract
 	}
 	/**
 	 * Making sure all the path has been made where it should be
-	 * 
+	 *
 	 * @param string $dir The wanted path
-	 * 
+	 *
 	 * @return SupplierConnectorAbstract
 	 */
 	protected function _mkDir($dir)
@@ -474,17 +474,17 @@ class SupplierConnectorAbstract
 	/**
 	 * read from a url
 	 * @deprecated use BmvComScriptCURL::readUrl instead
-	 * 
+	 *
 	 * @param string  $url             The url
 	 * @param int     $timeout         The timeout in seconds
 	 * @param array   $data            The data we are POSTING
 	 * @param string  $customerRequest The type of the post: DELETE or POST etc...
-	 * 
+	 *
 	 * @return mixed
 	 */
-	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '')
+	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '', $extraOpts = array())
 	{
-		return BmvComScriptCURL::readUrl($url, $timeout, $data, $customerRequest);
+		return BmvComScriptCURL::readUrl($url, $timeout, $data, $customerRequest, $extraOpts);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -500,7 +500,7 @@ class SupplierConnectorAbstract
 			return null;
 		}
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Got product info from supplier:' . print_r($pro->getArray(), true) , __FUNCTION__);
-		
+
 		$product = $this->_importProduct($pro, $this->_lib);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::Updated product with id:' . $product->getId() , __FUNCTION__);
 		return $product;
