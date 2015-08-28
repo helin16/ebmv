@@ -8,6 +8,7 @@
  */
 class Header extends TTemplateControl
 {
+	const MAX_ITEM_NO = 10;
 	/**
 	 * (non-PHPdoc)
 	 * @see TPage::render()
@@ -23,7 +24,7 @@ class Header extends TTemplateControl
 		if(!$this->getPage()->IsPostBack && !$this->getPage()->IsCallBack)
 			$this->getPage()->getClientScript()->registerEndScript('headerEndJs', $this->_getJs());
 	}
-	
+
 	private function _getJs()
 	{
 		$products = ($supplier = Supplier::get(Supplier::ID_CIO)) instanceof Supplier ? $supplier->getProducts(array(), array(ProductType::ID_COURSE)) : array();
@@ -98,9 +99,18 @@ class Header extends TTemplateControl
 				$html .= $this->getMenuListRow($language, $productType, array('CN'=> '报纸', 'EN'=> 'NewsPapers'));
 			if(intval($productType->getId()) === ProductType::ID_COURSE && isset($products))
 			{
-				foreach ($products as $product)
-				{
-					$html .= $this->getMenuListRow($language, $productType, array('CN'=> '书', 'EN'=> 'Books'), $product);
+				if(count($products) > self::MAX_ITEM_NO) {
+					foreach (array_splice($products, 0, self::MAX_ITEM_NO) as $product) {
+						$html .= $this->getMenuListRow($language, $productType, array('CN'=> '报纸', 'EN'=> 'NewsPapers'), $product);
+					}
+					$html .= '<li role="separator" class="divider"></li>';
+					$categories = $products[self::MAX_ITEM_NO + 1]->getCategorys();
+					if(count($categories) > 0)
+						$html .= '<li><a href="/products/category/' . $categories[0]->getId() . '">显示所有/ 顯示全部 / Show All</a></li>';
+				} else {
+					foreach ($products as $product) {
+						$html .= $this->getMenuListRow($language, $productType, array('CN'=> '书', 'EN'=> 'Books'), $product);
+					}
 				}
 			}
 		}
