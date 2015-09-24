@@ -318,6 +318,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProduct(Product $product)
 	{
+		$this->_debugMode = true;
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
 		$type = $product->getProductType();
 		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
