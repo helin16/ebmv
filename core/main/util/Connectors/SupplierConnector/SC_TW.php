@@ -330,8 +330,11 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$url = $this->_formatURL($this->_supplier->getInfo('import_url'), "getBookInfo") . '?' . http_build_query($params);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
 		
+		var_dump('Request: ');
+		var_dump($url);
 		$results = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
-		print_r($results);
+		var_dump('Response: ');
+		var_dump($results);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got results:' . print_r($results, true), __FUNCTION__);
 		
 		return SupplierConnectorProduct::getProduct(new SimpleXMLElement($results));
