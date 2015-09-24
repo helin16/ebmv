@@ -318,7 +318,6 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProduct(Product $product)
 	{
-		$this->_debugMode = true;
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
 		$type = $product->getProductType();
 		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
@@ -332,6 +331,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Sending params to :' . $url, __FUNCTION__);
 		
 		$results = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT);
+		print_r($results);
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got results:' . print_r($results, true), __FUNCTION__);
 		
 		return SupplierConnectorProduct::getProduct(new SimpleXMLElement($results));
