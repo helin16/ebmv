@@ -1,7 +1,7 @@
 <?php
 /**
  * The soap authentication server for web services
- * 
+ *
  * @package    Web
  * @subpackage Class
  * @author     lhe<helin16@gmail.com>
@@ -30,12 +30,12 @@ class WebAuth
 	const RESULT_CODE_OTHER_ERROR = 3;
 	/**
 	 * Authentication method
-	 * 
+	 *
 	 * @param string $CDKey  The scecret key
 	 * @param string $SiteID The library code
 	 * @param string $Uid    The username
 	 * @param string $Pwd    The hashed password
-	 * 
+	 *
 	 * @return string
 	 * @soapmethod
 	 */
@@ -57,12 +57,12 @@ class WebAuth
 			$userAccount = $this->_getUser($SiteID, $Uid, $Pwd);
 			if(!$userAccount instanceof UserAccount)
 				throw new Exception('Invalid User!');
-			
+
 			$response->addAttribute('CDkey', $CDKey);
 			$user = $response->addChild('User');
 			$user->addAttribute('libraryId', $SiteID);
 			$user->addAttribute('LoginName', $Uid);
-			
+
 			$user_mobile = $user_email = '';
 			$user->addAttribute('Password', $Pwd);
 			$user->addAttribute('Name', trim($userAccount->getPerson()));
@@ -80,9 +80,9 @@ class WebAuth
 	}
 	/**
 	 * validating the CDKey
-	 * 
+	 *
 	 * @param string $CDkey The secrect
-	 * 
+	 *
 	 * @throws Exception
 	 * @return Ambigous <Supplier, NULL>
 	 */
@@ -96,7 +96,7 @@ class WebAuth
 			$keys = explode(',', $supplier->getInfo('skey'));
 			if(count($keys) === 0 || ($key = trim($keys[0])) === '')
 				continue;
-			
+
 			$wantedCDKey = strtolower(StringUtilsAbstract::getCDKey($key, $Uid, $SiteID));
 			if($wantedCDKey === strtolower(trim($CDKey)))
 				return $supplier;
@@ -105,11 +105,11 @@ class WebAuth
 	}
 	/**
 	 * Getting the user
-	 * 
+	 *
 	 * @param string $libCode
 	 * @param string $username
 	 * @param string $password
-	 * 
+	 *
 	 * @throws Exception
 	 * @return UserAccount
 	 */
@@ -121,6 +121,21 @@ class WebAuth
 		try
 		{
 			$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, $lib, true);
+			if(!$userAccount instanceof UserAccount) {
+    			// check whether the library has the user or not
+    			if (! LibraryConnectorAbstract::getScript ($lib)->chkUser ( $username, $password ))
+    			    throw new CoreException ( 'Invalid login please contact your library!' );
+
+    			// get the information from the library system
+    			$userInfo = LibraryConnectorAbstract::getScript ($lib)->getUserInfo ( $username, $password );
+    			// check whether our local db has the record already
+    			if (($userAccount = UserAccount::getUserByUsername ( $username, $lib )) instanceof UserAccount) {
+    			    $person = $userAccount->getPerson();
+    			    $userAccount = UserAccount::updateUser ( $userAccount, $lib, $userInfo->getUsername (), $userInfo->getPassword (), null, Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName(), $person ) );
+    			} else {		// we need to create a user account from blank
+    			    $userAccount = UserAccount::createUser ( $lib, $userInfo->getUsername (), $userInfo->getPassword (), Role::get(Role::ID_READER), Person::createNudpatePerson( $userInfo->getFirstName (), $userInfo->getLastName() ) );
+    			}
+			}
 			return $userAccount;
 		}
 		catch(Exception $ex)
@@ -130,11 +145,11 @@ class WebAuth
 	}
 	/**
 	 * Getting local users
-	 * 
+	 *
 	 * @param string $libCode The library code
 	 * @param string $Uid     The username
 	 * @param string $Pwd     The hashed password
-	 * 
+	 *
 	 * @return string
 	 * @soapmethod
 	 */
@@ -149,7 +164,7 @@ class WebAuth
 			$now = new UDate();
 			$response->addAttribute('Time', trim($now));
 			$response->addAttribute('TimeZone',trim($now->getTimeZone()->getName()));
-			
+
 			$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, $lib, true);
 			$user = $response->addChild('User');
 			$user->addAttribute('libraryId', $libCode);
