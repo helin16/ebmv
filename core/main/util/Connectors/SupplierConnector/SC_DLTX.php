@@ -206,7 +206,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$xml->Language = 'zh-CN';
 
 		$publishDate = new UDate ( $xml->PublicationDate );
-		$xml->BookType = ($bookName = trim(str_replace(trim($xml->PublicationDate), '', trim($xml->BookName)))) . '/' . ($bookName . $publishDate->format ('Y')) . '/' . ($bookName . $publishDate->format('m'));
+		$xml->BookType = ($bookName = trim(str_replace(trim($xml->PublicationDate), '', trim($xml->BookName))));
 		$copiesXml = $xml->addChild( 'Copies' );
 		$readOnline = $copiesXml->addChild ($this->_getLibOwnsType ( LibraryOwnsType::ID_ONLINE_VIEW_COPIES )->getCode ());
 		$readOnline->Available = 1;
