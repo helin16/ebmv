@@ -4,6 +4,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	const CODE_SUCC = 100;
 	const CODE_TOKEN_INVALID = 310;
 	const CODE_TOKEN_EXPIRED = 900;
+	const CODE_REPLACE = 'VWMR';
 	/**
 	 * Getting the formatted url
 	 * 
@@ -16,7 +17,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	{
 		$siteId = $this->_lib->getInfo('aus_code');
 		if(strtoupper($siteId) === 'WML')
-			$siteId = 'VMWL';
+			$siteId = self::CODE_REPLACE;
 		return trim(str_replace('{method}', $methodName, str_replace('{SiteID}', $siteId, $url)));
 	}
 	/**
@@ -325,7 +326,7 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 		$type = $product->getProductType();
 		$siteId = $this->_lib->getInfo('aus_code');
 		if(strtoupper($siteId) === 'WML')
-			$siteId = 'VMWL';
+			$siteId = self::CODE_REPLACE;
 		$params = array("SiteID" => $siteId,
 				'Isbn' => trim($product->getAttribute('isbn')),
 				'NO' => trim($product->getAttribute('cno')),
