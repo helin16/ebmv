@@ -14,7 +14,10 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	private function _formatURL($url, $methodName)
 	{
-		return trim(str_replace('{method}', $methodName, str_replace('{SiteID}', $this->_lib->getInfo('aus_code'), $url)));
+		$siteId = $this->_lib->getInfo('aus_code');
+		if(strtoupper($siteId) === 'WML')
+			$siteId = 'VMWL';
+		return trim(str_replace('{method}', $methodName, str_replace('{SiteID}', $siteId, $url)));
 	}
 	/**
 	 * Gettht product List
@@ -320,7 +323,10 @@ class SC_TW extends SupplierConnectorAbstract implements SupplierConn
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting Product from supplier:', __FUNCTION__);
 		$type = $product->getProductType();
-		$params = array("SiteID" => trim($this->_lib->getInfo('aus_code')),
+		$siteId = $this->_lib->getInfo('aus_code');
+		if(strtoupper($siteId) === 'WML')
+			$siteId = 'VMWL';
+		$params = array("SiteID" => $siteId,
 				'Isbn' => trim($product->getAttribute('isbn')),
 				'NO' => trim($product->getAttribute('cno')),
 				'format' => 'xml',
