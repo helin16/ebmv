@@ -1,8 +1,7 @@
 <?php
 require_once 'bootstrap.php';
-$product = Product::get(18621);
 
-$result = SupplierConnectorAbstract::getInstance($product->getSupplier(), Library::get(10))->updateProduct($product);
+$result = SupplierConnectorAbstract::getInstance(Supplier::get(12), Library::get(10))->getProductListInfo(ProductType::get(3));
 
 var_dump($result);
 
