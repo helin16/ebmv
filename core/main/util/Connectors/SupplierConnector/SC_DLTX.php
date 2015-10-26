@@ -193,9 +193,9 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 // 			$readOnlineCopy = 1;
 		$xml = new SimpleXMLElement ( '<' . $type->getName () . '/>' );
 		$xml->PublicationDate = $product instanceof Product ? $product->getAttribute ( 'publish_date' ) : $data['pubDate'];
-		$xml->BookName = $product instanceof Product ? $product->getTitle () : $data['title'] . $data['pubDate'];
+		$xml->BookName = $product instanceof Product ? $product->getTitle () : $data['title'] . ' ' . $data['pubDate'];
 		$xml->Isbn = $product instanceof Product ? $product->getAttribute ( 'isbn' ) : $data['magazineId'];
-		$xml->NO = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $data['pid'];
+		$xml->NO = $product instanceof Product ? $product->getAttribute ( 'cno' ) : $data['brandId'];
 		$xml->Author = $product instanceof Product ? $product->getAttribute ( 'author' ) : $this->_supplier->getName ();
 		$xml->Press = $product instanceof Product ? $product->getAttribute ( 'publisher' ) : $this->_supplier->getName ();
 		$xml->Words = '';
@@ -246,5 +246,4 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$data = base64_encode ( $data );
 		return $data;
 	}
-
 }
