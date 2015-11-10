@@ -27,7 +27,7 @@ echo "== Supplier IDS: " . implode(', ', $supplierIds) . "\n\r";
 echo "== TYPE IDS: " . implode(', ', $typeIds) . "\n\r";
 echo "== Total Records: '" . $totalrecords . "\n\r";
 echo "== Starting Importing @ " . trim(new UDate()) . "========================================================\n\r";
-ImportProduct::run($libCodes, $supplierIds, $totalrecords, $someTypeIds);
+ImportProduct::run($libCodes, $supplierIds, $totalrecords, $typeIds);
 echo "== Finished Importing @ " . trim(new UDate()) . "========================================================\n\r";
 echo "\n\r\n\r\n\r\n\r\n\r";
 
