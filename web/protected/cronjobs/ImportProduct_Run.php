@@ -2,8 +2,8 @@
 require_once dirname(__FILE__) . '/../../bootstrap.php';
 
 //checking usage
-if ($argc != 4)
-		die("Usage: ImportProduct siteCode(37,werew,121fd|all) supplierids(1,2,3|all) totalrecords(30|all)\r\n");
+if ($argc < 4 || $argc > 5)
+		die("Usage: ImportProduct siteCode(37,werew,121fd|all) supplierids(1,2,3|all) totalrecords(30|all) typeIds(1,2,3)[optional]\r\n");
 
 if (!Core::getUser() instanceof UserAccount)
 	Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
