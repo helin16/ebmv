@@ -24,7 +24,7 @@ if(isset($argv[4]) && is_array($someTypeIds = explode(',', trim($argv[4]))) && c
 echo "== Params ===================================================\n\r";
 echo "== Site Codes: '" . implode("', '", $libCodes) . "\n\r";
 echo "== Supplier IDS: " . implode(', ', $supplierIds) . "\n\r";
-echo "== TYPE IDS: " . implode(', ', $someTypeIds) . "\n\r";
+echo "== TYPE IDS: " . implode(', ', $typeIds) . "\n\r";
 echo "== Total Records: '" . $totalrecords . "\n\r";
 echo "== Starting Importing @ " . trim(new UDate()) . "========================================================\n\r";
 ImportProduct::run($libCodes, $supplierIds, $totalrecords, $someTypeIds);
