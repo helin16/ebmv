@@ -23,7 +23,7 @@ class ImportProduct
 	 *
 	 * @return string
 	 */
-	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null)
+	public static function run(array $libCodes = array(), array $supplierIds = array(), $totalRecords = null, array $typeIds = array())
 	{
 		ini_set('max_execution_time', 0);
 		if(!Core::getUser() instanceof UserAccount)
@@ -43,7 +43,7 @@ class ImportProduct
 				//loop through each supplier
 				foreach($suppliers as $supplier)
 				{
-					self::_importProduct($supplier, $lib, $totalRecords);
+					self::_importProduct($supplier, $lib, $totalRecords, $typeIds);
 				}
 			}
 		}
@@ -59,7 +59,7 @@ class ImportProduct
 		return $transId;
 	}
 
-	private static function _importProduct(Supplier $supplier, Library $lib, $totalRecords)
+	private static function _importProduct(Supplier $supplier, Library $lib, $totalRecords, array $typeIds = array())
 	{
 		$totalRecords = trim($totalRecords);
 		$fullUpdate = ($totalRecords === '');
@@ -75,6 +75,18 @@ class ImportProduct
 		}
 
 		$types = $script->getImportProductTypes();
+		if(count($typeIds) > 0 && count($providedTypes = ProductType::getAllByCriteria('id in (' . implode(', ', array_fill(0, count($typeIds), '?')) . ')', $typeIds)) > 0) {
+		    $workInTypes = array();
+		    $typeIds = array();
+		    foreach($types as $type)
+		        $typeIds[] = $type->getId();
+		    foreach($providedTypes as $providedType)
+		    {
+		        if(in_array($providedType->getId(), $typeIds))
+		            $workInTypes[$providedType->getId()] = $providedType;
+		    }
+		    $types = $workInTypes;
+		}
 		self::log( "  :: Got (" . count($types) . ") types to import:", __FUNCTION__);
 		foreach($types as $type)
 		{
