@@ -114,7 +114,6 @@ class Controller extends LibAdminPageAbstract
 			}
 			$filePath = $this->_getExcel($results);
 			$dir = dirname(__FILE__) . '/../../../../asset/report/';
-			die($dir);
 			$assetId = Asset::registerAsset('statics_export.xlsx', $filePath, $dir);
 			if(!($asset = Asset::getAsset($assetId)) instanceof Asset)
 				throw new Exception('System Error: can NOT generate excel file');
@@ -122,7 +121,7 @@ class Controller extends LibAdminPageAbstract
 		}
 		catch (Exception $e)
 		{
-			$errors[] = $e->getMessage() . $e->getTraceAsString();
+			$errors[] = $e->getMessage() ;
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
