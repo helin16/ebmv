@@ -120,7 +120,7 @@ class Controller extends LibAdminPageAbstract
 		}
 		catch (Exception $e)
 		{
-			$errors[] = $e->getMessage();
+			$errors[] = $e->getMessage() . $e->getTraceAsString();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($result, $errors);
 	}
