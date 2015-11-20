@@ -75,7 +75,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
 		if(!isset(self::$cache['data']))
 		{
-			$importUrl = str_replace('{page_no}', 1, trim($this->_supplier->getInfo('import_url')));
+			$importUrl = str_replace('{page_no}', $pageNo, trim($this->_supplier->getInfo('import_url')));
 			$this->_getJsonFromUrl($importUrl, $type);
 		}
 		return array_slice(self::$cache['data'], ($pageNo - 1) * $pageSize, $pageSize);
