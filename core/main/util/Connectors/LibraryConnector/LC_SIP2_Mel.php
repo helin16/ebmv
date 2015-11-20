@@ -2,14 +2,12 @@
 class LC_SIP2_Mel extends LibraryConnectorAbstract implements LibraryConn
 {
 	public static $_cache = array();
-	const INSTITUTION_ID = 'VCML'; //AO
-	const TERMINAL_PASSWORD = 'V3nd3r!'; //AC
 	/**
 	 * Getting the library user info
-	 *
+	 * 
 	 * @param unknown $username
 	 * @param unknown $password
-	 *
+	 * 
 	 * @return multitype:
 	 */
 	private function _getPersonInfo(Library $library, $username, $password)
@@ -19,30 +17,30 @@ class LC_SIP2_Mel extends LibraryConnectorAbstract implements LibraryConn
 			$this->_log('starting: ' . __FUNCTION__ . ' with params:' , __FUNCTION__);
 			$this->_log(print_r(func_get_args(), true) , __FUNCTION__);
 		}
-
+		
 		$key = md5($username . $password);
 		if(!isset(self::$_cache[$key]))
 		{
 			if($this->_isDebugMode === true)
 				$this->_log('NOT found in cache, creating new...' , __FUNCTION__);
-
+			
 			$hostInfo = $library->getInfo('sip2_host');
 			$hosts = explode(':', str_replace(' ', '', $hostInfo));
-
+			
 			if($this->_isDebugMode === true)
 			{
 				$this->_log('trying to connect to ' . $hostInfo . ' with params:', __FUNCTION__);
 				$this->_log(print_r($hosts, true), __FUNCTION__);
 			}
-			$result = BmvComSIP2::getSIP($hosts[0], isset($hosts[1]) ? $hosts[1] : null)->getPatronInfo($username, $password, false, self::INSTITUTION_ID, self::TERMINAL_PASSWORD);
-
+			$result = BmvComSIP2::getSIP($hosts[0], isset($hosts[1]) ? $hosts[1] : null)->getPatronInfo($username, $password, false, 'VCML', 'b00k');
+			
 			if($this->_isDebugMode === true)
 			{
 				$this->_log('Got result:', __FUNCTION__);
 				$this->_log(print_r($result, true), __FUNCTION__);
 			}
 			$pInfo = array();
-			if(strtoupper(trim($result['variable']['BL'][0])) === 'Y'
+			if(strtoupper(trim($result['variable']['BL'][0])) === 'Y' 
 // 					&& strtoupper(trim($result['variable']['CQ'][0])) === 'Y'
 			)
 			{
@@ -53,7 +51,7 @@ class LC_SIP2_Mel extends LibraryConnectorAbstract implements LibraryConn
 			}
 			self::$_cache[$key] = $pInfo;
 		}
-
+		
 		if($this->_isDebugMode === true)
 		{
 			$this->_log('Got result from ' . __FUNCTION__ . ':', __FUNCTION__);
@@ -78,7 +76,7 @@ class LC_SIP2_Mel extends LibraryConnectorAbstract implements LibraryConn
 				$this->_log('starting: ' . __FUNCTION__ . ' with params:' , __FUNCTION__);
 				$this->_log(print_r(func_get_args(), true) , __FUNCTION__);
 			}
-
+			
 			$result = $this->_getPersonInfo($this->getLibrary(), $username, $password);
 			if($this->_isDebugMode === true)
 			{
@@ -115,7 +113,7 @@ class LC_SIP2_Mel extends LibraryConnectorAbstract implements LibraryConn
 				$this->_log(print_r(func_get_args(), true) , __FUNCTION__);
 			}
 			$result = ($pInfo = $this->_getPersonInfo($this->getLibrary(), $username, $password)) instanceof LibraryConnectorUser;
-
+			
 			if($this->_isDebugMode === true)
 				$this->_log('Result for ' . __FUNCTION__ . ' is now:' . ($result === true ? 'true' : 'false') , __FUNCTION__);
 			return $result;
