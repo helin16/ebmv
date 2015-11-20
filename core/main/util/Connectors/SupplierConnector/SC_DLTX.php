@@ -20,9 +20,9 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	 *
 	 * @return SimpleXMLElement
 	 */
-	private function _getJsonFromUrl($url, ProductType $type, $pageNo = 1)
+	private function _getJsonFromUrl($importUrl, ProductType $type, $pageNo = 1)
 	{
-		$url = str_replace('{page_no}', $pageNo, $url);
+		$url = str_replace('{page_no}', $pageNo, $importUrl);
 		if($this->_debugMode === true)
 			SupplierConnectorAbstract::log($this, '::reading from url: ' . $url , __FUNCTION__);
 		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, array(), '', array(CURLOPT_POST=> true, CURLOPT_POSTFIELDS => json_encode(array('appId' => self::APP_ID))));
@@ -42,7 +42,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		}
 		if(count(self::$cache['data']) < intval($result['total']) ) {
 		    SupplierConnectorAbstract::log($this, 'NEXT PAGE, as got(' . count(self::$cache['data']) . ') < provided(' . intval($result['total']) . ')' , __FUNCTION__);
-		    $this->_getJsonFromUrl($url, $type, $pageNo + 1);
+		    $this->_getJsonFromUrl($importUrl, $type, $pageNo + 1);
 		}
 		return $this;
 	}
