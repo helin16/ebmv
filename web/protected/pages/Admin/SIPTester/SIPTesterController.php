@@ -45,9 +45,6 @@ class SIPTesterController extends AdminPageAbstract
     			throw new Exception("patronpwd needed!");
     		$mysiplocation = !isset($_REQUEST['siplocation']) ? '' : trim($_REQUEST['siplocation']);
 
-    		if(isset($testData['terminalPwd']) && ($terminalPwd = trim($testData['terminalPwd'])) !== '')
-    		    $this->_sip2->AC = $terminalPwd;
-
     		$i = 0;
     		$logs = array();
     		$mysip = new SIP2();
@@ -119,6 +116,8 @@ class SIPTesterController extends AdminPageAbstract
     		// Get Charged Items Raw response
     		$logs[$i]['title'] = ' Get Charged Items Raw response:';
     		$info = array();
+    		if(isset($testData['terminalPwd']) && ($terminalPwd = trim($testData['terminalPwd'])) !== '')
+    		   $mysip->AC = $terminalPwd;
     		$in = $mysip->msgPatronInformation('none');
     		$info[] = ':: Get Response for PatronInformation: ';
     		$info[] =  print_r($in, true);
