@@ -40,8 +40,10 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 				self::$cache['data'][] = $this->_fakeProduct($type, $row);
 			}
 		}
-		if(count(self::$cache['data']) < intval($result['total']) )
-			$this->_getJsonFromUrl($url, $type, $pageNo + 1);
+		if(count(self::$cache['data']) < intval($result['total']) ) {
+		    SupplierConnectorAbstract::log($this, 'NEXT PAGE, as got(' . count(self::$cache['data']) . ') < provided(' . intval($result['total']) . ')' , __FUNCTION__);
+		    $this->_getJsonFromUrl($url, $type, $pageNo + 1);
+		}
 		return $this;
 	}
 	/**
@@ -75,8 +77,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
 		if(!isset(self::$cache['data']))
 		{
-			$importUrl = str_replace('{page_no}', $pageNo, trim($this->_supplier->getInfo('import_url')));
-			$this->_getJsonFromUrl($importUrl, $type);
+			$this->_getJsonFromUrl(trim($this->_supplier->getInfo('import_url')), $type);
 		}
 		return array_slice(self::$cache['data'], ($pageNo - 1) * $pageSize, $pageSize);
 	}
