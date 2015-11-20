@@ -1,5 +1,5 @@
 <?php
-class SIPTesterController extends AdminPageAbstract 
+class SIPTesterController extends AdminPageAbstract
 {
 	/**
 	 * The selected Menu Item name
@@ -29,22 +29,25 @@ class SIPTesterController extends AdminPageAbstract
     	try
     	{
     		$testData = json_decode(json_encode($param->CallbackParameter->testdata), true);
-    		
+
     		if(!isset($testData['Server']) || ($server = trim($testData['Server'])) === '')
     			throw new Exception("Server needed!");
-    		
+
     		$urls = parse_url($server);
     		if(!isset($urls['host']) || ($host = trim($urls['host'])) === '')
     			throw new Exception("Invalid url for host!");
     		if(!isset($urls['port']) || ($port = trim($urls['port'])) === '')
     			throw new Exception("Invalid url for port!");
-    		
+
     		if(!isset($testData['patron']) || ($patron = trim($testData['patron'])) === '')
     			throw new Exception("patron needed!");
     		if(!isset($testData['patronpwd']) || ($patronpwd = trim($testData['patronpwd'])) === '')
     			throw new Exception("patronpwd needed!");
     		$mysiplocation = !isset($_REQUEST['siplocation']) ? '' : trim($_REQUEST['siplocation']);
-    		
+
+    		if(isset($testData['terminalPwd']) && ($terminalPwd = trim($testData['terminalPwd'])) !== '')
+    		    $this->_sip2->AC = $terminalPwd;
+
     		$i = 0;
     		$logs = array();
     		$mysip = new SIP2();
@@ -63,7 +66,7 @@ class SIPTesterController extends AdminPageAbstract
     		$mysip->scLocation = $mysiplocation;
     		$info[] = ':: Assigin the scLocation: ' . $mysiplocation;
     		$logs[$i++]['info'] = $info;
-    		
+
     		// connect to SIP server
     		$logs[$i]['title'] = 'Initialiszing the connection to: ' . $server;
     		$info = array();
@@ -71,7 +74,7 @@ class SIPTesterController extends AdminPageAbstract
     		$info[] = ':: Got Results: ';
     		$info[] = print_r($result, true);
     		$logs[$i++]['info'] = $info;
-    		
+
     		// login into SIP server
     		$logs[$i]['title'] = 'login into SIP server:' . $server;
     		$info = array();
@@ -84,7 +87,7 @@ class SIPTesterController extends AdminPageAbstract
     		$info[] = ':: Formatted Response: ';
     		$info[] = print_r($result, true);
     		$logs[$i++]['info'] = $info;
-    		
+
     		// selfcheck status mesage
     		$logs[$i]['title'] = 'Requesting Self-checking:';
     		$info = array();
@@ -98,8 +101,10 @@ class SIPTesterController extends AdminPageAbstract
     		$info[] = print_r($result, true);
     		//getting AO & AN
     		$info[] = ':: Trying to assign AO: ';
-    		if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0]))
-    		{
+    		if(isset($testData['institutionId']) && ($ao = trim($testData['institutionId'])) !== '') {
+    		    $mysip->AO = $ao; /* set AO to value returned */
+    		    $info[] = ':: GOT AO: ' . $mysip->AO;
+    		} else if(isset($result['variable']['AO']) && isset($result['variable']['AO'][0])) {
     			$mysip->AO = $result['variable']['AO'][0]; /* set AO to value returned */
     			$info[] = ':: GOT AO: ' . $mysip->AO;
     		}
@@ -110,7 +115,7 @@ class SIPTesterController extends AdminPageAbstract
     			$info[] = ':: GOT AN: ' . $mysip->AN;
     		}
     		$logs[$i++]['info'] = $info;
-    		
+
     		// Get Charged Items Raw response
     		$logs[$i]['title'] = ' Get Charged Items Raw response:';
     		$info = array();
@@ -123,7 +128,7 @@ class SIPTesterController extends AdminPageAbstract
     		$result = $mysip->parsePatronInfoResponse($rawResp);
     		$info[] = print_r($result, true);
     		$logs[$i++]['info'] = $info;
-    		
+
     		$result['logs'] = $logs;
     	}
     	catch(Exception $ex)
