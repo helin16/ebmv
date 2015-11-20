@@ -74,7 +74,8 @@ class SupplierConnectorAbstract
 	{
 		if($script->getEchoLogging() === true)
 			echo new UDate() . '::' . $funcName . ':' . $msg . "\r\n";
-		Log::logging($script->getLibrary(), $script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
+		else
+		    Log::logging($script->getLibrary(), $script->getSupplier()->getId(), get_class($script), $msg, Log::TYPE_SC, $comments,  $funcName);
 	}
 	/**
 	 * construtor

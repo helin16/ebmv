@@ -67,7 +67,11 @@ class ImportProduct
 		self::log( "== import from " . __FUNCTION__, $supplier->getName());
 
 		//if there is an error for supplier connector
-		try {$script = SupplierConnectorAbstract::getInstance($supplier, $lib); }
+		try {
+		    $script = SupplierConnectorAbstract::getInstance($supplier, $lib);
+		    $script->setDebugMode(true)
+		        ->setEchoLogging(true);
+		}
 		catch(Exception $ex)
 		{
 			self::log( "  :: " . $ex->getMessage() . ". Trace: " . $ex->getTraceAsString(), __FUNCTION__);
