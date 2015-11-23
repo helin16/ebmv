@@ -24,38 +24,38 @@ class HelpController extends FrontEndPageAbstract
 
         $array = array(
 			 array (
-        		'en' => array (
-        			'question' => "How can I access eBMV?"
-        			,'answer'   => '<p>You can access eBMV Chinese Language e-Resource via the link on your library’s website. '
-        				          .'You can browse and search catalogue, or preview e-books before you login. '
-        				          .'If you’d like to read a whole e-book, or read newspaper and magazine, please login with your library card and PIN.</p>'
-				)
-			 	,'zh_cn' => array (
-        			'question' => "如何使用eBMV中文电子资源?"
-        			,'answer'  => '<p>你可以从图书馆网页上的链接进入eBMV中文电子资源网页. 在登录之前你可以浏览和检索目录, 也可以预览每本电子书的开始部分. '
-			 			         .'如果你要阅读一本电子书的全部, 或者阅读报纸和杂志, 请先登录. 登录号是你的图书馆卡号和密码.</p>'
-				)
-			 	,'zh_tw' => array (
-        			'question' => "如何使用eBMV中文電子資源? "
-        			,'answer'  => '<p>你可以從圖書館網頁上的鏈接進入eBMV中文電子資源網頁. 在登錄之前你可以流覽和檢索目錄, 也可以預覽每本電子書的開始部份.'
-			 			         .'如果你要閱讀一本電子書的全部, 或者閱讀報紙和雜誌, 請先登錄. 登錄號是你的圖書館卡號和 密碼.</p>'
-				)
-			 )
-			 ,array (
+//         		'en' => array (
+//         			'question' => "How can I access eBMV?"
+//         			,'answer'   => '<p>You can access eBMV Chinese Language e-Resource via the link on your library’s website. '
+//         				          .'You can browse and search catalogue, or preview e-books before you login. '
+//         				          .'If you’d like to read a whole e-book, or read newspaper and magazine, please login with your library card and PIN.</p>'
+// 				)
+// 			 	,'zh_cn' => array (
+//         			'question' => "如何使用eBMV中文电子资源?"
+//         			,'answer'  => '<p>你可以从图书馆网页上的链接进入eBMV中文电子资源网页. 在登录之前你可以浏览和检索目录, 也可以预览每本电子书的开始部分. '
+// 			 			         .'如果你要阅读一本电子书的全部, 或者阅读报纸和杂志, 请先登录. 登录号是你的图书馆卡号和密码.</p>'
+// 				)
+// 			 	,'zh_tw' => array (
+//         			'question' => "如何使用eBMV中文電子資源? "
+//         			,'answer'  => '<p>你可以從圖書館網頁上的鏈接進入eBMV中文電子資源網頁. 在登錄之前你可以流覽和檢索目錄, 也可以預覽每本電子書的開始部份.'
+// 			 			         .'如果你要閱讀一本電子書的全部, 或者閱讀報紙和雜誌, 請先登錄. 登錄號是你的圖書館卡號和 密碼.</p>'
+// 				)
+// 			 ),
+			 array (
         		'en' => array (
         			'question' => "How can I read Simplified Chinese e-books?"
-        			,'answer'   => 'Select the Simplified Chinese e-book of interest in the catalogue, click its cover. The book’s metadata will appear on the new page. There are also two buttons to select: “Read Online” and “Download This Book”. Read Online will work on desktops, Laptops and tablets which run Microsoft Windows, Apple OS or Android operating systems. <br />Apps for Android tablet and iPad can be found at the following sites: <br /> The URL for Android app is<br /> <a href="http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk">http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk</a> <br /> The URL for iOS app is<br /><a href="http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa">http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa</a> <br />You need to install Android and / or iOS apps first, then you will be able to read e-books on your tablets.<br />  You can borrow up to 20 Simplified Chinese e-books. Loan period is <b>two</b> weeks. eBMV will automatically return Simplified Chinese e-books when it’s due.'
+        			,'answer'   => 'Select the Simplified Chinese e-book of interest in the catalogue, click its cover. The book’s metadata will appear on the new page. There are also two buttons to select: “Read Online” and “Download This Book”. Read Online will work on desktops, Laptops and tablets which run Microsoft Windows, Apple OS or Android operating systems. '
 				)
 			 	,'zh_cn' => array (
         			'question' => "如何在线阅读简体中文电子书?"
-        			,'answer'  => '在目录上选择你要读的简体中文电子书, 点击封面.  在新的网页上有这本书的元数据, 还有两个按钮供选择: “在线阅读” 和 “下载阅读”.  在线阅读可在运行微软公司视窗, 苹果公司OS或安卓操作系统的桌上, 手提或和平板电脑上实现.<br />安卓和苹果公司平板电脑的阅读器可从下列网站上下载:<br />安卓阅读器的链接是:<br /><a href="http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk">http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk</a><br />苹果iOS阅读器的链接是:<br /><a href="http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa">http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa</a><br />你须先安装安卓或苹果iOS阅读器然后才能在平板电脑上看电子书.<br />你可以最多借20本简体中文电子书, 借阅期限是两个星期. eBMV会自动归还到期的简体中文电子书'
+        			,'answer'  => '在目录上选择你要读的简体中文电子书, 点击封面. 在新的网页上有这本书的元数据, 还有两个按钮供选择: “在线阅读” 和 “下载阅读”. 在线阅读可在运行微软公司视窗, 苹果公司OS或安卓操作系统的桌上, 手提或和平板电脑上实现.'
 				)
 			 	,'zh_tw' => array (
         			'question' => "如何在線閱讀簡體中文電子書?"
-        			,'answer'  => '在目錄上選擇你要讀的簡體中文電子書, 點擊封面. 在新的網頁上有這本書的元數據, 還有兩個按鈕供選擇: “在線閱讀” 和“下載閱讀”. 在線閱讀可在運行微軟公司視窗, 蘋果公司OS或安卓操作系統的桌上, 手提或和平板電腦上實現.<br />安卓和蘋果公司平板電腦的閱讀器可從下列網站上下載:<br />安卓閱讀器的鏈接是:<br /><a href="http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk">http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk</a><br />蘋果iOS閱讀器的鏈接是:<br /><a href="http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa">http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa</a><br />你須先安裝安卓或蘋果iOS閱讀器然後才能在平板電腦上看電子書.<br />你可以最多藉20本簡體中文電子書, 借閱期限是兩個星期. eBMV會自動歸還到期的簡體中文電子書'
+        			,'answer'  => '在目錄上選擇你要讀的簡體中文電子書, 點擊封面. 在新的網頁上有這本書的元數據, 還有兩個按鈕供選擇: “在線閱讀” 和“下載閱讀”. 在線閱讀可在運行微軟公司視窗, 蘋果公司OS或安卓操作系統的桌上, 手提或和平板電腦上實現.'
 				)
-			 )
-			 ,array (
+			 ),
+			 array (
         		'en' => array (
         			'question' => "What browsers are supported?"
         			,'answer'   => '<table class="table table-bordered"><tr><td>Microsoft</td><td>IE 8 or later</td></tr><tr><td>Apple</td><td>Safari</td></tr><tr><td>Google</td><td>Chrome</td></tr><tr><td>Mozilla</td><td>Firefox</td></tr></table>'
@@ -72,7 +72,7 @@ class HelpController extends FrontEndPageAbstract
 			 ,array (
         		'en' => array (
         			'question' => "How can I download and read Simplified Chinese e-books?"
-        			,'answer'   => '<p>Select the Simplified Chinese e-book of interest in the catalogue, click its cover. The book’s metadata will appear on the new page. There are also two buttons to select: “Read Online” and “Download This Book”. It can be read on Android tablets or Apple iPad after download.</p>'
+        			,'answer'   => '<p>Apps for Android tablet and iPad can be found at the following sites:</p><p>The URL for Android app is <a href="http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk">http://gw.apabi.com/download/product/ApabiReaderforAndroid/ApabiReaderforAndroid.apk</a></p><p>The URL for iOS app is <a href="http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa">http://gw.apabi.com/download/product/ApabiReaderforiOS/ApabiReader2.1.4/ApabiReader.2.1.4.ipa</a></p><p>You need to install Android and / or iOS apps first, and then you will be able to read e-books on your tablets.You can borrow up to 20 Simplified Chinese e-books. Loan period is two weeks. eBMV will automatically return Simplified Chinese e-books when it’s due.</p><p>Log in to library from the device. Select the Simplified Chinese e-book of interest in the catalogue, click its cover. The book’s metadata will appear on the new page. There are also two buttons to select: “Read Online” and “Download This Book”. Click “Download This Book”. It can be read on Android tablets or Apple iPad after download.</p><p>Log in to library from the device. Select the Simplified Chinese e-book of interest in the catalogue, click its cover. The book’s metadata will appear on the new page. There are also two buttons to select: “Read Online” and “Download This Book”. Click “Download This Book”. It can be read on Android tablets or Apple iPad after download.</p><p>Click “中华数字书苑”, open mobile Apabi reader<img src="/themes/images/apabi_reader_1.png" /></p><p>Go to the landing page; enter your site code and card number, password<img src="/themes/images/apabi_reader_2.png" /></p><p>Once logged in there is a list of books on bookshelf, click cover page to open<img src="/themes/images/apabi_reader_3.png" /></p>'
 				)
 			 	,'zh_cn' => array (
         			'question' => "如何下载阅读简体中文电子书?"
