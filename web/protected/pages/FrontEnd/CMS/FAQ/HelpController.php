@@ -23,7 +23,7 @@ class HelpController extends FrontEndPageAbstract
     {
 
         $array = array(
-			 array (
+// 			 array (
 //         		'en' => array (
 //         			'question' => "How can I access eBMV?"
 //         			,'answer'   => '<p>You can access eBMV Chinese Language e-Resource via the link on your library’s website. '
