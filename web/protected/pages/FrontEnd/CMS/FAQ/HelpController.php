@@ -23,24 +23,24 @@ class HelpController extends FrontEndPageAbstract
     {
 
         $array = array(
-// 			 array (
-//         		'en' => array (
-//         			'question' => "How can I access eBMV?"
-//         			,'answer'   => '<p>You can access eBMV Chinese Language e-Resource via the link on your library’s website. '
-//         				          .'You can browse and search catalogue, or preview e-books before you login. '
-//         				          .'If you’d like to read a whole e-book, or read newspaper and magazine, please login with your library card and PIN.</p>'
-// 				)
-// 			 	,'zh_cn' => array (
-//         			'question' => "如何使用eBMV中文电子资源?"
-//         			,'answer'  => '<p>你可以从图书馆网页上的链接进入eBMV中文电子资源网页. 在登录之前你可以浏览和检索目录, 也可以预览每本电子书的开始部分. '
-// 			 			         .'如果你要阅读一本电子书的全部, 或者阅读报纸和杂志, 请先登录. 登录号是你的图书馆卡号和密码.</p>'
-// 				)
-// 			 	,'zh_tw' => array (
-//         			'question' => "如何使用eBMV中文電子資源? "
-//         			,'answer'  => '<p>你可以從圖書館網頁上的鏈接進入eBMV中文電子資源網頁. 在登錄之前你可以流覽和檢索目錄, 也可以預覽每本電子書的開始部份.'
-// 			 			         .'如果你要閱讀一本電子書的全部, 或者閱讀報紙和雜誌, 請先登錄. 登錄號是你的圖書館卡號和 密碼.</p>'
-// 				)
-// 			 ),
+			 array (
+        		'en' => array (
+        			'question' => "How can I access eBMV?"
+        			,'answer'   => '<p>You can access eBMV Chinese Language e-Resource via the link on your library’s website. '
+        				          .'You can browse and search catalogue, or preview e-books before you login. '
+        				          .'If you’d like to read a whole e-book, or read newspaper and magazine, please login with your library card and PIN.</p>'
+				)
+			 	,'zh_cn' => array (
+        			'question' => "如何使用eBMV中文电子资源?"
+        			,'answer'  => '<p>你可以从图书馆网页上的链接进入eBMV中文电子资源网页. 在登录之前你可以浏览和检索目录, 也可以预览每本电子书的开始部分. '
+			 			         .'如果你要阅读一本电子书的全部, 或者阅读报纸和杂志, 请先登录. 登录号是你的图书馆卡号和密码.</p>'
+				)
+			 	,'zh_tw' => array (
+        			'question' => "如何使用eBMV中文電子資源? "
+        			,'answer'  => '<p>你可以從圖書館網頁上的鏈接進入eBMV中文電子資源網頁. 在登錄之前你可以流覽和檢索目錄, 也可以預覽每本電子書的開始部份.'
+			 			         .'如果你要閱讀一本電子書的全部, 或者閱讀報紙和雜誌, 請先登錄. 登錄號是你的圖書館卡號和 密碼.</p>'
+				)
+			 ),
 			 array (
         		'en' => array (
         			'question' => "How can I read Simplified Chinese e-books?"
