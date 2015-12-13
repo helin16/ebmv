@@ -66,7 +66,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 		$download->Total = 1;
 		return $xml;
 	}
-	private function _getListData($pageNo, $pageSize = DaoQuery::DEFAULT_JOIN_TYPE)
+	private function _getListData($digiGroupId, $pageNo, $pageSize = DaoQuery::DEFAULT_JOIN_TYPE)
 	{
 		$now = new UDate();
 		$thisYear = $now->format('Y');
@@ -81,7 +81,7 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 				'ordertype' => '0',
 				'page' => $pageNo,
 				'pagesize' => $pageSize,
-				'digitresgroupid' => 486
+				'digitresgroupid' => $digiGroupId, //486: WML
 		);
 		$xml = BmvComScriptCURL::readUrl($url . '?' . http_build_query($data), BmvComScriptCURL::CURL_TIMEOUT);
 		return new SimpleXMLElement($xml);
@@ -94,7 +94,10 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductListInfo(ProductType $type = null)
 	{
-		$xml = $this->_getListData(1, 1);
+		$digiGroupId = trim($this->_lib->getInfo ( 'apabi_digi_group_id' ) );
+		if($digiGroupId === '')
+			return array();
+		$xml = $this->_getListData($digiGroupId, 1, 1);
 		$totalRecords = $xml->TotalCount;
 		$pageNo = 1;
 		$pageSize = 100;
@@ -107,7 +110,10 @@ class SC_Apabi_eBooks extends SupplierConnectorAbstract implements SupplierConn
 	 */
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $onceOnly = false)
 	{
-		$xml = $this->_getListData($pageNo, $pageSize);
+		$digiGroupId = trim($this->_lib->getInfo ( 'apabi_digi_group_id' ) );
+		if($digiGroupId === '')
+			return array();
+		$xml = $this->_getListData($digiGroupId, $pageNo, $pageSize);
 		$array = array();
 		foreach($xml->Records->children() as $fakeProductXml)
 		{
