@@ -231,7 +231,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	public function getOverDueIssues(ProductType $type, UDate $fromTime = null, UDate $toTime = null) {
 	  if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'start to get all the overdue issues:', __FUNCTION__);
 	  ProductAttribute::getQuery()->eagerLoad('ProductAttribute.product', 'inner join', 'pro', 'pro.active = 1 and pa.productId = pro.id and pro.productTypeId = ' . $type->getId() . ' and pro.supplierId = ' . $this->getSupplier()->getId());
-	  $attributes = ProductAttribute::getAllByCriteria('productAttributeTypeId = ?', array(ProductAttributeType::ID_CNO));
+	  $attributes = ProductAttribute::getAllByCriteria('typeId = ?', array(ProductAttributeType::ID_CNO));
 	  if (count($attributes) === 0) {
 	    if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Found no brandIds, quit.', __FUNCTION__);
 	    return $this;
