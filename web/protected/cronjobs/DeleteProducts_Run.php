@@ -17,10 +17,10 @@ abstract class DeleteProducts
     
     self::log("== Params ===================================================", '', $preFix . self::TAB);
     $libIds = (($libIds = trim($argv[1])) === 'all' ? array() : explode(',', str_replace(' ', '', $libIds)));
-    self::log("== library Ids: '" . implode("', '", $libIds), '', $preFix . self::TAB);
+    self::log("== library Ids: " . implode(", ", $libIds), '', $preFix . self::TAB);
     
     $supplierIds = (($supplierIds = trim($argv[2])) === 'all' ? array() : explode(',', str_replace(' ', '', $supplierIds)));
-    self::log("== Supplier IDS: '" . implode("', '", $supplierIds), '', $preFix . self::TAB);
+    self::log("== Supplier IDS: " . implode(", ", $supplierIds), '', $preFix . self::TAB);
     $typeIds = array();
     if(isset($argv[4]) && is_array($someTypeIds = explode(',', trim($argv[4]))) && count($someTypeIds) >0)
       $typeIds = $someTypeIds;
