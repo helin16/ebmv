@@ -183,7 +183,7 @@ abstract class DeleteProducts
     $funcName = ($funcName === '' ? '': (' [' . $funcName . ']'));
     $timeDiff = '';
     if($start instanceof UDate) {
-      $timeDiff = ' TOOK '  . ($now->getDateTime()->UnixTimestamp() - $start->getDateTime()->UnixTimestamp()) . '(s)';
+      $timeDiff = ' TOOK '  . ($now->getDateTime()->getTimestamp() - $start->getDateTime()->getTimestamp()) . '(s)';
     }
     $newMsage = trim($now) . $preFix . $msg .  $funcName . $timeDiff . $postFix;
     echo $newMsage;
