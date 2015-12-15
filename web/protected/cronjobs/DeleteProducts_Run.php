@@ -4,7 +4,8 @@ require_once dirname(__FILE__) . '/../../bootstrap.php';
 abstract class DeleteProducts
 {
   const TAB = '  ';
-  public static function run($argc, $argv, $preFix = '') {
+  public static function run($argc, $argv, $preFix = '')
+  {
     //checking usage
     if ($argc < 3 || $argc > 4)
       die("Usage: DeleteProduct_Run.php siteCode(37,werew,121fd|all) supplierids(1,2,3|all) typeIds(1,2,3)[optional]\r\n");
@@ -27,6 +28,14 @@ abstract class DeleteProducts
     self::log('');
     self::log('');
     
+    //getting all the products
+    $products = self::_getProducts($libIds, $supplierIds, $typeIds);
+    self::log('== Start deleting ' . count($products) . ' Product(s)', '', $preFix . self::TAB);
+    foreach($products as $product) {
+      self::_deleteRelationship($product, $preFix . self::TAB . self::TAB);
+      self::log('');
+    }
+    self::log('== FINISHED deleting ' . count($products) . ' Product(s)', '', $preFix . self::TAB);
     
     self::log("== Cleanup Assets ===================================================", '', $preFix . self::TAB);
     CleanupAssets::run();
@@ -35,23 +44,108 @@ abstract class DeleteProducts
     
     self::log("== FINISHED =======", __CLASS__ . '::' . __FUNCTION__, $preFix, $start);
   }
-  
-  private static function getProducts($libIds = array(), $supplierIds = array(), $typeIds = array(), $preFix = self::TAB) {
-    $where = $params = array();
+  /**
+   * deleting the relationship for the products
+   * 
+   * @param Product $product
+   * @param unknown $preFix
+   */
+  private static function _deleteRelationship(Product $product, $preFix) 
+  {
+    self::log("DELETING PRODUCT ID = " . $product->getId(), '', $preFix);
+    return;
+    
+    self::log("DELETING ProductAttribute ... ", '', $preFix . self::TAB);
+    ProductAttribute::deleteByCriteria('productId = ?', array($product->getId()));
+    self::log("DONE", '', $preFix . self::TAB . self::TAB);
+
+    self::log("DELETING ProductStatics ... ", '', $preFix . self::TAB);
+    ProductStatics::deleteByCriteria('productId = ?', array($product->getId()));
+    self::log("DONE", '', $preFix . self::TAB . self::TAB);
+
+    self::log("DELETING ProductShelfItem ... ", '', $preFix . self::TAB);
+    ProductShelfItem::deleteByCriteria('productId = ?', array($product->getId()));
+    self::log("DONE", '', $preFix . self::TAB . self::TAB);
+
+    self::log("DELETING LibraryOwns ... ", '', $preFix . self::TAB);
+    LibraryOwns::deleteByCriteria('productId = ?', array($product->getId()));
+    self::log("DONE", '', $preFix . self::TAB . self::TAB);
+    
+    self::log("DELETING ProductStaticsLog ... ", '', $preFix . self::TAB);
+    ProductStaticsLog::deleteByCriteria('productId = ?', array($product->getId()));
+    self::log("DONE", '', $preFix . self::TAB . self::TAB);
+    
+    self::log("DELETING Product ... ", '', $preFix . self::TAB);
+    Product::deleteByCriteria('productId = ?', array($product->getId()));
+    self::log("DONE", '', $preFix . self::TAB . self::TAB);
+  }
+  /**
+   * Getting all the product for deleting
+   * 
+   * @param array  $libIds
+   * @param array  $supplierIds
+   * @param array  $typeIds
+   * @param string $preFix
+   * 
+   * @throws Exception
+   * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+   */
+  private static function _getProducts($libIds = array(), $supplierIds = array(), $typeIds = array(), $preFix = self::TAB)
+  {
+    self::log("-- Trying to get all the products ----- ", __CLASS__ . '::' . __FUNCTION__, $preFix);
+    $where = $joins = $params = array();
     if(count($libIds) > 0) {
-      foreach($libIds as $index => $libId)
-      $where[] = 'supplierId in (' . implode(',', array_fill(0, count($libIds), '?')) . ')';
-      $params = array_merge($params, $libIds);
+      $wheres = array();
+      foreach($libIds as $index => $libId) {
+        $key = 'lib_' . $index;
+        $params[$key] = $libId;
+        $wheres[] = ':' . $key;
+      }
+      $joins['libOwns'] = 'libown.productId = pro.id and libown.active = 1 and libown.libraryId in (' . implode(', ', $wheres) . ')';
     }
     if(count($supplierIds) > 0) {
-      $where[] = 'supplierId in (' . implode(',', array_fill(0, count($supplierIds), '?')) . ')';
-      $params = array_merge($params, $supplierIds);
+      $wheres = array();
+      foreach($supplierIds as $index => $supId) {
+        $key = 'sup_' . $index;
+        $params[$key] = $supId;
+        $wheres[] = ':' . $key;
+      }
+      $where[] = 'pro.supplierId in (' . implode(',', $wheres) . ')';
     }
-    
-    Product::getAllByCriteria('supplierId in (')
+    if(count($typeIds) > 0) {
+      $wheres = array();
+      foreach($typeIds as $index => $typeId) {
+        $key = 'type_' . $index;
+        $params[$key] = $supId;
+        $wheres[] = ':' . $key;
+      }
+      $where[] = 'pro.productTypeId in (' . implode(',', $wheres) . ')';
+    }
+    if (isset($joins['libOwns'])) {
+      Product::getQuery()->eagerLoad('Product.libOwns', 'inner join', 'libown', $joins['libOwns']);
+      $where[] = 'pro.active = 1';
+    }
+    if (count($where) > 0) {
+      $products = Product::getAllByCriteria(implode(' AND ', $where), $params, true);
+    } else {
+      throw new Exception("DANGEROURS ACTION: no condition provided for getting the products!");
+    }
+    self::log("-- Got (" . count($products) . ") product(s)", __CLASS__ . '::' . __FUNCTION__, $preFix);
+    return $products;
   }
-  
-  private static function log($msg, $funcName = '', $preFix = '', UDate $start = null, $postFix = "\n\r") {
+  /**
+   * generating the log
+   * 
+   * @param string $msg
+   * @param string $funcName
+   * @param string $preFix
+   * @param UDate  $start
+   * @param string $postFix
+   * 
+   * @return UDate
+   */
+  private static function log($msg, $funcName = '', $preFix = '', UDate $start = null, $postFix = "\n\r")
+  {
     $now = new UDate();
     $funcName = ($funcName === '' ? (' [' . $funcName . ']') : '');
     $timeDiff = '';
