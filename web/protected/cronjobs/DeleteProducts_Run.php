@@ -32,7 +32,18 @@ abstract class DeleteProducts
     $products = self::_getProducts($libIds, $supplierIds, $typeIds);
     self::log('== Start deleting ' . count($products) . ' Product(s)', '', $preFix . self::TAB);
     foreach($products as $product) {
-      self::_deleteRelationship($product, $libIds, $preFix . self::TAB . self::TAB);
+      try{
+        Dao::beginTransaction();
+        self::_deleteRelationship($product, $libIds, $preFix . self::TAB . self::TAB);
+        Dao::commitTransaction();
+      } catch (Exception $ex) {
+        Dao::rollbackTransaction();
+        self::log('!!!!!!!!!!!!!!!!', '', $preFix . self::TAB . self::TAB);
+        self::log('ERROR WHEN DELETING PRODUCT(ID=' . $product->getId() . '): ' . $ex->getMessage(), '', $preFix . self::TAB . self::TAB . self::TAB);
+        self::log(preg_replace("/[\n\r]/", "\n" . self::TAB . self::TAB . self::TAB . self::TAB, print_r($ex->getTraceAsString(), true)), '', $preFix . self::TAB . self::TAB . self::TAB . self::TAB);
+        self::log('!!!!!!!!!!!!!!!!', '', $preFix . self::TAB . self::TAB);
+        continue;
+      }
       self::log('');
     }
     self::log('== FINISHED deleting ' . count($products) . ' Product(s)', '', $preFix . self::TAB);
