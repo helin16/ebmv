@@ -20,7 +20,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	 *
 	 * @return SimpleXMLElement
 	 */
-	private function _getJsonFromUrl($importUrl, ProductType $type, $pageNo = 1)
+	private function _getJsonFromUrl($importUrl, ProductType $type, $cachKey, $pageNo = 1)
 	{
 		$url = str_replace('{page_no}', $pageNo, $importUrl);
 		if($this->_debugMode === true)
@@ -33,16 +33,16 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 			throw new Exception('Error Occurred, when trying to fetch data from "' . $url . '": ' . $result['error']);
 		if(count($result['data']) > 0)
 		{
-			if(!isset(self::$cache['data']))
-				self::$cache['data'] = array();
+			if(!isset(self::$cache[$cachKey]))
+				self::$cache[$cachKey] = array();
 			foreach($result['data'] as $row)
 			{
-				self::$cache['data'][] = $this->_fakeProduct($type, $row);
+				self::$cache[$cachKey][] = $this->_fakeProduct($type, $row);
 			}
 		}
-		if(count(self::$cache['data']) < intval($result['total']) ) {
-		    SupplierConnectorAbstract::log($this, 'NEXT PAGE, as got(' . count(self::$cache['data']) . ') < provided(' . intval($result['total']) . ')' , __FUNCTION__);
-		    $this->_getJsonFromUrl($importUrl, $type, $pageNo + 1);
+		if(count(self::$cache[$cachKey]) < intval($result['total']) ) {
+		    SupplierConnectorAbstract::log($this, 'NEXT PAGE, as got(' . count(self::$cache[$cachKey]) . ') < provided(' . intval($result['total']) . ')' , __FUNCTION__);
+		    $this->_getJsonFromUrl($importUrl, $type, $cachKey, $pageNo + 1);
 		}
 		return $this;
 	}
@@ -59,12 +59,13 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$importUrl = str_replace('{page_no}', 1, trim($this->_supplier->getInfo('import_url')));
 
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got import url:' . $importUrl, __FUNCTION__);
-		if(!isset(self::$cache['data']))
-			$this->_getJsonFromUrl($importUrl, $type);
+		$cachKey = 'productListData';
+		if(!isset(self::$cache[$cachKey]))
+			$this->_getJsonFromUrl($importUrl, $type, $cachKey);
 
-		if(count(self::$cache['data']) === 0)
+		if(count(self::$cache[$cachKey]) === 0)
 			throw new SupplierConnectorException('Can NOT any data information from ' . $importUrl . '!');
-		$array = SupplierConnectorProduct::getInitPagination ( null, count(self::$cache['data']), 1, DaoQuery::DEFAUTL_PAGE_SIZE );
+		$array = SupplierConnectorProduct::getInitPagination ( null, count(self::$cache[$cachKey]), 1, DaoQuery::DEFAUTL_PAGE_SIZE );
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, '::got array from results:' . print_r($array, true) , __FUNCTION__);
 		return $array;
 	}
@@ -75,11 +76,12 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	public function getProductList($pageNo = 1, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, ProductType $type = null, $onceOnly = false)
 	{
 		if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Getting product list:', __FUNCTION__);
-		if(!isset(self::$cache['data']))
+		$cachKey = 'productListData';
+		if(!isset(self::$cache[$cachKey]))
 		{
-			$this->_getJsonFromUrl(trim($this->_supplier->getInfo('import_url')), $type);
+			$this->_getJsonFromUrl(trim($this->_supplier->getInfo('import_url')), $type, $cachKey);
 		}
-		return array_slice(self::$cache['data'], ($pageNo - 1) * $pageSize, $pageSize);
+		return array_slice(self::$cache[$cachKey], ($pageNo - 1) * $pageSize, $pageSize);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -216,6 +218,49 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$download->Available = $readOnlineCopy;
 		$download->Total = 1;
 		return $xml;
+	}
+	/**
+	 * Import all the overdue issues.
+	 * 
+	 * @param ProductType $type
+	 * @param UDate       $fromTime
+	 * @param UDate       $toTime
+	 * 
+	 * @return SC_DLTX
+	 */
+	public function getOverDueIssues(ProductType $type, UDate $fromTime = null, UDate $toTime = null) {
+	  if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'start to get all the overdue issues:', __FUNCTION__);
+	  ProductAttribute::getQuery()->eagerLoad('ProductAttribute.product', 'inner join', 'pro', 'pro.active = 1 and pa.productId = pro.id and pro.productTypeId = ' . $type->getId() . ' and pro.supplierId = ' . $this->getSupplier()->getId());
+	  $attributes = ProductAttribute::getAllByCriteria('productAttributeTypeId = ?', array(ProductAttributeType::ID_CNO));
+	  if (count($attributes) === 0) {
+	    if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Found no brandIds, quit.', __FUNCTION__);
+	    return $this;
+	  }
+	  
+	  $brandIds = array();
+	  foreach($attributes as $attribute) {
+	    $brandIds[] = trim($attribute->getValue());
+	  }
+	  
+	  $newProducts = array();
+	  $brandIds = array_unique($brandIds);
+	  $base_url = 'http://public.dooland.com/v1/Magazine/overdue/id/{brand_id}/page/{page_no}';
+    $params = array();
+    if ($fromTime instanceof UDate) {
+      $params['startdate'] = trim($fromTime);
+    }
+    if ($toTime instanceof UDate) {
+      $params['enddate'] = trim($toTime);
+    }
+	  if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got ' . $brandIds . ' brandIds to go through: ', __FUNCTION__);
+	  foreach($brandIds as $brandId) {
+	    if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start BrandId: ' . $brandId, __FUNCTION__);
+	    $importUrl = str_replace('{brand_id}', $brandId, $base_url);
+	    $cachKey = 'productOverDueListData_' . $brandId;
+  		if(!isset(self::$cache[$cachKey]))
+  			$this->_getJsonFromUrl($importUrl, $type, $cachKey);
+  		$this->importProducts(self::$cache[$cachKey]);
+	  }
 	}
 	/**
 	 * Getting the library owns type
