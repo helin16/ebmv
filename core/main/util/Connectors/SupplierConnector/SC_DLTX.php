@@ -239,7 +239,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	  
 	  $brandIds = array();
 	  foreach($attributes as $attribute) {
-	    $brandIds[] = trim($attribute->getValue());
+	    $brandIds[] = trim($attribute->getAttribute());
 	  }
 	  
 	  $newProducts = array();
