@@ -32,7 +32,7 @@ abstract class DeleteProducts
     $products = self::_getProducts($libIds, $supplierIds, $typeIds);
     self::log('== Start deleting ' . count($products) . ' Product(s)', '', $preFix . self::TAB);
     foreach($products as $product) {
-      self::_deleteRelationship($product, $preFix . self::TAB . self::TAB);
+      self::_deleteRelationship($product, $libIds, $preFix . self::TAB . self::TAB);
       self::log('');
     }
     self::log('== FINISHED deleting ' . count($products) . ' Product(s)', '', $preFix . self::TAB);
@@ -50,25 +50,47 @@ abstract class DeleteProducts
    * @param Product $product
    * @param unknown $preFix
    */
-  private static function _deleteRelationship(Product $product, $preFix) 
+  private static function _deleteRelationship(Product $product, array $libIds = array(), $preFix) 
   {
     self::log("DELETING PRODUCT ID = " . $product->getId(), '', $preFix);
-    return;
+    
+    if(count($libIds) > 0) {
+      self::log("DELETING ProductShelfItem with provided libIds(" . implode(', ', $libIds) . ") ... ", '', $preFix . self::TAB);
+      $users = UserAccount::getAllByCriteria('libraryId in (' . implode(', ', $libIds) . ')');
+      self::log("found " . count($users) . ' owner(s).', '', $preFix . self::TAB . self::TAB);
+      $ownerIdsSql = '';
+      if (count($users) > 0) {
+        $ownerIdsSql .= ' and ownerId in ( ' . implode(', ', array_map(create_fuction('$a', 'reutrn $a->getId()'), $users)) . ')';
+      }
+      ProductShelfItem::deleteByCriteria('productId = ?' . $ownerIdsSql, array($product->getId()));
+      self::log("DONE", '', $preFix . self::TAB . self::TAB);
+  
+      self::log("DELETING LibraryOwns with provided libIds(" . implode(', ', $libIds) . ") ... ", '', $preFix . self::TAB);
+      LibraryOwns::deleteByCriteria('productId = ? and libraryId in (' . implode(', ', $libIds) . ')', array($product->getId()));
+      self::log("DONE", '', $preFix . self::TAB . self::TAB);
+    } else {
+      self::log("DELETING ProductShelfItem ... ", '', $preFix . self::TAB);
+      ProductShelfItem::deleteByCriteria('productId = ?', array($product->getId()));
+      self::log("DONE", '', $preFix . self::TAB . self::TAB);
+      
+      self::log("DELETING LibraryOwns ... ", '', $preFix . self::TAB);
+      LibraryOwns::deleteByCriteria('productId = ? ', array($product->getId()));
+      self::log("DONE", '', $preFix . self::TAB . self::TAB);
+    }
+    
+    $extracShelfItemcount = ProductShelfItem::countByCriteria('productId = ? and active = 1', array($product->getId()));
+    $extracLibOwnsCount = LibraryOwns::countByCriteria('productId = ? and active = 1', array($product->getId()));
+    if ($extracShelfItemcount > 0 || $extracLibOwnsCount > 0) {
+      self::log("Break the library relationship only, as there are more libraries owns that product", '', $preFix . self::TAB);
+      return;
+    }
     
     self::log("DELETING ProductAttribute ... ", '', $preFix . self::TAB);
     ProductAttribute::deleteByCriteria('productId = ?', array($product->getId()));
     self::log("DONE", '', $preFix . self::TAB . self::TAB);
-
+    
     self::log("DELETING ProductStatics ... ", '', $preFix . self::TAB);
     ProductStatics::deleteByCriteria('productId = ?', array($product->getId()));
-    self::log("DONE", '', $preFix . self::TAB . self::TAB);
-
-    self::log("DELETING ProductShelfItem ... ", '', $preFix . self::TAB);
-    ProductShelfItem::deleteByCriteria('productId = ?', array($product->getId()));
-    self::log("DONE", '', $preFix . self::TAB . self::TAB);
-
-    self::log("DELETING LibraryOwns ... ", '', $preFix . self::TAB);
-    LibraryOwns::deleteByCriteria('productId = ?', array($product->getId()));
     self::log("DONE", '', $preFix . self::TAB . self::TAB);
     
     self::log("DELETING ProductStaticsLog ... ", '', $preFix . self::TAB);
