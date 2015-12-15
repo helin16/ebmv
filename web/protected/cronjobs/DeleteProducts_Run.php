@@ -98,7 +98,7 @@ abstract class DeleteProducts
     self::log("DONE", '', $preFix . self::TAB . self::TAB);
     
     self::log("DELETING Product ... ", '', $preFix . self::TAB);
-    Product::deleteByCriteria('productId = ?', array($product->getId()));
+    Product::deleteByCriteria('id = ?', array($product->getId()));
     self::log("DONE", '', $preFix . self::TAB . self::TAB);
   }
   /**
@@ -169,7 +169,7 @@ abstract class DeleteProducts
   private static function log($msg, $funcName = '', $preFix = '', UDate $start = null, $postFix = "\n\r")
   {
     $now = new UDate();
-    $funcName = ($funcName === '' ? (' [' . $funcName . ']') : '');
+    $funcName = ($funcName === '' ? '': (' [' . $funcName . ']'));
     $timeDiff = '';
     if($start instanceof UDate) {
       $timeDiff = ' TOOK '  . ($now->UnixTimestamp() - $start->UnixTimestamp()) . '(s)';
