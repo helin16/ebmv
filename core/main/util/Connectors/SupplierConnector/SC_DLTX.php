@@ -252,7 +252,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
     if ($toTime instanceof UDate) {
       $params['enddate'] = trim($toTime);
     }
-	  if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got ' . $brandIds . ' brandIds to go through: ', __FUNCTION__);
+	  if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got ' . count($brandIds) . ' brandIds to go through: ', __FUNCTION__);
 	  foreach($brandIds as $brandId) {
 	    if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start BrandId: ' . $brandId, __FUNCTION__);
 	    $importUrl = str_replace('{brand_id}', $brandId, $base_url);
