@@ -9,6 +9,13 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	const APP_ID = 'f239776c84236b30c83e86993666cc99';
 	const APP_SECRET = '20b832cd14b69a02b32c36fbd66f531a';
 	public static $cache = array();
+	private function _getCurlData($url, $extraOpts = array()) {
+		//try to use apc
+		if (!isset(self::$cache['url_' . md5($url)])) {
+			self::$cache['url_' . md5($url)] = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, array(), '', $extraOpts);
+		}
+		return self::$cache['url_' . md5($url)];
+	}
 	/**
 	 * Getting the json from url
 	 *
@@ -25,7 +32,7 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 		$url = str_replace('{page_no}', $pageNo, $importUrl);
 		if($this->_debugMode === true)
 			SupplierConnectorAbstract::log($this, '::reading from url: ' . $url , __FUNCTION__);
-		$result = SupplierConnectorAbstract::readUrl($url, BmvComScriptCURL::CURL_TIMEOUT, array(), '', array(CURLOPT_POST=> true, CURLOPT_POSTFIELDS => json_encode(array('appId' => self::APP_ID))));
+		$result = self::_getCurlData($url, array(CURLOPT_POST=> true, CURLOPT_POSTFIELDS => json_encode(array('appId' => self::APP_ID))));
 		if($this->_debugMode === true)
 			SupplierConnectorAbstract::log($this, '::got results:' . $result , __FUNCTION__);
 		$result = json_decode($result, true);
