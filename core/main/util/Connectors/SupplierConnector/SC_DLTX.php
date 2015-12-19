@@ -252,13 +252,13 @@ class SC_DLTX extends SupplierConnectorAbstract implements SupplierConn
 	  $newProducts = array();
 	  $brandIds = array_unique($brandIds);
 	  $base_url = 'http://public.dooland.com/v1/Magazine/overdue/id/{brand_id}/page/{page_no}';
-    $params = array();
-    if ($fromTime instanceof UDate) {
-      $params['startdate'] = trim($fromTime);
-    }
-    if ($toTime instanceof UDate) {
-      $params['enddate'] = trim($toTime);
-    }
+	  $params = array();
+	  if ($fromTime instanceof UDate) {
+	    $params['startdate'] = trim($fromTime);
+	  }
+	  if ($toTime instanceof UDate) {
+	    $params['enddate'] = trim($toTime);
+	  }
 	  if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Got ' . count($brandIds) . ' brandIds to go through: ', __FUNCTION__);
 	  foreach($brandIds as $brandId) {
 	    if($this->_debugMode === true) SupplierConnectorAbstract::log($this, 'Start BrandId: ' . $brandId, __FUNCTION__);
