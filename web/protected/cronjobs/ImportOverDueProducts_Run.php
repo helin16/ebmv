@@ -10,4 +10,4 @@ abstract class ImportOverDueIssues
      SupplierConnectorAbstract::getInstance(Supplier::get(12), Library::get($libraryId))->setDebugMode(true)->setEchoLogging(true)->getOverDueIssues(ProductType::get(3), new UDate('2015-08-01'));
   }
 }
-ImportOverDueIssues::run($argv[2]);
+ImportOverDueIssues::run($argv[1]);
