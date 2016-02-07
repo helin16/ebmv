@@ -44,7 +44,7 @@ class HelpController extends FrontEndPageAbstract
 			 array (
         		'en' => array (
         			'question' => "How can I read Simplified Chinese e-books?"
-        			,'answer'   => 'Select the Simplified Chinese e-book of interest in the catalogue, click its cover. The book’s metadata will appear on the new page. There are also two buttons to select: “Read Online” and “Download This Book”. Read Online will work on desktops, Laptops and tablets which run Microsoft Windows, Apple OS or Android operating systems. '
+        			,'answer'   => 'Select the Simplified Chinese e-book of interest in the catalogue, click its cover. The book’s metadata will appear on the new page. There are also two buttons to select: “Read Online” and “Download This Book”. <br />e-book from Founder Apabi  It can be read on Android tablets or Apple iPad after download.<br />e-book from Xinhua Downloaded e-book requires Microsoft Windows platform to open (Windows XP SP2, Vista, and Widows 7). Downloaded file is a compressed file bundled with reader.  After unzip you will get an executable file (.exe). Double click the file to start reading*. *Note: if Chinese is not selected as the default language in MS Windows, the downloaded file’s name will appear as a string of strange characters. It will not affect you open the file.'
 				)
 			 	,'zh_cn' => array (
         			'question' => "如何在线阅读简体中文电子书?"
